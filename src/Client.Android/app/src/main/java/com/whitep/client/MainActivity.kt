@@ -333,7 +333,7 @@ private fun requestScreen(onBack: () -> Unit) {
             enabled = !requestState.isSendingRequest,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(if (requestState.isSendingRequest) "Sending and waiting for hosts…" else "Send to trusted hosts")
+            Text(if (requestState.isSendingRequest) "Sending and waiting for hosts…" else "Send to a trusted host")
         }
         if (requestState.canCancelRequest || requestState.isCancellingRequest) {
             OutlinedButton(
@@ -345,7 +345,7 @@ private fun requestScreen(onBack: () -> Unit) {
                     if (requestState.isCancellingRequest) {
                         "Sending cancellation…"
                     } else {
-                        "Cancel request on selected hosts"
+                        "Cancel request on selected host"
                     },
                 )
             }
@@ -375,9 +375,9 @@ private fun requestScreen(onBack: () -> Unit) {
             ) {
                 Text(
                     if (requestState.isRetryingRequest) {
-                        "Retrying failed attempts…"
+                        "Trying the next trusted host…"
                     } else {
-                        "Retry failed attempts manually"
+                        "Try the next trusted host manually"
                     },
                 )
             }

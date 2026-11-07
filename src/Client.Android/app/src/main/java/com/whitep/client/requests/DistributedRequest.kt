@@ -3,11 +3,21 @@ package com.whitep.client.requests
 import java.util.UUID
 
 /**
- * Conservative first-release limits for one Android distributed inference request.
- * The task does not prescribe numeric ceilings; these values cap retry amplification while
- * retaining the existing three-host-per-round contract.
+ * First-release request policy: one active peer at a time and no more than three
+ * distinct, sequential attempts during one logical request.
  */
 object FirstReleaseInferenceLimits {
+    const val MAX_ROUNDS = 3
+    const val MAX_ACTIVE_HOSTS_PER_REQUEST = 1
+    const val MAX_TOTAL_HOSTS = MAX_ROUNDS * MAX_ACTIVE_HOSTS_PER_REQUEST
+
+    /** @deprecated This compatibility limit is not used by the first-release request path. */
+    @Deprecated("Use MultiHostCompatibilityLimits for generic multi-host tooling.")
+    const val MAX_HOSTS_PER_ROUND = 3
+}
+
+/** Generic three-host batching retained for legacy verification and a future approved mode. */
+object MultiHostCompatibilityLimits {
     const val MAX_ROUNDS = 3
     const val MAX_HOSTS_PER_ROUND = 3
     const val MAX_TOTAL_HOSTS = MAX_ROUNDS * MAX_HOSTS_PER_ROUND
@@ -34,7 +44,7 @@ data class DistributedRequestProgress(
     }
 
     fun afterDispatch(hostIds: Collection<String>): DistributedRequestProgress {
-        require(hostIds.size in 1..FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND) {
+        require(hostIds.size in 1..MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND) {
             "A dispatched round must contain one to three host attempts"
         }
         require(hostIds.none { hostId -> hostId.isBlank() }) {
@@ -56,7 +66,7 @@ data class DistributedRequestProgress(
      */
     @Deprecated("Use afterDispatch(hostIds) to retain the peer history required for later rounds.")
     fun afterDispatch(hostCount: Int): DistributedRequestProgress {
-        require(hostCount in 1..FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND) {
+        require(hostCount in 1..MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND) {
             "A dispatched round must contain one to three host attempts"
         }
         return copy(
@@ -79,7 +89,7 @@ data class DistributedRequest(
     val deadlineUnixMs: Long,
     val maxRounds: Int,
     val maxTotalHosts: Int =
-        minOf(maxRounds, FirstReleaseInferenceLimits.MAX_ROUNDS) * FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
+        minOf(maxRounds, FirstReleaseInferenceLimits.MAX_ROUNDS) * FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST,
     val status: DistributedRequestStatus = DistributedRequestStatus.QUEUED,
 ) {
     init {
@@ -88,10 +98,10 @@ data class DistributedRequest(
         require(maxRounds in 1..FirstReleaseInferenceLimits.MAX_ROUNDS) {
             "maxRounds must be between one and the first-release maximum"
         }
-        require(maxTotalHosts in 1..FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS) {
+        require(maxTotalHosts in 1..MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS) {
             "maxTotalHosts must be within the first-release maximum"
         }
-        require(maxTotalHosts <= maxRounds * FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND) {
+        require(maxTotalHosts <= maxRounds * MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND) {
             "maxTotalHosts cannot exceed the configured round capacity"
         }
     }

@@ -178,11 +178,14 @@ class AndroidInferenceRequestRuntime private constructor(
                 request = request,
                 announcements = announcements,
                 excludedEphemeralHostIds = excludedEphemeralHostIds,
-                maxHosts = FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
+                maxHosts = FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST,
             )
         return HostSelectionResult(
             candidates = candidates,
-            feedback = HostSelectionFeedback(availableHostCount = candidates.size),
+            feedback = HostSelectionFeedback(
+                availableHostCount = candidates.size,
+                requestedHostCount = FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST,
+            ),
         )
     }
 
@@ -195,6 +198,9 @@ class AndroidInferenceRequestRuntime private constructor(
         excludedEphemeralHostIds: Set<String>,
         maxHosts: Int,
     ): HostSelectionResult {
+        require(maxHosts == FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST) {
+            "First-release requests select exactly one peer; inference prompts are never broadcast."
+        }
         val discovery =
             authenticatedHostDiscovery
                 ?: throw IllegalStateException(
@@ -229,6 +235,11 @@ class AndroidInferenceRequestRuntime private constructor(
         maxOutputTokens: Int,
         protocolVersion: String,
     ): InferenceRoundDispatchResult {
+        if (selectedHosts.size > FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST) {
+            return InferenceRoundDispatchResult.Rejected(
+                InferenceRoundDispatchRejection.TOO_MANY_HOSTS,
+            )
+        }
         val requestId = distributedRequest.requestId
         val lock = requestBudgetLocks.computeIfAbsent(requestId) { Mutex() }
         return lock.withLock {
@@ -248,7 +259,7 @@ class AndroidInferenceRequestRuntime private constructor(
             // Reserve before suspending in transport: cancellation after a partial send must fail
             // closed rather than allowing the same request to exceed its host-attempt ceiling.
             val selectedHostIds = selectedHosts.map { candidate -> candidate.announcement.ephemeralHostId }
-            if (selectedHosts.size in 1..HostCandidateSelector.MAX_HOSTS_PER_ROUND &&
+            if (selectedHosts.size in 1..FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST &&
                 selectedHostIds.none { hostId -> hostId.isBlank() } &&
                 selectedHostIds.toSet().size == selectedHostIds.size
             ) {

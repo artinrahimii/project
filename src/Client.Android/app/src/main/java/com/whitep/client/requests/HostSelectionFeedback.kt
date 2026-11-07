@@ -6,11 +6,11 @@ package com.whitep.client.requests
  */
 data class HostSelectionFeedback(
     val availableHostCount: Int,
-    val requestedHostCount: Int = FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
+    val requestedHostCount: Int = MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND,
 ) {
     init {
-        require(requestedHostCount in 1..FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND) {
-            "requestedHostCount must be within the first-release per-round ceiling."
+        require(requestedHostCount in 1..MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND) {
+            "requestedHostCount must be within the generic multi-host compatibility ceiling."
         }
         require(availableHostCount in 0..requestedHostCount) {
             "availableHostCount must be between zero and the requested host count."

@@ -64,7 +64,7 @@ fun RequestUiState.toNetworkInferenceStatusPresentation(): NetworkInferenceStatu
     val networkStatus =
         when {
             isDiscoveringPeers -> "Discovering peers."
-            isCancellingRequest -> "Sending cancellation to selected peers."
+            isCancellingRequest -> "Sending cancellation to the selected host."
             isSendingRequest -> "Request transport is active."
             discoveredPeers.isNotEmpty() ->
                 "Peers discovered: ${discoveredPeers.size}; trusted: $trustedPeerCount."
@@ -74,7 +74,7 @@ fun RequestUiState.toNetworkInferenceStatusPresentation(): NetworkInferenceStatu
     val inferenceStatus =
         when {
             isCancellingRequest -> "Cancellation requested."
-            isRetryingRequest -> "Retrying failed attempts."
+            isRetryingRequest -> "Trying the next trusted host."
             else ->
                 when (runStatus) {
                     RequestRunStatus.IDLE -> "Not started."

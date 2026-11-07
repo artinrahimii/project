@@ -444,6 +444,15 @@ class RequestViewModel(
         val context = retryableRequest ?: return
         val network = mutableNetworkState.value
         if (!network.canRetryRequest || network.isSendingRequest || network.isCancellingRequest) return
+        if (clockMillis() >= context.request.deadlineUnixMs) {
+            commandsScope.launch {
+                updateAggregatedRequestStatus(
+                    context,
+                    "The overall request deadline expired; no further host will be contacted.",
+                )
+            }
+            return
+        }
         executeRequestRound(context, manualRetry = true)
     }
 
@@ -468,9 +477,9 @@ class RequestViewModel(
                 isRetryingRequest = manualRetry,
                 message =
                     if (manualRetry) {
-                        "Preparing a manual retry for failed host attempts…"
+                        "Preparing a manual attempt for the next trusted host…"
                     } else {
-                        "Preparing a request for explicitly trusted, compatible peers…"
+                        "Preparing a request for one explicitly trusted, compatible host…"
                     },
             )
 
@@ -486,25 +495,20 @@ class RequestViewModel(
                         )
                     return@launch
                 }
-                val gateway = requireRuntime()
-                if (manualRetry) {
-                    context =
-                        context.copy(
-                            request =
-                                context.request.copy(
-                                    deadlineUnixMs = Math.addExact(clockMillis(), REQUEST_DEADLINE_MILLIS),
-                                ),
-                        )
-                    retryableRequest = context
+                if (clockMillis() >= context.request.deadlineUnixMs) {
+                    updateAggregatedRequestStatus(
+                        context,
+                        "The overall request deadline expired; no further host will be contacted.",
+                    )
+                    return@launch
                 }
-
+                val gateway = requireRuntime()
                 val remainingHosts = context.request.maxTotalHosts - context.progress.hostsAttempted
                 val failedPeerCount = failedPeerIdsForRetry(context).size
-                val requestedHosts =
-                    if (manualRetry) failedPeerCount else FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND
+                val requestedHosts = FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST
                 val maxHosts =
                     minOf(
-                        FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
+                        FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST,
                         remainingHosts,
                         requestedHosts,
                     )
@@ -553,7 +557,7 @@ class RequestViewModel(
                 val selection =
                     gateway.discoverAndSelectReachableHosts(
                         request = selectionRequest,
-                        excludedEphemeralHostIds = successfulPeerIds(context),
+                        excludedEphemeralHostIds = context.progress.attemptedEphemeralHostIds.toSet(),
                         maxHosts = maxHosts,
                     )
                 mutableHostAvailabilityMessage.value = selection.feedback.message
@@ -724,13 +728,6 @@ class RequestViewModel(
                 outcome != HostResponseOutcome.SUCCEEDED && outcome != HostResponseOutcome.CANCELLED
             }.keys
 
-    private fun successfulPeerIds(context: RetryableRequestContext): Set<String> =
-        latestOutcomeByHost(context)
-            .filterValues { outcome ->
-                outcome == HostResponseOutcome.SUCCEEDED ||
-                    outcome == HostResponseOutcome.CANCELLED
-            }.keys
-
     private suspend fun updateAggregatedRequestStatus(
         context: RetryableRequestContext,
         message: String? = null,
@@ -746,8 +743,7 @@ class RequestViewModel(
             when {
                 latestOutcomes.isEmpty() -> RequestRunStatus.IDLE
                 hasCancellation -> RequestRunStatus.CANCELLED
-                failedCount == 0 -> RequestRunStatus.SUCCEEDED
-                successCount > 0 -> RequestRunStatus.PARTIAL
+                successCount > 0 -> RequestRunStatus.SUCCEEDED
                 else -> RequestRunStatus.FAILED
             }
         val budgetRemaining =
@@ -758,13 +754,15 @@ class RequestViewModel(
         val canRetry =
             isCurrentRetryContext &&
                 failedCount > 0 &&
+                successCount == 0 &&
                 !hasCancellation &&
-                budgetRemaining
+                budgetRemaining &&
+                clockMillis() < context.request.deadlineUnixMs
         val statusMessage =
             when (status) {
                 RequestRunStatus.IDLE -> "No request has been sent."
                 RequestRunStatus.RUNNING -> "The request is still running."
-                RequestRunStatus.SUCCEEDED -> "All latest host attempts completed successfully."
+                RequestRunStatus.SUCCEEDED -> "The selected trusted host completed the request successfully."
                 RequestRunStatus.PARTIAL ->
                     if (canRetry) {
                         "The request has partial results. Failed host attempts can be retried manually."
@@ -773,9 +771,9 @@ class RequestViewModel(
                     }
                 RequestRunStatus.FAILED ->
                     if (canRetry) {
-                        "All latest host attempts failed or timed out. A manual retry is available."
+                        "The selected host failed or timed out. A manual attempt with the next trusted host is available."
                     } else {
-                        "All latest host attempts failed or timed out. The manual retry budget is exhausted."
+                        "The selected host failed or timed out. The attempt budget or request deadline is exhausted."
                     }
                 RequestRunStatus.CANCELLED ->
                     "The request was cancelled. Cancelled attempts cannot be retried."
@@ -850,7 +848,7 @@ class RequestViewModel(
                 mutableNetworkState.value.copy(
                     canCancelRequest = false,
                     isCancellingRequest = true,
-                    message = "Sending cancellation requests to the selected hosts…",
+                    message = "Sending a cancellation request to the selected host…",
                 )
             try {
                 val results = requireRuntime().cancelSelectedHosts(active.requestId, active.attempts)
@@ -861,11 +859,9 @@ class RequestViewModel(
                 val sentCount = results.count(InferenceAttemptCancellationResult::cancellationSent)
                 val message =
                     if (sentCount == queuedCount) {
-                        "Cancellation requests sent to all $queuedCount queued host attempts. " +
-                            "Waiting for host responses."
+                        "Cancellation request sent to the selected host. Waiting for its response."
                     } else {
-                        "Cancellation requests sent to $sentCount of $queuedCount queued host attempts; " +
-                            "the remaining attempts may have completed or could not accept cancellation."
+                        "Cancellation could not be confirmed for the selected host; it may have completed or may not have accepted cancellation."
                     }
                 mutableNetworkState.value = mutableNetworkState.value.copy(message = message)
             } catch (cancellation: CancellationException) {
@@ -1032,7 +1028,7 @@ class RequestViewModel(
 
     private companion object {
         const val CURRENT_PROTOCOL_VERSION = "1.0.0"
-        const val REQUEST_DEADLINE_MILLIS = 90_000L
+        const val REQUEST_DEADLINE_MILLIS = 180_000L
     }
 }
 

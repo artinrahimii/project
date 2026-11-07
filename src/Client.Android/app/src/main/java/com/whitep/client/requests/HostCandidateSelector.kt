@@ -27,7 +27,7 @@ data class HostCandidate(
  * It does not perform discovery, network I/O, retries, deadline scheduling, or dispatch.
  */
 object HostCandidateSelector {
-    const val MAX_HOSTS_PER_ROUND = FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND
+    const val MAX_HOSTS_PER_ROUND = MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND
 
     fun select(
         request: InferenceRequest,
