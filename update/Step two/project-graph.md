@@ -273,23 +273,42 @@
         "SHA واقعی main در لحظهٔ ممیزی ثبت شده و با checkpoint ایجاد گراف و آخرین تغییر کد محصول اشتباه گرفته نشده باشد.",
         "هیچ ورودی ممیزی از SHA تاریخی منسوخ 6f70586b4b7ff69c463f7e5b02293090c63e78ec استفاده نکند."
       ],
-      "status": "not_started",
+      "status": "in_progress",
       "status_fa": "انجام‌نشده",
       "expected_output_paths": [
         "update/Step three/UPD-S1-001/execution-report.md",
         "update/Step three/UPD-S1-001/evidence/baseline-audit.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "update/Step three/UPD-S1-001/execution-report.md",
+        "update/Step three/UPD-S1-001/evidence/baseline-audit.md",
+        "tests/test_update_baseline_audit.py"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-001/evidence/baseline-audit.md",
+        "tests/test_update_baseline_audit.py",
+        "https://github.com/artinrahimii/project/actions/runs/42401485764",
+        "https://github.com/artinrahimii/project/actions/runs/42401485830",
+        "https://github.com/artinrahimii/project/actions/runs/42401485784"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=preserve; affected_task_ids=T0015, T0016, T0041, T0042, T0139, T0216, T0217. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-001-20261107195322",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "update/Step two/project-graph.md",
+          "update/Step three/UPD-S1-001/execution-report.md",
+          "update/Step three/UPD-S1-001/evidence/baseline-audit.md",
+          "tests/test_update_baseline_audit.py"
+        ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          "GitHub Actions quality run 42401485764 passed against baseline V 3.1.17.",
+          "GitHub Actions product build run 42401485830 passed against baseline V 3.1.17.",
+          "GitHub Actions Rendezvous container run 42401485784 passed against baseline V 3.1.17."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -300,7 +319,61 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-001-20261107195322",
+          "started_at": "2026-11-07T19:53:22.752Z",
+          "ended_at": "2026-11-07T19:53:22.752Z",
+          "result": "partial",
+          "summary": "Baseline code, graph, protocol and CI audit completed; new regression tests have been added but are awaiting execution on the resulting commit.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-001/execution-report.md",
+            "update/Step three/UPD-S1-001/evidence/baseline-audit.md",
+            "tests/test_update_baseline_audit.py"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Baseline quality gate",
+              "command": "python -m unittest discover -s tests -v; python -m compileall -q tools tests; python tools/graph_guard.py on both graphs",
+              "result": "passed",
+              "run_id": 42401485764,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42401485764",
+              "note": "Run belongs to audited base commit; added regression test not included."
+            },
+            {
+              "name": "Baseline Windows and Android product build",
+              "command": "workflow product-build.yml",
+              "result": "passed",
+              "run_id": 42401485830,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42401485830",
+              "note": "Windows and Android CI tasks passed; emulator evidence is not physical-device E2E."
+            },
+            {
+              "name": "Baseline Rendezvous container smoke",
+              "command": "docker build and tests/rendezvous_container_smoke.py",
+              "result": "passed",
+              "run_id": 42401485784,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42401485784"
+            },
+            {
+              "name": "New baseline audit regression test",
+              "command": "python -m unittest tests.test_update_baseline_audit -v",
+              "result": "pending",
+              "note": "Will run after this commit triggers the quality workflow."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the newly added baseline audit regression suite and graph guard on the resulting main commit; then record its exact commit SHA in the next graph update and reassess done criteria.",
+          "device_and_host_details_redacted": "Not applicable to a source-and-CI baseline audit; no physical Android device or separate Windows host was accessed.",
+          "model_revision_and_sha256": "Not applicable to UPD-S1-001.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable to UPD-S1-001."
+        }
+      ]
     },
     {
       "id": "UPD-S1-002",
@@ -3736,8 +3809,8 @@
   "progress_snapshot": {
     "as_of": "2026-11-07",
     "total_tasks": 24,
-    "not_started": 24,
-    "in_progress": 0,
+    "not_started": 23,
+    "in_progress": 1,
     "done": 0,
     "blocked": 0,
     "verified_completion_percentage": 0,
