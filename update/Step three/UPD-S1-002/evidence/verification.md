@@ -53,3 +53,11 @@
 - Rendezvous container run 42409867998: **PASS**؛ image build و HTTP smoke روی commit دقیق.
 - Product build run 42409868020: Windows WPF job 128515459519 و HostLifecycle job 128515459678 هر دو **PASS**؛ Android job 128515459792 در آخرین مشاهده **IN PROGRESS** بود و نتیجهٔ نهایی workflow هنوز معلوم نبود.
 - نتیجهٔ آزمون‌های commit اصلاحی باید از runهای دقیق همان commit گرفته شود؛ در این مرحله pending است.
+
+
+## بررسی CI و بازیابی گراف پس از V 3.1.23
+
+- Step Three quality gate run 42410464261: **FAIL**؛ 459 tests، یک failure و یک error؛ هر دو مربوط به نبود حصار پایانی JSON گراف بودند.
+- Rendezvous container run 42410464340: **PASS**.
+- Product build run 42410464270: Windows/HostLifecycle/Android jobها هنگام آخرین مشاهده هنوز در حال اجرا بودند؛ نتیجهٔ نهایی ثبت نشده.
+- اولین JSON object متوازن و کامل بازیابی‌شده: 206,406 کاراکتر؛ شامل 24 node و 80 edge. بدنهٔ دوم تکراری حذف و یک closing fence افزوده شد.

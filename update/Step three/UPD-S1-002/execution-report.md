@@ -100,3 +100,14 @@
 - assertionهای جدید با شناسهٔ واقعی `remotePeerId.toBase58() != endpoint.peerId`، کامنت `Stops renewal.`، متن واقعی metadata visibility در ADR-0004 و قالب Markdown شناسهٔ AC-P2P-01 تطبیق داده شدند.
 - Attempt ناموفق CI: `UPD-S1-002-20261107201143`. تلاش اصلاحی: `UPD-S1-002-20261107201850`.
 - وضعیت UPD-S1-002 همچنان `in_progress` است؛ CI اصلاحیه هنوز اجرا/تأیید نشده است.
+
+
+## تلاش ساختاری — خطای حصار Markdown گراف در V 3.1.23
+
+- Commit: `c6b4b082df9241afbc490381ab3ac8fa93ec4c71` (`V 3.1.23`).
+- Step Three quality gate: **FAIL**، run [42410464261](https://github.com/artinrahimii/project/actions/runs/42410464261). گزارش آزمون: ۴۵۹ آزمون، یک failure و یک error؛ هر دو ناشی از نبودن حصار پایانی JSON در `update/Step two/project-graph.md` بودند.
+- بررسی دقیق فایل نشان داد اولین شیء JSON کامل و قابل Parse باقی مانده، اما بدنهٔ JSON قدیمی یک‌بار دیگر بعد از آن درج شده و حصار بستهٔ Markdown حذف شده است. دادهٔ گراف بازیابی شد؛ هیچ گره، یال یا سابقه‌ای از JSON اول حذف نشد.
+- Rendezvous container build/smoke در همان commit: **PASS**، run [42410464340](https://github.com/artinrahimii/project/actions/runs/42410464340).
+- Product build run [42410464270] در آخرین مشاهده هنوز در حال اجرا بود.
+- فایل گراف اکنون از اولین JSON کامل بازسازی می‌شود و یک حصار پایانی دقیق دریافت می‌کند. وضعیت UPD-S1-002 همچنان `in_progress` است تا quality gate و graph_guard روی commit اصلاحی موفق شوند.
+- Attempt خطای حصار: `UPD-S1-002-20261107201905`. Attempt بازیابی و اصلاح: `UPD-S1-002-20261107202026`.
