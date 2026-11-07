@@ -293,15 +293,15 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=preserve; affected_task_ids=T0015, T0016, T0041, T0042, T0139, T0216, T0217. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-001-20261107195322",
+        "last_attempt_id": "UPD-S1-001-20261107195420",
         "last_attempt_result": "partial",
         "changed_files": [
-          "update/Step two/project-graph.md",
+          "tests/test_update_baseline_audit.py",
           "update/Step three/UPD-S1-001/execution-report.md",
           "update/Step three/UPD-S1-001/evidence/baseline-audit.md",
-          "tests/test_update_baseline_audit.py"
+          "update/Step two/project-graph.md"
         ],
         "related_commits": [],
         "tests_passed": [
@@ -309,7 +309,10 @@
           "GitHub Actions product build run 42401485830 passed against baseline V 3.1.17.",
           "GitHub Actions Rendezvous container run 42401485784 passed against baseline V 3.1.17."
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          "CI run 42408388222: audit test expected ASCII group separator; evidence correctly used Persian thousands separator.",
+          "CI run 42408388222: audit test expected explicit SemaphoreSlim constructor; source uses target-typed new(1, 1)."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -370,6 +373,46 @@
           "contract_changes": [],
           "follow_up": "Verify the newly added baseline audit regression suite and graph guard on the resulting main commit; then record its exact commit SHA in the next graph update and reassess done criteria.",
           "device_and_host_details_redacted": "Not applicable to a source-and-CI baseline audit; no physical Android device or separate Windows host was accessed.",
+          "model_revision_and_sha256": "Not applicable to UPD-S1-001.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable to UPD-S1-001."
+        },
+        {
+          "attempt_id": "UPD-S1-001-20261107195420",
+          "started_at": "2026-11-07T19:54:20.340Z",
+          "ended_at": "2026-11-07T19:54:20.340Z",
+          "result": "partial",
+          "summary": "The first CI run exposed two false-negative expectations in the newly added audit tests. Both assertions were corrected against the exact repository content; a clean CI rerun is pending.",
+          "changed_files": [
+            "tests/test_update_baseline_audit.py",
+            "update/Step three/UPD-S1-001/execution-report.md",
+            "update/Step three/UPD-S1-001/evidence/baseline-audit.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "First baseline regression CI run",
+              "command": "python -m unittest discover -s tests -v",
+              "result": "failed",
+              "run_id": 42408388222,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42408388222",
+              "failure_details": [
+                "Audit assertion expected ASCII 4,014,945; evidence used Persian grouping separator.",
+                "Audit assertion expected explicit SemaphoreSlim(1, 1); implementation used _inferenceSemaphore = new(1, 1)."
+              ]
+            },
+            {
+              "name": "Corrected baseline regression CI",
+              "command": "python -m unittest discover -s tests -v",
+              "result": "pending",
+              "note": "Awaiting CI on the correction commit."
+            }
+          ],
+          "failure_details": "Two audit-only assertions did not match the exact evidence/source formatting. They were corrected; no Android, Windows or Shared product source was changed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Wait for the correction commit's quality workflow; if green, record the verified commit SHA in a follow-up metadata update and reassess UPD-S1-001 acceptance.",
+          "device_and_host_details_redacted": "Not applicable to source audit; no physical device or separate Windows host accessed.",
           "model_revision_and_sha256": "Not applicable to UPD-S1-001.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable to UPD-S1-001."
         }

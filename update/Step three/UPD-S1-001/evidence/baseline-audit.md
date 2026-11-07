@@ -75,3 +75,14 @@
 ## 7. Audit boundaries
 
 No product source was modified by UPD-S1-001. No legacy task status, dependency edge, model setting, trust policy or visual asset was changed. No physical device or separate Windows host was available to this repository audit. The new static audit regression test is an audit guard only and must not be represented as a product E2E test.
+
+
+## 8. Regression audit test run and correction
+
+- First quality run for the new audit test: https://github.com/artinrahimii/project/actions/runs/42408388222 — failed.
+- Exactly two newly added assertions failed:
+  - expected ASCII-formatted 4,014,945 while the evidence contains the Persian grouping separator in 4٬014٬945;
+  - expected an explicit SemaphoreSlim(1, 1) constructor call while the implementation uses the target-typed initializer _inferenceSemaphore = new(1, 1).
+- The relevant source findings remain supported by the repository: the field is a one-slot SemaphoreSlim and the evidence uses the byte count returned by the Git tree.
+- Both assertions were corrected to match the actual repository text. No product source was changed.
+- Four of the six new audit tests passed in this first run. Full rerun is pending; no successful result is claimed yet.

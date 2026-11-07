@@ -92,3 +92,17 @@ README ابزارهای لازم را این‌گونه مشخص می‌کند: 
 آزمون regression ممیزی باید در CI روی این commit اجرا و موفق شود. پس از آن، شواهد نهایی و SHA commit واقعی در تاریخچه ثبت می‌شود و وضعیت task فقط پس از بازبینی مجدد معیارها قابل تغییر به done است.
 
 این گزارش اجرای واقعی قابلیت جدید را ادعا نمی‌کند؛ خروجی این وظیفه، ممیزی خط مبنای قابل‌ردیابی است.
+
+
+## ثبت نتیجهٔ نخستین regression CI و اصلاح
+
+در commit بررسی ممیزی، quality gate با run شمارهٔ 42408388222 شکست خورد. از ۶ آزمون جدید ممیزی، ۲ assertion شکست کاذب داشتند:
+1. آزمون اندازهٔ گراف، جداکنندهٔ ASCII را انتظار داشت؛ evidence اندازه را با جداکنندهٔ هزارگان فارسی ثبت کرده بود. انتظار آزمون به متن واقعی evidence اصلاح شد.
+2. آزمون semaphore، فراخوانی صریح SemaphoreSlim(1, 1) را انتظار داشت؛ کد C# از مقداردهی target-typed به شکل _inferenceSemaphore = new(1, 1) استفاده می‌کند. انتظار آزمون به عبارت واقعی موجود در سورس اصلاح شد.
+
+سایر چهار آزمون جدید موفق بودند و آزمون‌های قبلی در خروجی همان suite اجرا شدند. این خطاها فقط در assertionهای جدید audit بودند؛ هیچ سورس محصولی تغییر نکرده است. آزمون اصلاح‌شده هنوز در یک CI تازه اجرا نشده، بنابراین وضعیت UPD-S1-001 همچنان in_progress باقی می‌ماند.
+
+- Workflow: https://github.com/artinrahimii/project/actions/runs/42408388222
+- Changed test: tests/test_update_baseline_audit.py
+- Execution checkpoint for this correction: 760c3882fe6a6e680c149d0b374790e26db7a4a9 (V 3.1.18)
+- Next verification: run the full quality workflow on the correction commit; do not mark this task done before it passes.
