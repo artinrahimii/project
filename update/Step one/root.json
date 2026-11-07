@@ -1,7 +1,7 @@
 {
   "stage": "step_one",
   "status": "in_progress",
-  "latest_version": "V1.1",
+  "latest_version": "V1.2",
   "final_version": null,
   "versions": [
     {
@@ -9,6 +9,16 @@
       "agent_label": "ChatGPT-GPT-6",
       "parent_version": null,
       "path": "update/Step one/Output/V1.1.json",
+      "outcome": "revise",
+      "status": "registered",
+      "change_classification": "material",
+      "content_changed": true
+    },
+    {
+      "version": "V1.2",
+      "agent_label": "ChatGPT-GPT-6-Review-02",
+      "parent_version": "V1.1",
+      "path": "update/Step one/Output/V1.2.json",
       "outcome": "revise",
       "status": "registered",
       "change_classification": "material",
@@ -24,6 +34,9 @@
   "notes": [
     "این root در نخستین اجرای Task Decomposition ایجاد شده، زیرا در main وجود نداشت.",
     "final_version تا اجرای دو بررسی closure متوالی و معتبر null باقی می‌ماند.",
-    "مرجع update/closure-policy.json در زمان ایجاد این root در مخزن موجود نبود؛ نسخهٔ V1.1 قواعد closure ارائه‌شده در درخواست را اعمال کرده است."
-  ]
+    "مرجع update/closure-policy.json در زمان ایجاد این root در مخزن موجود نبود؛ نسخهٔ V1.1 قواعد closure ارائه‌شده در درخواست را اعمال کرده است.",
+    "V1.2 نسخهٔ V1.1 را به‌صورت مادی بازبینی کرده و با حفظ ۲۱ شناسهٔ قبلی، UPD-S1-022 را برای trust اولیه و ماندگار افزوده است.",
+    "دو closure check متوالی هنوز اجرا نشده‌اند؛ final_version همچنان null است."
+  ],
+  "last_updated": "2026-11-07"
 }
