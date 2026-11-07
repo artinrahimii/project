@@ -1,0 +1,71 @@
+{
+  "stage": "step_one",
+  "policy_version": "1.0",
+  "source": "Task Decomposition instructions supplied with UPD-S1-2026-11-07-001",
+  "purpose": "Shared, mandatory saturation and closure rules for every Step One output version.",
+  "classification": {
+    "fields": {
+      "change_classification": [
+        "material",
+        "minor",
+        "none"
+      ],
+      "content_changed": "boolean",
+      "minor_edit_streak": "integer",
+      "closure_signal": [
+        "none",
+        "approaching_closure"
+      ],
+      "closure_reason": "non-empty string",
+      "unresolved_blocking_issues": "array",
+      "closure_result": [
+        "not_checked",
+        "ready_to_close",
+        "confirm_close"
+      ]
+    },
+    "material": "Classify by practical effect. A small correction to a required omission, missing task, or incorrect acceptance criterion is material. A material change resets minor_edit_streak to 0.",
+    "minor": "Wording-only or cosmetic polish is minor. A minor change increments minor_edit_streak.",
+    "none": "No substantive task-list change. A no-change closure-check version does not count as a minor edit.",
+    "history": "Before every version, inspect the complete registered history in root.json. Do not infer history from filenames or commit order alone."
+  },
+  "saturation": {
+    "trigger": "Three consecutive registered minor versions trigger closure_signal=approaching_closure.",
+    "next_agent": "The agent creating the third consecutive minor version must explicitly instruct the next agent to prioritize closure.",
+    "persistence": "Once triggered, closure_signal remains active until the stage is completed.",
+    "after_trigger": "Do not add optional detail or make cosmetic edits merely to demonstrate activity. Record nonessential ideas as optional follow-ups only when useful.",
+    "defect_override": "Do not ignore a real defect, missing required task, or unresolved blocking issue. A necessary material correction is permitted; set content_changed=true, reset consecutive_no_change_closure_checks to 0, and keep closure mode active."
+  },
+  "closure": {
+    "eligible_first_check": {
+      "requirements": [
+        "The agent reviews the latest registered version and complete root.json history.",
+        "No material or otherwise necessary content change is needed.",
+        "No blocking issue remains unresolved.",
+        "Save a complete, self-contained version with change_classification=none and content_changed=false.",
+        "Set closure_result=ready_to_close.",
+        "Register this check in root.json closure.closure_checks with version, agent label, result and content_changed=false.",
+        "Set root.closure.consecutive_no_change_closure_checks to 1."
+      ]
+    },
+    "eligible_second_check": {
+      "requirements": [
+        "The immediately following registered version reviews the first check and the complete root.json history.",
+        "The agent label must be different from the first closure-check agent.",
+        "The substantive task list still needs no change and no blocking issue remains.",
+        "Save a complete version with change_classification=none and content_changed=false.",
+        "Set closure_result=confirm_close and parent_version to the first closure-check version.",
+        "Register this check in root.json closure.closure_checks.",
+        "Set root.closure.consecutive_no_change_closure_checks to 2."
+      ]
+    },
+    "reset": "Any substantive task-list change or blocking issue resets consecutive_no_change_closure_checks to 0. Closure checks must be consecutive registered versions and use distinct agent labels.",
+    "completion": "Only after the second valid check has been registered successfully may root.json set status=completed and final_version to the second check's version. One agent's opinion, a minor-edit threshold, or newest filename is not enough.",
+    "failure": "Never claim closure or completion if root.json update failed. Preserve every previous version."
+  },
+  "root_authority": {
+    "source": "root.json is the authoritative state for the registered version, history, counters, closure checks, stage status and final_version.",
+    "conflict": "If root counters/history conflict with registered versions, stop and report the inconsistency. Do not guess or silently repair.",
+    "registration": "A version is registered only after its complete file exists and root.json is successfully updated to reference it."
+  }
+}
