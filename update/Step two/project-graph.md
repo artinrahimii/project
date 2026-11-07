@@ -535,21 +535,40 @@
         "فرادادهٔ قابل مشاهده برای هر جزء و محدودیت نگهداری آن ثبت شده باشد.",
         "تصمیم با T0009، T0019، T0118 تا T0120، T0206 و T0227 تطبیق داده شده باشد."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "docs/decisions/",
         "update/Step three/UPD-S1-002/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/decisions/README.md",
+        "tests/test_update_transport_trust_boundary.py",
+        "update/Step three/UPD-S1-002/execution-report.md",
+        "update/Step three/UPD-S1-002/evidence/verification.md"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-002/execution-report.md",
+        "update/Step three/UPD-S1-002/evidence/verification.md",
+        "tests/test_update_transport_trust_boundary.py",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0019, T0118, T0119, T0120, T0129, T0130, T0131, T0132, T0133, T0134, T0206, T0226, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-002-20261107201128",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+          "docs/decisions/README.md",
+          "tests/test_update_transport_trust_boundary.py",
+          "update/Step three/UPD-S1-002/execution-report.md",
+          "update/Step three/UPD-S1-002/evidence/verification.md",
+          "update/Step two/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -562,7 +581,64 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-002-20261107201128",
+          "started_at": "2026-11-07T20:11:28.347Z",
+          "ended_at": "2026-11-07T20:11:28.347Z",
+          "result": "partial",
+          "summary": "Direct authenticated P2P selected as primary; rendezvous is metadata-only; relay remains disabled and direct failure is fail-closed. Reviewed actual Windows/Android/rendezvous sources, retention behavior and relevant legacy reports. Updated ADR and decision register and added source-contract regression checks; exact-commit CI remains pending.",
+          "changed_files": [
+            "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+            "docs/decisions/README.md",
+            "tests/test_update_transport_trust_boundary.py",
+            "update/Step three/UPD-S1-002/execution-report.md",
+            "update/Step three/UPD-S1-002/evidence/verification.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Update transport/trust boundary regression tests",
+              "command": "python -m unittest discover -s tests -v",
+              "result": "pending",
+              "note": "Run on the commit containing this task's changes."
+            },
+            {
+              "name": "Rendezvous and host loopback acceptance",
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "pending",
+              "note": "Run on the exact task commit; no local execution claimed."
+            },
+            {
+              "name": "Python syntax and graph validation",
+              "command": "python -m compileall -q tools tests; python tools/graph_guard.py on both graphs",
+              "result": "pending",
+              "note": "Run on the exact task commit."
+            },
+            {
+              "name": "Windows and Android CI builds",
+              "command": "workflow product-build.yml",
+              "result": "pending",
+              "note": "Build result for the task commit not yet available."
+            },
+            {
+              "name": "Rendezvous container smoke",
+              "command": "workflow rendezvous-container.yml",
+              "result": "pending",
+              "note": "Container run for task commit not yet available."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Observe exact-commit CI. If all relevant checks pass, record the exact SHA and run IDs in a follow-up graph update and complete UPD-S1-002. Preserve AC-P2P-01 and deployment-log retention as separate unverified gates.",
+          "device_and_host_details_redacted": "No physical Android device or separate Windows host was accessed. This task is an architecture/source/loopback-boundary decision.",
+          "model_revision_and_sha256": "Not applicable to UPD-S1-002.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable to UPD-S1-002."
+        }
+      ]
     },
     {
       "id": "UPD-S1-003",
@@ -2745,11 +2821,12 @@
       "from": "UPD-S1-001",
       "to": "UPD-S1-002",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-002 در V1.10، UPD-S1-001 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "UPD-S1-002 نیازمند نتیجهٔ ممیزی خط مبنای UPD-S1-001 است تا تصمیم مسیر را بر اساس وضعیت واقعی کد، آزمون و شکاف‌ها بگیرد. این پیش‌نیاز، قرارداد یا artifact اجرایی/رابطی را میان دو task مبادله نمی‌کند؛ بنابراین ماهیت فنی آن sequencing_only است. ترتیب محافظه‌کارانه و type=blocks حفظ می‌شود. شواهد: گزارش و baseline-audit وظیفهٔ 001.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step three/UPD-S1-001/execution-report.md",
+        "update/Step three/UPD-S1-001/evidence/baseline-audit.md"
       ]
     },
     {
@@ -3918,10 +3995,10 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-07",
+    "as_of": "2026-11-07T20:11:28.347Z",
     "total_tasks": 24,
-    "not_started": 23,
-    "in_progress": 0,
+    "not_started": 22,
+    "in_progress": 1,
     "done": 1,
     "blocked": 0,
     "verified_completion_percentage": 4.17,
@@ -4039,7 +4116,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-07",
+  "updated_at": "2026-11-07T20:11:28.347Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
