@@ -23,12 +23,14 @@ class AndroidDistributedRequestContractTests(unittest.TestCase):
         self.assertIn("require(deadlineUnixMs > 0L)", source)
         self.assertIn("object FirstReleaseInferenceLimits", source)
         self.assertIn("MAX_ROUNDS = 3", source)
+        self.assertIn("MAX_ACTIVE_HOSTS_PER_REQUEST = 1", source)
+        self.assertIn("MAX_TOTAL_HOSTS = MAX_ROUNDS * MAX_ACTIVE_HOSTS_PER_REQUEST", source)
+        self.assertIn("object MultiHostCompatibilityLimits", source)
         self.assertIn("MAX_HOSTS_PER_ROUND = 3", source)
-        self.assertIn("MAX_TOTAL_HOSTS = MAX_ROUNDS * MAX_HOSTS_PER_ROUND", source)
         self.assertIn("val maxTotalHosts: Int", source)
         self.assertIn("require(maxRounds in 1..FirstReleaseInferenceLimits.MAX_ROUNDS)", source)
         self.assertIn("require(maxTotalHosts in 1..FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS)", source)
-        self.assertIn("maxTotalHosts <= maxRounds * FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND", source)
+        self.assertIn("maxTotalHosts <= maxRounds * FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST", source)
         self.assertIn("fun afterDispatch(hostCount: Int)", source)
 
     def test_factory_creates_a_new_uuid_backed_request_scoped_identifier(self):
@@ -62,9 +64,9 @@ class AndroidDistributedRequestContractTests(unittest.TestCase):
             "rejectsBlankEphemeralRequestId",
             "rejectsNonPositiveDeadline",
             "rejectsNonPositiveRoundLimit",
-            "appliesTheThreeRoundAndNineHostFirstReleaseMaximums",
+            "appliesThreeSequentialSingleHostAttemptsAsTheFirstReleaseMaximum",
             "rejectsMoreThanThreeRounds",
-            "rejectsMoreThanNineTotalHosts",
+            "rejectsMoreThanThreeTotalHosts",
             "rejectsTotalHostBudgetLargerThanRoundCapacity",
             "exposesTheSevenDefinedRequestLifecycleStates",
         )

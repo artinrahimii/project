@@ -182,10 +182,11 @@ class AndroidInferenceRequestRuntime private constructor(
             )
         return HostSelectionResult(
             candidates = candidates,
-            feedback = HostSelectionFeedback(
-                availableHostCount = candidates.size,
-                requestedHostCount = FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST,
-            ),
+            feedback =
+                HostSelectionFeedback(
+                    availableHostCount = candidates.size,
+                    requestedHostCount = FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST,
+                ),
         )
     }
 

@@ -230,7 +230,7 @@ class RequestViewModelTest {
         assertEquals(1, gateway.dispatchCount)
         assertEquals(listOf(gateway.peerId), gateway.sentHostIds)
         assertEquals(
-            "Only 1 of 3 compatible, reachable hosts are currently available. Continuing with 1 host.",
+            "All 1 requested compatible, reachable hosts are available.",
             activeViewModel.uiState.value.hostAvailabilityMessage,
         )
         assertEquals(1, activeViewModel.uiState.value.hostResponses.size)
@@ -244,7 +244,7 @@ class RequestViewModelTest {
     }
 
     @Test
-    fun cancelActionSendsCorrelatedCancellationForEveryQueuedAttemptFromTheLiveDispatch() {
+    fun cancelActionSendsCorrelatedCancellationForTheSingleQueuedAttempt() {
         val gateway =
             FakeRequestExecutionGateway(
                 peerIds = listOf("peer-a", "peer-b", "peer-c"),
@@ -267,28 +267,28 @@ class RequestViewModelTest {
 
         assertTrue(activeViewModel.uiState.value.isSendingRequest)
         assertTrue(activeViewModel.uiState.value.canCancelRequest)
-        assertEquals(gateway.peerIds, gateway.sentHostIds)
+        assertEquals(listOf("peer-a"), gateway.sentHostIds)
 
         activeViewModel.cancelCurrentRequest()
 
         assertEquals(1, gateway.cancellationCallCount)
         assertTrue(gateway.lastCancellationRequestId.isNotBlank())
         assertEquals(
-            listOf("attempt-1", "attempt-2", "attempt-3"),
+            listOf("attempt-1"),
             gateway.lastCancelledAttempts.map { attempt -> attempt.attemptId },
         )
-        assertEquals(gateway.peerIds, gateway.lastCancelledAttempts.map { attempt -> attempt.ephemeralHostId })
+        assertEquals(listOf("peer-a"), gateway.lastCancelledAttempts.map { attempt -> attempt.ephemeralHostId })
         assertTrue(gateway.lastCancellationResults.all { result -> result.cancellationSent })
         assertFalse(activeViewModel.uiState.value.canCancelRequest)
         assertTrue(
             activeViewModel.uiState.value.networkStatusMessage
                 .orEmpty()
-                .contains("Cancellation requests sent to all 3 queued host attempts."),
+                .contains("Cancellation request sent to the selected host."),
         )
 
         gateway.releaseRoundResponses.complete(Unit)
         assertFalse(activeViewModel.uiState.value.isSendingRequest)
-        assertEquals(3, activeViewModel.uiState.value.hostResponses.size)
+        assertEquals(1, activeViewModel.uiState.value.hostResponses.size)
         assertTrue(
             activeViewModel.uiState.value.hostResponses.all { response ->
                 response.outcome == HostResponseOutcome.CANCELLED
@@ -299,13 +299,11 @@ class RequestViewModelTest {
     }
 
     @Test
-    fun aggregatesZeroOneTwoAndThreeResponsesWithoutInventingMissingResults() {
+    fun aggregatesSingleHostSuccessAndFailureWithoutInventingMissingResults() {
         val cases =
             listOf(
                 Triple(0, RequestRunStatus.FAILED, true),
-                Triple(1, RequestRunStatus.PARTIAL, true),
-                Triple(2, RequestRunStatus.PARTIAL, true),
-                Triple(3, RequestRunStatus.SUCCEEDED, false),
+                Triple(1, RequestRunStatus.SUCCEEDED, false),
             )
 
         cases.forEach { (responseCount, expectedStatus, expectedCanRetry) ->
@@ -328,13 +326,13 @@ class RequestViewModelTest {
             activeViewModel.sendRequest("response cardinality $responseCount", "local/test-model", 64)
 
             val cards = activeViewModel.uiState.value.hostResponses
-            assertEquals(3, cards.size)
+            assertEquals(1, cards.size)
             assertEquals(
                 responseCount,
                 cards.count { card -> card.outcome == HostResponseOutcome.SUCCEEDED },
             )
             assertEquals(
-                3 - responseCount,
+                1 - responseCount,
                 cards.count { card -> card.outcome != HostResponseOutcome.SUCCEEDED },
             )
             assertEquals(expectedStatus, activeViewModel.uiState.value.runStatus)
@@ -371,16 +369,8 @@ class RequestViewModelTest {
         val gateway = FakeRequestExecutionGateway(peerIds = listOf("peer-a", "peer-b", "peer-c"))
         gateway.responseOutcomesByRound =
             listOf(
-                listOf(
-                    InferenceOutcome.INFERENCE_OUTCOME_FAILED,
-                    InferenceOutcome.INFERENCE_OUTCOME_FAILED,
-                    InferenceOutcome.INFERENCE_OUTCOME_FAILED,
-                ),
-                listOf(
-                    InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED,
-                    InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED,
-                    InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED,
-                ),
+                listOf(InferenceOutcome.INFERENCE_OUTCOME_FAILED),
+                listOf(InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED),
             )
         val activeViewModel =
             RequestViewModel(
@@ -411,23 +401,19 @@ class RequestViewModelTest {
         assertTrue(firstAttemptIds.intersect(gateway.dispatchedAttemptIdsByRound[1].toSet()).isEmpty())
         assertEquals(RequestRunStatus.SUCCEEDED, activeViewModel.uiState.value.runStatus)
         assertFalse(activeViewModel.uiState.value.canRetryRequest)
-        assertEquals(6, activeViewModel.uiState.value.hostResponses.size)
+        assertEquals(2, activeViewModel.uiState.value.hostResponses.size)
+        assertEquals(
+            listOf("peer-a", "peer-b"),
+            gateway.dispatchedHostIdsByRound.flatten(),
+        )
+        assertEquals(setOf("peer-a"), gateway.lastExcludedHostIds)
     }
 
     @Test
-    fun manualRetryExcludesHostsWhoseLatestAttemptAlreadySucceeded() {
-        val gateway = FakeRequestExecutionGateway(peerIds = listOf("peer-a", "peer-b", "peer-c"))
-        gateway.responseOutcomesByRound =
-            listOf(
-                listOf(
-                    InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED,
-                    InferenceOutcome.INFERENCE_OUTCOME_FAILED,
-                    InferenceOutcome.INFERENCE_OUTCOME_FAILED,
-                ),
-                listOf(
-                    InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED,
-                    InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED,
-                ),
+    fun successfulSingleHostRequestDoesNotOfferOrDispatchAnotherAttempt() {
+        val gateway =
+            FakeRequestExecutionGateway(
+                peerIds = listOf("peer-a", "peer-b", "peer-c"),
             )
         val activeViewModel =
             RequestViewModel(
@@ -442,18 +428,17 @@ class RequestViewModelTest {
         )
         gateway.peerIds.forEach(activeViewModel::trustPeerAfterExplicitConfirmation)
 
-        activeViewModel.sendRequest("retry only failed hosts", "local/test-model", 64)
-        assertEquals(RequestRunStatus.PARTIAL, activeViewModel.uiState.value.runStatus)
-        assertTrue(activeViewModel.uiState.value.canRetryRequest)
+        activeViewModel.sendRequest("do not retry a successful request", "local/test-model", 64)
+
         assertEquals(1, gateway.dispatchCount)
+        assertEquals(listOf("peer-a"), gateway.dispatchedHostIdsByRound.single())
+        assertEquals(RequestRunStatus.SUCCEEDED, activeViewModel.uiState.value.runStatus)
+        assertFalse(activeViewModel.uiState.value.canRetryRequest)
 
         activeViewModel.retryFailedAttempts()
 
-        assertEquals(2, gateway.dispatchCount)
-        assertEquals(setOf("peer-a"), gateway.lastExcludedHostIds)
-        assertEquals(listOf("peer-b", "peer-c"), gateway.dispatchedHostIdsByRound.last())
-        assertEquals(RequestRunStatus.SUCCEEDED, activeViewModel.uiState.value.runStatus)
-        assertFalse(activeViewModel.uiState.value.canRetryRequest)
+        assertEquals(1, gateway.dispatchCount)
+        assertEquals(1, activeViewModel.uiState.value.hostResponses.size)
     }
 
     @Test
@@ -585,7 +570,11 @@ class RequestViewModelTest {
                     .map(::candidate)
             return HostSelectionResult(
                 candidates = candidates,
-                feedback = HostSelectionFeedback(availableHostCount = candidates.size),
+                feedback =
+                    HostSelectionFeedback(
+                        availableHostCount = candidates.size,
+                        requestedHostCount = maxHosts,
+                    ),
             )
         }
 

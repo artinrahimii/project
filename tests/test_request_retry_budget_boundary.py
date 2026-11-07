@@ -36,11 +36,13 @@ FALLBACK_CONNECTOR = (
 class RetryPolicyBoundaryTests(unittest.TestCase):
     def test_distributed_request_has_one_shared_and_enforced_attempt_budget(self):
         self.assertIn("const val MAX_ROUNDS = 3", DISTRIBUTED_REQUEST)
+        self.assertIn("const val MAX_ACTIVE_HOSTS_PER_REQUEST = 1", DISTRIBUTED_REQUEST)
+        self.assertIn("const val MAX_TOTAL_HOSTS = MAX_ROUNDS * MAX_ACTIVE_HOSTS_PER_REQUEST", DISTRIBUTED_REQUEST)
+        self.assertIn("object MultiHostCompatibilityLimits", DISTRIBUTED_REQUEST)
         self.assertIn("const val MAX_HOSTS_PER_ROUND = 3", DISTRIBUTED_REQUEST)
-        self.assertIn("const val MAX_TOTAL_HOSTS = MAX_ROUNDS * MAX_HOSTS_PER_ROUND", DISTRIBUTED_REQUEST)
         self.assertIn("maxRounds in 1..FirstReleaseInferenceLimits.MAX_ROUNDS", DISTRIBUTED_REQUEST)
         self.assertIn("maxTotalHosts in 1..FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS", DISTRIBUTED_REQUEST)
-        self.assertIn("maxTotalHosts <= maxRounds * FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND", DISTRIBUTED_REQUEST)
+        self.assertIn("maxTotalHosts <= maxRounds * FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST", DISTRIBUTED_REQUEST)
         self.assertIn("attemptedEphemeralHostIds = attemptedEphemeralHostIds + hostIds", DISTRIBUTED_REQUEST)
 
     def test_one_round_dispatch_times_out_instead_of_replaying_a_host_submission(self):
@@ -70,7 +72,7 @@ class RetryPolicyBoundaryTests(unittest.TestCase):
         self.assertIn("!hasCancellation", REQUEST_VIEW_MODEL)
         self.assertIn("attemptId = UUID.randomUUID().toString()", REQUEST_VIEW_MODEL)
         self.assertIn("onClick = requestViewModel::retryFailedAttempts", REQUEST_SCREEN)
-        self.assertIn("Retry failed attempts manually", REQUEST_SCREEN)
+        self.assertIn("Try the next trusted host manually", REQUEST_SCREEN)
 
     def test_busy_hint_and_host_response_delivery_do_not_create_hidden_request_retries(self):
         self.assertIn("private const long BusyRetryDelayMilliseconds = 1_000", HOST_MAPPER)

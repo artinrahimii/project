@@ -39,15 +39,14 @@ class AndroidManualRetryContractTests(unittest.TestCase):
     def test_retry_eligibility_uses_latest_attempt_and_keeps_cancel_terminal(self):
         self.assertIn("private fun latestOutcomeByHost", VIEW_MODEL)
         self.assertIn("private fun failedPeerIdsForRetry", VIEW_MODEL)
-        self.assertIn("private fun successfulPeerIds", VIEW_MODEL)
-        self.assertIn("excludedEphemeralHostIds = successfulPeerIds(context)", VIEW_MODEL)
+        self.assertIn("excludedEphemeralHostIds = context.progress.attemptedEphemeralHostIds.toSet()", VIEW_MODEL)
         self.assertIn("!hasCancellation", VIEW_MODEL)
         self.assertIn("RequestRunStatus.CANCELLED", VIEW_MODEL)
         self.assertIn("outcome == HostResponseOutcome.CANCELLED", VIEW_MODEL)
 
     def test_compose_screen_invokes_retry_only_from_the_explicit_user_action(self):
         self.assertIn("onClick = requestViewModel::retryFailedAttempts", SCREEN)
-        self.assertIn("Retry failed attempts manually", SCREEN)
+        self.assertIn("Try the next trusted host manually", SCREEN)
         self.assertIn("requestState.canRetryRequest", SCREEN)
         self.assertIn("!requestState.isCancellingRequest", SCREEN)
 

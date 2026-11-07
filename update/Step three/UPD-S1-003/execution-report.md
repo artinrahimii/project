@@ -81,3 +81,16 @@
 
 - در این تلاش فقط ممیزی منبع و تاریخچه انجام شد؛ آزمون جدید یا اجرای محصولی انجام نشده است.
 - آزمون‌های baseline مربوط به V 3.1.24 روی commit مستقل خود قبلاً موفق بوده‌اند؛ این موفقیت‌ها جای آزمون تغییرات آتی UPD-S1-003 را نمی‌گیرند.
+
+
+## تلاش دوم — تثبیت سیاست تک‌میزبانه و اصلاح ناسازگاری بودجه
+
+- commit مبنا: `28594b1fd1c706069748e63fecc482f3634dd296` — `V 3.1.28`.
+- تصمیم: `ADR-0022-single-host-sequential-retry.md`.
+- سیاست: یک میزبان در هر round؛ سه round/سه تلاش متمایز برای کل درخواست؛ retry دستی؛ requestId ثابت؛ attemptId/roundId تازه؛ یک deadline مشترک؛ لغو terminal.
+- اصلاح محصول: اعتبارسنجی دامنهٔ `DistributedRequest` و default factory اکنون فقط سقف first-release را می‌پذیرند. سقف generic سه‌میزبانه در `MultiHostCompatibilityLimits` و selector/dispatcher عمومی حفظ می‌شود.
+- اصلاح آزمون: آزمون دامنه و UI به مسیر یک میزبان و fallback ترتیبی تغییر کردند؛ source-contract guardها میان policy محصول و compatibility تفکیک شدند.
+- اصلاح قالب‌بندی: دو تخلف ktlint در `DistributedRequest.kt` و `AndroidInferenceRequestRuntime.kt` برطرف شدند.
+- شواهد: `update/Step three/UPD-S1-003/evidence/decision-matrix.md` و `ci-baseline.md`.
+- وضعیت: در انتظار CI commit اصلاحی؛ تا سبزشدن build و آزمون‌ها، گره `in_progress` باقی می‌ماند.
+- آزمون دستگاه واقعی و Android-to-Windows با مدل محلی در این محیط اجرا نشده‌اند و به UPD-S1-020/021 تعلق دارند.

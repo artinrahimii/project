@@ -89,7 +89,10 @@ data class DistributedRequest(
     val deadlineUnixMs: Long,
     val maxRounds: Int,
     val maxTotalHosts: Int =
-        minOf(maxRounds, FirstReleaseInferenceLimits.MAX_ROUNDS) * FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST,
+        minOf(
+            maxRounds,
+            FirstReleaseInferenceLimits.MAX_ROUNDS,
+        ) * FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST,
     val status: DistributedRequestStatus = DistributedRequestStatus.QUEUED,
 ) {
     init {
@@ -98,11 +101,11 @@ data class DistributedRequest(
         require(maxRounds in 1..FirstReleaseInferenceLimits.MAX_ROUNDS) {
             "maxRounds must be between one and the first-release maximum"
         }
-        require(maxTotalHosts in 1..MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS) {
+        require(maxTotalHosts in 1..FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS) {
             "maxTotalHosts must be within the first-release maximum"
         }
-        require(maxTotalHosts <= maxRounds * MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND) {
-            "maxTotalHosts cannot exceed the configured round capacity"
+        require(maxTotalHosts <= maxRounds * FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST) {
+            "maxTotalHosts cannot exceed the configured first-release round capacity"
         }
     }
 
@@ -120,7 +123,7 @@ data class DistributedRequest(
                 minOf(
                     maxRounds,
                     FirstReleaseInferenceLimits.MAX_ROUNDS,
-                ) * FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND,
+                ) * FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST,
         ): DistributedRequest =
             DistributedRequest(
                 requestId = UUID.randomUUID().toString(),

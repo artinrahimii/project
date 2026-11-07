@@ -14,14 +14,14 @@ class DistributedRequestTest {
                 requestId = "ephemeral-request-001",
                 deadlineUnixMs = 1_798_000_000_000L,
                 maxRounds = 3,
-                maxTotalHosts = 5,
+                maxTotalHosts = 3,
                 status = DistributedRequestStatus.WAITING,
             )
 
         assertEquals("ephemeral-request-001", request.requestId)
         assertEquals(1_798_000_000_000L, request.deadlineUnixMs)
         assertEquals(3, request.maxRounds)
-        assertEquals(5, request.maxTotalHosts)
+        assertEquals(3, request.maxTotalHosts)
         assertEquals(DistributedRequestStatus.WAITING, request.status)
     }
 
@@ -58,8 +58,8 @@ class DistributedRequestTest {
         assertEquals(second.requestId, UUID.fromString(second.requestId).toString())
         assertEquals(DistributedRequestStatus.QUEUED, first.status)
         assertEquals(DistributedRequestStatus.QUEUED, second.status)
-        assertEquals(6, first.maxTotalHosts)
-        assertEquals(6, second.maxTotalHosts)
+        assertEquals(2, first.maxTotalHosts)
+        assertEquals(2, second.maxTotalHosts)
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -73,16 +73,17 @@ class DistributedRequestTest {
     }
 
     @Test
-    fun appliesTheThreeRoundAndNineHostFirstReleaseMaximums() {
+    fun appliesThreeSequentialSingleHostAttemptsAsTheFirstReleaseMaximum() {
         assertEquals(3, FirstReleaseInferenceLimits.MAX_ROUNDS)
-        assertEquals(3, FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND)
-        assertEquals(9, FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS)
+        assertEquals(1, FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST)
+        assertEquals(3, FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS)
+        assertEquals(3, MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND)
         assertEquals(
-            3,
+            1,
             DistributedRequest.create(deadlineUnixMs = 1_798_000_000_000L, maxRounds = 1).maxTotalHosts,
         )
         assertEquals(
-            9,
+            3,
             DistributedRequest.create(deadlineUnixMs = 1_798_000_000_000L, maxRounds = 3).maxTotalHosts,
         )
     }
@@ -97,12 +98,12 @@ class DistributedRequestTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun rejectsMoreThanNineTotalHosts() {
+    fun rejectsMoreThanThreeTotalHosts() {
         DistributedRequest(
             requestId = "request-1",
             deadlineUnixMs = 1_798_000_000_000L,
             maxRounds = 3,
-            maxTotalHosts = 10,
+            maxTotalHosts = 4,
         )
     }
 
@@ -112,7 +113,7 @@ class DistributedRequestTest {
             requestId = "request-1",
             deadlineUnixMs = 1_798_000_000_000L,
             maxRounds = 2,
-            maxTotalHosts = 7,
+            maxTotalHosts = 3,
         )
     }
 

@@ -32,11 +32,11 @@ class AndroidHostCandidateSelectorContractTests(unittest.TestCase):
         self.assertIn("status.ephemeralHostId != hostId", source)
         self.assertIn("status.activeRequests >= capabilities.maxConcurrentRequests", source)
 
-    def test_selector_returns_at_most_three_unique_hosts_deterministically(self):
+    def test_selector_keeps_three_host_batching_as_compatibility_only(self):
         source = SELECTOR.read_text(encoding="utf-8")
 
         self.assertIn(
-            "const val MAX_HOSTS_PER_ROUND = FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND",
+            "const val MAX_HOSTS_PER_ROUND = MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND",
             source,
         )
         self.assertIn(".groupBy { candidate -> candidate.announcement.ephemeralHostId }", source)

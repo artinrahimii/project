@@ -983,25 +983,67 @@
         "docs/decisions/",
         "update/Step three/UPD-S1-003/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
+      "actual_output_paths": [
+        "docs/decisions/ADR-0022-single-host-sequential-retry.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-003/evidence/decision-matrix.md",
+        "update/Step three/UPD-S1-003/evidence/ci-baseline.md",
+        "tests/test_android_distributed_request_contract.py",
+        "tests/test_android_host_candidate_selector_contract.py",
+        "tests/test_android_inference_attempt_budget_acceptance.py",
+        "tests/test_android_manual_retry_contract.py",
+        "tests/test_request_retry_budget_boundary.py"
+      ],
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. New decision ADR-0022 records the first-release one-host/sequential-retry policy. The generic three-host selector and dispatcher remain compatibility primitives and do not change the production runtime's one-host admission boundary. The implementation attempt is partial pending exact-commit CI.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-003-20261107203548",
+        "last_attempt_id": "UPD-S1-003-20261107214517",
         "last_attempt_result": "partial",
-        "changed_files": [],
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+          "tests/test_android_distributed_request_contract.py",
+          "tests/test_android_host_candidate_selector_contract.py",
+          "tests/test_android_inference_attempt_budget_acceptance.py",
+          "tests/test_android_manual_retry_contract.py",
+          "tests/test_request_retry_budget_boundary.py",
+          "docs/decisions/README.md",
+          "docs/decisions/ADR-0022-single-host-sequential-retry.md",
+          "update/Step three/UPD-S1-003/evidence/decision-matrix.md",
+          "update/Step three/UPD-S1-003/evidence/ci-baseline.md",
+          "update/Step three/UPD-S1-003/execution-report.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "FirstReleaseInferenceLimits",
+            "DistributedRequest",
+            "production host selection cardinality",
+            "manual retry and cancellation UI"
+          ],
+          "affected_by_contract_changes": [
+            "Android domain tests",
+            "Android ViewModel tests",
+            "Python source-contract guards",
+            "Android ktlint/build"
+          ],
+          "review_evidence": [
+            "update/Step three/UPD-S1-003/evidence/decision-matrix.md",
+            "update/Step three/UPD-S1-003/evidence/ci-baseline.md"
+          ]
         }
       },
       "execution_history": [
@@ -1022,6 +1064,44 @@
           "device_and_host_details_redacted": "Source and CI audit only; no physical Android handset or external Windows host was available.",
           "model_revision_and_sha256": "Not applicable to design audit start.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable."
+        },
+        {
+          "attempt_id": "UPD-S1-003-20261107214517",
+          "started_at": "2026-11-07T21:45:17.833Z",
+          "ended_at": "2026-11-07T21:45:17.833Z",
+          "result": "partial",
+          "summary": "Selected and documented first-release policy: one active peer per logical request, at most three sequential attempts across three rounds, manual retry only, one shared absolute deadline, terminal cancellation and correlation-safe late-response rejection. Corrected DistributedRequest validation and factory defaults so the logical request cannot exceed three total hosts. Retained generic three-host selector/dispatcher compatibility. Updated Android domain/UI tests and source-contract guards; fixed two baseline ktlint violations. Exact-commit CI has not yet run.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "tests/test_android_distributed_request_contract.py",
+            "tests/test_android_host_candidate_selector_contract.py",
+            "tests/test_android_inference_attempt_budget_acceptance.py",
+            "tests/test_android_manual_retry_contract.py",
+            "tests/test_request_retry_budget_boundary.py",
+            "docs/decisions/README.md",
+            "docs/decisions/ADR-0022-single-host-sequential-retry.md",
+            "update/Step three/UPD-S1-003/evidence/decision-matrix.md",
+            "update/Step three/UPD-S1-003/evidence/ci-baseline.md",
+            "update/Step three/UPD-S1-003/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": "Baseline CI on V 3.1.28 failed with 8 stale Python contract expectations and 2 ktlint formatting violations. The corresponding source/test updates are part of this attempt; exact-commit CI verification is pending.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "FirstReleaseInferenceLimits: three rounds, one active host per round, three total sequential attempts.",
+            "DistributedRequest maxTotalHosts validation/default now uses the first-release single-host policy rather than generic three-host compatibility limits.",
+            "Production Android runtime remains capped at one selected host.",
+            "Generic MultiHostCompatibilityLimits remains three hosts per batch for compatibility-only selector/dispatcher usage."
+          ],
+          "follow_up": "Verify the commit on online main, then inspect its quality and product-build workflow results. Correct any remaining real failure and rerun affected consumers before changing UPD-S1-003 to done. UPD-S1-008's 168 legacy reviews and physical-device product gates remain separate.",
+          "device_and_host_details_redacted": "Source, test and CI-log inspection only. No physical Android device or external Windows host was attached to this execution.",
+          "model_revision_and_sha256": "Not applicable; local model inference not run.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; install/upgrade acceptance not run."
         }
       ]
     },
@@ -4294,7 +4374,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-07T20:35:48.198Z",
+    "as_of": "2026-11-07T21:45:17.833Z",
     "total_tasks": 24,
     "not_started": 21,
     "in_progress": 1,
@@ -4415,7 +4495,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-07T20:35:48.198Z",
+  "updated_at": "2026-11-07T21:45:17.833Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
