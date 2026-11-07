@@ -573,7 +573,8 @@
           "update/Step three/UPD-S1-002/evidence/verification.md"
         ],
         "related_commits": [
-          "47a597c7e0e5df14234e717dd10685d6816c6e40"
+          "47a597c7e0e5df14234e717dd10685d6816c6e40",
+          "f6c153ee44a509493a6d88d901a32956af7b0f6e"
         ],
         "tests_passed": [
           {
@@ -880,7 +881,7 @@
             "update/Step three/UPD-S1-002/execution-report.md",
             "update/Step three/UPD-S1-002/evidence/verification.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "f6c153ee44a509493a6d88d901a32956af7b0f6e",
           "tests": [
             {
               "name": "Step Three quality gate",
@@ -911,7 +912,7 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "The SHA of this completion-record commit will be added in the next graph update after GitHub creates it. Physical Android-to-Windows acceptance remains UPD-S1-020, not part of this architecture-decision task.",
+          "follow_up": "Continue with UPD-S1-003 in graph order. Keep physical Android-to-Windows acceptance and deployment-provider logging review as independent gates.",
           "device_and_host_details_redacted": "No physical Android handset or separate Windows host was accessed in this attempt; CI used hosted Windows and Android emulator/instrumentation environments.",
           "model_revision_and_sha256": "Not applicable to UPD-S1-002.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable to UPD-S1-002."
@@ -4394,7 +4395,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-07T20:20:26.226Z",
+  "updated_at": "2026-11-07T20:32:01.654Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
