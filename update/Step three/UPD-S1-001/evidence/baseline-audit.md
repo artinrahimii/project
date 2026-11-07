@@ -86,3 +86,14 @@ No product source was modified by UPD-S1-001. No legacy task status, dependency 
 - The relevant source findings remain supported by the repository: the field is a one-slot SemaphoreSlim and the evidence uses the byte count returned by the Git tree.
 - Both assertions were corrected to match the actual repository text. No product source was changed.
 - Four of the six new audit tests passed in this first run. Full rerun is pending; no successful result is claimed yet.
+
+
+## 9. Final CI verification
+
+- Correction commit: c10b59eb6ede67261643e6994f2c08c18fa591ec (V 3.1.19).
+- Quality run: https://github.com/artinrahimii/project/actions/runs/42408460108 — success.
+- Python suite: 458 tests, OK.
+- Python compileall: success.
+- Legacy graph guard: 0 errors, 1 warning. The warning is UNMAPPED_DEPENDENCY for T0001 with the metadata text «مفروضات/ابزارهای توسعه و نیازمندی‌های همین بخش»; graph_guard intentionally preserves it as metadata rather than treating it as a task ID.
+- Update graph guard: 24 tasks, 80 edges; 0 errors and 0 warnings in normal and --repo-root modes.
+- All six tests in tests/test_update_baseline_audit.py passed.

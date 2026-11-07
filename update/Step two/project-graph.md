@@ -273,7 +273,7 @@
         "SHA واقعی main در لحظهٔ ممیزی ثبت شده و با checkpoint ایجاد گراف و آخرین تغییر کد محصول اشتباه گرفته نشده باشد.",
         "هیچ ورودی ممیزی از SHA تاریخی منسوخ 6f70586b4b7ff69c463f7e5b02293090c63e78ec استفاده نکند."
       ],
-      "status": "in_progress",
+      "status": "done",
       "status_fa": "انجام‌نشده",
       "expected_output_paths": [
         "update/Step three/UPD-S1-001/execution-report.md",
@@ -289,25 +289,31 @@
         "tests/test_update_baseline_audit.py",
         "https://github.com/artinrahimii/project/actions/runs/42401485764",
         "https://github.com/artinrahimii/project/actions/runs/42401485830",
-        "https://github.com/artinrahimii/project/actions/runs/42401485784"
+        "https://github.com/artinrahimii/project/actions/runs/42401485784",
+        "https://github.com/artinrahimii/project/actions/runs/42408460108"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=preserve; affected_task_ids=T0015, T0016, T0041, T0042, T0139, T0216, T0217. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-001-20261107195420",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "UPD-S1-001-20261107195525",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/test_update_baseline_audit.py",
           "update/Step three/UPD-S1-001/execution-report.md",
           "update/Step three/UPD-S1-001/evidence/baseline-audit.md",
           "update/Step two/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "760c3882fe6a6e680c149d0b374790e26db7a4a9",
+          "c10b59eb6ede67261643e6994f2c08c18fa591ec"
+        ],
         "tests_passed": [
-          "GitHub Actions quality run 42401485764 passed against baseline V 3.1.17.",
-          "GitHub Actions product build run 42401485830 passed against baseline V 3.1.17.",
-          "GitHub Actions Rendezvous container run 42401485784 passed against baseline V 3.1.17."
+          "Base commit quality run 42401485764 passed: Python tests, compileall and both graph guards.",
+          "Base commit product build run 42401485830 passed: Windows WPF build/smoke/installer/lifecycle and Android lint/build/JVM/emulator tests.",
+          "Base commit Rendezvous container run 42401485784 passed.",
+          "Correction commit quality run 42408460108 passed: 458 Python tests, compileall, legacy graph guard (0 errors, 1 preserved metadata warning), update graph guard (0 errors, 0 warnings).",
+          "New tests/test_update_baseline_audit.py passed in run 42408460108."
         ],
         "tests_failed": [
           "CI run 42408388222: audit test expected ASCII group separator; evidence correctly used Persian thousands separator.",
@@ -413,6 +419,68 @@
           "contract_changes": [],
           "follow_up": "Wait for the correction commit's quality workflow; if green, record the verified commit SHA in a follow-up metadata update and reassess UPD-S1-001 acceptance.",
           "device_and_host_details_redacted": "Not applicable to source audit; no physical device or separate Windows host accessed.",
+          "model_revision_and_sha256": "Not applicable to UPD-S1-001.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable to UPD-S1-001."
+        },
+        {
+          "attempt_id": "UPD-S1-001-20261107195525",
+          "started_at": "2026-11-07T19:55:25.306Z",
+          "ended_at": "2026-11-07T19:55:25.306Z",
+          "result": "succeeded",
+          "summary": "Baseline audit evidence, source-flow findings and regression checks passed. The initial two audit assertion mismatches were corrected in V 3.1.19; the full 458-test suite and both update-graph guard modes then passed.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-001/execution-report.md",
+            "update/Step three/UPD-S1-001/evidence/baseline-audit.md"
+          ],
+          "commit_sha": "c10b59eb6ede67261643e6994f2c08c18fa591ec",
+          "tests": [
+            {
+              "name": "Full Python quality suite",
+              "command": "python -m unittest discover -s tests -v",
+              "result": "passed",
+              "run_id": 42408460108,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42408460108",
+              "summary": "Ran 458 tests; OK."
+            },
+            {
+              "name": "Python syntax check",
+              "command": "python -m compileall -q tools tests",
+              "result": "passed",
+              "run_id": 42408460108,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42408460108"
+            },
+            {
+              "name": "Legacy graph guard",
+              "command": "python tools/graph_guard.py step three/project-graph.md and --repo-root .",
+              "result": "passed_with_warning",
+              "run_id": 42408460108,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42408460108",
+              "summary": "0 errors; 1 warning preserving legacy T0001 metadata string as unmapped dependency."
+            },
+            {
+              "name": "Update graph guard",
+              "command": "python tools/graph_guard.py update/Step two/project-graph.md and --repo-root .",
+              "result": "passed",
+              "run_id": 42408460108,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42408460108",
+              "summary": "24 tasks, 80 edges; 0 errors and 0 warnings."
+            },
+            {
+              "name": "Baseline audit regression tests",
+              "command": "included in python -m unittest discover -s tests -v",
+              "result": "passed",
+              "run_id": 42408460108,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42408460108",
+              "summary": "All 6 tests in UpdateBaselineAuditTests passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to UPD-S1-002 as the next dependency-ready task; validate every edge before changing its classification and record architectural decisions with source-level evidence.",
+          "device_and_host_details_redacted": "Not applicable to UPD-S1-001; this task is a repository baseline audit, not a physical product acceptance test.",
           "model_revision_and_sha256": "Not applicable to UPD-S1-001.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable to UPD-S1-001."
         }
@@ -3853,10 +3921,10 @@
     "as_of": "2026-11-07",
     "total_tasks": 24,
     "not_started": 23,
-    "in_progress": 1,
-    "done": 0,
+    "in_progress": 0,
+    "done": 1,
     "blocked": 0,
-    "verified_completion_percentage": 0,
+    "verified_completion_percentage": 4.17,
     "calculation": "done nodes with real output and verified acceptance evidence / 24 * 100"
   },
   "visual_identity": {

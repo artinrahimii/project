@@ -2,7 +2,7 @@
 
 ## نتیجهٔ این تلاش
 
-**وضعیت ثبت‌شده: در حال اجرا (in_progress).** ممیزی مخزن و ردیابی جریان‌های فعلی انجام شده است؛ آزمون regression جدید این گزارش هنوز در CI اجرا نشده و SHA کامیت این تلاش تا زمان ایجاد کامیت قابل ثبت نیست. بنابراین این وظیفه هنوز به‌عنوان تکمیل‌شده اعلام نمی‌شود.
+وضعیت اولیهٔ گزارش در زمان ثبت نخستین تلاش in_progress بود. نتیجهٔ نهایی پس از اصلاح آزمون‌ها و اجرای کامل CI در بخش «نتیجهٔ نهایی» درج شده است.
 
 ## خط مبنای مخزن
 
@@ -106,3 +106,18 @@ README ابزارهای لازم را این‌گونه مشخص می‌کند: 
 - Changed test: tests/test_update_baseline_audit.py
 - Execution checkpoint for this correction: 760c3882fe6a6e680c149d0b374790e26db7a4a9 (V 3.1.18)
 - Next verification: run the full quality workflow on the correction commit; do not mark this task done before it passes.
+
+
+## نتیجهٔ نهایی UPD-S1-001
+
+<badge>done</badge> معیارهای ممیزی خط مبنا پس از اجرای موفق آزمون regression و کنترل‌های گراف تأیید شدند.
+
+- وضعیت: done
+- Attempt نهایی: UPD-S1-001-20261107195525
+- Commit حاوی evidence و test source: c10b59eb6ede67261643e6994f2c08c18fa591ec — V 3.1.19
+- Quality workflow: https://github.com/artinrahimii/project/actions/runs/42408460108
+- نتیجهٔ آزمون‌ها: ۴۵۸ آزمون Python موفق؛ compileall موفق؛ graph guard گراف قدیمی بدون error و با یک warning metadata حفظ‌شده؛ graph guard گراف Update بدون error یا warning.
+- شش آزمون baseline-audit تازه نیز در suite کامل موفق شدند.
+- warning گراف قدیمی: T0001 به یک عبارت متنی metadata غیرشناسه‌ای ارجاع دارد؛ graph_guard آن را به‌عنوان metadata حفظ می‌کند و فقط warning می‌دهد. این warning پنهان یا به‌عنوان وابستگی معتبر طبقه‌بندی نشده است.
+- هیچ سورس محصولی در این وظیفه تغییر نکرده است؛ هدف task ممیزی و تعیین خط مبنا بود.
+- وضعیت reconciliation همچنان مستقل و pending است؛ هیچ‌یک از ۱۶۸ شناسهٔ قدیمی در این task بازبینی‌شده محسوب نمی‌شود.
