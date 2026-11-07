@@ -1,0 +1,29 @@
+{
+  "stage": "step_one",
+  "status": "in_progress",
+  "latest_version": "V1.1",
+  "final_version": null,
+  "versions": [
+    {
+      "version": "V1.1",
+      "agent_label": "ChatGPT-GPT-6",
+      "parent_version": null,
+      "path": "update/Step one/Output/V1.1.json",
+      "outcome": "revise",
+      "status": "registered",
+      "change_classification": "material",
+      "content_changed": true
+    }
+  ],
+  "closure": {
+    "consecutive_no_change_closure_checks": 0,
+    "closure_checks": [],
+    "closure_signal": "none"
+  },
+  "minor_edit_streak": 0,
+  "notes": [
+    "این root در نخستین اجرای Task Decomposition ایجاد شده، زیرا در main وجود نداشت.",
+    "final_version تا اجرای دو بررسی closure متوالی و معتبر null باقی می‌ماند.",
+    "مرجع update/closure-policy.json در زمان ایجاد این root در مخزن موجود نبود؛ نسخهٔ V1.1 قواعد closure ارائه‌شده در درخواست را اعمال کرده است."
+  ]
+}
