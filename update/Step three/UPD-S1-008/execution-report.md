@@ -386,3 +386,64 @@
 - Product Build دقیق V3.1.77 [run 42502195216](https://github.com/artinrahimii/project/actions/runs/42502195216) هنگام این ثبت هنوز در حال اجراست؛ موفقیت آن ادعا نمی‌شود.
 - اجرای واقعی مدل و Android-to-Windows فیزیکی در این بازبینی انجام نشده است.
 - reconciliation: **34/168 reviewed** و **134 pending**؛ UPD-S1-008 همچنان `in_progress`.
+
+
+## بازبینی تکمیلی T0061 تا T0065 — تلاش UPD-S1-008-20261108170039
+
+### T0061 — نگاشت inference به API محلی و دریافت پاسخ واقعی
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم reconciliation: `re_review_required/reviewed`؛ UPD-S1-023 trigger بازبینی مجدد است.
+- LlamaCppServerBackend درخواست را به POST /v1/chat/completions با model ID تنظیم‌شده، prompt و max_tokens تبدیل می‌کند؛ پاسخ choices[0].message.content را استخراج، validate و برمی‌گرداند. پیش از inference health check اجرا می‌شود و model capability از /v1/models و /props خوانده می‌شود.
+- آزمون opt-in واقعی process را از طریق launcher اجرا می‌کند، loopback و health را کنترل و پاسخ غیرخالی را از backend واقعی می‌گیرد؛ پاسخ fixture را صریحاً رد می‌کند.
+- workflow باینری llama.cpp b11443 را با archive SHA ثابت اعتبارسنجی و GGUF را به revision مشخص pin کرده؛ تاریخچهٔ exact run 40077575618 پاسخ واقعی مدل را PASS کرده است.
+- UPD-S1-023 هنوز انتخاب deterministic مدل از catalog نصب‌شده و capability واقعی را به مسیر عادی وصل نکرده است؛ T0061 باید پس از اجرای سیاست مدل دوباره بررسی شود. این شواهد اثبات Android-to-P2P نیستند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0061.md`.
+
+### T0062 — مدیریت timeout، خطای فرایند، قطع ارتباط و پاسخ ناقص
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم reconciliation: `re_review_required/reviewed`؛ UPD-S1-023 trigger بازبینی مجدد است.
+- backend timeout داخلی را به TimeoutException، قطع transport را به HttpRequestException امن و JSON/response ناقص را به InvalidDataException تبدیل می‌کند؛ caller cancellation از timeout جداست.
+- Program.cs regressionهای timeout، اتصال قطع‌شده، malformed/truncated JSON و عدم افشای جزئیات transport را پوشش می‌دهد. process-kill integration جداگانه برای T0062 ادعا نشده و متعلق به T0063 است.
+- HostLifecycle regression در run 40078502247 و real local inference در 40078502151 موفق ثبت شده‌اند.
+- UPD-S1-023 ممکن است قرارداد typed error و مصرف‌کنندگان آن را تغییر دهد؛ پس از یکپارچه‌سازی resolver، callerها و error mapping باید دوباره بازبینی شوند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0062.md`.
+
+### T0063 — لغو inference و توقف process اختصاصی
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم reconciliation: `re_review_required/reviewed`؛ UPD-S1-023 trigger بازبینی مجدد است.
+- MainWindow مالک LocalInferenceProcessLauncher است و token عملیات generation را به HostInferenceSession می‌دهد؛ در مسیر managed local engine امکان توقف process اختصاصی دارد.
+- آزمون opt-in واقعی generation دوم را شروع می‌کند، in-flight ماندن پس از 150ms را الزام، token را cancel و OperationCanceledException را بررسی می‌کند؛ سپس process متعلق به test را stop و endpoint را unavailable می‌سنجد.
+- تاریخچهٔ T0063-A004 exact commit 694b0fcf847a9a2087af292910112c9c041d86df را با active generation cancellation و توقف تمیز process گزارش می‌کند؛ jobهای Windows/Android/quality همان commit نیز موفق بوده‌اند.
+- این پذیرش تاریخی مربوط به managed local inference است. پس از تغییر catalog/backend composition در UPD-S1-023 باید cancellation و process ownership دوباره آزموده شوند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0063.md`.
+
+### T0064 — آزمون opt-in با مدل کوچک دارای مجوز
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم reconciliation: `re_review_required/reviewed`؛ UPD-S1-023 trigger بازبینی مجدد است.
+- workflow llama.cpp CPU binary را با archive SHA ثابت دانلود و مدل GGUF را به revision a6b7826ed969c3926a98359e39912af137b464cb pin می‌کند؛ size و GGUF magic را بررسی و WHITEP_RUN_REAL_INFERENCE_TEST=1 را فعال می‌کند.
+- مدل pin شده در شواهد قبلی Apache-2.0 ثبت شده؛ workflow exact run 40092245411 پاسخ واقعی، cancellation فعال و توقف process را PASS کرده است.
+- Product Build عادی الزاماً مسیر live model را اجرا نمی‌کند؛ یک SKIP در test harness موفقیت inference واقعی نیست.
+- UPD-S1-023 باید مدل pin شده، license/checksum و metadata را با catalog محصول سازگار کند؛ پس از آن real-model workflow روی مسیر انتخاب‌شدهٔ جدید باید اجرا شود.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0064.md`.
+
+### T0065 — کنترل عدم استفاده از API ارائه‌دهندگان ابری در inference
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم reconciliation: `re_review_required/reviewed`؛ UPD-S1-023 trigger بازبینی مجدد است.
+- NoCloudProviderInferenceTests به‌صورت source-level endpointها و SDKهای شناخته‌شده OpenAI/Anthropic/Google/Mistral/Cohere را در دو implementation محلی رد و URI میزبان، /health و /v1/chat/completions را assert می‌کند.
+- خود آزمون صریحاً می‌گوید packet capture یا proof نبود همه outbound traffic نیست؛ گزارش T0065 نیز همین scope را پذیرفته است.
+- Exact source CI quality run 40094709423 و product run 40094709452 روی SHA 49823014f48f79ab55525126c5d7b3b649d75ceb موفق گزارش شده‌اند.
+- UPD-S1-023 مسیر backend فعال را تغییر می‌دهد؛ پس از تغییر composition باید implementation paths و guard منبع ابری دوباره inventory شوند. این تست packet-level isolation نیست.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0065.md`.
+
+### CI و مرز شواهد
+
+- Quality V3.1.78 [42502412081](https://github.com/artinrahimii/project/actions/runs/42502412081) موفق؛ Rendezvous [42502412120](https://github.com/artinrahimii/project/actions/runs/42502412120) موفق.
+- Product Build V3.1.78 [42502412102](https://github.com/artinrahimii/project/actions/runs/42502412102) هنگام این ثبت هنوز در حال اجرا بود؛ موفقیت آن ادعا نمی‌شود.
+- شواهد real-model/cancellation از runهای تاریخی و commitهای مشخص‌شده‌اند؛ inference زنده روی V3.1.78 ادعا نمی‌شود.
+- packet capture، Android-to-Windows فیزیکی و نصب/ارتقای فیزیکی اجرا نشده‌اند.
+- reconciliation: **39/168 reviewed** و **129 pending**؛ UPD-S1-008 همچنان `in_progress`.

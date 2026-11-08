@@ -3152,7 +3152,12 @@
         "update/Step three/UPD-S1-008/evidence/review-T0057.md",
         "update/Step three/UPD-S1-008/evidence/review-T0058.md",
         "update/Step three/UPD-S1-008/evidence/review-T0059.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0060.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0060.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0061.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0062.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0063.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0064.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0065.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
@@ -3204,13 +3209,18 @@
         "update/Step three/UPD-S1-008/evidence/review-T0057.md",
         "update/Step three/UPD-S1-008/evidence/review-T0058.md",
         "update/Step three/UPD-S1-008/evidence/review-T0059.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0060.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0060.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0061.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0062.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0063.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0064.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0065.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 17,
+        "attempt_count": 18,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261108165615",
+        "last_attempt_id": "UPD-S1-008-20261108170039",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3258,7 +3268,12 @@
           "update/Step three/UPD-S1-008/evidence/review-T0057.md",
           "update/Step three/UPD-S1-008/evidence/review-T0058.md",
           "update/Step three/UPD-S1-008/evidence/review-T0059.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0060.md"
+          "update/Step three/UPD-S1-008/evidence/review-T0060.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0061.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0062.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0063.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0064.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0065.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
@@ -3280,7 +3295,8 @@
           "c933559b3be973f1cdf21e094b786c84742ca7ab",
           "4420970596b16fd09dc7fbf6ef686204e8d27a12",
           "6c77fded48253e0b9ddbadd37033e788a43944a5",
-          "a19595c475752832fdd3701e109dc0e1a088721f"
+          "a19595c475752832fdd3701e109dc0e1a088721f",
+          "bc9882a8ad1fcd29b6a2e42e31509a76e926f2f6"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -3321,7 +3337,9 @@
           "Exact V 3.1.76 Step Three quality gate on main SHA 6c77fded48253e0b9ddbadd37033e788a43944a5 passed (run 42486973958): Python tests, compileall and both graph guards.",
           "Exact V 3.1.76 product build on main SHA 6c77fded48253e0b9ddbadd37033e788a43944a5 passed (run 42486974256): Windows WPF, Android and HostLifecycle jobs all succeeded.",
           "Current HostLifecycle log: 67 PASS markers, 1 opt-in real-model integration SKIP, 85.88% line coverage; the skip is not real-model inference evidence.",
-          "Exact V 3.1.77 Step Three quality gate on SHA a19595c475752832fdd3701e109dc0e1a088721f passed (run 42502195218): Python tests, compileall and both graph guards."
+          "Exact V 3.1.77 Step Three quality gate on SHA a19595c475752832fdd3701e109dc0e1a088721f passed (run 42502195218): Python tests, compileall and both graph guards.",
+          "Exact V3.1.78 Step Three quality gate on SHA bc9882a8ad1fcd29b6a2e42e31509a76e926f2f6 passed (run 42502412081).",
+          "Exact V3.1.78 Rendezvous container build/smoke passed (run 42502412120)."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -4288,7 +4306,7 @@
             "update/Step three/UPD-S1-008/evidence/review-T0059.md",
             "update/Step three/UPD-S1-008/evidence/review-T0060.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "bc9882a8ad1fcd29b6a2e42e31509a76e926f2f6",
           "tests": [
             {
               "name": "V 3.1.77 Step Three quality gate",
@@ -4308,6 +4326,53 @@
           "follow_up": "Continue T0061 onward. Resolve the IInferenceEngine adapter versus active IInferenceBackend composition under UPD-S1-023; rerun active local backend integration and model selection tests; UPD-S1-008 remains in_progress while 134 reviews are pending.",
           "device_and_host_details_redacted": "Source review and GitHub-hosted CI only; Product Build V3.1.77 was still running at this attempt; no physical Android/Windows device pair used.",
           "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108170039",
+          "started_at": "2026-11-08T17:00:39.121Z",
+          "ended_at": "2026-11-08T17:00:39.121Z",
+          "result": "partial",
+          "summary": "Reviewed T0061-T0065 individually against current main backend, process launcher, opt-in live-model harness, workflow, cloud-source guard, historical task reports and dependency edges. Five baseline statuses remain done. All five reconciliation decisions are re_review_required and review_status reviewed because UPD-S1-023 will change model catalog/selection/backend composition. 39/168 old-task reviews recorded; 129 pending. Historical live-model/cancellation CI is attributed to older exact implementation commits, not current product main.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0061.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0062.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0063.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0064.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0065.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Exact V3.1.78 Step Three quality gate",
+              "command": ".github/workflows/quality.yml",
+              "result": "passed",
+              "run_id": 42502412081,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42502412081",
+              "summary": "Exact V3.1.78 passed Python tests, compileall and both graph guards."
+            },
+            {
+              "name": "Exact V3.1.78 Rendezvous container",
+              "command": ".github/workflows/rendezvous-container.yml",
+              "result": "passed",
+              "run_id": 42502412120,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42502412120",
+              "summary": "Exact V3.1.78 container build and smoke passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "UPD-S1-023 model catalog and backend-selection changes trigger re-review of local engine/model tasks T0057-T0065."
+          ],
+          "follow_up": "Continue from T0066. Product Build V3.1.78 was still in_progress during this review; do not claim it passed until observed. Re-review T0057-T0065 after UPD-S1-023 selects and wires the active catalog/backend composition.",
+          "device_and_host_details_redacted": "Current main code reviewed; historical real-inference/cancellation evidence came from older GitHub-hosted Windows runners. No physical Android device paired with target Windows host was used.",
+          "model_revision_and_sha256": "Historical opt-in run 40092245411 used llama.cpp b11443 and GGUF revision a6b7826ed969c3926a98359e39912af137b464cb; current V3.1.78 product run did not demonstrate that model path.",
           "pre_upgrade_post_upgrade_snapshot": null
         }
       ],
@@ -7850,7 +7915,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T16:56:15.857Z",
+  "updated_at": "2026-11-08T17:00:39.121Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -8033,12 +8098,12 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "reviewed": 34,
-      "pending": 134
+      "reviewed": 39,
+      "pending": 129
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "134 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until every required review has individual code/test/acceptance evidence, dependency review and no pending records.",
+    "completion_blocker": "129 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until every required review has individual code/test/acceptance evidence, dependency review and no pending records.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",

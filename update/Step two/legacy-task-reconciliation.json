@@ -647,7 +647,7 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "https://github.com/artinrahimii/project/actions/runs/42502195218"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "bc9882a8ad1fcd29b6a2e42e31509a76e926f2f6"
     },
     {
       "legacy_task_id": "T0057",
@@ -668,7 +668,7 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "https://github.com/artinrahimii/project/actions/runs/42502195218"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "bc9882a8ad1fcd29b6a2e42e31509a76e926f2f6"
     },
     {
       "legacy_task_id": "T0058",
@@ -689,7 +689,7 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "https://github.com/artinrahimii/project/actions/runs/42502195218"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "bc9882a8ad1fcd29b6a2e42e31509a76e926f2f6"
     },
     {
       "legacy_task_id": "T0059",
@@ -708,7 +708,7 @@
         "src/Host.Windows/MainWindow.xaml.cs",
         "https://github.com/artinrahimii/project/actions/runs/42502195218"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "bc9882a8ad1fcd29b6a2e42e31509a76e926f2f6"
     },
     {
       "legacy_task_id": "T0060",
@@ -728,7 +728,7 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "https://github.com/artinrahimii/project/actions/runs/42502195218"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "bc9882a8ad1fcd29b6a2e42e31509a76e926f2f6"
     },
     {
       "legacy_task_id": "T0061",
@@ -738,9 +738,15 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0061.md",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        ".github/workflows/real-inference.yml",
+        "https://github.com/artinrahimii/project/actions/runs/42502412081"
+      ],
       "review_commit_sha": null
     },
     {
@@ -751,9 +757,15 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0062.md",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0062/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42502412081"
+      ],
       "review_commit_sha": null
     },
     {
@@ -764,9 +776,17 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0063.md",
+        "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        ".github/workflows/real-inference.yml",
+        "step three/T0063/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42502412081"
+      ],
       "review_commit_sha": null
     },
     {
@@ -777,9 +797,15 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0064.md",
+        ".github/workflows/real-inference.yml",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0064/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42502412081"
+      ],
       "review_commit_sha": null
     },
     {
@@ -790,9 +816,16 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0065.md",
+        "tests/test_no_cloud_provider_inference.py",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "step three/T0065/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42502412081"
+      ],
       "review_commit_sha": null
     },
     {

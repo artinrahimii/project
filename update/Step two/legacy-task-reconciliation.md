@@ -49,10 +49,10 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**34/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای T0027، T0032–T0036، T0041–T0060، T0199 و T0214 ثبت شده است. 134 رکورد همچنان `pending` هستند.
+**39/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای T0027، T0032–T0036، T0041–T0065، T0199 و T0214 ثبت شده است. 129 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
-هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 28 رکورد (T0027، T0032–T0036، T0041–T0044، T0199 و T0214)، و `re_review_required/pending` برای 134 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
+هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 33 رکورد (T0027، T0032–T0036، T0041–T0044، T0199 و T0214)، و `re_review_required/pending` برای 129 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
 
 
 ## نتیجهٔ تکمیلی در V 3.1.56
@@ -209,3 +209,14 @@
 - هر پنج baseline status برابر done ماندند؛ تصمیم‌ها re_review_required و رکوردها reviewed هستند؛ UPD-S1-023 باید قرارداد مدل/backend را بازبینی کند.
 - Quality CI دقیق [42502195218](https://github.com/artinrahimii/project/actions/runs/42502195218) موفق بود. Product Build دقیق V3.1.77 هنگام این ثبت هنوز در حال اجرا بود؛ موفق فرض نشده است.
 - جمع reconciliation: **34/168 reviewed (20.24%)**، **134 pending**. نشانگرهای قدیمی تا بسته‌شدن کل reconciliation pending می‌مانند.
+
+
+## بازبینی محتوایی T0061 تا T0065 — V 3.1.78
+
+- مبنای کد: `bc9882a8ad1fcd29b6a2e42e31509a76e926f2f6` — `V 3.1.78`.
+- T0061/T0062: POST /v1/chat/completions، health/model probing، timeout و پاسخ نامعتبر در backend محلی بررسی شدند. گزارش‌های exact-commit live-model runs 40077575618 و 40078502151 پاسخ non-empty از مدل GGUF pin شده را ثبت کرده‌اند.
+- T0063/T0064: آزمون opt-in generation cancellation و process stop در run 40092245411 روی commit `694b0fcf847a9a2087af292910112c9c041d86df` موفق ثبت شده؛ این شواهد تاریخی‌اند و نتیجهٔ V3.1.78 نیستند.
+- T0065: source-level guard، endpointها و SDKهای cloud-provider شناخته‌شده را بررسی می‌کند؛ packet capture یا نبود همهٔ outbound traffic را اثبات نمی‌کند.
+- هر پنج baseline status برابر done ماندند؛ هر پنج تصمیم `re_review_required/reviewed` ثبت شدند، زیرا UPD-S1-023 هنوز catalog/selection/backend composition را تغییر خواهد داد.
+- Quality V3.1.78 [42502412081](https://github.com/artinrahimii/project/actions/runs/42502412081) و Rendezvous [42502412120](https://github.com/artinrahimii/project/actions/runs/42502412120) موفق‌اند؛ Product Build V3.1.78 [42502412102](https://github.com/artinrahimii/project/actions/runs/42502412102) هنگام این بازبینی هنوز in_progress بود.
+- جمع reconciliation: **39/168 reviewed (23.21%)**، **129 pending**. وضعیت قدیمی و نشانگرهای update_impact تغییر نکرده‌اند.
