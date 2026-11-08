@@ -55,3 +55,11 @@ C# HostLifecycle/mapper/identity، Kotlin parser/ViewModel و Python source-cont
 - Windows WPF 128723595595 passed clean build/publish/generated Protobuf/startup/policy/DPAPI/installer checks.
 - Rendezvous 42478015406 passed.
 - Android 128723595688 passed test-source lint but failed main-source ktlint in RequestViewModel terminal error-code validation; APK/JVM/Keystore steps skipped.
+
+## CI exact V 3.1.52
+- Quality 42478443061 passed: 479 Python tests and graph guards.
+- Rendezvous 42478442987 passed.
+- HostLifecycle 128724891789 passed with coverage.
+- Windows WPF build/publish/generated Proto/smoke/policy passed; Windows installer was still running at report time.
+- Android 128724891880 failed main-source ktlint on three multiline enum-code set expressions; APK/JVM/Keystore steps skipped.
+- A second retry of real local inference failed while downloading the pinned llama.cpp archive; no SHA-256, GGUF or inference result.

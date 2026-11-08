@@ -917,37 +917,15 @@ class RequestViewModel(
 
         val errorCodeIsConsistent =
             when (response.outcome) {
-                InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED -> {
-                    response.errorCode == ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED
-                }
-                InferenceOutcome.INFERENCE_OUTCOME_CANCELLED -> {
-                    response.errorCode == ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED
-                }
-                InferenceOutcome.INFERENCE_OUTCOME_FAILED -> {
-                    response.errorCode in setOf(
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED,
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_HOST_BUSY,
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_RESOURCE_LIMIT,
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_INTERNAL,
-                    )
-                }
-                InferenceOutcome.INFERENCE_OUTCOME_TIMED_OUT -> {
-                    response.errorCode in setOf(
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED,
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_REQUEST_EXPIRED,
-                    )
-                }
-                InferenceOutcome.INFERENCE_OUTCOME_REJECTED -> {
-                    response.errorCode in setOf(
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED,
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_INVALID_MESSAGE,
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSUPPORTED_VERSION,
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSUPPORTED_MODEL,
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_REQUEST_EXPIRED,
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_RESOURCE_LIMIT,
-                        ProtocolErrorCode.PROTOCOL_ERROR_CODE_INTERNAL,
-                    )
-                }
+                InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED,
+                InferenceOutcome.INFERENCE_OUTCOME_CANCELLED,
+                -> response.errorCode == ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED
+                InferenceOutcome.INFERENCE_OUTCOME_FAILED ->
+                    response.errorCode in failedResponseErrorCodes
+                InferenceOutcome.INFERENCE_OUTCOME_TIMED_OUT ->
+                    response.errorCode in timedOutResponseErrorCodes
+                InferenceOutcome.INFERENCE_OUTCOME_REJECTED ->
+                    response.errorCode in rejectedResponseErrorCodes
                 else -> false
             }
         if (!errorCodeIsConsistent) return false
@@ -1080,6 +1058,29 @@ class RequestViewModel(
     }
 
     private companion object {
+        private val failedResponseErrorCodes =
+            setOf(
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED,
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_HOST_BUSY,
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_RESOURCE_LIMIT,
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_INTERNAL,
+            )
+        private val timedOutResponseErrorCodes =
+            setOf(
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED,
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_REQUEST_EXPIRED,
+            )
+        private val rejectedResponseErrorCodes =
+            setOf(
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED,
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_INVALID_MESSAGE,
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSUPPORTED_VERSION,
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSUPPORTED_MODEL,
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_REQUEST_EXPIRED,
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_RESOURCE_LIMIT,
+                ProtocolErrorCode.PROTOCOL_ERROR_CODE_INTERNAL,
+            )
+
         const val CURRENT_PROTOCOL_VERSION = "1.0.0"
         const val REQUEST_DEADLINE_MILLIS = 180_000L
     }

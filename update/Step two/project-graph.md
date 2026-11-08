@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.52",
+  "commit_intent": "V 3.1.53",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -4111,9 +4111,9 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0032, T0033, T0034, T0035, T0036, T0107, T0108, T0109, T0110, T0111, T0112, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0189, T0190, T0191, T0192. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-017-20261108120120",
+        "last_attempt_id": "UPD-S1-017-20261108120610",
         "last_attempt_result": "partial",
         "changed_files": [
           "protocol/whitep/v1/messages.proto",
@@ -4140,7 +4140,8 @@
         "related_commits": [
           "8a4d1b7d1d231ee9f86d970d9db4fa5092bffec2",
           "6b8417d8b607a5da122758d97bf9ccca110db0b5",
-          "cd27ca0adbaf12068f14e4c942a0ac7f833a24f0"
+          "cd27ca0adbaf12068f14e4c942a0ac7f833a24f0",
+          "04ad9eb9eace198ee14ee3d739321938c0a69f41"
         ],
         "tests_passed": [
           "V3.1.49 quality.yml run 42477241092: 479 tests passed; update graph guard clean; legacy guard 0 errors/1 preserved warning.",
@@ -4153,22 +4154,28 @@
           "V3.1.51 quality gate: 479 Python tests and graph guards passed.",
           "V3.1.51 HostLifecycle suite and coverage passed.",
           "V3.1.51 Windows WPF build/publish/smoke/policy/DPAPI/installer passed.",
-          "V3.1.51 Rendezvous build and smoke passed."
+          "V3.1.51 Rendezvous build and smoke passed.",
+          "V3.1.52 quality passed 479 Python tests and both graph guards.",
+          "V3.1.52 HostLifecycle tests and coverage passed.",
+          "V3.1.52 Rendezvous container build/smoke passed."
         ],
         "tests_failed": [
           "V3.1.49 Android ktlint failed on two new test files; fixed formatting/import order in follow-up attempt.",
           "V3.1.49 real-local-inference workflow failed before inference because pinned llama.cpp release download returned a GitHub transient HTML error page; no SHA/model inference was verified.",
           "V3.1.50 Android ktlint: RequestViewModelTest import ordering and multiline error assertion chains failed; fixed in attempt 3.",
-          "V3.1.51 Android ktlint reached main source and failed on outcome validator formatting in RequestViewModel.kt; corrected in attempt 4."
+          "V3.1.51 Android ktlint reached main source and failed on outcome validator formatting in RequestViewModel.kt; corrected in attempt 4.",
+          "V3.1.52 Android ktlint failed on multiline setOf expressions in RequestViewModel outcome validation; moved allowed sets to companion properties in attempt 5.",
+          "Retry of V3.1.49 local inference workflow failed at pinned llama.cpp archive download a second time before checksum/model execution."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "required",
           "triggering_contracts": [
-            "Typed terminal ProtocolErrorCode validation in Android ViewModel",
-            "Shared Windows/Android terminal outcome mapping",
-            "Exact request/attempt/round correlation"
+            "Protobuf terminal error_code",
+            "Android allowed error_code/outcome mapping",
+            "Windows and Android consistent terminal state mapping",
+            "Exact attempt/round side-error correlation"
           ],
           "affected_by_contract_changes": [],
           "review_evidence": [
@@ -4183,7 +4190,10 @@
             "https://github.com/artinrahimii/project/actions/runs/42477696370",
             "https://github.com/artinrahimii/project/actions/runs/42477696429",
             "https://github.com/artinrahimii/project/actions/runs/42478015523",
-            "https://github.com/artinrahimii/project/actions/runs/42478015591"
+            "https://github.com/artinrahimii/project/actions/runs/42478015591",
+            "https://github.com/artinrahimii/project/actions/runs/42478443061",
+            "https://github.com/artinrahimii/project/actions/runs/42478443044",
+            "https://github.com/artinrahimii/project/actions/runs/42477241035"
           ]
         }
       },
@@ -4445,7 +4455,7 @@
         {
           "attempt_id": "UPD-S1-017-20261108120120",
           "started_at": "2026-11-08T12:01:20Z",
-          "ended_at": "2026-11-08T12:01:20Z",
+          "ended_at": "2026-11-08T12:04:58Z",
           "result": "partial",
           "summary": "Applied the V3.1.51 main-source ktlint corrections in RequestViewModel. The outcome validator now follows the same multiline assignment/when style as other ViewModel code, has explicit braced outcome branches, and uses braced if/else mappings. Typed error semantics are unchanged. Exact V3.1.52 CI pending.",
           "changed_files": [
@@ -4454,40 +4464,67 @@
             "update/Step three/UPD-S1-017/evidence/protocol-error-correlation.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "04ad9eb9eace198ee14ee3d739321938c0a69f41",
           "tests": [
             {
-              "name": "Android main/test Kotlin lint",
+              "name": "V3.1.52 quality",
+              "command": "quality.yml exact commit",
+              "result": "passed",
+              "run_id": 42478443061,
+              "summary": "479 Python tests; update graph 24/80 zero errors/warnings; legacy graph 230/422 zero errors and one preserved T0001 warning."
+            },
+            {
+              "name": "V3.1.52 Android Kotlin lint",
               "command": "gradle --no-daemon ktlintCheck",
-              "result": "pending",
-              "summary": "Must pass all production/test source sets."
+              "result": "failed",
+              "run_id": 42478443044,
+              "job_id": 128724891880,
+              "summary": "Test source set passed. Three main-source lint errors remained in RequestViewModel's FAILED/TIMED_OUT/REJECTED branches: multiline setOf membership expressions must be moved out of the when branches."
             },
             {
-              "name": "Android debug/release build and JVM tests",
-              "command": "clean Android client build and testDebugUnitTest",
-              "result": "pending",
-              "summary": "Build APKs and run parser/ViewModel tests."
+              "name": "V3.1.52 Android build/JVM/Keystore",
+              "command": "Android product job after ktlint",
+              "result": "not_run",
+              "run_id": 42478443044,
+              "job_id": 128724891880,
+              "summary": "APK, release build, JVM tests and Keystore instrumentation were skipped because main-source lint failed."
             },
             {
-              "name": "Android Keystore instrumentation",
-              "command": "product-build Android emulator instrumentation",
-              "result": "pending",
-              "summary": "Must run after build/JVM tests."
+              "name": "V3.1.52 HostLifecycle",
+              "command": "HostLifecycle acceptance suite and coverage",
+              "result": "passed",
+              "run_id": 42478443044,
+              "job_id": 128724891789,
+              "summary": "HostLifecycle acceptance and coverage passed."
             },
             {
-              "name": "Windows shared protocol and HostLifecycle",
-              "command": "product-build Windows and HostLifecycle jobs",
-              "result": "pending",
-              "summary": "C# validator, generated Protobuf and mapper acceptance."
+              "name": "V3.1.52 Windows WPF",
+              "command": "Windows build/publish/policy/installer",
+              "result": "in_progress_at_last_check",
+              "run_id": 42478443044,
+              "job_id": 128724891601,
+              "summary": "Build/publish, WPF startup and policy checks passed; installer step was still active at last check."
             },
             {
-              "name": "Python exact-head quality",
-              "command": "quality.yml",
-              "result": "pending",
-              "summary": "479 tests and both graph guards."
+              "name": "V3.1.52 Rendezvous",
+              "command": "Rendezvous container build and smoke",
+              "result": "passed",
+              "run_id": 42478442987,
+              "summary": "Production container and HTTP smoke passed."
+            },
+            {
+              "name": "V3.1.49 real local inference retry",
+              "command": "Re-run failed job for pinned llama.cpp b11443 and GGUF",
+              "result": "failed_before_checksum",
+              "run_id": 42477241035,
+              "job_id": 128723857803,
+              "summary": "The second retry again failed on Download and verify pinned llama.cpp CPU binary. The download endpoint returned HTML/error content instead of the pinned ZIP; no SHA-256 verification, GGUF download or inference was executed."
             }
           ],
-          "failure_details": null,
+          "failure_details": [
+            "V3.1.52 main-source ktlint failed on multiline setOf membership expressions in three terminal-outcome branches. The next attempt extracts those allowed-code sets into private immutable companion properties and leaves the when branches with one-line membership checks.",
+            "Second retry of the real local inference job failed at the same upstream pinned binary download; the model checksum was never verified."
+          ],
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -4497,6 +4534,63 @@
           "follow_up": "Run exact V3.1.52 quality/product workflow. Only accept completion after Android lint, APK, JVM, Keystore, Windows and HostLifecycle tests all pass.",
           "device_and_host_details_redacted": "Hosted Android emulator and Windows CI only; no physical user device or target Windows host.",
           "model_revision_and_sha256": "No local model run in this attempt.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-017-20261108120610",
+          "started_at": "2026-11-08T12:06:10Z",
+          "ended_at": "2026-11-08T12:06:10Z",
+          "result": "partial",
+          "summary": "Refactored Android response outcome validation to use private immutable allowed-error-code sets in RequestViewModel's companion object. Terminal branches now perform one-line membership checks while preserving exactly the prior accepted error-code mappings. Exact V3.1.53 CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "update/Step three/UPD-S1-017/execution-report.md",
+            "update/Step three/UPD-S1-017/evidence/protocol-error-correlation.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android production and test Kotlin lint",
+              "command": "gradle --no-daemon ktlintCheck",
+              "result": "pending",
+              "summary": "Must pass every Kotlin source set."
+            },
+            {
+              "name": "Android debug/release APK and JVM tests",
+              "command": "product-build clean Android job",
+              "result": "pending",
+              "summary": "Build clean APKs and run parser/ViewModel tests."
+            },
+            {
+              "name": "Android Keystore instrumentation",
+              "command": "product-build Android instrumentation",
+              "result": "pending",
+              "summary": "Keystore/emulator tests after APK/JVM."
+            },
+            {
+              "name": "Windows HostLifecycle/shared Protobuf",
+              "command": "product-build Windows and HostLifecycle jobs",
+              "result": "pending",
+              "summary": "C# shared validator, generated Protobuf and mapper tests."
+            },
+            {
+              "name": "Python protocol and quality gate",
+              "command": "quality.yml",
+              "result": "pending",
+              "summary": "479 tests plus graph guards."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Extracted immutable private sets for FAILED, TIMED_OUT and REJECTED response error codes into the ViewModel companion object.",
+            "Simplified when branches to direct membership checks without changing the allowed enum values or terminal mapping semantics."
+          ],
+          "follow_up": "Run exact V3.1.53 quality/product CI. Do not declare task done until Android lint, APK/JVM/Keystore, C# HostLifecycle and cross-platform protocol tests pass.",
+          "device_and_host_details_redacted": "No physical Android handset or customer Windows endpoint; hosted CI only.",
+          "model_revision_and_sha256": "No local model SHA verified; both attempts at the pinned llama.cpp archive download failed before hashing.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
@@ -6387,7 +6481,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T12:01:20Z",
+    "as_of": "2026-11-08T12:06:10Z",
     "total_tasks": 24,
     "not_started": 16,
     "in_progress": 1,
@@ -6508,7 +6602,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T12:01:20Z",
+  "updated_at": "2026-11-08T12:06:10Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",

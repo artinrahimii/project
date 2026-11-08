@@ -100,3 +100,15 @@
 - اصلاح main-source در تلاش بعدی انجام شد و منطق allowed error codes همان مقدارهای قبلی را حفظ می‌کند.
 - APK، release، JVM unit tests و Keystore instrumentation در این نسخه به دلیل lint اجرا نشدند.
 - آزمون فیزیکی Android-to-Windows، clean install کاربر و in-place upgrade هنوز اجرا نشده‌اند.
+
+## نتایج exact V 3.1.52 و اصلاح پایدار main-source
+
+- Commit: `04ad9eb9eace198ee14ee3d739321938c0a69f41`.
+- Quality [42478443061](https://github.com/artinrahimii/project/actions/runs/42478443061): **success**؛ ۴۷۹ Python tests؛ graph guard update ۲۴/۸۰ صفر خطا/هشدار؛ legacy ۲۳۰/۴۲۲ صفر خطا و یک هشدار تاریخی T0001.
+- Rendezvous [42478442987](https://github.com/artinrahimii/project/actions/runs/42478442987): **success**.
+- HostLifecycle [42478443044]: **success**.
+- Windows WPF [42478443044]: clean build/publish، generated Protobuf، WPF startup و policy/DPAPI gates موفق بودند؛ installer step در آخرین بررسی هنوز در حال اجرا بود.
+- Android [42478443044]: test source lint را پاس کرد اما main-source lint سه خطا در multiline setOf membership expressions در سه outcome branch داشت. APK/JVM/Keystore به‌علت fail شدن lint اجرا نشدند.
+- اصلاح پنجم: مجموعه‌های مجاز FAILED/TIMED_OUT/REJECTED اکنون به private immutable companion properties منتقل شده‌اند؛ when branches فقط یک membership check تک‌خطی دارند و enum values تغییر نکرده‌اند.
+- retry دوم workflow مدل محلی روی V3.1.49 نیز در همان مرحلهٔ دانلود آرشیو pinned llama.cpp شکست خورد؛ SHA-256 و inference همچنان اجرا نشده‌اند.
+- UPD-S1-017 همچنان `in_progress` است تا exact V3.1.53 CI.
