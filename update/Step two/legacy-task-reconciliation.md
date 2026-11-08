@@ -49,10 +49,10 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**8/168 بازبینی محتوایی فعلی ثبت شده‌اند.** T0012، T0013، T0015، T0016، T0019 و T0020 با تصمیم `unchanged` reviewed هستند؛ T0199 و T0214 نیز بازبینی شده‌اند اما تصمیم `re_review_required` دارند تا پس از UPD-S1-019 و UPD-S1-021 دوباره بررسی شوند. 160 رکورد همچنان `pending` هستند. کد، آزمون و معیار پذیرش هر شناسه باید در مرحله‌های بعدی جداگانه بررسی شود. وجود مسیر فایل، evidence یا اجرای قدیمی CI به‌تنهایی تأیید وضعیت امروز آن وظیفه نیست.
+**14/168 بازبینی محتوایی فعلی ثبت شده‌اند.** T0012، T0013، T0015، T0016، T0019 و T0020 با تصمیم `unchanged` reviewed هستند؛ T0027، T0032، T0033، T0034، T0035، T0036، T0199 و T0214 نیز بازبینی شده‌اند اما تصمیم `re_review_required` دارند تا پس از UPD-S1-021، UPD-S1-004 یا UPD-S1-017 دوباره بررسی شوند. 154 رکورد همچنان `pending` هستند. کد، آزمون و معیار پذیرش هر شناسه باید در مرحله‌های بعدی جداگانه بررسی شود. وجود مسیر فایل، evidence یا اجرای قدیمی CI به‌تنهایی تأیید وضعیت امروز آن وظیفه نیست.
 
 ## سیاست تغییر وضعیت
-هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای T0199 و T0214، و `re_review_required/pending` برای 160 رکورد باقی‌مانده ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation در حالت `pending/re_review_required` باقی می‌مانند؛ وضعیت واقعی هر بررسی در همین فایل JSON ثبت می‌شود.
+هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 8 رکورد (T0027، T0032–T0036، T0199 و T0214)، و `re_review_required/pending` برای 154 رکورد باقی‌مانده ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation در حالت `pending/re_review_required` باقی می‌مانند؛ وضعیت واقعی هر بررسی در همین فایل JSON ثبت می‌شود.
 
 
 ## نتیجهٔ تکمیلی در V 3.1.56
@@ -123,3 +123,18 @@
 - Quality gate دقیق همین commit: [run 42484508893](https://github.com/artinrahimii/project/actions/runs/42484508893) — **success**؛ اعتبارسنجی گراف به‌روزرسانی، گراف قدیمی، مسیرهای شواهد و آزمون‌های Python موفق شدند.
 - Product build دقیق همین commit: [run 42484508866](https://github.com/artinrahimii/project/actions/runs/42484508866) در آخرین بررسی `in_progress` بود؛ هیچ نتیجهٔ نهایی برای آن ادعا نمی‌شود.
 - reconciliation: **8/168 reviewed** و **160 pending**؛ تصمیم‌های T0199/T0214 برای بازبینی مجدد پس از UPD-S1-019/021 حفظ شده‌اند.
+
+
+## بازبینی شش وظیفهٔ قدیمی دیگر روی V 3.1.69
+
+- مبنای بررسی: `ebede06d9584d17e8277ccf811770e5fe4b40161` — `V 3.1.69`.
+- `T0027`: README و فرمان‌های restore/build/test/package با آزمون فرمان‌ها و workflowهای clean-checkout تطبیق داده شدند؛ تصمیم `re_review_required` برای بازبینی مجدد پس از UPD-S1-021.
+- `T0032`: قرارداد InferenceResponse و round-trip دو زبان با fixtureهای مشترک بررسی شد؛ بازبینی مجدد پس از تصمیم streaming در UPD-S1-004 و تغییرات runtime در UPD-S1-017 لازم است.
+- `T0033`: HostAnnouncement/HostCapabilities/ModelCapability و منع prompt/response/user identity/history در metadata discovery بررسی شد؛ بازبینی مجدد پس از UPD-S1-017.
+- `T0034`: CancelRequest، HostBusy، UnsupportedModel و ProtocolError و correlation IDs بررسی شدند؛ assertionهای جدید attempt/round در CI موفق‌اند؛ بازبینی مجدد پس از UPD-S1-017.
+- `T0035`: سیاست version `1.0.0` و نگاشت typed invalid/unsupported version errors به schema و HostLifecycle tests پیوند داده شد؛ بازبینی مجدد پس از UPD-S1-017.
+- `T0036`: تولید C# و Kotlin از یک schema واحد و مصرف generated types بررسی شد؛ build/round-trip دو پلتفرم در Product CI موفق است؛ بازبینی مجدد پس از UPD-S1-017.
+- Quality run دقیق V3.1.69 [42484597069](https://github.com/artinrahimii/project/actions/runs/42484597069) موفق بود. Product run [42482672544](https://github.com/artinrahimii/project/actions/runs/42482672544) روی snapshot بدون تغییر در schema/consumer/build نسبت به V3.1.69 سه job Windows/Android/HostLifecycle را موفق تکمیل کرد؛ Product run دقیق V3.1.69 هنوز در صف/اجرا بود.
+- وابستگی‌های مستقیم قدیمی هر شش وظیفه در گراف Step Three `done` هستند؛ هیچ وضعیت پایه، وابستگی یا نشانگر ثابت `update_impact` تغییر داده نشد.
+- شواهد مستقل: `update/Step three/UPD-S1-008/evidence/review-T0027.md`, `update/Step three/UPD-S1-008/evidence/review-T0032.md`, `update/Step three/UPD-S1-008/evidence/review-T0033.md`, `update/Step three/UPD-S1-008/evidence/review-T0034.md`, `update/Step three/UPD-S1-008/evidence/review-T0035.md`, `update/Step three/UPD-S1-008/evidence/review-T0036.md`.
+- نتیجه: **14/168 reviewed (8.33%)، 154 pending (91.67%)**؛ UPD-S1-008 همچنان `in_progress`.

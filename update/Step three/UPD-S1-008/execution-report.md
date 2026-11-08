@@ -169,3 +169,19 @@
 - شناسهٔ commit واقعی در `execution_history.commit_sha` تلاش نهم ثبت شد.
 - Product build دقیق V3.1.68، run [42484508866](https://github.com/artinrahimii/project/actions/runs/42484508866)، هنگام آخرین مشاهده هنوز `in_progress` بود.
 - وضعیت UPD-S1-008 همچنان `in_progress` است: 8/168 legacy reviews finalized, 160 pending.
+
+
+## تلاش دهم — بازبینی T0027 و T0032 تا T0036 روی V 3.1.69
+
+- Attempt: `UPD-S1-008-20261108132200`; بررسی در `2026-11-08T13:24:39.020Z`; مبنا `ebede06d9584d17e8277ccf811770e5fe4b40161` — `V 3.1.69`.
+- شش گره به‌صورت جداگانه از روی عنوان، شرح، وضعیت پایه، پیش‌نیازها، فایل اجرایی، مصرف‌کنندگان و آزمون پذیرش بررسی شدند.
+- `T0027`: فرمان‌های README با `test_readme_build_commands.py` و `test_reproducible_build_contract.py` و workflowهای واقعی build تطبیق داده شدند؛ تصمیم `re_review_required` به‌دلیل UPD-S1-021.
+- `T0032`: InferenceResponse؛ تصمیم `re_review_required` برای UPD-S1-004/017.
+- `T0033`: HostAnnouncement/HostCapabilities/ModelCapability و محرمانگی metadata؛ تصمیم `re_review_required` برای UPD-S1-017.
+- `T0034`: CancelRequest/HostBusy/UnsupportedModel/ProtocolError و شناسه‌های attempt/round؛ تصمیم `re_review_required` برای UPD-S1-017.
+- `T0035`: ProtocolVersionPolicy، نسخه 1.0.0 و خطاهای typed؛ تصمیم `re_review_required` برای UPD-S1-017.
+- `T0036`: تولید Protobuf C#/Java/Kotlin از schema canonical و آزمون round-trip؛ تصمیم `re_review_required` برای UPD-S1-017.
+- همهٔ وضعیت‌های پایهٔ `done` و تمام وابستگی‌های مستقیم قدیمی حفظ شدند. Quality CI دقیق V3.1.69 (run 42484597069) موفق شد؛ Product build V3.1.61 (run 42482672544) سه job را موفق تکمیل کرد. Product build دقیق V3.1.69 در زمان این بررسی queued/in_progress بود و success ادعا نمی‌شود.
+- آزمون دستگاه واقعی، Android-to-Windows end-to-end، live inference، clean install و in-place upgrade اجرا نشده‌اند.
+- شواهد مستقل در `update/Step three/UPD-S1-008/evidence/review-T0027.md` و `review-T0032.md` تا `review-T0036.md` ثبت شده‌اند.
+- reconciliation: **14/168 reviewed**، **154 pending**، **8.33%**؛ UPD-S1-008 همچنان `in_progress`.

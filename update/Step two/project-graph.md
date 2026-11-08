@@ -3117,7 +3117,13 @@
         "docs/decisions/ADR-0024-tcp-request-framing.md",
         "tests/test_decision_traceability.py",
         "update/Step three/UPD-S1-008/evidence/review-T0199.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0214.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0214.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0027.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0032.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0033.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0034.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0035.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0036.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
@@ -3135,13 +3141,19 @@
         "docs/decisions/ADR-0003-tcp-request-framing.md",
         "tests/test_decision_traceability.py",
         "update/Step three/UPD-S1-008/evidence/review-T0199.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0214.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0214.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0027.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0032.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0033.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0034.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0035.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0036.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 9,
+        "attempt_count": 10,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261108131900",
+        "last_attempt_id": "UPD-S1-008-20261108132200",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3162,7 +3174,13 @@
           "tests/test_decision_traceability.py",
           "update/Step three/UPD-S1-008/evidence/review-T0020-ADR-uniqueness.md",
           "update/Step three/UPD-S1-008/evidence/review-T0199.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0214.md"
+          "update/Step three/UPD-S1-008/evidence/review-T0214.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0027.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0032.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0033.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0034.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0035.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0036.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
@@ -3176,7 +3194,8 @@
           "89a7b12ff24449f2b730200939053dedcd91f56f",
           "365c734e178013fc6ea9499bf08855e91f5d0cbe",
           "fe489b7f141a9a969f550b851093e3fcf45c8a19",
-          "851753e3d1e668714fbc020a8d6437ecd6afae0a"
+          "851753e3d1e668714fbc020a8d6437ecd6afae0a",
+          "ebede06d9584d17e8277ccf811770e5fe4b40161"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -3202,7 +3221,9 @@
           "T0199 review on V3.1.67: canonical protocol, 11 cross-language message round-trips, shared fixtures and new assertions for error message attempt/round IDs, ModelCapability limits and metadata-only discovery passed.",
           "T0199 exact V3.1.67 Quality Gate 42484306209 passed; source-identical product CI V3.1.61 run 42482672544 passed all Windows/Android/HostLifecycle jobs.",
           "T0214 review on V3.1.67: README command contract, clean-checkout workflow, packaging, installer smoke and Android APK build/test workflow aligned; V3.1.61 Product build artifacts were inspected.",
-          "Exact V3.1.68 quality workflow 42484508893 passed after the T0199/T0214 review evidence and reconciliation ledger were committed."
+          "Exact V3.1.68 quality workflow 42484508893 passed after the T0199/T0214 review evidence and reconciliation ledger were committed.",
+          "T0027 reviewed: README build/test/package commands map to tested clean-checkout workflows; source status done retained; re-review after UPD-S1-021.",
+          "T0032-T0036 individually reviewed: response/metadata/error/version messages, C#/Kotlin generation, shared fixtures and test/build consumers verified; source statuses done retained; re-review after UPD-S1-004/017."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -3752,6 +3773,100 @@
           "contract_changes": [],
           "follow_up": "Continue reviewing the remaining 160 affected legacy IDs individually. Re-review T0199 after UPD-S1-019 extends retry, timeout, cancellation, trust, replay, tamper and state-mapping tests; re-review T0214 after UPD-S1-021 changes final packages, checksums, licenses, installation guides and in-place upgrades. Preserve all old statuses and static impact markers.",
           "device_and_host_details_redacted": "Repository source and GitHub-hosted Windows runner/Android emulator CI only; no physical Android handset or user Windows host used.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108132200",
+          "started_at": "2026-11-08T13:22:00Z",
+          "ended_at": "2026-11-08T13:24:39.020Z",
+          "result": "partial",
+          "summary": "Individually reviewed six more legacy tasks (T0027 and T0032-T0036). Each baseline done status remains unchanged; the decisions are re_review_required for future package/docs, streaming/runtime, or protocol lifecycle changes. Fourteen of 168 reconciliation records are now reviewed; 154 remain pending.",
+          "changed_files": [
+            "update/Step three/UPD-S1-008/evidence/review-T0027.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0032.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0033.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0034.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0035.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0036.md",
+            "update/Step two/project-graph.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step two/decision-impact-map.md",
+            "update/Step three/UPD-S1-008/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "T0027 code/test/dependency review",
+              "command": "Inspect the legacy T0027 source, dependencies, acceptance and direct/indirect consumers on V3.1.69.",
+              "result": "passed",
+              "summary": "README commands align with the reproducible clean-checkout tests and the product workflow; build verification passed in run 42482672544."
+            },
+            {
+              "name": "T0032 code/test/dependency review",
+              "command": "Inspect the legacy T0032 source, dependencies, acceptance and direct/indirect consumers on V3.1.69.",
+              "result": "passed",
+              "summary": "InferenceResponse fields and C#/Kotlin round-trip coverage are present in the canonical schema and shared 11-message fixtures."
+            },
+            {
+              "name": "T0033 code/test/dependency review",
+              "command": "Inspect the legacy T0033 source, dependencies, acceptance and direct/indirect consumers on V3.1.69.",
+              "result": "passed",
+              "summary": "HostAnnouncement/HostCapabilities and ModelCapability fields are explicit; discovery metadata tests forbid prompt, response and identity/history leakage."
+            },
+            {
+              "name": "T0034 code/test/dependency review",
+              "command": "Inspect the legacy T0034 source, dependencies, acceptance and direct/indirect consumers on V3.1.69.",
+              "result": "passed",
+              "summary": "Cancellation/busy/model/protocol error fields include correlation identifiers; new attempt/round assertions passed in exact V3.1.67 quality CI."
+            },
+            {
+              "name": "T0035 code/test/dependency review",
+              "command": "Inspect the legacy T0035 source, dependencies, acceptance and direct/indirect consumers on V3.1.69.",
+              "result": "passed",
+              "summary": "ProtocolVersionPolicy maps invalid and unsupported versions to the declared typed wire error codes and is covered by HostLifecycle tests."
+            },
+            {
+              "name": "T0036 code/test/dependency review",
+              "command": "Inspect the legacy T0036 source, dependencies, acceptance and direct/indirect consumers on V3.1.69.",
+              "result": "passed",
+              "summary": "The same canonical schema feeds C# and Kotlin generated sources; generated bindings and round-trip tests passed in the product CI."
+            },
+            {
+              "name": "Exact V3.1.69 quality gate",
+              "command": "GitHub Actions run 42484597069.",
+              "result": "passed",
+              "summary": "Full Python suite, compileall and both graph guards completed successfully on the current main snapshot.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42484597069"
+            },
+            {
+              "name": "Cross-platform product build for unchanged protocol/README inputs",
+              "command": "GitHub Actions run 42482672544 on V3.1.61.",
+              "result": "passed",
+              "summary": "Windows, Android and HostLifecycle jobs passed; Protobuf code generation, C# and Kotlin round-trip/JVM tests, WPF publish/installer and APK artifacts succeeded. Relevant schema, consumer and workflow files remained unchanged through V3.1.69.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42482672544"
+            },
+            {
+              "name": "Product build exact V3.1.69",
+              "command": "GitHub Actions run 42484597043.",
+              "result": "not_run",
+              "summary": "Queued/in progress at review time; no exact-commit product build success is claimed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42484597043"
+            },
+            {
+              "name": "Physical runtime, clean install and in-place upgrade",
+              "command": "Physical Android handset and target Windows host.",
+              "result": "not_run",
+              "summary": "Not accessible in this review; CI/emulator tests are not substitutes."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue reviewing the remaining 154 affected IDs individually. Re-review T0027 after UPD-S1-021 updates docs/packages/install/upgrade; T0032 after UPD-S1-004 finalizes streaming and UPD-S1-017 changes runtime semantics; T0033-T0036 after UPD-S1-017 changes host protocol lifecycle, metadata, status/errors or generated contract. Keep old statuses and update_impact markers unchanged.",
+          "device_and_host_details_redacted": "Source review and GitHub-hosted CI only; no physical Android or target Windows host used.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -7174,7 +7289,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T13:21:24.285Z",
+    "as_of": "2026-11-08T13:24:39.020Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -7295,7 +7410,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T13:21:24.285Z",
+  "updated_at": "2026-11-08T13:24:39.020Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -7478,12 +7593,12 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "pending": 160,
-      "reviewed": 8
+      "pending": 154,
+      "reviewed": 14
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "160 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until every affected task has an individual implementation, dependency, test and acceptance review with evidence. T0199 and T0214 have reviewed re_review_required decisions and must be revisited after UPD-S1-019/021.",
+    "completion_blocker": "154 of 168 legacy task reviews remain pending; UPD-S1-008 stays in_progress until all affected IDs receive individual source, dependency, test and acceptance review. T0027 and T0032-T0036 are reviewed but marked re_review_required for UPD-S1-021/004/017 follow-up.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",
