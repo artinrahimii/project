@@ -46,7 +46,11 @@ class InferenceBackendAbstractionTests(unittest.TestCase):
 
         # The UI may parse user-entered text for validation, but the session must
         # receive the normalized settings returned by the validated settings store.
-        self.assertIn("_settingsStore.Save(new LocalHostSettings(", connect_handler)
+        self.assertIn("_settingsStore.Save(_settings with", connect_handler)
+        self.assertIn("ServerUrl = endpoint.ToString()", connect_handler)
+        self.assertIn("ModelId = ModelId.Text", connect_handler)
+        self.assertIn("EngineExecutablePath = EngineExecutablePath.Text", connect_handler)
+        self.assertIn("ModelFilePath = ModelFilePath.Text", connect_handler)
         self.assertIn("new Uri(_settings.ServerUrl), _settings.ModelId", connect_handler)
         self.assertNotIn("new Uri(ServerUrl.Text", connect_handler)
         self.assertIn("var validated = LocalHostSettings.Validate(settings);", settings_source)

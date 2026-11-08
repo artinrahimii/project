@@ -178,3 +178,12 @@
 - قرارداد واقعی `InferenceHostAttempt` شامل `ephemeralHostId`، `attemptId` و `submissionStatus` است؛ roundId در پیام Protobuf درخواست/پاسخ و pending transport correlation وجود دارد. تست‌ها به‌جای افزودن فیلد جدید به مدل، roundId پیام دریافتی را nonblank و roundId پاسخ را منطبق با درخواست دریافت‌شده بررسی می‌کنند.
 - Keystore instrumentation و artifact نهایی APK به‌دلیل شکست کامپایل JVM اجرا/آپلود نشدند.
 - UPD-S1-003 همچنان `in_progress` است.
+
+
+## اعتبارسنجی نهایی — V 3.1.36
+
+چهار معیار پذیرش احراز شدند: یک میزبان در هر round، حداکثر سه تلاش ترتیبی روی میزبان‌های متمایز، retry فقط با اقدام صریح کاربر، requestId ثابت، attemptId و roundId جدید، deadline مشترک، لغو terminal و رد پاسخ دیررس/تکراری. generic selector/dispatcher چندمیزبانه حفظ شده‌اند اما runtime نسخهٔ نخست فقط یک میزبان را dispatch می‌کند.
+
+CI دقیق V 3.1.36: quality run 42457409001، Product Build run 42457409040 و Rendezvous run 42457409058 همگی PASS. Product Build شامل Android JVM و Keystore instrumentation، Windows WPF/installer و HostLifecycle بود. شواهد در evidence/ci-3.1.36.md ثبت شده‌اند.
+
+این تأیید شامل آزمون فیزیکی Android-to-Windows، نصب تمیز مشتری یا in-place upgrade نیست؛ آن معیارها برای UPD-S1-020/021 باز هستند.

@@ -977,8 +977,8 @@
         "تکلیف تمام وظایف سه‌میزبانه و چندپاسخی مرتبط با شناسهٔ مشخص ثبت شده باشد.",
         "رفتار انتخاب هم‌زمان چند میزبان با retry ترتیبی اشتباه گرفته نشده باشد."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "expected_output_paths": [
         "docs/decisions/",
         "update/Step three/UPD-S1-003/execution-report.md"
@@ -988,7 +988,9 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
-        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "update/Step three/UPD-S1-003/execution-report.md",
+        "update/Step three/UPD-S1-003/evidence/ci-3.1.36.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-003/evidence/decision-matrix.md",
@@ -1002,14 +1004,15 @@
         "update/Step three/UPD-S1-003/evidence/ci-3.1.31.md",
         "update/Step three/UPD-S1-003/evidence/ci-3.1.32.md",
         "update/Step three/UPD-S1-003/evidence/ci-3.1.33.md",
-        "update/Step three/UPD-S1-003/evidence/ci-3.1.34.md"
+        "update/Step three/UPD-S1-003/evidence/ci-3.1.34.md",
+        "update/Step three/UPD-S1-003/evidence/ci-3.1.36.md"
       ],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. New decision ADR-0022 records the first-release one-host/sequential-retry policy. The generic three-host selector and dispatcher remain compatibility primitives and do not change the production runtime's one-host admission boundary. The implementation attempt is partial pending exact-commit CI. V 3.1.29 quality gate found five residual contract/documentation assertions; the exact tests and register row were corrected in the next partial attempt. Do not mark done until CI passes.",
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. New decision ADR-0022 records the first-release one-host/sequential-retry policy. The generic three-host selector and dispatcher remain compatibility primitives and do not change the production runtime's one-host admission boundary. The implementation attempt is partial pending exact-commit CI. V 3.1.29 quality gate found five residual contract/documentation assertions; the exact tests and register row were corrected in the next partial attempt. Do not mark done until CI passes. چهار معیار پذیرش با CI موفق روی SHA دقیق V3.1.36 تأیید و این گره بسته شد؛ آزمون فیزیکی Android-to-Windows و upgrade در این تأیید ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 9,
+        "attempt_count": 10,
         "failed_attempt_count": 6,
-        "last_attempt_id": "UPD-S1-003-20261108065950",
-        "last_attempt_result": "failed",
+        "last_attempt_id": "UPD-S1-003-20261108073419",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
@@ -1039,7 +1042,8 @@
           "10303ad6faddd7d4a50096d702d0e9f4a10e2b7d",
           "b881d980419be1998e32eeb6a55d0d13d5a4cc3e",
           "40d9128be6d3bd0df3531d44b893946f24e82961",
-          "b8c664315ba3071080e91190ba79eef7ae58caa7"
+          "b8c664315ba3071080e91190ba79eef7ae58caa7",
+          "d027e72f3968ef7c8c826f889042eb67a8533fa4"
         ],
         "tests_passed": [
           "Rendezvous container build and smoke",
@@ -1065,7 +1069,8 @@
           "Windows WPF build and installer — run 42456934059",
           "HostLifecycle unit/integration and coverage — run 42456934059",
           "Android ktlint — run 42456934059",
-          "Android debug/release APK and merged-manifest permissions — run 42456934059"
+          "Android debug/release APK and merged-manifest permissions — run 42456934059",
+          "V3.1.36 exact-SHA quality PASS (42457409001), Product Build PASS (42457409040; Android JVM/Keystore instrumentation, Windows WPF/installer and HostLifecycle), Rendezvous PASS (42457409058)."
         ],
         "tests_failed": [
           "Step Three quality gate",
@@ -1079,27 +1084,12 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
-          "triggering_contracts": [
-            "FirstReleaseInferenceLimits",
-            "DistributedRequest",
-            "production host selection cardinality",
-            "manual retry and cancellation UI"
-          ],
-          "affected_by_contract_changes": [
-            "Android domain tests",
-            "Android ViewModel tests",
-            "Python source-contract guards",
-            "Android ktlint/build"
-          ],
+          "state": "not_required",
+          "triggering_contracts": [],
+          "affected_by_contract_changes": [],
           "review_evidence": [
             "update/Step three/UPD-S1-003/evidence/decision-matrix.md",
-            "update/Step three/UPD-S1-003/evidence/ci-baseline.md",
-            "update/Step three/UPD-S1-003/evidence/ci-3.1.31.md",
-            "update/Step three/UPD-S1-003/evidence/ci-3.1.32.md",
-            "update/Step three/UPD-S1-003/evidence/ci-3.1.33.md",
-            "update/Step three/UPD-S1-003/evidence/ci-3.1.34.md",
-            "update/Step three/UPD-S1-003/evidence/ci-3.1.34.md"
+            "update/Step three/UPD-S1-003/evidence/ci-3.1.36.md"
           ]
         }
       },
@@ -1651,6 +1641,58 @@
           "device_and_host_details_redacted": "CI runner only. Windows is a CI runner, not a physical customer host with a loaded model; no real Android handset-to-Windows local inference occurred. No in-place upgrade was run.",
           "model_revision_and_sha256": "Not applicable; no real model inference was run.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable."
+        },
+        {
+          "attempt_id": "UPD-S1-003-20261108073419",
+          "started_at": "2026-11-08T07:34:19.650Z",
+          "ended_at": "2026-11-08T07:34:19.650Z",
+          "result": "succeeded",
+          "summary": "The first-release policy and all four acceptance criteria were verified. One selected host is active in each round; at most three sequential attempts over distinct hosts are allowed and retry is explicit/manual. requestId and absolute deadline are preserved, attemptId/roundId are refreshed, cancellation is terminal, and late/duplicate/mismatched responses are rejected. The decision matrix explicitly resolves the 23 impacted legacy task IDs while generic multi-host compatibility remains separate. Exact V3.1.36 quality, Product Build (including Android JVM and Keystore instrumentation), and Rendezvous CI all passed.",
+          "changed_files": [
+            "docs/decisions/ADR-0022-single-host-sequential-retry.md",
+            "update/Step three/UPD-S1-003/evidence/decision-matrix.md",
+            "update/Step three/UPD-S1-003/execution-report.md",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "update/Step three/UPD-S1-003/evidence/ci-3.1.36.md"
+          ],
+          "commit_sha": "d027e72f3968ef7c8c826f889042eb67a8533fa4",
+          "tests": [
+            {
+              "name": "Quality gate",
+              "command": ".github/workflows/quality.yml on exact V3.1.36 SHA",
+              "result": "passed",
+              "run_id": 42457409001,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42457409001"
+            },
+            {
+              "name": "Android/Windows Product Build and HostLifecycle",
+              "command": ".github/workflows/product-build.yml on exact V3.1.36 SHA",
+              "result": "passed",
+              "run_id": 42457409040,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42457409040"
+            },
+            {
+              "name": "Rendezvous container",
+              "command": ".github/workflows/rendezvous-container.yml on exact V3.1.36 SHA",
+              "result": "passed",
+              "run_id": 42457409058,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42457409058"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "First-release policy is one active host per round and three sequential attempts over different hosts; generic multi-host compatibility is preserved separately.",
+            "Exact-commit Android request runtime, correlation, timeout/cancel, Windows admission and CI test matrix are green."
+          ],
+          "follow_up": "Continue UPD-S1-005 and later full product E2E/install acceptance under UPD-S1-020/021.",
+          "device_and_host_details_redacted": "CI runners only. This task's contract/decision acceptance does not claim physical Android-to-Windows testing.",
+          "model_revision_and_sha256": "Not applicable.",
+          "pre_upgrade_post_upgrade_snapshot": "No installation or in-place upgrade was part of this task."
         }
       ]
     },
@@ -1822,11 +1864,11 @@
       "evidence": [
         "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
       ],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0049, T0050, T0051, T0052, T0053, T0054, T0055, T0056, T0098, T0099, T0100, T0101, T0102, T0103, T0104, T0105, T0106, T0107, T0196. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. حدهای RAM و فضای دیسکِ قابل اندازه‌گیری به تنظیمات پایدار منتقل شدند. CPU/GPU/VRAM/idle/AC به‌علت نبود سنجش و enforce معتبر، محدودیت قابل‌تنظیم معرفی نشده‌اند. CI کد جدید pending است.",
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0049, T0050, T0051, T0052, T0053, T0054, T0055, T0056, T0098, T0099, T0100, T0101, T0102, T0103, T0104, T0105, T0106, T0107, T0196. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. حدهای RAM و فضای دیسکِ قابل اندازه‌گیری به تنظیمات پایدار منتقل شدند. CPU/GPU/VRAM/idle/AC به‌علت نبود سنجش و enforce معتبر، محدودیت قابل‌تنظیم معرفی نشده‌اند. CI کد جدید pending است. CI دقیق V 3.1.37: کیفیت 467/468 تست Python موفق و یک assertion قدیمی شکست؛ HostLifecycle و real-inference نیز پیش از اجرای واقعی inference به‌خاطر انتظار schemaVersion=1 متوقف شدند. Rendezvous موفق بود. دو assertion در commit بعدی اصلاح می‌شوند.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-005-20261108073039",
+        "last_attempt_id": "UPD-S1-005-20261108073419",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Host.Infrastructure/LocalHostSettingsStore.cs",
@@ -1837,26 +1879,34 @@
           "tests/test_decision_traceability.py",
           "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md",
           "update/Step three/UPD-S1-005/execution-report.md",
-          "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
+          "update/Step three/UPD-S1-005/evidence/resource-policy-review.md",
+          "tests/test_inference_backend_abstraction.py",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "update/Step two/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "b2992d2764ca2aac7a61c56bb87d6050a52a1a9c"
+        ],
         "tests_passed": [
           "V 3.1.36 Windows build/installer and HostLifecycle tests passed before this change; baseline only."
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.1.37 quality run 42459097705: one stale Save-constructor source-contract assertion; 467 other Python tests passed.",
+          "V 3.1.37 HostLifecycle job in product run 42459097749: stale schemaVersion==1 assertion at Program.cs:1132.",
+          "V 3.1.37 real-inference run 42459097704: pinned artifacts verified but HostLifecycle stopped before inference due same stale schema-version assertion."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "required",
           "triggering_contracts": [
-            "LocalHostSettings persisted schema",
-            "WPF resource-threshold UI",
-            "Host readiness and peer admission"
+            "settings schema v2",
+            "WPF save-with preservation"
           ],
           "affected_by_contract_changes": [
-            "Windows settings load/save",
-            "HostLifecycle persistence tests",
-            "Python source contracts"
+            "HostLifecycle test harness",
+            "Python WPF source contract",
+            "real-inference acceptance harness"
           ],
           "review_evidence": [
             "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
@@ -1881,7 +1931,7 @@
             "update/Step three/UPD-S1-005/execution-report.md",
             "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "b2992d2764ca2aac7a61c56bb87d6050a52a1a9c",
           "tests": [
             {
               "name": "V 3.1.36 Windows build and installer baseline",
@@ -1910,19 +1960,95 @@
               "command": "python -m unittest discover -s tests -v",
               "result": "pending",
               "note": "Must pass on exact commit."
+            },
+            {
+              "name": "Quality gate on V 3.1.37",
+              "command": ".github/workflows/quality.yml",
+              "result": "failed",
+              "run_id": 42459097705,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42459097705",
+              "summary": "One stale Python WPF test expected Save(new LocalHostSettings(...)); current code preserves the expanded record via Save(_settings with ...). 467 other tests passed."
+            },
+            {
+              "name": "Host lifecycle acceptance on V 3.1.37",
+              "command": "HostLifecycle.Tests clean checkout runner",
+              "result": "failed",
+              "run_id": 42459097749,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42459097749",
+              "summary": "All preceding host assertions passed; the harness stopped at Program.cs line 1132 because it still expected schema version 1 rather than current version 2."
+            },
+            {
+              "name": "Real local inference workflow on V 3.1.37",
+              "command": ".github/workflows/real-inference.yml",
+              "result": "failed",
+              "run_id": 42459097704,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42459097704",
+              "summary": "Pinned llama.cpp b11443 archive SHA-256 verified and pinned SmolLM2 GGUF revision downloaded (105,454,144 bytes; SHA-256 8030f04528538d47bda434f6f0bdf3952c40a58123e4d5e755332f23731a8684). The HostLifecycle harness then stopped at the same schema-version-1 assertion before launching llama-server; no inference response was produced."
+            },
+            {
+              "name": "Rendezvous container on V 3.1.37",
+              "command": ".github/workflows/rendezvous-container.yml",
+              "result": "passed",
+              "run_id": 42459097708,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42459097708",
+              "summary": "Container build and service smoke passed."
             }
           ],
-          "failure_details": null,
+          "failure_details": "V 3.1.37 exposed two stale assertions after settings schema moved from v1 to v2: tests/test_inference_backend_abstraction.py expected the prior Save(new LocalHostSettings(...)) constructor, and tests/HostLifecycle.Tests/Program.cs expected schemaVersion 1. The real-inference workflow had already verified the pinned llama.cpp CPU archive and GGUF model (model SHA-256 8030f04528538d47bda434f6f0bdf3952c40a58123e4d5e755332f23731a8684) but the harness failed before starting inference.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
             "LocalHostSettings schema v2 adds owner-configured RAM and minimum free system-drive thresholds; schema v1 loads with 4/1 GiB defaults and upgrades on next save.",
             "WPF restores/persists both thresholds and revalidates before local inference and peer hosting."
           ],
-          "follow_up": "Validate exact-commit Python quality, graph guards, Windows build/installer and HostLifecycle persistence tests. Task remains in_progress until all pass.",
+          "follow_up": "V 3.1.38 updates both stale contract assertions, checks persistence of the schema-v2 default RAM/disk values, and reruns Quality, Product Build, Real local inference and Rendezvous.",
           "device_and_host_details_redacted": "No physical Windows host or Android handset was accessed.",
           "model_revision_and_sha256": "Not applicable.",
           "pre_upgrade_post_upgrade_snapshot": "No product in-place upgrade; settings migration test awaits CI."
+        },
+        {
+          "attempt_id": "UPD-S1-005-20261108073419",
+          "started_at": "2026-11-08T07:34:19.650Z",
+          "ended_at": "2026-11-08T07:34:19.650Z",
+          "result": "partial",
+          "summary": "Aligned the Python WPF connect test with settings-record preservation through Save(_settings with ...), and aligned HostLifecycle settings JSON assertions with the current schema version while checking persisted default RAM/disk thresholds. Exact CI for these corrections is pending.",
+          "changed_files": [
+            "tests/test_inference_backend_abstraction.py",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-005/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Quality gate corrections",
+              "command": ".github/workflows/quality.yml",
+              "result": "pending",
+              "note": "Must pass on exact V3.1.38 commit."
+            },
+            {
+              "name": "HostLifecycle suite including settings schema",
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "pending",
+              "note": "Must pass on exact V3.1.38 commit."
+            },
+            {
+              "name": "Real llama.cpp process and GGUF response",
+              "command": ".github/workflows/real-inference.yml",
+              "result": "pending",
+              "note": "Must reach a real generated response and verify model/server hashes; hosted Windows runner is not the separate customer Android/Windows product E2E."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "HostLifecycle and Python tests now describe schema-v2 persistence and the validated WPF Save-with expression without weakening loopback validation."
+          ],
+          "follow_up": "Inspect exact V3.1.38 jobs and logs; do not mark UPD-S1-005 done until all four acceptance criteria and required tests are verified.",
+          "device_and_host_details_redacted": "Hosted GitHub Windows runner only; no physical Android handset or external Windows host was connected.",
+          "model_revision_and_sha256": "Pending exact V3.1.38 real-inference run.",
+          "pre_upgrade_post_upgrade_snapshot": "Product upgrade not tested; only local settings schema migration is covered."
         }
       ]
     },

@@ -1129,7 +1129,9 @@ try
     Assert(reloadedSettings == savedSettings, "Versioned settings must survive save/load round-trip.");
     using (var settingsJson = JsonDocument.Parse(File.ReadAllText(settingsPath)))
     {
-        Assert(settingsJson.RootElement.GetProperty("schemaVersion").GetInt32() == 1, "Settings file must contain explicit schema version 1.");
+        Assert(settingsJson.RootElement.GetProperty("schemaVersion").GetInt32() == LocalHostSettings.CurrentSchemaVersion, "Settings file must contain the current explicit schema version.");
+        Assert(settingsJson.RootElement.GetProperty("requiredModelMemoryGiB").GetDouble() == 4d, "Default model RAM requirement must be persisted.");
+        Assert(settingsJson.RootElement.GetProperty("minimumFreeDiskGiB").GetDouble() == 1d, "Default free-disk requirement must be persisted.");
     }
 
     var remoteRejected = false;
