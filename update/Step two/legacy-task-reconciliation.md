@@ -115,3 +115,11 @@
 - تصمیم T0199 برابر `re_review_required` به‌دلیل توسعهٔ آزمون‌ها در UPD-S1-019؛ تصمیم T0214 برابر `re_review_required` به‌دلیل بسته‌بندی، مستندات و in-place upgrade در UPD-S1-021 است. وضعیت پایهٔ هر دو `done` حفظ شد.
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0199.md` و `update/Step three/UPD-S1-008/evidence/review-T0214.md`.
 - نتیجه: **8/168 reviewed (4.76%)، 160 pending (95.24%)**؛ UPD-S1-008 همچنان `in_progress`.
+
+
+## تأیید پس از commit — V 3.1.68
+
+- شواهد T0199 و T0214، reconciliation و تاریخچهٔ اجرا روی شاخهٔ آنلاین `main` در commit `851753e3d1e668714fbc020a8d6437ecd6afae0a` با پیام `V 3.1.68` ثبت شدند.
+- Quality gate دقیق همین commit: [run 42484508893](https://github.com/artinrahimii/project/actions/runs/42484508893) — **success**؛ اعتبارسنجی گراف به‌روزرسانی، گراف قدیمی، مسیرهای شواهد و آزمون‌های Python موفق شدند.
+- Product build دقیق همین commit: [run 42484508866](https://github.com/artinrahimii/project/actions/runs/42484508866) در آخرین بررسی `in_progress` بود؛ هیچ نتیجهٔ نهایی برای آن ادعا نمی‌شود.
+- reconciliation: **8/168 reviewed** و **160 pending**؛ تصمیم‌های T0199/T0214 برای بازبینی مجدد پس از UPD-S1-019/021 حفظ شده‌اند.

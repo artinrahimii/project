@@ -160,3 +160,12 @@
 - هیچ وضعیت قدیمی یا وابستگی گراف اولیه تغییر نکرد. آزمون فیزیکی Android-to-Windows، مدل واقعی روی میزبان Windows، clean install و in-place upgrade در این تلاش اجرا نشده‌اند.
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0199.md` و `update/Step three/UPD-S1-008/evidence/review-T0214.md`.
 - reconciliation: **8/168 reviewed**، **160 pending**، **4.76%**؛ UPD-S1-008 همچنان `in_progress`.
+
+
+## تأیید پس از ثبت شواهد — V 3.1.68
+
+- commit آنلاین: `851753e3d1e668714fbc020a8d6437ecd6afae0a` — `V 3.1.68`، شاخهٔ `main`.
+- Quality CI دقیق commit: [42484508893](https://github.com/artinrahimii/project/actions/runs/42484508893) — **success**.
+- شناسهٔ commit واقعی در `execution_history.commit_sha` تلاش نهم ثبت شد.
+- Product build دقیق V3.1.68، run [42484508866](https://github.com/artinrahimii/project/actions/runs/42484508866)، هنگام آخرین مشاهده هنوز `in_progress` بود.
+- وضعیت UPD-S1-008 همچنان `in_progress` است: 8/168 legacy reviews finalized, 160 pending.
