@@ -389,3 +389,12 @@
 - Product CI دقیق source بررسی‌شده [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) و Quality CI [42510357597](https://github.com/artinrahimii/project/actions/runs/42510357597) موفق شدند.
 - reconciliation: **114/168 reviewed (67.86%)** و **54 pending (32.14%)**؛ `UPD-S1-008` همچنان `in_progress` است. گراف اولیه و markerهای ثابت آن تا تکمیل همهٔ 168 مورد دست‌نخورده باقی ماندند.
 - آزمون فیزیکی Android-to-Windows، پاسخ live مدل محلی، ذخیرهٔ پاسخ در همان Room، clean install واقعی و in-place upgrade اجرا نشده‌اند.
+
+
+## بازبینی محتوایی T0171 تا T0175 روی V 3.1.92
+
+- T0171 تا T0175 از روی کد Android/Windows، آزمون‌های واحد/قراردادی و مصرف‌کنندگان مستقیم بررسی شدند. شواهد مستقل: `update/Step three/UPD-S1-008/evidence/review-T0171.md` تا `review-T0175.md`.
+- وضعیت پایهٔ هر پنج وظیفه `done` حفظ شد؛ تصمیم هر پنج `re_review_required` و review_status برابر `reviewed` ثبت شد.
+- انتخاب مجدد میزبان پیشین به‌طور پیش‌فرض ممنوع، correlation و deadline پاسخ کنترل‌شده، پاسخ تکراری در حافظه deduplicate، لغو با CancelRequest هم‌بسته و retry فقط دستی و محدود است. idempotency پایدار پاسخ در Room و آزمون فیزیکی E2E هنوز اثبات نشده است.
+- Product CI دقیق source [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) و Quality CI [42510357597](https://github.com/artinrahimii/project/actions/runs/42510357597) موفق شدند.
+- reconciliation جاری: **119/168 reviewed (70.83%)** و **49 pending (29.17%)**؛ UPD-S1-008 همچنان `in_progress` است. گراف اولیه و markerهای pending آن عمداً تغییر نکردند.
