@@ -885,3 +885,16 @@
 - وضعیت پایهٔ هر پنج گره `done` حفظ شد و تصمیم هر پنج `re_review_required` است. T0194/T0195 در این دستهٔ affected IDs نیستند و پوشه یا رکوردی برایشان ایجاد نشد.
 - reconciliation پیش از batch 134/168 reviewed و 34 pending؛ پس از batch باید 139/168 reviewed و 29 pending باشد.
 - آزمون با میزبان و دستگاه واقعی، live model inference، clean install و in-place upgrade در این batch انجام نشد.
+
+
+## بازبینی محتوایی T0198، T0200، T0201، T0202 و T0203 — 2026-11-08T19:31:52.816Z
+
+- مبنای main: `473c5964e49e82a17c963304cc82fbd4f6e23a70` (`V 3.1.102`). آزمون‌های تاریخی در source `a074815979aff371650c5101c514989f42180968` (`V 3.0.922`) اجرا شده‌اند؛ source فعلی با آن snapshot یکسان نیست.
+- T0198: selector/timer/dispatcher/request tests اکنون شامل سه host compatibility، first-release تک‌میزبان، budget، timeout/deadline و idempotency هستند؛ پاسخ collector صفر/یک/سه را پوشش می‌دهد و test صریح دو پاسخ همچنان پیدا نشد.
+- T0200: source فعلی تست authenticated transport و native .NET peer fixture را به‌شکل one-host نگه می‌دارد؛ تست سه-processهای تاریخی در فایل فعلی transport وجود ندارد. fixture loopback و پاسخ تستی است، نه مدل واقعی یا Windows نصب‌شده.
+- T0201: اجرای واقعی llama.cpp + GGUF روی Windows GitHub runner موفق بود. llama.cpp b11443 archive SHA `98303a5a688a606d4a32522e47ed7cafa0ddff04d3be56ab927e25d3b1ea45c6`؛ executable SHA `4cdaae426a798b49717e3ce9b8a7756a16355c83c812d9d59bc99e26ae6d3968`؛ GGUF revision `a6b7826ed969c3926a98359e39912af137b464cb`، size 105454144 bytes، SHA `8030f04528538d47bda434f6f0bdf3952c40a58123e4d5e755332f23731a8684`. Run [41886745964](https://github.com/artinrahimii/project/actions/runs/41886745964) موفق بود.
+- T0202: وضعیت legacy `deferred_final` حفظ شد. workflow دستی LAN هنوز اجرا نشده؛ runner ویندوز `whitep-lan` و Android فیزیکی روی LAN شرط رفع مانع است.
+- T0203: اجرای تاریخی سه .NET process روی loopback و یک runner، با response text یکسان، correlation مستقل host/attempt را آزمود؛ اما test multi-process در source فعلی وجود ندارد و production first-release یک میزبان در هر round dispatch می‌کند. پذیرش current multi-host انجام‌شده محسوب نمی‌شود.
+- Product Build current HEAD در زمان بررسی هنوز `in_progress` بود؛ run تاریخی 41886746018 را فقط به‌عنوان شاهد source قدیمی ثبت می‌کنیم. اجرای محلی این environment انجام نشد.
+- وضعیت پایهٔ T0198/T0200/T0201/T0203 `done` و T0202 برابر `deferred_final` بدون تغییر حفظ شد؛ تصمیم هر پنج `re_review_required` و review_status برابر `reviewed` ثبت می‌شود.
+- شواهد مستقل در `review-T0198.md`، `review-T0200.md`، `review-T0201.md`، `review-T0202.md` و `review-T0203.md` ذخیره شدند. Reconciliation از 139/168 به 144/168 reviewed و از 29 به 24 pending خواهد رسید.
