@@ -857,3 +857,17 @@
 - شواهد مستقل: `review-T0181.md` تا `review-T0185.md` در همین پوشهٔ evidence.
 - reconciliation پیش از این batch: 124/168 reviewed و 44 pending؛ پس از ثبت: 129/168 reviewed و 39 pending. UPD-S1-008 همچنان `in_progress` است.
 - در این batch هیچ کد محصول یا وضعیت گراف اولیه تغییر نکرد؛ آزمون نصب/ارتقای واقعی Windows و Android انجام نشد.
+
+
+## بازبینی محتوایی T0186 تا T0190 — 2026-11-08T19:21:07.886Z
+
+- مبنای main: `fc006d4c7f01de25c27346fc85670d1dc503e231` (`V 3.1.98`). source محصول بررسی‌شده `db2bfaa62c7816e9f06ed4e9e1a8d1d91cb822fd` (`V 3.1.88`) است؛ commitهای بعدی فقط reconciliation، گزارش و گراف را تغییر دادند.
+- T0186: رضایت صریح Android پیش از ذخیره trust و هشدار مستقل Windows پیش از ایجاد peer-host lifecycle بررسی شد.
+- T0187: آزمون canary اسکن محتوای حساس در فایل‌های متعلق به برنامه، logها و دیتابیس را پوشش می‌دهد؛ OS logs، crash dump، backup و ابزارهای ثالث خارج دامنه‌اند.
+- T0188: threat model تفصیلی و محدودیت anonymity/PeerId/IP/traffic ثبت شده و AC-P2P-01/AC-PRIV-01 صریحاً NOT RUN هستند.
+- T0189: خطاهای پروتکل typed و correlation-bound هستند؛ parser و UI Android متن غیرقابل‌اعتماد host را به پیام پایدار تبدیل نمی‌کنند.
+- T0190: Room status و presentationهای structured وجود دارند، اما صفحهٔ conversation هنوز می‌گوید درخواست به host ارسال نمی‌شود؛ Windows network presenter نیز ادعای عدم پیاده‌سازی P2P دارد، با وجود lifecycle میزبان. این تناقض‌ها و عدم اتصال گفت‌وگوی معمولی به inference ثبت شد.
+- Product Build دقیق source baseline [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) موفق بود؛ Quality Gate روی main جاری [42514411385](https://github.com/artinrahimii/project/actions/runs/42514411385) نیز موفق شد. Product Build جدید روی main در زمان بررسی هنوز in_progress بود؛ بنابراین آن را موفق اعلام نمی‌کنیم.
+- وضعیت پایهٔ هر پنج وظیفه `done` حفظ شد؛ تصمیم هر پنج `re_review_required` است و شواهد مستقل در `review-T0186.md` تا `review-T0190.md` ثبت می‌شود.
+- reconciliation پیش از این batch 129/168 reviewed و 39 pending؛ پس از ثبت 134/168 reviewed و 34 pending خواهد بود.
+- آزمون Android-to-Windows روی دستگاه واقعی، پاسخ مدل محلی، ذخیره در همان گفت‌وگو، clean install و in-place upgrade در این batch اجرا نشدند.
