@@ -709,3 +709,30 @@
   - update/Step three/UPD-S1-008/evidence/review-T0124.md
   - update/Step three/UPD-S1-008/evidence/review-T0125.md
 - نتیجهٔ reconciliation: **80/168 reviewed (47.62%)** و **88 pending (52.38%)**؛ UPD-S1-008 همچنان in_progress.
+
+
+## بازبینی محتوایی T0126 تا T0135 — 2026-11-08T18:21:15.285Z
+
+- مبنای کد: 7082162e902e1c7e32718e0af687f8f62b7d92dc — V 3.1.85، شاخهٔ آنلاین main.
+- T0126: feedback از candidateهای واقعاً probeشده تولید می‌شود؛ zero host مانع dispatch است. سیاست first-release یک host در هر round است، پس آزمون legacy سه‌میزبانه فقط compatibility است و باید با UPD-S1-003 هماهنگ شود.
+- T0127: آزمون‌های Android انقضای lease، duplicate peer، stale/untrusted/busy status و no-host را پوشش می‌دهند؛ این‌ها آزمون مستقل شبکهٔ عمومی نیستند.
+- T0128: وضعیت deferred_final حفظ شد؛ پذیرش دو رایانه/node مستقل و public HTTPS Rendezvous اجرا نشده و loopback/LAN/CI جایگزین آن نیست.
+- T0129: unchanged — کتابخانهٔ maintained libp2p ادامه دارد و الگوریتم اختصاصی رمزنگاری وجود ندارد.
+- T0130/T0131: Windows DPAPI CurrentUser و Android Keystore برای هویت و trust؛ explicit PeerId confirmation، persistence و fail-closed tests بررسی شدند.
+- T0132/T0133: secure channel و session-key establishment به library libp2p سپرده شده؛ transport از plaintext downgrade و pinned-PeerId mismatch جلوگیری می‌کند.
+- T0134: malformed identity، unknown/untrusted peer، mismatch و plaintext-only رد می‌شوند؛ تمام نسخه‌های handshake داخل library به‌طور مستقل ممیزی نشده‌اند.
+- T0135: شناسهٔ request از user/device/conversation پایدار مستقل است؛ generator 128-bit، finite sample، descriptorهای بدون stable IDs و request/attempt/round correlation بررسی شدند.
+- V3.1.85 Quality [42509179813] و Rendezvous [42509179886] موفق؛ HostLifecycle در Product [42509179878] موفق؛ Android و Windows jobs در snapshot هنوز در حال اجرا بودند.
+- HostLifecycle یک آزمون real-model را SKIP کرد؛ هیچ inference واقعی با مدل محلی ادعا نمی‌شود.
+- شواهد مستقل:
+- update/Step three/UPD-S1-008/evidence/review-T0126.md
+- update/Step three/UPD-S1-008/evidence/review-T0127.md
+- update/Step three/UPD-S1-008/evidence/review-T0128.md
+- update/Step three/UPD-S1-008/evidence/review-T0129.md
+- update/Step three/UPD-S1-008/evidence/review-T0130.md
+- update/Step three/UPD-S1-008/evidence/review-T0131.md
+- update/Step three/UPD-S1-008/evidence/review-T0132.md
+- update/Step three/UPD-S1-008/evidence/review-T0133.md
+- update/Step three/UPD-S1-008/evidence/review-T0134.md
+- update/Step three/UPD-S1-008/evidence/review-T0135.md
+- نتیجهٔ reconciliation: **90/168 reviewed (53.57%)** و **78 pending (46.43%)**؛ UPD-S1-008 همچنان in_progress و T0128 همچنان deferred_final است.

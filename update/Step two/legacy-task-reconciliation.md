@@ -49,7 +49,7 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**80/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0109 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 98 رکورد همچنان `pending` هستند.
+**90/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0109 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 98 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
 هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 48 رکورد؛ شناسه‌های دقیق در JSON مرجع و فیلد review_status=reviewed ثبت شده‌اند.، و `re_review_required/pending` برای 114 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
@@ -315,3 +315,22 @@
 - update/Step three/UPD-S1-008/evidence/review-T0123.md
 - update/Step three/UPD-S1-008/evidence/review-T0124.md
 - update/Step three/UPD-S1-008/evidence/review-T0125.md
+
+
+## بازبینی T0126 تا T0135 روی V 3.1.85
+
+- commit کد بررسی‌شده: 7082162e902e1c7e32718e0af687f8f62b7d92dc.
+- ده شناسه جداگانه در برابر کد، تست، معیار legacy و edgeهای مستقیم بررسی شدند؛ وضعیت پایه حفظ شد.
+- تصمیم unchanged فقط برای T0129 ثبت شد. T0128 deferred_final باقی ماند و آزمون شبکهٔ عمومی/دو گرهٔ مستقل اجرا نشده است.
+- V3.1.85 Quality و Rendezvous موفق؛ HostLifecycle موفق و Android/Windows product jobs در snapshot هنوز در حال اجرا بودند.
+- reconciliation: **90/168 reviewed (53.57%)**، **78 pending (46.43%)**؛ UPD-S1-008 in_progress.
+- update/Step three/UPD-S1-008/evidence/review-T0126.md
+- update/Step three/UPD-S1-008/evidence/review-T0127.md
+- update/Step three/UPD-S1-008/evidence/review-T0128.md
+- update/Step three/UPD-S1-008/evidence/review-T0129.md
+- update/Step three/UPD-S1-008/evidence/review-T0130.md
+- update/Step three/UPD-S1-008/evidence/review-T0131.md
+- update/Step three/UPD-S1-008/evidence/review-T0132.md
+- update/Step three/UPD-S1-008/evidence/review-T0133.md
+- update/Step three/UPD-S1-008/evidence/review-T0134.md
+- update/Step three/UPD-S1-008/evidence/review-T0135.md
