@@ -3306,9 +3306,19 @@
         "UPD-S1-021"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0209.md",
+        "tools/build_windows_installer.ps1",
+        ".github/workflows/product-build.yml",
+        "tests/test_generate_dependency_licenses.py",
+        "tests/test_generate_model_license_notice.py",
+        "tests/test_reproducible_build_contract.py",
+        "https://github.com/artinrahimii/project/actions/runs/42516118989",
+        "https://github.com/artinrahimii/project/actions/runs/42516118989/job/128839399180",
+        "https://github.com/artinrahimii/project/actions/artifacts/13631034913"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3320,9 +3330,18 @@
         "UPD-S1-024"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0210.md",
+        "tools/build_windows_installer.ps1",
+        ".github/workflows/product-build.yml",
+        "tests/test_wpf_entrypoint.py",
+        "src/Host.Windows/App.xaml.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42516118989",
+        "https://github.com/artinrahimii/project/actions/runs/42516118989/job/128839399180",
+        "https://github.com/artinrahimii/project/actions/artifacts/13631034913"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3334,9 +3353,20 @@
         "UPD-S1-024"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0211.md",
+        ".github/workflows/product-build.yml",
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/AndroidManifest.xml",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "tests/test_reproducible_build_contract.py",
+        "src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidKeyStorePersistenceTest.kt",
+        "https://github.com/artinrahimii/project/actions/runs/42516118989",
+        "https://github.com/artinrahimii/project/actions/runs/42516118989/job/128839399364",
+        "https://github.com/artinrahimii/project/actions/artifacts/13631911820"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3347,9 +3377,18 @@
         "UPD-S1-021"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0212.md",
+        ".github/workflows/android-release.yml",
+        "tests/test_android_release_signing_contract.py",
+        "docs/android-release-signing.md",
+        "step three/T0212/evidence/verification.md",
+        "https://github.com/artinrahimii/project/actions/runs/42114568183",
+        "https://github.com/artinrahimii/project/actions/runs/42114568183/job/127550657183",
+        "https://github.com/artinrahimii/project/actions/artifacts/13455966209"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3360,9 +3399,21 @@
         "UPD-S1-021"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0213.md",
+        ".github/workflows/release-assets.yml",
+        "tests/test_release_assets_contract.py",
+        "docs/release-assets.md",
+        "step three/T0213/evidence/verification.md",
+        "step three/T0213/evidence/SHA256SUMS-final.txt",
+        "https://github.com/artinrahimii/project/actions/runs/42253832983",
+        "https://github.com/artinrahimii/project/actions/artifacts/13521278559",
+        "https://github.com/artinrahimii/project/releases/436740935",
+        "https://github.com/artinrahimii/project/actions/runs/42255409787",
+        "https://github.com/artinrahimii/project/actions/runs/42516118975"
+      ],
       "review_commit_sha": null
     },
     {

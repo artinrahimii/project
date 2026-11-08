@@ -3267,7 +3267,12 @@
         "update/Step three/UPD-S1-008/evidence/review-T0205.md",
         "update/Step three/UPD-S1-008/evidence/review-T0206.md",
         "update/Step three/UPD-S1-008/evidence/review-T0207.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0208.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0208.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0209.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0210.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0211.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0212.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0213.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
@@ -3434,13 +3439,23 @@
         "update/Step three/UPD-S1-008/evidence/review-T0205.md",
         "update/Step three/UPD-S1-008/evidence/review-T0206.md",
         "update/Step three/UPD-S1-008/evidence/review-T0207.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0208.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0208.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0209.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0210.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0211.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0212.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0213.md",
+        "https://github.com/artinrahimii/project/actions/runs/42516118975",
+        "https://github.com/artinrahimii/project/actions/runs/42516118989",
+        "https://github.com/artinrahimii/project/actions/runs/42114568183",
+        "https://github.com/artinrahimii/project/actions/runs/42253832983",
+        "https://github.com/artinrahimii/project/releases/436740935"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 36,
+        "attempt_count": 37,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261108193901",
+        "last_attempt_id": "UPD-S1-008-20261108201805",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3603,7 +3618,12 @@
           "update/Step three/UPD-S1-008/evidence/review-T0205.md",
           "update/Step three/UPD-S1-008/evidence/review-T0206.md",
           "update/Step three/UPD-S1-008/evidence/review-T0207.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0208.md"
+          "update/Step three/UPD-S1-008/evidence/review-T0208.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0209.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0210.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0211.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0212.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0213.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
@@ -3749,7 +3769,12 @@
           "T0204 historical second-round loopback interop test passed; current source regression/policy difference recorded.",
           "T0205 HostLifecycle remote cancellation test passed; llama.cpp internal compute cancellation limitation retained.",
           "T0206 metadata-only rendezvous contract passed and production source hashes unchanged since baseline.",
-          "T0207/T0208 current-head CI steps partially completed; no full run success claimed."
+          "T0207/T0208 current-head CI steps partially completed; no full run success claimed.",
+          "T0209/T0210 current-HEAD Windows Product Build: real installer compiled, 83-package and model-license inventory generated, isolated install, publisher registry, WPF smoke launch and uninstall passed; artifact 13631034913.",
+          "T0211 current-HEAD Android Product Build: clean APK, JVM and Keystore instrumentation, emulator APK install, launcher resolution, live PID and resumed MainActivity passed; one non-loopback LAN integration test explicitly skipped.",
+          "T0212 production Android signing: exact workflow Blob SHA is unchanged at current HEAD; run 42114568183 completed all 15 steps, verified the pinned certificate and uploaded signed APK artifact 13455966209.",
+          "T0213 release bundle: artifact 13521278559 SHA-256 manifest entries independently verified; Draft Release 436740935 has four uploaded assets; a successful post-fix tag run remains required.",
+          "Exact current-HEAD Quality Gate 42516118975 passed 480 Python tests, compileall, Step Three graph guards (230 nodes/422 edges, 0 errors, 1 preserved warning) and Update graph guards (24 nodes/80 edges, 0 errors, 0 warnings)."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -6132,6 +6157,88 @@
           "contract_changes": [],
           "follow_up": "Continue with T0209 onward. Recheck current-head run 42515602200 before closing T0207/T0208. Keep T0204/T0205 under re-review for current sequential cancellation/failover policy and backend cancellation boundary. UPD-S1-008 remains in_progress.",
           "device_and_host_details_redacted": "Evidence is CI-based: loopback Android/.NET fixtures and Windows GitHub runner; no physical LAN, user Windows host installation, Android device E2E, normal conversation Room persistence or in-place upgrade was performed.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108201805",
+          "started_at": "2026-11-08T20:18:05.645Z",
+          "ended_at": "2026-11-08T20:18:05.645Z",
+          "result": "partial",
+          "summary": "Reviewed T0209-T0213 against current source, tests, current-head CI logs and release artifacts. Legacy baseline statuses remain done; no legacy status changed. All five reviews are marked reviewed with re_review_required because UPD-S1-021 (and for T0210/T0211 UPD-S1-024) still requires subsequent product revalidation. Reconciliation advanced from 149/168 to 154/168 reviewed; 14 pending remain. Physical Android-to-Windows acceptance and a post-fix tag release run are not claimed.",
+          "changed_files": [
+            "update/Step three/UPD-S1-008/evidence/review-T0209.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0210.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0211.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0212.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0213.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "T0209 Windows installer build/install/license acceptance",
+              "command": "Product Build run 42516118989; Windows job 128839399180; tools/build_windows_installer.ps1",
+              "result": "passed",
+              "run_id": 42516118989,
+              "job_id": 128839399180,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42516118989",
+              "summary": "Installer EXE 61,465,445 bytes generated; 83 package licenses and one model notice; isolated install, Publisher registry check, smoke launch, uninstall; artifact 13631034913 uploaded."
+            },
+            {
+              "name": "T0210 installed WPF application smoke",
+              "command": "Product Build run 42516118989; Windows job 128839399180; tests/test_wpf_entrypoint.py",
+              "result": "passed",
+              "run_id": 42516118989,
+              "job_id": 128839399180,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42516118989",
+              "summary": "Installed executable ran --smoke-test; MainWindow and required controls validated; clean shutdown and uninstall."
+            },
+            {
+              "name": "T0211 Android APK emulator install/launch",
+              "command": "Product Build run 42516118989; Android job 128839399364; connectedDebugAndroidTest and adb install/launch",
+              "result": "passed",
+              "run_id": 42516118989,
+              "job_id": 128839399364,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42516118989",
+              "summary": "Emulator instrumentation; one non-loopback LAN test skipped; APK installed, launcher resolved, PID 4319 and resumed MainActivity observed."
+            },
+            {
+              "name": "T0212 production signed Android APK",
+              "command": "Android signed release workflow run 42114568183; job 127550657183",
+              "result": "passed",
+              "run_id": 42114568183,
+              "job_id": 127550657183,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42114568183",
+              "summary": "All 15 steps succeeded; protected production signing, pinned certificate verification, signed APK artifact 13455966209 upload and keystore cleanup. Workflow Blob SHA matches current main."
+            },
+            {
+              "name": "T0213 SHA-256 release bundle and Draft assets",
+              "command": "Release assets run 42253832983; artifact 13521278559; release 436740935; Quality Gate 42255409787 and 42516118975",
+              "result": "passed",
+              "run_id": 42253832983,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42253832983",
+              "summary": "All three SHA-256 entries independently returned OK and Draft contains four uploaded assets. Historical final Draft lookup failed; post-fix contract tests passed but no tag workflow rerun after fix."
+            },
+            {
+              "name": "Exact current HEAD Quality Gate",
+              "command": "GitHub Actions run 42516118975",
+              "result": "passed",
+              "run_id": 42516118975,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42516118975",
+              "job_id": 128839399205,
+              "summary": "480 Python tests, compileall, 230-node/422-edge legacy graph guard and 24-node/80-edge update graph guard passed; one historical unmapped dependency warning preserved."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue with pending legacy IDs T0215,T0216,T0217,T0218,T0219,T0221,T0222,T0223,T0224,T0225,T0226,T0227,T0228,T0229. T0215 requires successful post-fix tag workflow execution. Review each remaining task against code/tests/acceptance and retain its legacy baseline status. Keep UPD-S1-008 in_progress until all 168 reviews are complete; physical E2E and in-place upgrade remain separate acceptance gates.",
+          "device_and_host_details_redacted": "CI-only evidence: Windows GitHub-hosted runner and Android Emulator API 36. No user-owned Android device, Windows host, physical LAN, real cross-device model inference, real Android Room response persistence or in-place upgrade was exercised.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -9554,7 +9661,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T19:39:01.091Z",
+    "as_of": "2026-11-08T20:18:05.645Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -9675,7 +9782,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T19:39:01.091Z",
+  "updated_at": "2026-11-08T20:18:05.645Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -9858,12 +9965,12 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "reviewed": 149,
-      "pending": 19
+      "reviewed": 154,
+      "pending": 14
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "19 affected legacy records remain pending. T0202 remains deferred_final until physical Android-to-Windows LAN acceptance. T0204/T0205/T0207/T0208 require revalidation against current source or completed current-head CI; UPD-S1-008 remains in_progress until every record has evidence and no pending reviews remain.",
+    "completion_blocker": "14 affected legacy records remain pending: T0215,T0216,T0217,T0218,T0219,T0221,T0222,T0223,T0224,T0225,T0226,T0227,T0228,T0229. T0215 needs successful post-fix release-assets tag execution; other remaining records require individual source/test/acceptance review. UPD-S1-008 remains in_progress until no required review is pending.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",

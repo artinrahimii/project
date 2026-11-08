@@ -910,3 +910,16 @@
 - T0208: artifactهای تاریخی شامل Android 223/224 passed و 1 skipped، و Windows HostLifecycle coverage 85.70% و 67 PASS/1 SKIP بود؛ current validator و workflow نیز بازبینی شدند. روی current run، HostLifecycle coverage artifact 111,852 bytes آپلود شده، اما Android coverage و سایر artifactها هنوز کامل نشده‌اند.
 - وضعیت پایهٔ T0204/T0205/T0207/T0208 `done` و T0206 `done` بدون تغییر حفظ شد؛ تصمیم‌ها به‌ترتیب `re_review_required`, `re_review_required`, `unchanged`, `re_review_required`, `re_review_required` هستند. هیچ status در گراف اولیه تغییر نکرد.
 - شواهد مستقل در `review-T0204.md` تا `review-T0208.md` قرار گرفتند. Reconciliation از 144/168 به 149/168 reviewed و از 24 به 19 pending تغییر می‌کند.
+
+
+## بازبینی محتوایی T0209 تا T0213 — 2026-11-08T20:18:05.645Z
+
+- مبنای بررسی: `a51627faafaa9b2c4c5299d81a465fa5ed61ffb6` (`V 3.1.106`)؛ شواهد current-head یا run تاریخی با source workflow یکسان و artifact قابل‌تأیید بررسی شدند.
+- T0209: installer واقعی روی Windows runner ساخته، نصب، smoke-launch و uninstall شد؛ 83 package در license inventory و یک model license notice ثبت شد. Artifact `13631034913` بارگذاری شد. هشدار padding metadata در PE ثبت شد، اما Publisher نصب‌شده به‌طور مستقل PASS بود.
+- T0210: executable نصب‌شده روی Windows clean runner با `--smoke-test` اجرا شد؛ MainWindow و کنترل‌های الزامی بررسی و خروج تمیز تأیید شد.
+- T0211: APK روی Android Emulator نصب و MainActivity اجرا شد؛ PID=4319 و topResumedActivity ثبت شد. یک آزمون non-loopback LAN عمداً SKIPPED بود؛ ارتباط فیزیکی Android↔Windows اثبات نشده است.
+- T0212: production signing در run `42114568183` روی `179efa9fe07c3ba007885e9e3198eba620092617` موفق بود؛ 15 مرحله، fingerprint verification، upload artifact و key cleanup موفق شدند. Blob workflow امضا با HEAD جاری یکسان است.
+- T0213: سه checksum مستقل در manifest تأیید و Draft Release `436740935` با چهار asset موجود است. run قدیمی در final Draft lookup شکست خورد؛ اصلاح بعدی Quality Gate را گذرانده، اما اجرای tag جدید پس از اصلاح هنوز انجام نشده است.
+- هر پنج رکورد: تصمیم `re_review_required`، review_status برابر `reviewed`، baseline `done` حفظ، status_changed=false. دلیل re-review وابستگی‌های تحویل UPD-S1-021 و هویت بصری UPD-S1-024 است.
+- شواهد مستقل در evidence پوشهٔ همین وظیفه درج شده‌اند. Reconciliation پس از این تلاش: 154/168 reviewed (91.67%) و 14/168 pending (8.33%).
+- commit مرجع این تلاش پس از ساخت ثبت خواهد شد؛ فیلد review_commit_sha فعلاً null است و SHA حدس زده نمی‌شود.

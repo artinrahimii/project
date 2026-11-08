@@ -448,3 +448,15 @@
 - **149/168 reviewed (88.69%)**؛ **19/168 pending (11.31%)**.
 - وضعیت پایهٔ هر پنج شناسه `done` حفظ شد؛ تصمیم T0206 `unchanged` و تصمیم T0204/T0205/T0207/T0208 برابر `re_review_required` است.
 - T0207/T0208 تا پایان Product Build جاری دوباره بررسی می‌شوند؛ T0202 هنوز مانع LAN فیزیکی جداگانه دارد.
+
+
+## بازبینی محتوایی T0209 تا T0213 — 2026-11-08T20:18:05.645Z
+
+- مبنای هر پنج بازبینی: `a51627faafaa9b2c4c5299d81a465fa5ed61ffb6` (`V 3.1.106`). وضعیت baseline هر پنج `done` حفظ شد و هیچ وضعیت قدیمی تغییر نکرد.
+- T0209/T0210: Windows clean runner، clean build/publish، نصب‌کنندهٔ واقعی، inventory مجوز 83 package، model license notice، نصب ایزوله، Publisher registry، WPF smoke و uninstall در Product Build `42516118989` موفق شدند.
+- T0211: APK clean build، JVM/Keystore instrumentation و نصب/launch روی Emulator موفق شدند؛ PID=4319 و resumed MainActivity ثبت شد. آزمون non-loopback LAN صریحاً SKIPPED بود.
+- T0212: امضای production در run `42114568183` با 15 مرحلهٔ موفق، fingerprint pin check و artifact واقعی تأیید شد؛ Blob workflow امضا با current HEAD یکسان است.
+- T0213: سه ورودی manifest با SHA-256 تأیید و Draft Release `436740935` با چهار asset موجود است. شکست تاریخی final lookup و نیاز به اجرای tag مجدد پس از اصلاح حفظ می‌شود.
+- تصمیم هر پنج: `re_review_required`؛ وضعیت بازبینی: `reviewed`. UPD-S1-021 و (برای T0210/T0211) UPD-S1-024 باید خروجی‌های نهایی را مجدداً بررسی کنند.
+- شواهد مستقل: `update/Step three/UPD-S1-008/evidence/review-T0209.md` تا `review-T0213.md`.
+- snapshot تازه: **154/168 reviewed (91.67%)**؛ **14/168 pending (8.33%)**. شناسه‌های pending: `T0215,T0216,T0217,T0218,T0219,T0221,T0222,T0223,T0224,T0225,T0226,T0227,T0228,T0229`. UPD-S1-008 همچنان `in_progress` است.
