@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.96",
+  "commit_intent": "V 3.1.98",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -3242,7 +3242,12 @@
         "update/Step three/UPD-S1-008/evidence/review-T0177.md",
         "update/Step three/UPD-S1-008/evidence/review-T0178.md",
         "update/Step three/UPD-S1-008/evidence/review-T0179.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0180.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0180.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0181.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0182.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0183.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0184.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0185.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
@@ -3384,13 +3389,18 @@
         "update/Step three/UPD-S1-008/evidence/review-T0177.md",
         "update/Step three/UPD-S1-008/evidence/review-T0178.md",
         "update/Step three/UPD-S1-008/evidence/review-T0179.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0180.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0180.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0181.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0182.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0183.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0184.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0185.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 31,
+        "attempt_count": 32,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261108191221",
+        "last_attempt_id": "UPD-S1-008-20261108191840",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3528,7 +3538,12 @@
           "update/Step three/UPD-S1-008/evidence/review-T0177.md",
           "update/Step three/UPD-S1-008/evidence/review-T0178.md",
           "update/Step three/UPD-S1-008/evidence/review-T0179.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0180.md"
+          "update/Step three/UPD-S1-008/evidence/review-T0180.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0181.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0182.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0183.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0184.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0185.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
@@ -3564,7 +3579,8 @@
           "47c078dc39ea69e2b88db57f057e71353fc2ec8c",
           "48d1bd4d85392bf9756948809e75d6278d8932f0",
           "2d36f1668352d1c47fa3efa6b604a8847b3f6b92",
-          "99cc89b08aa53da531483be132b5464b6f233eaa"
+          "99cc89b08aa53da531483be132b5464b6f233eaa",
+          "bf9ba99b17d12df86197064e3576afb0046153b0"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -3652,7 +3668,10 @@
           "Exact source Quality Gate run 42510357597 passed Python tests, compileall and graph guards.",
           "T0176-T0180 source, tests, retention policy, diagnostic logging and wire-buffer cleanup reviewed; baseline legacy statuses preserved.",
           "Exact source Product Build run 42510357567 passed Android/Windows and HostLifecycle CI.",
-          "Exact source Quality Gate run 42510357597 passed Python tests, compileall and graph guards."
+          "Exact source Quality Gate run 42510357597 passed Python tests, compileall and graph guards.",
+          "T0181-T0185 source, tests and CI workflows reviewed; baseline statuses preserved, T0185 decision unchanged.",
+          "Exact product CI 42510357567 passed Android/Windows build and instrumentation jobs.",
+          "Exact quality CI 42510357597 passed Python tests, compileall and graph guards."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -3670,7 +3689,7 @@
             "update/Step two/legacy-task-reconciliation.md"
           ]
         },
-        "follow_up": "Continue with pending T0181 onward; 44 legacy reviews remain. Follow up explicit exactly-two-valid-responses test; re-review T0176-T0180 after UPD-S1-015/018/019. UPD-S1-008 remains in_progress."
+        "follow_up": "Review T0186 onward; 39 legacy IDs remain pending. Re-review T0181-T0184 after UPD-S1-010/018 and actual device upgrade; UPD-S1-008 remains in_progress."
       },
       "execution_history": [
         {
@@ -5636,6 +5655,92 @@
           "contract_changes": [],
           "follow_up": "Continue from T0181. Add/execute an explicit two-valid-response test and review T0181 onward. Re-review T0176-T0180 after UPD-S1-015/018/019 finalize response and privacy policy. UPD-S1-008 remains in_progress until every record has specific evidence and no pending records remain.",
           "device_and_host_details_redacted": "Source and GitHub CI review only. No target Android handset, Windows installation, live local inference, public peer test, same-conversation Room E2E, clean install, in-place upgrade or forensic memory inspection was performed.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108191840",
+          "started_at": "2026-11-08T19:18:40.776Z",
+          "ended_at": "2026-11-08T19:18:40.776Z",
+          "result": "partial",
+          "summary": "Reviewed T0181-T0185 against exact code, Windows owner-consented retention and cleanup, Android Keystore identity/trust, encrypted Room/SQLCipher migration and APK permission verifier. Baseline task status remains done. T0181-T0184 are re_review_required; T0185 unchanged. Reconciliation is now 129/168 reviewed and 39 pending. No product code or old graph status changed; follow-up re-review after UPD-S1-010/018 and physical in-place upgrade remains.",
+          "changed_files": [
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0181.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0182.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0183.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0184.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0185.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step two/decision-impact-map.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": "bf9ba99b17d12df86197064e3576afb0046153b0",
+          "tests": [
+            {
+              "name": "Product build and platform tests",
+              "command": ".github/workflows/product-build.yml",
+              "result": "passed",
+              "run_id": 42510357567,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42510357567",
+              "summary": "Exact product source CI passed Android and Windows builds, Android JVM/Keystore instrumentation and Windows HostLifecycle tests."
+            },
+            {
+              "name": "Quality Gate",
+              "command": ".github/workflows/quality.yml",
+              "result": "passed",
+              "run_id": 42510357597,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42510357597",
+              "summary": "Python tests, compileall and both graph guards passed on exact source snapshot."
+            },
+            {
+              "name": "T0181 host retention consent",
+              "command": "ChatConversationAcceptanceTests.cs; LocalHostSettingsPersistenceTests.cs; test_host_conversation_retention_policy.py",
+              "result": "passed",
+              "run_id": 42510357567,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42510357567",
+              "summary": "Default-off policy, explicit owner consent, DPAPI store and settings are covered."
+            },
+            {
+              "name": "T0182 orphan file cleanup",
+              "command": "ChatConversationAcceptanceTests.cs; test_host_conversation_retention_policy.py",
+              "result": "passed",
+              "run_id": 42510357567,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42510357567",
+              "summary": "Stale owned temp files are eligible while recent, locked and reparse-point candidates are preserved."
+            },
+            {
+              "name": "T0183 Android Keystore",
+              "command": "AndroidKeyStorePersistenceTest.kt; AndroidPeerIdentityStoreTest.kt; AndroidPeerTrustStoreTest.kt",
+              "result": "passed",
+              "run_id": 42510357567,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42510357567",
+              "summary": "Non-exportable, purpose-separated keys, identity persistence, tamper and missing-key fail-closed, explicit trust and revoke are covered."
+            },
+            {
+              "name": "T0184 encrypted Room migration",
+              "command": "EncryptedClientDatabaseAcceptanceTest.kt; Android DB/storage contract tests",
+              "result": "passed",
+              "run_id": 42510357567,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42510357567",
+              "summary": "Encrypted DB reopen, plaintext legacy row migration, wrapped key and missing-key behavior covered by Android instrumentation."
+            },
+            {
+              "name": "T0185 packaged permissions",
+              "command": "tools/verify_android_permissions.py; test_android_minimum_permissions.py",
+              "result": "passed",
+              "run_id": 42510357567,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42510357567",
+              "summary": "AAPT2 validates actual APK permissions; source requests INTERNET and no runtime permissions."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue T0186 onward. Re-review T0181-T0184 after UPD-S1-010/018 and run real-device encrypted Room migration/upgrade. UPD-S1-008 remains in_progress until all 168 records have individual evidence and no pending remain.",
+          "device_and_host_details_redacted": "Exact source and GitHub CI review only; no physical Android or Windows install, real user data upgrade, live P2P inference, clean install or in-place upgrade.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -9058,7 +9163,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T19:12:21.510Z",
+    "as_of": "2026-11-08T19:18:40.776Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -9179,7 +9284,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T19:12:21.510Z",
+  "updated_at": "2026-11-08T19:18:40.776Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -9362,12 +9467,12 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "reviewed": 124,
-      "pending": 44
+      "reviewed": 129,
+      "pending": 39
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "44 of 168 task-level legacy reviews remain pending; an explicit exactly-two-valid-responses test remains a targeted follow-up. UPD-S1-008 stays in_progress until every required review has individual code/test/acceptance evidence and no pending records. T0128 remains deferred_final pending independent real-network acceptance.",
+    "completion_blocker": "39 of 168 affected legacy tasks remain pending. UPD-S1-008 stays in_progress until every record has individual code/test/acceptance evidence and no pending review remains; T0128 still requires independent real-network acceptance.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",
