@@ -2505,8 +2505,8 @@
         "سیاست عدم ثبت متن درخواست/پاسخ در log عادی و نگهداری موقت مستند باشد.",
         "کنترل‌های احراز هویت، تمامیت، replay و نگهداری کلید به آزمون‌های مشخص متصل باشند."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "expected_output_paths": [
         "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
         "src/Shared.Security/",
@@ -2565,14 +2565,17 @@
         "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
         "src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidKeyStorePersistenceTest.kt",
         "https://github.com/artinrahimii/project/actions/runs/42463288660",
-        "https://github.com/artinrahimii/project/actions/runs/42463288704"
+        "https://github.com/artinrahimii/project/actions/runs/42463288704",
+        "https://github.com/artinrahimii/project/actions/runs/42465146045",
+        "https://github.com/artinrahimii/project/actions/runs/42465146051",
+        "https://github.com/artinrahimii/project/actions/runs/42465146137"
       ],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0129, T0130, T0131, T0132, T0133, T0134, T0135, T0136, T0137, T0138, T0178, T0179, T0180, T0181, T0182, T0183, T0184, T0185, T0186, T0187, T0188, T0206, T0226, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. V 3.1.42 quality run 42465040801 failed eight subassertions in a single ADR traceability test; historical path refs/phrases were omitted. They are restored in V 3.1.43 with the prior 'no WPF enrollment prompt' claim explicitly marked historical and superseded. Current task remains in_progress pending exact CI.",
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0129, T0130, T0131, T0132, T0133, T0134, T0135, T0136, T0137, T0138, T0178, T0179, T0180, T0181, T0182, T0183, T0184, T0185, T0186, T0187, T0188, T0206, T0226, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. V 3.1.42 quality run 42465040801 failed eight subassertions in a single ADR traceability test; historical path refs/phrases were omitted. They are restored in V 3.1.43 with the prior 'no WPF enrollment prompt' claim explicitly marked historical and superseded. Current task remains in_progress pending exact CI. تکمیل نهایی پس از موفقیت تمام workflowهای دقیق V 3.1.43: quality ۴۷۲ تست، product build سه job، و rendezvous container build/smoke. Android JUnit ۲۲۴ موفق، صفر شکست و یک skipped؛ HostLifecycle ۶۷ critical PASS و پوشش خطی ۸۵٫۷۵٪. آزمون AndroidWindowsLanIntegrationTest skip شد و آزمون فیزیکی E2E ادعا نمی‌شود.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-007-20261108085719",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "UPD-S1-007-20261108090600",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
           "update/Step three/UPD-S1-007/execution-report.md",
@@ -2580,9 +2583,17 @@
           "update/Step two/project-graph.md"
         ],
         "related_commits": [
-          "0056553382a43fc21c0c74fe17341df571c0b80e"
+          "0056553382a43fc21c0c74fe17341df571c0b80e",
+          "292177f28e6b86d920e18e58ba0357c59b341f82"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "V 3.1.43 quality run 42465146045: all 472 Python tests passed including ADR-0018 decision traceability.",
+          "V 3.1.43 product run 42465146051: Windows WPF, Android and HostLifecycle jobs passed.",
+          "Android JUnit: 224 passed, 0 failed, 1 skipped; Keystore instrumentation and release signing-key cleanup passed.",
+          "Windows installer installed, launched and uninstalled; WPF startup smoke passed; 66 host publish files produced.",
+          "HostLifecycle: 67 critical pass markers, 1 skip, 85.75% line coverage.",
+          "V 3.1.43 Rendezvous run 42465146137: container build/smoke passed."
+        ],
         "tests_failed": [
           "V 3.1.42 quality run 42465040801: 8 traceability subassertions failed in test_explicit_peer_trust_decision_maps_to_persistent_store_transport_gate_and_acceptance because ADR-0018 omitted 6 required historical path references and 2 baseline phrases; restored as historical-only material in V 3.1.43."
         ],
@@ -2593,8 +2604,24 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": [
-            "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
-            "tests/test_decision_traceability.py"
+            "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
+            "tests/test_peer_inference_privacy_disclosure.py",
+            "tests/test_host_content_visibility.py",
+            "tests/test_network_payload_logging.py",
+            "tests/test_host_conversation_retention_policy.py",
+            "tests/test_threat_model_documentation.py",
+            "tests/test_sensitive_artifact_scanning.py",
+            "tests/test_sensitive_buffer_cleanup.py",
+            "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
+            "src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidKeyStorePersistenceTest.kt",
+            "https://github.com/artinrahimii/project/actions/runs/42463288660",
+            "https://github.com/artinrahimii/project/actions/runs/42463288704",
+            "https://github.com/artinrahimii/project/actions/runs/42465146045",
+            "https://github.com/artinrahimii/project/actions/runs/42465146051",
+            "https://github.com/artinrahimii/project/actions/runs/42465146137"
           ]
         }
       },
@@ -2716,6 +2743,95 @@
           "device_and_host_details_redacted": "Awaiting GitHub-hosted quality and product runners; no physical Android/Windows pair.",
           "model_revision_and_sha256": "Not applicable.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-007-20261108090600",
+          "started_at": "2026-11-08T08:57:19Z",
+          "ended_at": "2026-11-08T09:05:42Z",
+          "result": "succeeded",
+          "summary": "The exact V 3.1.43 commit passed the Step Three quality gate (all 472 Python tests), the complete Windows/Android/HostLifecycle product workflow, and the rendezvous container build/smoke. The Windows WPF startup smoke passed; 66 host files were published; the installer compiled, installed, smoke-launched, packaged license notices, and uninstalled. Android debug and release builds succeeded, the disposable CI signing key was removed, minimum-permission checks passed, Keystore instrumentation completed, and JUnit validation recorded 225 tests (224 passed, 0 failures, 1 skipped). HostLifecycle emitted 67 critical pass markers, 1 skip and 85.75% line coverage. The AndroidWindowsLanIntegrationTest was skipped, so no physical Android-to-Windows product E2E is claimed.",
+          "changed_files": [
+            "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+            "update/Step three/UPD-S1-007/execution-report.md",
+            "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": "292177f28e6b86d920e18e58ba0357c59b341f82",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact V 3.1.43",
+              "result": "passed",
+              "run_id": 42465146045,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42465146045",
+              "summary": "All 472 Python tests passed, including restored ADR-0018 historical decision traceability."
+            },
+            {
+              "name": "Windows/Android/HostLifecycle product build",
+              "command": "product-build.yml on exact V 3.1.43",
+              "result": "passed",
+              "run_id": 42465146051,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42465146051",
+              "summary": "Windows WPF, Android APK and HostLifecycle jobs all succeeded."
+            },
+            {
+              "name": "Android unit and instrumentation",
+              "command": "testDebugUnitTest createDebugUnitTestCoverageReport connectedDebugAndroidTest createDebugAndroidTestCoverageReport",
+              "result": "passed",
+              "run_id": 42465146051,
+              "artifact_ids": [
+                13611179090,
+                13611148973,
+                13611148982
+              ],
+              "summary": "Debug/release build, KtLint, disposable key cleanup, permission check and Keystore instrumentation succeeded. JUnit: 225 tests; 224 passed, 0 failed, 1 skipped. AndroidWindowsLanIntegrationTest was skipped; this is not physical-device E2E."
+            },
+            {
+              "name": "Android debug APK",
+              "command": "assembleDebug from clean outputs",
+              "result": "passed",
+              "run_id": 42465146051,
+              "artifact_id": 13611960371,
+              "size_bytes": 28972716,
+              "sha256": "6c8568797d0e2847ae9aa58820f7a307ea638f86d4957d4c83a887f0465ec960"
+            },
+            {
+              "name": "Windows WPF and installer",
+              "command": "dotnet build/publish, WPF startup smoke, tools/build_windows_installer.ps1",
+              "result": "passed",
+              "run_id": 42465146051,
+              "artifact_ids": [
+                13611675667,
+                13611052409,
+                13610957706
+              ],
+              "summary": "66 published files; WPF startup smoke passed; installer compiled, installed, smoke-launched, included notices and uninstalled. PE CompanyName had whitespace padding warning; installed AppPublisher registration was checked separately."
+            },
+            {
+              "name": "Windows HostLifecycle/security",
+              "command": "HostLifecycle test executable on Windows runner",
+              "result": "passed",
+              "run_id": 42465146051,
+              "artifact_id": 13611013614,
+              "summary": "67 critical PASS markers, one skip and 85.75% line coverage. Covered secure-channel identity, no plaintext downgrade, tamper/replay, response correlation, trust, privacy disclosure, safe logging, retention, cleanup and one-inference admission."
+            },
+            {
+              "name": "Rendezvous container build and smoke",
+              "command": "rendezvous-container.yml on exact V 3.1.43",
+              "result": "passed",
+              "run_id": 42465146137,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42465146137",
+              "summary": "Container build and smoke passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue with UPD-S1-006. Keep AC-P2P-01, AC-PRIV-01, ordinary-chat-to-Room integration, physical Android-to-Windows, target-device clean install and in-place upgrade as separate open acceptance gates.",
+          "device_and_host_details_redacted": "GitHub-hosted Windows and Ubuntu runners and Android emulator. No physical user Android handset or external target Windows PC was connected. AndroidWindowsLanIntegrationTest was skipped.",
+          "model_revision_and_sha256": "No new model inference was required for this privacy/trust review. Earlier pinned model/real inference evidence is recorded in UPD-S1-005.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed. No in-place upgrade or preservation snapshot was captured."
         }
       ]
     },
@@ -5647,14 +5763,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T08:54:00Z",
+    "as_of": "2026-11-08T09:06:00Z",
     "total_tasks": 24,
     "not_started": 18,
-    "in_progress": 1,
-    "done": 5,
+    "in_progress": 0,
+    "done": 6,
     "blocked": 0,
-    "verified_completion_percentage": 20.83,
-    "calculation": "5 / 24 verified done tasks; reconciliation remains a separate measure."
+    "verified_completion_percentage": 25,
+    "calculation": "6 verified done update tasks / 24 total update tasks = 25.00%. Legacy reconciliation is a separate measure."
   },
   "visual_identity": {
     "scope": [
@@ -5768,7 +5884,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T08:54:00Z",
+  "updated_at": "2026-11-08T09:06:00Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",

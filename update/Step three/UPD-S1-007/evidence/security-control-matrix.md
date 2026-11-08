@@ -51,3 +51,14 @@
 - Exact V 3.1.42 quality run: [42465040801](https://github.com/artinrahimii/project/actions/runs/42465040801) — 472 tests ran; 8 subtest assertions failed inside `test_explicit_peer_trust_decision_maps_to_persistent_store_transport_gate_and_acceptance`.
 - The source and runtime controls themselves were not the cause. The regression test requires the historical ADR to keep explicit paths to the portable trust test, Windows trust test, peer-transport test, test Program, product workflow and traceability test, plus two phrases documenting the original V 3.0.443 caller boundary.
 - V 3.1.43 restores those references and phrases as historical evidence while explicitly stating that the former “no WPF prompt” claim is superseded by current code. Exact-head CI remains pending.
+
+
+## Final exact-commit verification — V 3.1.43
+
+- Quality [42465146045](https://github.com/artinrahimii/project/actions/runs/42465146045): **success**, 472 Python tests passed including ADR-0018 traceability.
+- Product [42465146051](https://github.com/artinrahimii/project/actions/runs/42465146051): **success**, Windows, Android and HostLifecycle jobs all passed.
+- Android JUnit summary: `tests=225, passed=224, failures=0, skipped=1`. The skipped test was `AndroidWindowsLanIntegrationTest`; no physical Android-to-Windows result is claimed.
+- Android Keystore instrumentation job succeeded; the debug APK artifact and reports were uploaded.
+- Windows installer install/smoke/uninstall and WPF startup smoke passed; 66 publish files were produced.
+- HostLifecycle summary: 67 critical PASS markers, 1 skip, 85.75% line coverage.
+- Rendezvous [42465146137](https://github.com/artinrahimii/project/actions/runs/42465146137): **success**.
