@@ -2618,10 +2618,12 @@
         "UPD-S1-017"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0166.md"
+      ],
+      "review_commit_sha": "48d1bd4d85392bf9756948809e75d6278d8932f0"
     },
     {
       "legacy_task_id": "T0167",
@@ -2634,10 +2636,12 @@
         "UPD-S1-017"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0167.md"
+      ],
+      "review_commit_sha": "48d1bd4d85392bf9756948809e75d6278d8932f0"
     },
     {
       "legacy_task_id": "T0168",
@@ -2650,10 +2654,12 @@
         "UPD-S1-017"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0168.md"
+      ],
+      "review_commit_sha": "48d1bd4d85392bf9756948809e75d6278d8932f0"
     },
     {
       "legacy_task_id": "T0169",
@@ -2666,10 +2672,12 @@
         "UPD-S1-017"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0169.md"
+      ],
+      "review_commit_sha": "48d1bd4d85392bf9756948809e75d6278d8932f0"
     },
     {
       "legacy_task_id": "T0170",
@@ -2682,10 +2690,12 @@
         "UPD-S1-017"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0170.md"
+      ],
+      "review_commit_sha": "48d1bd4d85392bf9756948809e75d6278d8932f0"
     },
     {
       "legacy_task_id": "T0171",

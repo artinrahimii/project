@@ -379,3 +379,13 @@
 - reconciliation جاری: **109/168 reviewed (64.88%)** و **59 pending (35.12%)**. `UPD-S1-008` همچنان `in_progress` است.
 - گراف اولیه و markerهای ثابت `update_impact` عمداً تغییر نکردند؛ تا تکمیل همهٔ 168 مورد و مطابق آزمون قراردادی pending می‌مانند.
 - آزمون فیزیکی Android-to-Windows، inference واقعی مدل محلی، same Room E2E، clean install روی دستگاه واقعی و in-place upgrade در این تلاش اجرا نشدند.
+
+
+## بازبینی محتوایی T0166 تا T0170 روی V 3.1.90
+
+- پنج وظیفه به‌صورت مستقل از روی کد، UI/runtime، آزمون‌های واحد و قراردادی و وابستگی‌ها بررسی شدند؛ شواهد: `update/Step three/UPD-S1-008/evidence/review-T0166.md` تا `review-T0170.md`.
+- وضعیت پایهٔ هر پنج گره `done` حفظ شد؛ تصمیم هر پنج `re_review_required` و وضعیت reconciliation برابر `reviewed` ثبت شد. دلیل بازاعتبارسنجی باز، سیاست UPD-S1-015 و اتصال پاسخ همان گفت‌وگو/Room در UPD-S1-010 است.
+- کد کارت پاسخ مستقل و collector چند-attempt وجود دارد، اما مسیر اجرایی نسخهٔ نخست یک میزبان فعال در هر round و حداکثر سه تلاش ترتیبی را اجرا می‌کند؛ retry دستی است. generic سه‌میزبانهٔ سازگار را نباید با multi-host production یکسان دانست.
+- Product CI دقیق source بررسی‌شده [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) و Quality CI [42510357597](https://github.com/artinrahimii/project/actions/runs/42510357597) موفق شدند.
+- reconciliation: **114/168 reviewed (67.86%)** و **54 pending (32.14%)**؛ `UPD-S1-008` همچنان `in_progress` است. گراف اولیه و markerهای ثابت آن تا تکمیل همهٔ 168 مورد دست‌نخورده باقی ماندند.
+- آزمون فیزیکی Android-to-Windows، پاسخ live مدل محلی، ذخیرهٔ پاسخ در همان Room، clean install واقعی و in-place upgrade اجرا نشده‌اند.

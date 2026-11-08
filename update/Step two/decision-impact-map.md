@@ -115,11 +115,11 @@
 | `T0163` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 15 | 10 |
 | `T0164` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 5 | 3 |
 | `T0165` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 11 | 9 |
-| `T0166` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 4 | 2 |
-| `T0167` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 1 | 1 |
-| `T0168` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 3 | 2 |
-| `T0169` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 2 | 2 |
-| `T0170` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 8 | 8 |
+| `T0166` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 4 | 2 |
+| `T0167` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 1 | 1 |
+| `T0168` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 3 | 2 |
+| `T0169` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 2 | 2 |
+| `T0170` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 8 | 8 |
 | `T0171` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 6 | 4 |
 | `T0172` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 2 | 3 |
 | `T0173` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 4 | 2 |
@@ -234,3 +234,10 @@
 - وضعیت پایهٔ هر پنج مورد `done` حفظ شد؛ تصمیم `re_review_required` و وضعیت بازبینی `reviewed` در JSON مرجع ثبت شده است. اجرای مجدد پس از UPD-S1-015 و آزمون‌های runtime نهایی ضروری است.
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0161.md` تا `review-T0165.md`؛ commit: `47c078dc39ea69e2b88db57f057e71353fc2ec8c`.
 - نتیجهٔ جاری ماتریس: **109 reviewed / 59 pending از 168 شناسهٔ متأثر**. این عدد، درصد پیشرفت 24 وظیفهٔ Update نیست.
+
+
+## بازبینی T0166 تا T0170 روی V 3.1.90
+
+- T0166 تا T0170 مستقل از روی کد، آزمون و مصرف‌کنندگان بررسی شدند. وضعیت پایهٔ `done` حفظ شد؛ تصمیم هر پنج `re_review_required` و review_status برابر `reviewed` در JSON ثبت شد.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0166.md` تا `review-T0170.md`؛ commit شواهد: `48d1bd4d85392bf9756948809e75d6278d8932f0`.
+- تعداد جاری: **114 reviewed / 54 pending از 168 شناسهٔ متأثر**. این شاخص با پیشرفت 24 وظیفهٔ Update مستقل است.
