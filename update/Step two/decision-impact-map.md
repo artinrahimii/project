@@ -4,7 +4,7 @@
 - تعداد کل وظایف قدیمی: 230
 - تعداد شناسه‌های متأثر: 168
 - تعداد رکوردهای مستقل: 168
-- وضعیت جاری مطابق JSON اصلی است؛ 134 مورد محتوایی reviewed و 34 مورد همچنان pending هستند.
+- وضعیت جاری مطابق JSON اصلی است؛ 139 مورد محتوایی reviewed و 29 مورد همچنان pending هستند.
 
 | شناسهٔ قدیمی | وضعیت پایه | شناسه‌های UPD-S1 مرتبط | تصمیم اولیه | وضعیت بازبینی | فایل‌های کد/قرارداد | فایل‌های آزمون |
 |---|---|---|---|---:|---:|---:|
@@ -140,11 +140,11 @@
 | `T0188` | done | UPD-S1-007, UPD-S1-018 | re_review_required | reviewed | 0 | 1 |
 | `T0189` | done | UPD-S1-017 | re_review_required | reviewed | 11 | 6 |
 | `T0190` | done | UPD-S1-010, UPD-S1-017 | re_review_required | reviewed | 5 | 4 |
-| `T0191` | done | UPD-S1-017 | re_review_required | pending | 1 | 1 |
-| `T0192` | done | UPD-S1-017 | re_review_required | pending | 0 | 1 |
-| `T0193` | done | UPD-S1-012 | re_review_required | pending | 3 | 6 |
-| `T0196` | done | UPD-S1-005, UPD-S1-013, UPD-S1-019, UPD-S1-023 | re_review_required | pending | 0 | 6 |
-| `T0197` | done | UPD-S1-019 | re_review_required | pending | 6 | 6 |
+| `T0191` | done | UPD-S1-017 | re_review_required | reviewed | 1 | 1 |
+| `T0192` | done | UPD-S1-017 | re_review_required | reviewed | 0 | 1 |
+| `T0193` | done | UPD-S1-012 | re_review_required | reviewed | 3 | 6 |
+| `T0196` | done | UPD-S1-005, UPD-S1-013, UPD-S1-019, UPD-S1-023 | re_review_required | reviewed | 0 | 6 |
+| `T0197` | done | UPD-S1-019 | re_review_required | reviewed | 6 | 6 |
 | `T0198` | done | UPD-S1-019 | re_review_required | pending | 6 | 6 |
 | `T0199` | done | UPD-S1-008, UPD-S1-019 | re_review_required | reviewed | 2 | 5 |
 | `T0200` | done | UPD-S1-004, UPD-S1-010, UPD-S1-019, UPD-S1-020 | re_review_required | pending | 1 | 3 |
@@ -269,3 +269,10 @@
 - وضعیت پایهٔ پنج وظیفه `done` حفظ شد؛ وضعیت بازبینی هر پنج مورد `reviewed` و تصمیم `re_review_required` است.
 - T0190 هنوز به اصلاح دو متن وضعیت و E2E گفت‌وگوی عادی نیاز دارد.
 - ماتریس جاری: **134 reviewed / 34 pending از 168 شناسهٔ متأثر**.
+
+
+## بازبینی T0191، T0192، T0193، T0196 و T0197 روی V 3.1.100
+
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0191.md`، `review-T0192.md`، `review-T0193.md`، `review-T0196.md` و `review-T0197.md`؛ commit `1236955162e57c1a70a576fc1d19f679d1fadeff`.
+- وضعیت پایه هر پنج مورد `done` حفظ شد؛ تصمیم بازبینی هر پنج `re_review_required` است.
+- نتیجهٔ جاری: **139 reviewed / 29 pending از 168 شناسهٔ متأثر**.
