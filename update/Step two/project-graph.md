@@ -1755,8 +1755,8 @@
         "اگر Streaming انتخاب شد، ترتیب قطعه‌ها، پایان، خطا، timeout و لغو تعریف شده باشند.",
         "اگر به نسخهٔ بعد منتقل شد، رفتار قابل‌قبول نسخهٔ اولیه و محدودهٔ تعویق ثبت شده باشد."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
       "expected_output_paths": [
         "docs/decisions/",
         "protocol/whitep/v1/messages.proto",
@@ -1764,17 +1764,45 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/protocol/",
         "update/Step three/UPD-S1-004/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0032, T0107, T0110, T0111, T0112, T0147, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
+      "actual_output_paths": [
+        "docs/decisions/ADR-0023-one-shot-inference-v1.md",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "tests/test_proto_contract.py",
+        "tests/test_android_libp2p_transport_contract.py",
+        "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+        "tests/test_inference_streaming_scope.py",
+        "update/Step three/UPD-S1-004/execution-report.md",
+        "update/Step three/UPD-S1-004/evidence/decision-review.md"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-004/evidence/decision-review.md",
+        "tests/test_inference_streaming_scope.py",
+        "tests/test_proto_contract.py",
+        "tests/test_android_libp2p_transport_contract.py",
+        "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs"
+      ],
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0032, T0107, T0110, T0111, T0112, T0147, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. تصمیم اجرای نسخهٔ نخست: پاسخ terminal یک‌باره؛ Streaming تا نسخهٔ بعد deferred. فیلد supports_streaming فقط metadata باقی می‌ماند و backend فعلی false گزارش می‌کند؛ قرارداد و کد سالم Protobuf تغییر نکرده‌اند. گزارش و آزمون regression افزوده شده‌اند؛ CI دقیق commit این تلاش هنوز pending است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-004-20261108082200",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "docs/decisions/ADR-0023-one-shot-inference-v1.md",
+          "tests/test_inference_streaming_scope.py",
+          "update/Step three/UPD-S1-004/execution-report.md",
+          "update/Step three/UPD-S1-004/evidence/decision-review.md",
+          "update/Step two/project-graph.md"
+        ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          "Existing Protobuf contract, Android transport contract and Windows backend capability tests pass in the exact V 3.1.38 CI suite."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1782,10 +1810,53 @@
           "state": "not_required",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "docs/decisions/ADR-0023-one-shot-inference-v1.md",
+            "tests/test_inference_streaming_scope.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-004-20261108082200",
+          "started_at": "2026-11-08T08:22:00Z",
+          "ended_at": "2026-11-08T08:22:00Z",
+          "result": "partial",
+          "summary": "Audited the shared Protobuf contract, Windows backend and engine, Android transport/runtime/ViewModel, and existing tests. Chose one complete terminal response for the first release and deferred streaming. Preserved the protocol, added ADR-0023 and a focused regression test. Exact-commit CI for the newly added test is pending, so this task remains in_progress.",
+          "changed_files": [
+            "docs/decisions/ADR-0023-one-shot-inference-v1.md",
+            "tests/test_inference_streaming_scope.py",
+            "update/Step three/UPD-S1-004/execution-report.md",
+            "update/Step three/UPD-S1-004/evidence/decision-review.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Existing exact-base quality gate",
+              "command": "quality.yml on V 3.1.38 base",
+              "result": "passed",
+              "run_id": 42459356154,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42459356154",
+              "summary": "Existing test suite and both graph validators passed before adding the new regression test."
+            },
+            {
+              "name": "New streaming scope regression test",
+              "command": "python -m unittest discover -s tests -p test_inference_streaming_scope.py -v",
+              "result": "pending",
+              "note": "Must pass on the exact V 3.1.39 commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run the new regression test and full quality gate on V 3.1.39; only then mark UPD-S1-004 done.",
+          "device_and_host_details_redacted": "Source inspection and GitHub-hosted CI evidence only. No physical Android handset or target Windows host was accessed.",
+          "model_revision_and_sha256": "No live model inference required for this scope decision; real local inference on the parent commit is documented in UPD-S1-005 and is not Android-to-Windows product acceptance.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed; no product installation or in-place upgrade."
+        }
+      ]
     },
     {
       "id": "UPD-S1-005",
@@ -1841,8 +1912,8 @@
         "شرایط عدم پذیرش درخواست و توقف مشارکت مشخص باشند.",
         "سقف یک inference هم‌زمان حفظ شود مگر اینکه تصمیم مستند و آزمون ظرفیت آن را تغییر دهد."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "expected_output_paths": [
         "src/Host.Domain/",
         "src/Host.Application/",
@@ -1854,22 +1925,36 @@
         "src/Host.Infrastructure/LocalHostSettingsStore.cs",
         "src/Host.Windows/MainWindow.xaml.cs",
         "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Application/HostReadinessEvaluator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
         "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
         "tests/test_host_resource_settings.py",
         "tests/test_decision_traceability.py",
+        "tests/test_inference_backend_abstraction.py",
+        "tests/HostLifecycle.Tests/Program.cs",
         "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md",
         "update/Step three/UPD-S1-005/execution-report.md",
         "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
       ],
       "evidence": [
-        "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
+        "update/Step three/UPD-S1-005/evidence/resource-policy-review.md",
+        "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
+        "tests/test_host_resource_settings.py",
+        "tests/test_decision_traceability.py",
+        "https://github.com/artinrahimii/project/actions/runs/42459356154",
+        "https://github.com/artinrahimii/project/actions/runs/42459356153",
+        "https://github.com/artinrahimii/project/actions/runs/42459356156",
+        "https://github.com/artinrahimii/project/actions/runs/42459356182"
       ],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0049, T0050, T0051, T0052, T0053, T0054, T0055, T0056, T0098, T0099, T0100, T0101, T0102, T0103, T0104, T0105, T0106, T0107, T0196. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. حدهای RAM و فضای دیسکِ قابل اندازه‌گیری به تنظیمات پایدار منتقل شدند. CPU/GPU/VRAM/idle/AC به‌علت نبود سنجش و enforce معتبر، محدودیت قابل‌تنظیم معرفی نشده‌اند. CI کد جدید pending است. CI دقیق V 3.1.37: کیفیت 467/468 تست Python موفق و یک assertion قدیمی شکست؛ HostLifecycle و real-inference نیز پیش از اجرای واقعی inference به‌خاطر انتظار schemaVersion=1 متوقف شدند. Rendezvous موفق بود. دو assertion در commit بعدی اصلاح می‌شوند.",
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0049, T0050, T0051, T0052, T0053, T0054, T0055, T0056, T0098, T0099, T0100, T0101, T0102, T0103, T0104, T0105, T0106, T0107, T0196. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. حدهای RAM و فضای دیسکِ قابل اندازه‌گیری به تنظیمات پایدار منتقل شدند. CPU/GPU/VRAM/idle/AC به‌علت نبود سنجش و enforce معتبر، محدودیت قابل‌تنظیم معرفی نشده‌اند. CI کد جدید pending است. CI دقیق V 3.1.37: کیفیت 467/468 تست Python موفق و یک assertion قدیمی شکست؛ HostLifecycle و real-inference نیز پیش از اجرای واقعی inference به‌خاطر انتظار schemaVersion=1 متوقف شدند. Rendezvous موفق بود. دو assertion در commit بعدی اصلاح می‌شوند. تأیید نهایی: CI دقیق V 3.1.38 با SHA 2cc12c32cfc2663316c93064543e6ce62caaa5cb روی هر چهار workflow موفق شد؛ دو assertion قدیمی V 3.1.37 در V 3.1.38 اصلاح شده و regressionها اکنون سبز هستند. هیچ آزمون فیزیکی Android-to-Windows یا ارتقای درجا در این وظیفه ادعا نمی‌شود.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-005-20261108073419",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "UPD-S1-005-20261108073426",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Infrastructure/LocalHostSettingsStore.cs",
           "src/Host.Windows/MainWindow.xaml.cs",
@@ -1882,13 +1967,23 @@
           "update/Step three/UPD-S1-005/evidence/resource-policy-review.md",
           "tests/test_inference_backend_abstraction.py",
           "tests/HostLifecycle.Tests/Program.cs",
-          "update/Step two/project-graph.md"
+          "update/Step two/project-graph.md",
+          "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+          "src/Host.Application/HostReadinessEvaluator.cs",
+          "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+          "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+          "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs"
         ],
         "related_commits": [
-          "b2992d2764ca2aac7a61c56bb87d6050a52a1a9c"
+          "b2992d2764ca2aac7a61c56bb87d6050a52a1a9c",
+          "2cc12c32cfc2663316c93064543e6ce62caaa5cb"
         ],
         "tests_passed": [
-          "V 3.1.36 Windows build/installer and HostLifecycle tests passed before this change; baseline only."
+          "Exact V 3.1.38 quality gate: Python tests, compileall and Update/legacy graph guards all passed (run 42459356154).",
+          "Exact V 3.1.38 product build: Windows WPF, installer acceptance, Android lint/debug/release/Keystore instrumentation and HostLifecycle suite passed (run 42459356153).",
+          "Exact V 3.1.38 real inference: pinned llama.cpp and GGUF loaded; generation and cancellation passed (run 42459356156).",
+          "Exact V 3.1.38 rendezvous build and smoke passed (run 42459356182).",
+          "Host capacity concurrency test admitted 1 of 64 requests; 63 were Busy and maximum concurrent inference was 1."
         ],
         "tests_failed": [
           "V 3.1.37 quality run 42459097705: one stale Save-constructor source-contract assertion; 467 other Python tests passed.",
@@ -1898,18 +1993,21 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "not_required",
           "triggering_contracts": [
             "settings schema v2",
-            "WPF save-with preservation"
+            "WPF save-with preservation",
+            "live RAM/disk readiness",
+            "single-inference admission"
           ],
-          "affected_by_contract_changes": [
-            "HostLifecycle test harness",
-            "Python WPF source contract",
-            "real-inference acceptance harness"
-          ],
+          "affected_by_contract_changes": [],
           "review_evidence": [
-            "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
+            "update/Step three/UPD-S1-005/evidence/resource-policy-review.md",
+            "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
+            "tests/test_host_resource_settings.py",
+            "https://github.com/artinrahimii/project/actions/runs/42459356154",
+            "https://github.com/artinrahimii/project/actions/runs/42459356153",
+            "https://github.com/artinrahimii/project/actions/runs/42459356156"
           ]
         }
       },
@@ -2049,6 +2147,79 @@
           "device_and_host_details_redacted": "Hosted GitHub Windows runner only; no physical Android handset or external Windows host was connected.",
           "model_revision_and_sha256": "Pending exact V3.1.38 real-inference run.",
           "pre_upgrade_post_upgrade_snapshot": "Product upgrade not tested; only local settings schema migration is covered."
+        },
+        {
+          "attempt_id": "UPD-S1-005-20261108073426",
+          "started_at": "2026-11-08T07:34:26Z",
+          "ended_at": "2026-11-08T07:44:32Z",
+          "result": "succeeded",
+          "summary": "The exact V 3.1.38 commit passed all four workflow gates. The settings schema-v2 persistence/migration and measured-capacity checks passed; participation remained opt-in and fail-closed; the host admitted exactly one of 64 concurrent requests and returned Busy for 63. Windows WPF/installer, Android lint/debug/release/Keystore instrumentation, HostLifecycle, Python quality/graph guards, rendezvous, and a real pinned llama.cpp + GGUF inference/cancellation run succeeded. Physical Android-to-Windows and in-place upgrade remain separate and untested.",
+          "changed_files": [
+            "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+            "src/Host.Application/HostReadinessEvaluator.cs",
+            "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+            "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
+            "tests/test_host_resource_settings.py",
+            "tests/test_decision_traceability.py",
+            "tests/test_inference_backend_abstraction.py",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md",
+            "update/Step three/UPD-S1-005/execution-report.md",
+            "update/Step three/UPD-S1-005/evidence/resource-policy-review.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": "2cc12c32cfc2663316c93064543e6ce62caaa5cb",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact V 3.1.38 commit",
+              "result": "passed",
+              "run_id": 42459356154,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42459356154",
+              "summary": "All Python tests, compileall and both graph_guard structure/output checks passed."
+            },
+            {
+              "name": "Windows, Android and HostLifecycle product build",
+              "command": "product-build.yml on exact V 3.1.38 commit",
+              "result": "passed",
+              "run_id": 42459356153,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42459356153",
+              "summary": "Clean WPF build/startup/installer acceptance, Android lint/debug/release and Keystore instrumentation, HostLifecycle tests and coverage all passed."
+            },
+            {
+              "name": "Real local inference",
+              "command": "real-inference.yml on exact V 3.1.38 commit",
+              "result": "passed",
+              "run_id": 42459356156,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42459356156",
+              "summary": "Pinned llama.cpp CPU build 11443 and pinned SmolLM2 GGUF checksum were verified; real generation succeeded, active cancellation was observed and owned process exited cleanly."
+            },
+            {
+              "name": "Rendezvous service",
+              "command": "rendezvous-container.yml on exact V 3.1.38 commit",
+              "result": "passed",
+              "run_id": 42459356182,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42459356182",
+              "summary": "Container build and smoke test passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Persisted RAM and system-drive free-space thresholds in settings schema v2, with schema-v1 migration and fail-closed validation.",
+            "WPF restores/saves the thresholds and revalidates before inference and peer hosting; readiness only relies on live-measured RAM/disk.",
+            "Network participation remains owner opt-in; request admission remains exactly one active inference without queuing."
+          ],
+          "follow_up": "Continue UPD-S1-004 and subsequent tasks. Physical Android-to-Windows, product clean install and in-place upgrade remain separate acceptance gates.",
+          "device_and_host_details_redacted": "GitHub-hosted Windows runner performed WPF/HostLifecycle/llama.cpp checks; Linux/KVM Android runner performed build, JVM and Keystore instrumentation. No physical user Android handset or external target Windows host was connected.",
+          "model_revision_and_sha256": "llama.cpp b11443 archive SHA-256 98303a5a688a606d4a32522e47ed7cafa0ddff04d3be56ab927e25d3b1ea45c6; executable SHA-256 4cdaae426a798b49717e3ce9b8a7756a16355c83c812d9d59bc99e26ae6d3968; QuantFactory/SmolLM2-135M-Instruct-GGUF revision a6b7826ed969c3926a98359e39912af137b464cb, size 105454144 bytes, SHA-256 8030f04528538d47bda434f6f0bdf3952c40a58123e4d5e755332f23731a8684.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed in this task; product clean install and in-place upgrade are separate acceptance requirements."
         }
       ]
     },
@@ -5146,14 +5317,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T07:30:39.022Z",
+    "as_of": "2026-11-08T08:22:00Z",
     "total_tasks": 24,
-    "not_started": 20,
-    "in_progress": 2,
-    "done": 2,
+    "not_started": 19,
+    "in_progress": 1,
+    "done": 4,
     "blocked": 0,
-    "verified_completion_percentage": 8.33,
-    "calculation": "done nodes with real output and verified acceptance evidence / 24 * 100"
+    "verified_completion_percentage": 16.67,
+    "calculation": "Only update tasks with real outputs, verified acceptance evidence and successful required tests count as done; 4 / 24 = 16.67%. UPD-S1-004 remains in_progress pending its exact-commit regression CI."
   },
   "visual_identity": {
     "scope": [
@@ -5267,7 +5438,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T07:30:39.022Z",
+  "updated_at": "2026-11-08T08:22:00Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -5464,4 +5635,5 @@
       "UPD-S1-008 remains incomplete while any required review is pending."
     ]
   }
-}```
+}
+```
