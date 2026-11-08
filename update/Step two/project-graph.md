@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.55",
+  "commit_intent": "V 3.1.56",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -3122,7 +3122,9 @@
           "update/Step two/legacy-task-reconciliation.md",
           "update/Step two/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "3bc8863cf62044dc23383c675cd18233aed9b581"
+        ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
           "Update graph structural inventory: 24 nodes, 80 edges, 13 waves; acyclic; edge review states preserved.",
@@ -3157,7 +3159,7 @@
             "update/Step two/legacy-task-reconciliation.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "3bc8863cf62044dc23383c675cd18233aed9b581",
           "tests": [
             {
               "name": "Git Blob integrity for five mandatory sources",
@@ -6745,7 +6747,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T12:30:27.605Z",
+  "updated_at": "2026-11-08T12:35:18.017Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -6942,4 +6944,5 @@
       "UPD-S1-008 remains incomplete while any required review is pending."
     ]
   }
-}```
+}
+```
