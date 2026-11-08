@@ -56,6 +56,18 @@ class UpdateStepOneAlignmentTests(unittest.TestCase):
         self.assertIn("3:1", visual)
         self.assertIn("muted_teal", visual)
         self.assertIn("antique_gold", visual)
+        visual_gate = next(line for line in ACCEPTANCE.splitlines() if line.startswith("| AC-VISUAL-01 "))
+        for token, color in (
+            ("midnight_ink", "#142537"),
+            ("porcelain", "#F4F0E8"),
+            ("pure_white", "#FFFFFF"),
+            ("antique_gold", "#B89A62"),
+            ("muted_teal", "#587C80"),
+        ):
+            with self.subTest(acceptance_token=token):
+                self.assertIn(f"{token} {color}", visual_gate)
+        self.assertIn("4.5:1", visual_gate)
+        self.assertIn("3:1", visual_gate)
 
     def test_acceptance_matrix_maps_chat_retry_streaming_and_visual_gates(self):
         for gate in ("AC-CHAT-01", "AC-RETRY-01", "AC-STREAM-01", "AC-VISUAL-01"):

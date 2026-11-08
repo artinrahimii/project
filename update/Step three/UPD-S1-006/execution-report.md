@@ -55,3 +55,21 @@
 - اصلاح: عبارت به‌صورت دقیق و محدود بازگردانده شد: آزمون hosted local-inference، اجرای مدل واقعی روی میزبان Windows نصب‌شدهٔ کاربر یا مسیر گفت‌وگوی فیزیکی Android-to-Windows را اثبات نمی‌کند. هیچ معیار محصولی حذف یا آسان نشده است.
 - build اندروید، build ویندوز/HostLifecycle و rendezvous در زمان ثبت این گزارش هنوز نتیجهٔ نهایی نداشتند؛ وضعیت آن‌ها جداگانه بررسی می‌شود.
 - این اصلاح فقط خطای قرارداد متنی را هدف می‌گیرد. `UPD-S1-006` تا موفقیت کامل quality gate روی commit اصلاحی همچنان `in_progress` است.
+
+
+## تکمیل معیار صریح هویت بصری در جدول پذیرش — پیش از بستن وظیفه
+
+ردیف `AC-VISUAL-01` علاوه بر اشاره به پنج توکن، اکنون نام و HEX دقیق هر پنج رنگ را در خود جدول پذیرش دارد: `midnight_ink #142537`, `porcelain #F4F0E8`, `pure_white #FFFFFF`, `antique_gold #B89A62`, `muted_teal #587C80`. همان ردیف نقش یکسان semantic، کنتراست 4.5:1/3:1 و ممنوعیت‌های دقیق استفاده از teal/gold روی سطح روشن را نیز می‌سنجد. آزمون `test_update_step_one_alignment.py` اکنون متن جدول را برای تمام پنج مقدار HEX بررسی می‌کند.
+
+## نتایج CI دقیق commit V 3.1.46
+
+- Quality [42474804276](https://github.com/artinrahimii/project/actions/runs/42474804276): **success**؛ ۴۷۹ آزمون Python اجرا و پاس شدند؛ compileall و graph guards هر دو گراف نیز موفق شدند. گراف update بدون خطا/هشدار بود؛ گراف legacy یک هشدار قدیمی و حفظ‌شده دربارهٔ رشتهٔ متنی dependency در T0001 داشت و هیچ خطایی نداشت.
+- Rendezvous [42474804268](https://github.com/artinrahimii/project/actions/runs/42474804268): **success**.
+- Product [42474804278] (https://github.com/artinrahimii/project/actions/runs/42474804278): Windows WPF و HostLifecycle هر دو **success** شدند. در زمان آخرین بررسی، Android debug/release build، lint و JVM unit tests موفق بودند، اما Android Keystore instrumentation هنوز `in_progress` بود. چون این وظیفه فقط سند و قراردادهای آن را تغییر می‌دهد، این شواهد Android به‌عنوان آزمون فیزیکی/محصول نهایی یا شرط تکمیل هویت بصری استفاده نمی‌شود.
+- آزمون فیزیکی Android-to-Windows، rendered visual review، clean install کاربر و in-place upgrade همچنان در gates مستقل خودشان باقی هستند؛ این وظیفه آن‌ها را موفق اعلام نمی‌کند.
+
+## تلاش تکمیلی برای آزمون acceptance row
+
+- تلاش: `UPD-S1-006-20261108112329`.
+- آزمون اختصاصی `test_update_step_one_alignment.py` و quality gate روی commit نسخهٔ بعدی: **pending**.
+- وضعیت `UPD-S1-006`: `in_progress` تا موفقیت exact-commit quality gate پس از افزودن assertهای HEX.

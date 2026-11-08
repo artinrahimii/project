@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.46",
+  "commit_intent": "V 3.1.47",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -2439,9 +2439,9 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0013, T0020. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-006-20261108111311",
+        "last_attempt_id": "UPD-S1-006-20261108112329",
         "last_attempt_result": "partial",
         "changed_files": [
           "docs/requirements.md",
@@ -2454,9 +2454,13 @@
           "update/Step two/project-graph.md"
         ],
         "related_commits": [
-          "fc36774e3349558650e764476b70a721e4ed63a1"
+          "fc36774e3349558650e764476b70a721e4ed63a1",
+          "4076dd840ff8a0b4c15e2f6ed87d8c86fa41c478"
         ],
-        "tests_passed": [],
+        "tests_passed": [
+          "V 3.1.46 quality run 42474804276: 479 Python tests, compileall and graph guards passed.",
+          "V 3.1.46 rendezvous build/smoke run 42474804268 passed."
+        ],
         "tests_failed": [
           "V 3.1.45 quality run 42474633661: one failure in test_claims_audit due to removed legacy acceptance phrase; corrected for V 3.1.46."
         ],
@@ -2465,16 +2469,14 @@
         "contract_revalidation": {
           "state": "required",
           "triggering_contracts": [
-            "AC-CLAIMS-01 documentation wording",
-            "REQ-021–REQ-024",
-            "AC-CHAT-01, AC-RETRY-01, AC-STREAM-01, AC-VISUAL-01"
+            "AC-VISUAL-01 exact five palette tokens/HEX and contrast criteria",
+            "REQ-021–REQ-024"
           ],
           "affected_by_contract_changes": [],
           "review_evidence": [
             "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
             "tests/test_update_step_one_alignment.py",
-            "tests/test_acceptance_contract.py",
-            "https://github.com/artinrahimii/project/actions/runs/42474633661"
+            "https://github.com/artinrahimii/project/actions/runs/42474804276"
           ]
         }
       },
@@ -2586,6 +2588,56 @@
           "follow_up": "Run all exact-head V 3.1.46 workflows. Keep UPD-S1-006 in_progress until every acceptance criterion and its tests pass.",
           "device_and_host_details_redacted": "Hosted CI runners only; no physical Android handset or separate target Windows product host was connected.",
           "model_revision_and_sha256": "Not applicable to this documentation correction.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-006-20261108112329",
+          "started_at": "2026-11-08T11:23:29.876Z",
+          "ended_at": "2026-11-08T11:23:29.876Z",
+          "result": "partial",
+          "summary": "Made the five exact palette token names/HEX values explicit in AC-VISUAL-01 itself and added regression assertions against the acceptance row. Exact V3.1.47 quality validation is pending.",
+          "changed_files": [
+            "docs/acceptance.md",
+            "tests/test_update_step_one_alignment.py",
+            "update/Step three/UPD-S1-006/execution-report.md",
+            "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "V3.1.46 exact-head quality",
+              "command": "quality.yml on 4076dd840ff8a0b4c15e2f6ed87d8c86fa41c478",
+              "result": "passed",
+              "run_id": 42474804276,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42474804276",
+              "summary": "479 Python tests; compileall and both graph guards passed."
+            },
+            {
+              "name": "V3.1.46 product regression",
+              "command": "product-build.yml on 4076dd840ff8a0b4c15e2f6ed87d8c86fa41c478",
+              "result": "pending",
+              "run_id": 42474804278,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42474804278",
+              "summary": "Windows WPF and HostLifecycle passed; Android debug/release and JVM tests passed, Keystore instrumentation still in progress at last check."
+            },
+            {
+              "name": "V3.1.47 final requirements quality",
+              "command": "quality.yml on exact next commit",
+              "result": "pending",
+              "summary": "Must validate exact palette values in acceptance row."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "AC-VISUAL-01 now declares all five exact token name/HEX pairs in the acceptance table itself, alongside semantic and contrast rules.",
+            "Added tests that read the exact acceptance row for each token/HEX and contrast threshold."
+          ],
+          "follow_up": "Run exact-head V3.1.47 quality workflow. Keep the visual implementation, rendered screenshots and physical end-to-end gates separate.",
+          "device_and_host_details_redacted": "Hosted CI only; no physical Android handset or target Windows host attached.",
+          "model_revision_and_sha256": "Not applicable.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
@@ -5916,7 +5968,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T11:13:11.265Z",
+    "as_of": "2026-11-08T11:23:29.876Z",
     "total_tasks": 24,
     "not_started": 17,
     "in_progress": 1,
@@ -6037,7 +6089,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T11:13:11.265Z",
+  "updated_at": "2026-11-08T11:23:29.876Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
