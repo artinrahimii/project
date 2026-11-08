@@ -634,3 +634,28 @@
 - Product Build کلی موفق اعلام نمی‌شود؛ jobهای Windows و Android در زمان بررسی در حال اجرا بودند.
 - Android فیزیکی، Android-to-Windows واقعی، Room E2E، clean install و in-place upgrade اجرا نشده‌اند.
 - reconciliation: **54/168 reviewed** و **114 pending**؛ UPD-S1-008 همچنان `in_progress`.
+
+
+## بازبینی محتوایی T0100 تا T0109 — 2026-11-08T18:06:25.553Z
+
+- مبنای بررسی: `63ae554809f1d1bc6217b0ad48632f416f3db0f2` — `V 3.1.82`، شاخهٔ آنلاین `main`.
+- ده گرهٔ قدیمی T0100 تا T0109 از نظر کد تولیدی، آزمون ثبت‌شده، معیار legacy و یال‌های مستقیم جداگانه بررسی شدند؛ baseline status همه `done` و بدون تغییر است.
+- هر ده رکورد با تصمیم `re_review_required` و `review_status=reviewed` در JSON reconciliation ثبت شد. این تصمیم به معنی تأیید نهایی محصول نیست؛ وظایف Update مرتبط هنوز اجرا نشده‌اند.
+- T0100 admission context را در مسیر واقعی MainWindow به coordinator می‌رساند. T0101 مولد شناسهٔ آزموده‌شده دارد اما call-site تولیدی آن در مسیر inbound Windows اثبات نشد. T0104 gate یک‌بارمصرف آزمون دارد اما اتصال آن به همهٔ response pathهای زنده اثبات نشد. T0108/T0109 helper listener از PeerAnnouncementHostLifecycle واقعی جداگانه بررسی شد.
+- وابستگی‌های مستقیم مربوطه از قبل rationale/evidence و `validated` داشتند؛ هیچ طبقه‌بندی یا تاریخچه‌ای تغییر نکرد.
+- Product Build دقیق V3.1.82 [42503829586](https://github.com/artinrahimii/project/actions/runs/42503829586) موفق شد: jobهای Android، Windows WPF و HostLifecycle همگی successful بودند.
+- HostLifecycle: ۶۷ PASS، پوشش خطی ۸۵٫۸۹٪ و یک آزمون real-model اختیاری با وضعیت SKIP؛ این دسته inference واقعی مدل را ثابت نمی‌کند.
+- Quality Gate دقیق V3.1.82 [42503829570](https://github.com/artinrahimii/project/actions/runs/42503829570) موفق بود؛ CI جدید برای اعتبارسنجی همین تغییر ledger پس از commit اجرا خواهد شد.
+- شواهد مستقل:
+  - `update/Step three/UPD-S1-008/evidence/review-T0100.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0101.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0102.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0103.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0104.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0105.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0106.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0107.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0108.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0109.md`
+- نتیجهٔ reconciliation: **64/168 reviewed (38.10%)** و **104 pending**؛ UPD-S1-008 همچنان `in_progress`.
+

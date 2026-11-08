@@ -1174,10 +1174,19 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0100.md",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0100/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "63ae554809f1d1bc6217b0ad48632f416f3db0f2"
     },
     {
       "legacy_task_id": "T0101",
@@ -1189,10 +1198,20 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0101.md",
+        "src/Host.Windows/Requests/SecureRequestIdGenerator.cs",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/SecureRequestIdGeneratorTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_proto_contract.py",
+        "step three/T0101/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "63ae554809f1d1bc6217b0ad48632f416f3db0f2"
     },
     {
       "legacy_task_id": "T0102",
@@ -1204,10 +1223,21 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0102.md",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "protocol/whitep/v1/messages.proto",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0102/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "63ae554809f1d1bc6217b0ad48632f416f3db0f2"
     },
     {
       "legacy_task_id": "T0103",
@@ -1219,10 +1249,24 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0103.md",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Application/Inference/IInferenceEngine.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0103/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "63ae554809f1d1bc6217b0ad48632f416f3db0f2"
     },
     {
       "legacy_task_id": "T0104",
@@ -1234,10 +1278,20 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0104.md",
+        "src/Host.Windows/Requests/HostRequestResponseDeliveryGate.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "protocol/whitep/v1/messages.proto",
+        "tests/HostLifecycle.Tests/HostRequestResponseDeliveryTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0104/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "63ae554809f1d1bc6217b0ad48632f416f3db0f2"
     },
     {
       "legacy_task_id": "T0105",
@@ -1250,10 +1304,18 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0105.md",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0105/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "63ae554809f1d1bc6217b0ad48632f416f3db0f2"
     },
     {
       "legacy_task_id": "T0106",
@@ -1265,10 +1327,18 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0106.md",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0106/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "63ae554809f1d1bc6217b0ad48632f416f3db0f2"
     },
     {
       "legacy_task_id": "T0107",
@@ -1282,10 +1352,20 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0107.md",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0107/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "63ae554809f1d1bc6217b0ad48632f416f3db0f2"
     },
     {
       "legacy_task_id": "T0108",
@@ -1296,10 +1376,19 @@
         "UPD-S1-017"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0108.md",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0108/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "63ae554809f1d1bc6217b0ad48632f416f3db0f2"
     },
     {
       "legacy_task_id": "T0109",
@@ -1310,10 +1399,21 @@
         "UPD-S1-017"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0109.md",
+        "src/Host.Windows/Networking/ParticipationNetworkListenerLifecycle.cs",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ParticipationNetworkListenerLifecycleTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0109/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "63ae554809f1d1bc6217b0ad48632f416f3db0f2"
     },
     {
       "legacy_task_id": "T0110",

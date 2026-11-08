@@ -49,7 +49,7 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**54/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0099 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 114 رکورد همچنان `pending` هستند.
+**64/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0109 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 104 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
 هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 48 رکورد؛ شناسه‌های دقیق در JSON مرجع و فیلد review_status=reviewed ثبت شده‌اند.، و `re_review_required/pending` برای 114 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
@@ -256,4 +256,26 @@
 - یال‌های مرتبط از قبل validated هستند و تغییر نکردند: T0087→T0088/T0090/T0092 و T0097→T0098/T0099 sequencing_only؛ T0088→T0089، T0089→T0090، T0090→T0091، T0091→T0092 contract/interface؛ T0098→T0099 و T0099→T0100 hard_dependency.
 - وضعیت پایهٔ تمام پنج وظیفه done حفظ شد؛ تصمیم‌ها re_review_required/reviewed هستند. UPD-S1-010/024 برای سه وظیفهٔ نخست، و UPD-S1-013/023 برای دو مورد آخر trigger بازبینی مجددند.
 - Exact V3.1.81 Quality [42503265782](https://github.com/artinrahimii/project/actions/runs/42503265782) و Rendezvous [42503265712](https://github.com/artinrahimii/project/actions/runs/42503265712) موفق؛ HostLifecycle در Product [42503265704](https://github.com/artinrahimii/project/actions/runs/42503265704) موفق با ۶۷ PASS، ۸۵٫۸۸٪ coverage و یک SKIP اختیاری real-model. Windows و Android Product jobs هنگام ثبت در حال اجرا بودند.
-- reconciliation: **54/168 reviewed (32.14%)**، **114 pending**؛ وضعیت‌های قدیمی و نشانگرهای update_impact تغییر نکردند.
+- reconciliation: **64/168 reviewed (38.10%)**، **104 pending**؛ وضعیت‌های قدیمی و نشانگرهای update_impact تغییر نکردند.
+
+
+## بازبینی T0100 تا T0109 روی V 3.1.82
+
+- commit کد بررسی‌شده: `63ae554809f1d1bc6217b0ad48632f416f3db0f2` — `V 3.1.82`.
+- هر ده task از نظر کد، آزمون، معیار پذیرش و وابستگی‌ها بازبینی شدند؛ baseline status `done` و تاریخچه حفظ شد.
+- تصمیم هر ده رکورد `re_review_required` و `review_status=reviewed` است؛ re-review نهایی پس از اجرای UPD-S1 مرتبط لازم خواهد بود.
+- `update/Step three/UPD-S1-008/evidence/review-T0100.md`
+- `update/Step three/UPD-S1-008/evidence/review-T0101.md`
+- `update/Step three/UPD-S1-008/evidence/review-T0102.md`
+- `update/Step three/UPD-S1-008/evidence/review-T0103.md`
+- `update/Step three/UPD-S1-008/evidence/review-T0104.md`
+- `update/Step three/UPD-S1-008/evidence/review-T0105.md`
+- `update/Step three/UPD-S1-008/evidence/review-T0106.md`
+- `update/Step three/UPD-S1-008/evidence/review-T0107.md`
+- `update/Step three/UPD-S1-008/evidence/review-T0108.md`
+- `update/Step three/UPD-S1-008/evidence/review-T0109.md`
+- Product Build دقیق [42503829586](https://github.com/artinrahimii/project/actions/runs/42503829586) موفق؛ Windows، Android و HostLifecycle jobs موفق شدند.
+- Quality Gate دقیق [42503829570](https://github.com/artinrahimii/project/actions/runs/42503829570) موفق بود.
+- HostLifecycle: ۶۷ PASS، ۸۵٫۸۹٪ پوشش خطی و یک آزمون real-model اختیاری SKIP. هیچ inference مدل واقعی یا Android-to-Windows فیزیکی در این دسته ادعا نمی‌شود.
+- گراف قدیمی و نشانگرهای ثابت `update_impact` تغییر نکردند.
+- جمع reconciliation: **64/168 reviewed (38.10%)**، **104 pending (61.90%)**؛ UPD-S1-008 همچنان `in_progress`.
