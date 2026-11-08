@@ -898,3 +898,15 @@
 - Product Build current HEAD در زمان بررسی هنوز `in_progress` بود؛ run تاریخی 41886746018 را فقط به‌عنوان شاهد source قدیمی ثبت می‌کنیم. اجرای محلی این environment انجام نشد.
 - وضعیت پایهٔ T0198/T0200/T0201/T0203 `done` و T0202 برابر `deferred_final` بدون تغییر حفظ شد؛ تصمیم هر پنج `re_review_required` و review_status برابر `reviewed` ثبت می‌شود.
 - شواهد مستقل در `review-T0198.md`، `review-T0200.md`، `review-T0201.md`، `review-T0202.md` و `review-T0203.md` ذخیره شدند. Reconciliation از 139/168 به 144/168 reviewed و از 29 به 24 pending خواهد رسید.
+
+
+## بازبینی محتوایی T0204 تا T0208 — 2026-11-08T19:37:38.773Z
+
+- مبنای main: `168a1758094e88f3d1a9a2d86fde31136cdac916` (`V 3.1.104`).
+- T0204: اجرای تاریخی دور دوم پس از سه peer بی‌پاسخ در run [41911308402](https://github.com/artinrahimii/project/actions/runs/41911308402) موفق بود؛ ولی تست سه+سه peer در source فعلی وجود ندارد و current first-release تک‌میزبانه است.
+- T0205: cancellation مسیر peer-host تا HTTP generation operation با request/attempt correlation آزموده شد؛ لغو HTTP ثابت است، اما توقف داخلی محاسبات process جداگانهٔ llama.cpp اثبات نشده. run [41915992536](https://github.com/artinrahimii/project/actions/runs/41915992536) موفق.
+- T0206: source service، metadata DTO و Android directory client با Blob SHA دقیق از source baseline تا main تغییر نکرده‌اند؛ فیلد prompt/capsule/capsule رد می‌شود و directory پس از رد خالی است. تصمیم `unchanged`.
+- T0207: run تاریخی clean build [41925547942](https://github.com/artinrahimii/project/actions/runs/41925547942) موفق بود؛ اما product-build.yml و app/build.gradle.kts از آن commit تا main فعلی تغییر کرده‌اند. run exact-current-head [42515602200](https://github.com/artinrahimii/project/actions/runs/42515602200) هنوز در حال اجرا بود؛ Windows clean build و HostLifecycle success، Android و installer هنوز ناتمام.
+- T0208: artifactهای تاریخی شامل Android 223/224 passed و 1 skipped، و Windows HostLifecycle coverage 85.70% و 67 PASS/1 SKIP بود؛ current validator و workflow نیز بازبینی شدند. روی current run، HostLifecycle coverage artifact 111,852 bytes آپلود شده، اما Android coverage و سایر artifactها هنوز کامل نشده‌اند.
+- وضعیت پایهٔ T0204/T0205/T0207/T0208 `done` و T0206 `done` بدون تغییر حفظ شد؛ تصمیم‌ها به‌ترتیب `re_review_required`, `re_review_required`, `unchanged`, `re_review_required`, `re_review_required` هستند. هیچ status در گراف اولیه تغییر نکرد.
+- شواهد مستقل در `review-T0204.md` تا `review-T0208.md` قرار گرفتند. Reconciliation از 144/168 به 149/168 reviewed و از 24 به 19 pending تغییر می‌کند.
