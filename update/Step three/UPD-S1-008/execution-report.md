@@ -570,3 +570,67 @@
 - Windows WPF و Android APK jobs در زمان این ثبت هنوز in_progress بودند؛ Product Build کلی موفق اعلام نمی‌شود.
 - انتخاب خودکار مدل، inference واقعی با مدل نمونهٔ کاتالوگ، آزمون بصری UPD-S1-024، Android-to-Windows فیزیکی، clean install و in-place upgrade در این دسته اجرا نشده‌اند.
 - reconciliation: **49/168 reviewed**, **119 pending**؛ UPD-S1-008 همچنان `in_progress`.
+
+
+## بازبینی تکمیلی T0088، T0090، T0092، T0098 و T0099 — تلاش UPD-S1-008-20261108171030
+
+### T0088 — صفحهٔ گفت‌وگوی محلی میزبان
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ وظایف update: `UPD-S1-010`، `UPD-S1-024`.
+- MainWindow.xaml دارای پیام‌های چت، ورودی متن و کنترل ارسال است؛ MainWindow.xaml.cs مسیر ارسال را به HostInferenceSession متصل می‌کند و پیام user/assistant را جداگانه در UI نمایش می‌دهد.
+- تاریخچهٔ T0088، build و startup smoke واقعی WPF، HostLifecycle و Android/Protobuf build را در Product run 40179954088 و Quality run 40179954129 روی source commit وظیفه ثبت کرده است.
+- یال T0087→T0088 از نوع sequencing_only/validated و T0088→T0089 از نوع contract_or_interface_dependency/validated است؛ rationale/evidence قبلی حفظ می‌شوند.
+- این task صفحهٔ چت میزبان Windows را پوشش می‌دهد، نه چت Android و Room. UPD-S1-010 چرخهٔ Android را به runtime واقعی متصل و UPD-S1-024 هویت بصری صفحات را تغییر می‌دهد؛ پس از هر دو باید صفحه دوباره بازبینی شود.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0088.md`.
+
+### T0090 — ترتیب قطعی پیام‌های مکالمهٔ میزبان
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ وظایف update: `UPD-S1-010`.
+- ChatConversation پیام‌های user/assistant/system را به ترتیب در حافظه نگه می‌دارد؛ MainWindow مسیر append مرکزی دارد تا پاسخ پس از پیام کاربر درج شود.
+- HostConversationRetentionPolicy نگهداری را محدود می‌کند؛ WindowsHostConversationStore رمزگذاری DPAPI و نگهداری اختیاری با رضایت مالک را پیاده می‌کند. این history محلی Windows است، نه Room اندروید.
+- Acceptance tests ترتیب role/content، شناسه و timestamp پیام، clear و retention/restore را بررسی می‌کنند. Historic quality run 40181923409 و product run 40181923441 موفق بوده‌اند؛ یک source assertion قدیمی در تاریخچه حفظ و بعداً اصلاح شده است.
+- یال‌های T0089→T0090 و T0090→T0091 از نوع contract_or_interface_dependency/validated و T0087→T0090 از نوع sequencing_only/validated هستند.
+- این component مکالمهٔ in-memory میزبان است و persistence اختیاری DPAPI جایگزین Room اندروید نیست. UPD-S1-010 باید ترتیب و persistence همان چت Android را تضمین کند؛ مصرف‌کنندگان پس از اتصال runtime جدید دوباره بررسی شوند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0090.md`.
+
+### T0092 — نمایش خطا به‌صورت پیام system، نه پاسخ موفق مدل
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ وظایف update: `UPD-S1-010`.
+- HostErrorPresentation دسته‌های خطا و متن امن کاربر را جدا می‌کند؛ در مسیر Generate، خطا یا لغو به پیام System می‌رود و به‌عنوان Assistant response نمایش داده نمی‌شود.
+- Regression tests در تاریخچهٔ T0092 مسیر خطا را از پاسخ موفق جدا می‌کنند؛ Quality run 40232583373 و Product run 40232583374 برای کد/آزمون مبنا موفق ثبت شده‌اند.
+- یال T0091→T0092 از نوع contract_or_interface_dependency/validated و یال‌های T0087→T0092 و T0092→T0093 از نوع sequencing_only/validated هستند.
+- این شواهد مربوط به WPF میزبان است. UPD-S1-010 باید typed error mapping قابل‌فهم در Android را بسازد و retry/cancel/disconnect را بدون نمایش خطا به‌صورت پاسخ موفق مدیریت کند؛ سپس بازبینی مجدد لازم است.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0092.md`.
+
+### T0098 — هماهنگ‌کنندهٔ درخواست با semaphore تک‌ظرفیتی
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ وظایف update: `UPD-S1-005`، `UPD-S1-013`، `UPD-S1-023`.
+- HostRequestCoordinator با SemaphoreSlim(1,1) و WaitAsync(0) پذیرش غیرصفی را اعمال می‌کند؛ slot پس از success/failure/cancel آزاد می‌شود و درخواست هم‌زمان رد می‌شود.
+- HostRequestAdmissionPolicy پیش از inference، participation، Ready state، model match، capacity state و deadline را fail-closed بررسی می‌کند.
+- HostLifecycle روی exact V3.1.81 پیام PASS صریح دارد که از 64 درخواست هم‌زمان دقیقاً یک مورد پذیرفته و 63 مورد Busy شده‌اند؛ busy regressionها صف را رد و آزادشدن slot را کنترل می‌کنند.
+- یال T0097→T0098 از نوع sequencing_only/validated و T0098→T0099 از نوع hard_dependency/validated است.
+- UPD-S1-013 هنوز قیود نهایی منابع و UPD-S1-023 انتخاب مدل/backend را کامل نکرده‌اند؛ admission و ظرفیت باید پس از اعمال این دو وظیفه دوباره روی مسیر نهایی آزموده شوند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0098.md`.
+
+### T0099 — رد fail-fast درخواست دوم با وضعیت Busy
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ وظایف update: `UPD-S1-005`، `UPD-S1-013`، `UPD-S1-023`.
+- در حالت slot اشغال، Coordinator نتیجهٔ Busy را فوراً برمی‌گرداند؛ callback درخواست دوم اجرا و وارد صف نمی‌شود. Cancellation token حفظ می‌شود و پس از آزادشدن slot درخواست جدید پذیرفته می‌شود.
+- HostRequestCoordinatorBusyTests درخواست‌های هم‌زمان را بدون queue بررسی می‌کند؛ HostRequestAdmissionTests مدل not-ready/mismatch، capacity Unknown/Insufficient و deadline expired را پیش از inference رد می‌کنند.
+- تاریخچهٔ T0099 Product run 40309351792 و Quality run 40309351849 را موفق ثبت کرده؛ revalidation admission context در V3.0.313 run 40312672878 نیز پیام PASS دارد.
+- یال‌های T0098→T0099 و T0099→T0100 از نوع hard_dependency/validated و T0097→T0099 از نوع sequencing_only/validated باقی می‌مانند.
+- UPD-S1-013 و UPD-S1-023 هنوز سیاست ظرفیت و مدل/backend را تغییر می‌دهند؛ پس از اتصال آن‌ها Busy/admission/cancellation باید دوباره بازآزمایی شود.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0099.md`.
+
+### CI و مرز شواهد
+
+- Quality V3.1.81 [42503265782](https://github.com/artinrahimii/project/actions/runs/42503265782) موفق؛ Rendezvous [42503265712](https://github.com/artinrahimii/project/actions/runs/42503265712) موفق.
+- HostLifecycle در Product [42503265704](https://github.com/artinrahimii/project/actions/runs/42503265704) موفق: ۶۷ PASS، یک real-model SKIP، پوشش ۸۵٫۸۸٪.
+- Product Build کلی موفق اعلام نمی‌شود؛ jobهای Windows و Android در زمان بررسی در حال اجرا بودند.
+- Android فیزیکی، Android-to-Windows واقعی، Room E2E، clean install و in-place upgrade اجرا نشده‌اند.
+- reconciliation: **54/168 reviewed** و **114 pending**؛ UPD-S1-008 همچنان `in_progress`.

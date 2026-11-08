@@ -3167,7 +3167,12 @@
         "update/Step three/UPD-S1-008/evidence/review-T0072.md",
         "update/Step three/UPD-S1-008/evidence/review-T0073.md",
         "update/Step three/UPD-S1-008/evidence/review-T0074.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0075.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0075.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0088.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0090.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0092.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0098.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0099.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
@@ -3234,13 +3239,18 @@
         "update/Step three/UPD-S1-008/evidence/review-T0072.md",
         "update/Step three/UPD-S1-008/evidence/review-T0073.md",
         "update/Step three/UPD-S1-008/evidence/review-T0074.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0075.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0075.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0088.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0090.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0092.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0098.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0099.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 20,
+        "attempt_count": 21,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261108170611",
+        "last_attempt_id": "UPD-S1-008-20261108171030",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3303,7 +3313,12 @@
           "update/Step three/UPD-S1-008/evidence/review-T0072.md",
           "update/Step three/UPD-S1-008/evidence/review-T0073.md",
           "update/Step three/UPD-S1-008/evidence/review-T0074.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0075.md"
+          "update/Step three/UPD-S1-008/evidence/review-T0075.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0088.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0090.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0092.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0098.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0099.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
@@ -3328,7 +3343,8 @@
           "a19595c475752832fdd3701e109dc0e1a088721f",
           "bc9882a8ad1fcd29b6a2e42e31509a76e926f2f6",
           "da866157596ac17ff91eba21555e8821bc06878e",
-          "5cba6051583091d8fbfb2cc849a2aa812c983d53"
+          "5cba6051583091d8fbfb2cc849a2aa812c983d53",
+          "08ba01194adc2acc37593a2586eb79104c7dd650"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -3376,7 +3392,10 @@
           "Exact V3.1.79 Rendezvous container build/smoke passed (run 42502773013).",
           "Exact V3.1.80 Step Three quality gate passed on main SHA 5cba6051583091d8fbfb2cc849a2aa812c983d53 (run 42502980246).",
           "Exact V3.1.80 Rendezvous container build/smoke passed (run 42502980194).",
-          "Exact V3.1.80 HostLifecycle job passed in Product Build run 42502980229: 67 PASS markers, 85.89% line coverage; optional real-model inference test SKIPPED."
+          "Exact V3.1.80 HostLifecycle job passed in Product Build run 42502980229: 67 PASS markers, 85.89% line coverage; optional real-model inference test SKIPPED.",
+          "Exact V3.1.81 Step Three quality gate passed on main SHA 08ba01194adc2acc37593a2586eb79104c7dd650 (run 42503265782).",
+          "Exact V3.1.81 Rendezvous container build/smoke passed (run 42503265712).",
+          "Exact V3.1.81 HostLifecycle job passed in Product Build run 42503265704: 67 PASS markers, 1 optional real-model SKIP, 85.88% line coverage."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -4500,7 +4519,7 @@
             "update/Step three/UPD-S1-008/evidence/review-T0074.md",
             "update/Step three/UPD-S1-008/evidence/review-T0075.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "5cba6051583091d8fbfb2cc849a2aa812c983d53",
           "tests": [
             {
               "name": "Exact V3.1.80 Step Three quality gate",
@@ -4536,6 +4555,61 @@
           "follow_up": "Continue from T0076. After UPD-S1-023, re-review catalog metadata, license-warning and offline-cache consumers against real model installation/activation and model selection. After UPD-S1-024, inspect the WPF catalog/detail pages at target sizes and verify contrast. Product Build V3.1.80 Windows and Android jobs were still running during this attempt.",
           "device_and_host_details_redacted": "CI ran a GitHub-hosted Linux HostLifecycle runner and Windows/Android jobs were not yet complete; no physical Android device paired to a target Windows host was used.",
           "model_revision_and_sha256": "Sample catalog entry is bartowski source with declared SHA-256 2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d; historical real-inference workflow used separate QuantFactory revision a6b7826ed969c3926a98359e39912af137b464cb with SHA-256 8030f04528538d47bda434f6f0bdf3952c40a58123e4d5e755332f23731a8684. No model was downloaded or loaded in this review attempt.",
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108171030",
+          "started_at": "2026-11-08T17:10:30.000Z",
+          "ended_at": "2026-11-08T17:10:30.000Z",
+          "result": "partial",
+          "summary": "Reviewed T0088, T0090, T0092, T0098 and T0099 individually against current WPF UI, in-memory conversation, optional DPAPI host history, error presentation, request coordinator, admission policy, source tests, historical exact CI and old graph edges. All five baseline statuses remain done; decisions are re_review_required because Android UI/runtime and visual updates (T0088), Android same-chat/Room lifecycle (T0090), typed Android errors (T0092), and host capacity/model changes (T0098/T0099) are forthcoming. Existing legacy edges were already validated and were preserved. 54/168 content reviews recorded; 114 pending.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0088.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0090.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0092.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0098.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0099.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Exact V3.1.81 Step Three quality gate",
+              "command": ".github/workflows/quality.yml",
+              "result": "passed",
+              "run_id": 42503265782,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42503265782",
+              "summary": "Exact main V3.1.81 passed Python tests, compileall and both graph guards."
+            },
+            {
+              "name": "Exact V3.1.81 Rendezvous container",
+              "command": ".github/workflows/rendezvous-container.yml",
+              "result": "passed",
+              "run_id": 42503265712,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42503265712",
+              "summary": "Exact main V3.1.81 container build and smoke passed."
+            },
+            {
+              "name": "Exact V3.1.81 HostLifecycle job",
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "passed",
+              "run_id": 42503265704,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42503265704",
+              "summary": "HostLifecycle job passed with 67 PASS markers, 85.88% coverage and one opt-in real-model SKIP. Windows and Android jobs remained in progress."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "UPD-S1-010/024 affect WPF/chat UI and Android request flow; UPD-S1-013/023 affect host admission/capacity/model policy."
+          ],
+          "follow_up": "Continue with the next mapped legacy IDs after T0099. Re-review T0088/T0090/T0092 after UPD-S1-010/024; re-review T0098/T0099 after UPD-S1-013/023. Do not infer physical Android-to-Windows execution from emulator/CI tests.",
+          "device_and_host_details_redacted": "GitHub-hosted CI only; Windows and Android Product Build jobs were still in progress on exact V3.1.81. No physical Android device paired to a target Windows host was used.",
+          "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
       ],
@@ -7957,7 +8031,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T17:06:11.334Z",
+    "as_of": "2026-11-08T17:10:30.000Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -8078,7 +8152,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T17:06:11.334Z",
+  "updated_at": "2026-11-08T17:10:30.000Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -8261,12 +8335,12 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "reviewed": 49,
-      "pending": 119
+      "reviewed": 54,
+      "pending": 114
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "119 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until every required review has individual code/test/acceptance evidence, dependency review and no pending records.",
+    "completion_blocker": "114 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until every required review has individual code/test/acceptance evidence, dependency review and no pending records.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",

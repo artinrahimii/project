@@ -49,10 +49,10 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**49/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای T0027، T0032–T0036، T0041–T0075، T0199 و T0214 ثبت شده است. 119 رکورد همچنان `pending` هستند.
+**54/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0099 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 114 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
-هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 43 رکورد (T0027، T0032–T0036، T0041–T0044، T0199 و T0214)، و `re_review_required/pending` برای 119 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
+هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 48 رکورد؛ شناسه‌های دقیق در JSON مرجع و فیلد review_status=reviewed ثبت شده‌اند.، و `re_review_required/pending` برای 114 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
 
 
 ## نتیجهٔ تکمیلی در V 3.1.56
@@ -245,3 +245,15 @@
 - هر پنج baseline status برابر done حفظ شدند؛ تصمیم همه re_review_required/reviewed است، چون UPD-S1-023 activation/selection مدل و T0071 همچنین UPD-S1-024 UI بصری را تغییر می‌دهد.
 - Quality V3.1.80 [42502980246](https://github.com/artinrahimii/project/actions/runs/42502980246) و Rendezvous [42502980194](https://github.com/artinrahimii/project/actions/runs/42502980194) موفق. HostLifecycle در Product run [42502980229](https://github.com/artinrahimii/project/actions/runs/42502980229) موفق با ۶۷ PASS، پوشش ۸۵٫۸۹٪ و یک SKIP اختیاری real-model است؛ Windows و Android jobs در زمان این ثبت در حال اجرا بودند.
 - جمع reconciliation: **49/168 reviewed (29.17%)**، **119 pending**. وضعیت‌های قدیمی و update_impact markers تغییر نکردند.
+
+
+## بازبینی محتوایی T0088، T0090، T0092، T0098 و T0099 — V 3.1.81
+
+- T0088: صفحهٔ WPF میزبان و پیام‌های چت، ورودی و ارسال بررسی شد؛ Product run 40179954088 و Quality run 40179954129 برای source commit وظیفه موفق ثبت شده‌اند. این صفحه Android chat UI/Room نیست و پس از UPD-S1-010 و UPD-S1-024 بازبینی می‌شود.
+- T0090: ChatConversation ترتیب user/assistant/system را نگه می‌دارد؛ WindowsHostConversationStore history را با DPAPI و رضایت مالک نگه می‌دارد، اما این persistence محلی Windows است و جایگزین Room اندروید نیست. Historic quality 40181923409 و product 40181923441 موفق‌اند.
+- T0092: HostErrorPresentation و regressionها خطا/لغو را به پیام System نگاشت می‌کنند، نه پاسخ Assistant؛ historic quality 40232583373 و product 40232583374 موفق‌اند. typed error اندروید هنوز UPD-S1-010 است.
+- T0098/T0099: HostRequestCoordinator با semaphore یک و WaitAsync(0) پذیرش fail-fast دارد؛ Busy بدون queue، cancellation و release آزموده شده‌اند. Exact current V3.1.81 HostLifecycle [42503265704](https://github.com/artinrahimii/project/actions/runs/42503265704) PASS ثبت کرده؛ از ۶۴ درخواست هم‌زمان دقیقاً یک مورد پذیرفته و ۶۳ مورد Busy شده‌اند.
+- یال‌های مرتبط از قبل validated هستند و تغییر نکردند: T0087→T0088/T0090/T0092 و T0097→T0098/T0099 sequencing_only؛ T0088→T0089، T0089→T0090، T0090→T0091، T0091→T0092 contract/interface؛ T0098→T0099 و T0099→T0100 hard_dependency.
+- وضعیت پایهٔ تمام پنج وظیفه done حفظ شد؛ تصمیم‌ها re_review_required/reviewed هستند. UPD-S1-010/024 برای سه وظیفهٔ نخست، و UPD-S1-013/023 برای دو مورد آخر trigger بازبینی مجددند.
+- Exact V3.1.81 Quality [42503265782](https://github.com/artinrahimii/project/actions/runs/42503265782) و Rendezvous [42503265712](https://github.com/artinrahimii/project/actions/runs/42503265712) موفق؛ HostLifecycle در Product [42503265704](https://github.com/artinrahimii/project/actions/runs/42503265704) موفق با ۶۷ PASS، ۸۵٫۸۸٪ coverage و یک SKIP اختیاری real-model. Windows و Android Product jobs هنگام ثبت در حال اجرا بودند.
+- reconciliation: **54/168 reviewed (32.14%)**، **114 pending**؛ وضعیت‌های قدیمی و نشانگرهای update_impact تغییر نکردند.

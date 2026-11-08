@@ -956,7 +956,7 @@
         "https://github.com/artinrahimii/project/actions/runs/42502980194",
         "https://github.com/artinrahimii/project/actions/runs/42502980229"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "5cba6051583091d8fbfb2cc849a2aa812c983d53"
     },
     {
       "legacy_task_id": "T0072",
@@ -978,7 +978,7 @@
         "https://github.com/artinrahimii/project/actions/runs/42502980194",
         "https://github.com/artinrahimii/project/actions/runs/42502980229"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "5cba6051583091d8fbfb2cc849a2aa812c983d53"
     },
     {
       "legacy_task_id": "T0073",
@@ -1001,7 +1001,7 @@
         "https://github.com/artinrahimii/project/actions/runs/42502980194",
         "https://github.com/artinrahimii/project/actions/runs/42502980229"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "5cba6051583091d8fbfb2cc849a2aa812c983d53"
     },
     {
       "legacy_task_id": "T0074",
@@ -1023,7 +1023,7 @@
         "https://github.com/artinrahimii/project/actions/runs/42502980194",
         "https://github.com/artinrahimii/project/actions/runs/42502980229"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "5cba6051583091d8fbfb2cc849a2aa812c983d53"
     },
     {
       "legacy_task_id": "T0075",
@@ -1046,7 +1046,7 @@
         "https://github.com/artinrahimii/project/actions/runs/42502980194",
         "https://github.com/artinrahimii/project/actions/runs/42502980229"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "5cba6051583091d8fbfb2cc849a2aa812c983d53"
     },
     {
       "legacy_task_id": "T0088",
@@ -1057,10 +1057,18 @@
         "UPD-S1-024"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0088.md",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_wpf_entrypoint.py",
+        "https://github.com/artinrahimii/project/actions/runs/42503265782",
+        "https://github.com/artinrahimii/project/actions/runs/42503265712",
+        "https://github.com/artinrahimii/project/actions/runs/42503265704"
+      ],
+      "review_commit_sha": "08ba01194adc2acc37593a2586eb79104c7dd650"
     },
     {
       "legacy_task_id": "T0090",
@@ -1070,10 +1078,20 @@
         "UPD-S1-010"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0090.md",
+        "src/Host.Application/Chat/ChatConversation.cs",
+        "src/Host.Application/Chat/HostConversationRetentionPolicy.cs",
+        "src/Host.Windows/Chat/WindowsHostConversationStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ChatConversationAcceptanceTests.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42503265782",
+        "https://github.com/artinrahimii/project/actions/runs/42503265712",
+        "https://github.com/artinrahimii/project/actions/runs/42503265704"
+      ],
+      "review_commit_sha": "08ba01194adc2acc37593a2586eb79104c7dd650"
     },
     {
       "legacy_task_id": "T0092",
@@ -1083,10 +1101,19 @@
         "UPD-S1-010"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0092.md",
+        "src/Host.Application/HostErrorPresentation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_wpf_entrypoint.py",
+        "https://github.com/artinrahimii/project/actions/runs/42503265782",
+        "https://github.com/artinrahimii/project/actions/runs/42503265712",
+        "https://github.com/artinrahimii/project/actions/runs/42503265704"
+      ],
+      "review_commit_sha": "08ba01194adc2acc37593a2586eb79104c7dd650"
     },
     {
       "legacy_task_id": "T0098",
@@ -1098,10 +1125,20 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0098.md",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42503265782",
+        "https://github.com/artinrahimii/project/actions/runs/42503265712",
+        "https://github.com/artinrahimii/project/actions/runs/42503265704"
+      ],
+      "review_commit_sha": "08ba01194adc2acc37593a2586eb79104c7dd650"
     },
     {
       "legacy_task_id": "T0099",
@@ -1113,10 +1150,19 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0099.md",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42503265782",
+        "https://github.com/artinrahimii/project/actions/runs/42503265712",
+        "https://github.com/artinrahimii/project/actions/runs/42503265704"
+      ],
+      "review_commit_sha": "08ba01194adc2acc37593a2586eb79104c7dd650"
     },
     {
       "legacy_task_id": "T0100",
