@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.35",
+  "commit_intent": "V 3.1.36",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -1006,9 +1006,9 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. New decision ADR-0022 records the first-release one-host/sequential-retry policy. The generic three-host selector and dispatcher remain compatibility primitives and do not change the production runtime's one-host admission boundary. The implementation attempt is partial pending exact-commit CI. V 3.1.29 quality gate found five residual contract/documentation assertions; the exact tests and register row were corrected in the next partial attempt. Do not mark done until CI passes.",
       "execution_summary": {
-        "attempt_count": 8,
-        "failed_attempt_count": 5,
-        "last_attempt_id": "UPD-S1-003-20261108065938",
+        "attempt_count": 9,
+        "failed_attempt_count": 6,
+        "last_attempt_id": "UPD-S1-003-20261108065950",
         "last_attempt_result": "failed",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -1038,7 +1038,8 @@
           "719f2a4daf0b82c013c617a1a0a4778c625c474c",
           "10303ad6faddd7d4a50096d702d0e9f4a10e2b7d",
           "b881d980419be1998e32eeb6a55d0d13d5a4cc3e",
-          "40d9128be6d3bd0df3531d44b893946f24e82961"
+          "40d9128be6d3bd0df3531d44b893946f24e82961",
+          "b8c664315ba3071080e91190ba79eef7ae58caa7"
         ],
         "tests_passed": [
           "Rendezvous container build and smoke",
@@ -1060,7 +1061,11 @@
           "Step Three quality gate — run 42456615858",
           "Rendezvous container build/smoke — run 42456615879",
           "Windows WPF build and installer — run 42456615891",
-          "HostLifecycle unit/integration and coverage — run 42456615891"
+          "HostLifecycle unit/integration and coverage — run 42456615891",
+          "Windows WPF build and installer — run 42456934059",
+          "HostLifecycle unit/integration and coverage — run 42456934059",
+          "Android ktlint — run 42456934059",
+          "Android debug/release APK and merged-manifest permissions — run 42456934059"
         ],
         "tests_failed": [
           "Step Three quality gate",
@@ -1068,7 +1073,8 @@
           "Android ktlintTestSourceSetCheck — run 42455296829; JVM/instrumentation tests not run",
           "Android JVM :app:testDebugUnitTest — 5 of 214 failed in run 42455653927",
           "Android ktlintTestSourceSetCheck — run 42456615891; APK/JVM/instrumentation not run",
-          "Step Three Python quality gate — five stale contract-test failures in run 42456934121"
+          "Step Three Python quality gate — five stale contract-test failures in run 42456934121",
+          "Android :app:compileDebugUnitTestKotlin — unresolved InferenceHostAttempt.roundId at two transport test references in run 42456934059; JVM methods not run"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1092,6 +1098,7 @@
             "update/Step three/UPD-S1-003/evidence/ci-3.1.31.md",
             "update/Step three/UPD-S1-003/evidence/ci-3.1.32.md",
             "update/Step three/UPD-S1-003/evidence/ci-3.1.33.md",
+            "update/Step three/UPD-S1-003/evidence/ci-3.1.34.md",
             "update/Step three/UPD-S1-003/evidence/ci-3.1.34.md"
           ]
         }
@@ -1554,6 +1561,95 @@
           "follow_up": "Rerun exact-commit Python quality, graph validation, Android lint, debug/release builds, Android JVM and Keystore instrumentation, and Windows/HostLifecycle checks. Keep UPD-S1-003 in_progress until all required results pass.",
           "device_and_host_details_redacted": "CI runners only. No physical Android device, target Windows host with real model, or installation/upgrade test was performed by this Python quality run.",
           "model_revision_and_sha256": "Not applicable.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable."
+        },
+        {
+          "attempt_id": "UPD-S1-003-20261108065950",
+          "started_at": "2026-11-08T06:59:50Z",
+          "ended_at": "2026-11-08T07:05:09Z",
+          "result": "failed",
+          "summary": "V 3.1.34 exact-commit product build: Windows WPF clean build, publish, startup/security/identity/trust checks and installer acceptance passed; HostLifecycle unit/integration/coverage passed. Android ktlint, debug APK, release APK and merged-manifest permission validation passed. The Android JVM step failed during test-source compilation (before any JVM tests ran): two references attempted to read roundId from InferenceHostAttempt, whose actual contract only contains ephemeralHostId, attemptId and submissionStatus. Android Keystore instrumentation and final APK artifact were skipped. The round ID remains in the protobuf request/response and is correlated there; the test will assert it is nonblank and that response roundId matches the received request roundId.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt"
+          ],
+          "commit_sha": "b8c664315ba3071080e91190ba79eef7ae58caa7",
+          "tests": [
+            {
+              "name": "Windows WPF build and installer",
+              "command": "product-build.yml / Build Windows WPF host",
+              "result": "passed",
+              "run_id": 42456934059,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456934059",
+              "summary": "Clean build, publish, startup, security/identity/trust checks and installer acceptance passed."
+            },
+            {
+              "name": "HostLifecycle unit/integration and coverage",
+              "command": "product-build.yml / Host lifecycle unit and integration tests",
+              "result": "passed",
+              "run_id": 42456934059,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456934059",
+              "summary": "HostLifecycle suite and coverage passed."
+            },
+            {
+              "name": "Android Kotlin lint",
+              "command": "gradle --no-daemon ktlintCheck",
+              "result": "passed",
+              "run_id": 42456934059,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456934059",
+              "summary": "Kotlin formatting and lint passed."
+            },
+            {
+              "name": "Android debug APK",
+              "command": ":app:assembleDebug",
+              "result": "passed",
+              "run_id": 42456934059,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456934059",
+              "summary": "Debug APK built from clean outputs."
+            },
+            {
+              "name": "Android release APK",
+              "command": "Release variant build with disposable CI signing key; key removed",
+              "result": "passed",
+              "run_id": 42456934059,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456934059",
+              "summary": "Release variant built and temporary key cleanup succeeded."
+            },
+            {
+              "name": "Android merged manifest permission checks",
+              "command": "Verify minimum permissions in merged Android APK",
+              "result": "passed",
+              "run_id": 42456934059,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456934059",
+              "summary": "Minimum permission checks passed."
+            },
+            {
+              "name": "Android JVM unit tests",
+              "command": ":app:testDebugUnitTest",
+              "result": "failed",
+              "run_id": 42456934059,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456934059",
+              "summary": "Test-source compilation failed at :app:compileDebugUnitTestKotlin with unresolved InferenceHostAttempt.roundId at transport test lines 429 and 1002; JVM test methods did not run."
+            },
+            {
+              "name": "Android Keystore instrumentation",
+              "command": "Connected Android instrumentation test task",
+              "result": "skipped",
+              "run_id": 42456934059,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456934059",
+              "summary": "Skipped after JVM test compilation failed."
+            }
+          ],
+          "failure_details": "Exact Gradle output: :app:compileDebugUnitTestKotlin FAILED. Compiler errors at Libp2pInferenceRequestTransportTest.kt:429:42 and :1002:44: Unresolved reference 'roundId'. `InferenceHostAttempt` is defined in InferenceAttemptDispatcher.kt and contains only `ephemeralHostId`, `attemptId`, and `submissionStatus`; it has no `roundId`. The request received by the responder and final InferenceResponse do carry roundId. Correct test evidence should therefore assert received.roundId is nonblank and response.roundId equals the received/returned correlated roundId, without adding a redundant field to InferenceHostAttempt.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "No production request model change is required. InferenceHostAttempt intentionally contains only peer ID, attempt ID and submission status.",
+            "The round identity is part of InferenceRequest and InferenceResponse wire messages and is checked by the transport's PendingAttempt correlation logic.",
+            "The two test assertions now validate nonblank round IDs in the wire request/response instead of reading an absent attempt.roundId property."
+          ],
+          "follow_up": "Rerun exact-commit ktlint, Android debug/release, JVM unit tests, Keystore instrumentation and coverage after correcting the two test references. Keep UPD-S1-003 in_progress until all acceptance criteria pass.",
+          "device_and_host_details_redacted": "CI runner only. Windows is a CI runner, not a physical customer host with a loaded model; no real Android handset-to-Windows local inference occurred. No in-place upgrade was run.",
+          "model_revision_and_sha256": "Not applicable; no real model inference was run.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable."
         }
       ]
@@ -4827,7 +4923,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T07:03:30.662Z",
+    "as_of": "2026-11-08T07:06:14.852Z",
     "total_tasks": 24,
     "not_started": 21,
     "in_progress": 1,

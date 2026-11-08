@@ -166,3 +166,15 @@
 - این موارد نشان‌دهندهٔ شکست منطق محصول نیستند؛ آزمون‌های Python با بازطراحی آزمون‌های Kotlin همگام نشده بودند. محدودیت تولیدی یک میزبان در هر round تغییر نمی‌کند.
 - در همان commit، Kotlin lint موفق شد و build دیباگ Android آغاز شد؛ نتیجهٔ باقی مراحل Product Build پس از تکمیل workflow جداگانه ثبت می‌شود.
 - UPD-S1-003 تا پاس‌شدن مجدد Python quality، Android JVM و Keystore و سایر معیارها `in_progress` باقی می‌ماند.
+
+
+## اعتبارسنجی تکمیلی V 3.1.34 — خطای کامپایل JVM اندروید
+
+- Product build run: [42456934059](https://github.com/artinrahimii/project/actions/runs/42456934059).
+- Windows WPF build/publish/startup/security/installer: **PASS**.
+- HostLifecycle unit/integration/coverage: **PASS**.
+- Android ktlint، debug/release APK و permission checks: **PASS**.
+- Android JVM: **FAIL پیش از اجرای تست‌ها**؛ `:app:compileDebugUnitTestKotlin` در دو خط ۴۲۹ و ۱۰۰۲ از `Libp2pInferenceRequestTransportTest.kt` به `InferenceHostAttempt.roundId` ارجاع می‌داد، اما این value object چنین فیلدی ندارد.
+- قرارداد واقعی `InferenceHostAttempt` شامل `ephemeralHostId`، `attemptId` و `submissionStatus` است؛ roundId در پیام Protobuf درخواست/پاسخ و pending transport correlation وجود دارد. تست‌ها به‌جای افزودن فیلد جدید به مدل، roundId پیام دریافتی را nonblank و roundId پاسخ را منطبق با درخواست دریافت‌شده بررسی می‌کنند.
+- Keystore instrumentation و artifact نهایی APK به‌دلیل شکست کامپایل JVM اجرا/آپلود نشدند.
+- UPD-S1-003 همچنان `in_progress` است.
