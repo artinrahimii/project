@@ -3113,9 +3113,9 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261108124213",
+        "last_attempt_id": "UPD-S1-008-20261108124650",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3130,7 +3130,8 @@
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
           "795a2de651f4e43133f352699e34623a3a10df0a",
-          "38624cbc7537637086c8ef07aa7f4d15d8315e99"
+          "38624cbc7537637086c8ef07aa7f4d15d8315e99",
+          "f2abe47a43671753daaf233763b612592b3f694f"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -3139,10 +3140,13 @@
           "Current recorded-output/evidence path existence: All 1,167 path references exist in the exact HEAD tree.",
           "T0012: 24 unique REQ IDs with complete requirement/acceptance/verification/trace fields; dedicated tests passed in exact V3.1.56 quality CI.",
           "T0013: 21 acceptance gates map all 24 requirements; NOT RUN remains a release blocker; dedicated tests passed in exact V3.1.56 quality CI.",
-          "Exact V3.1.56 quality run 42480966736 passed Python test discovery, compileall and both graph structural/output-evidence guards."
+          "Exact V3.1.56 quality run 42480966736 passed Python test discovery, compileall and both graph structural/output-evidence guards.",
+          "V 3.1.58 automated Python tests passed: 479 tests, 0 failures.",
+          "V 3.1.58 Step Three graph structural and repository output/evidence guards passed: 230 nodes, 422 edges, 0 errors, 1 preserved historical metadata warning."
         ],
         "tests_failed": [
-          "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON."
+          "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
+          "V 3.1.58 quality run 42481831997: Python unit suite passed (479/479), Step Three graph guard passed; update graph graph_guard failed with FAILED_ATTEMPT_COUNT_MISMATCH: summary=1, history=0. Corrective action: mark the prior V3.1.57 validation attempt as result=failed and add the corrective current attempt as partial so summary and history counts agree."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -3281,8 +3285,8 @@
           "attempt_id": "UPD-S1-008-20261108124213",
           "started_at": "2026-11-08T12:42:13Z",
           "ended_at": "2026-11-08T12:42:25Z",
-          "result": "partial",
-          "summary": "Quality CI exposed an incorrect mutation of the legacy graph's static update_impact markers. The marker contract remains pending/re_review_required for all affected tasks; individual content-review outcomes remain only in the reconciliation JSON. Restore the legacy graph blob to the exact pre-review checkpoint and re-run CI.",
+          "result": "failed",
+          "summary": "The V 3.1.57 quality run failed its contract test because the static impact markers were mutated. The legacy graph was restored, but the V 3.1.58 follow-up quality run then found a failed-attempt count/history mismatch.",
           "changed_files": [
             "update/Step two/project-graph.md",
             "step three/project-graph.md",
@@ -3323,6 +3327,59 @@
           "contract_changes": [],
           "follow_up": "Verify V 3.1.58 quality run passes all graph contracts and unit tests; keep all legacy impact markers pending until the complete reconciliation criteria permit otherwise.",
           "device_and_host_details_redacted": "GitHub-hosted CI and repository source inspection only; no physical handset or target Windows host used.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108124650",
+          "started_at": "2026-11-08T12:46:50Z",
+          "ended_at": "2026-11-08T12:46:59Z",
+          "result": "partial",
+          "summary": "All 479 automated Python tests passed on V 3.1.58 and the legacy graph guards passed. The Update graph guard then reported a failed_attempt_count/history mismatch because attempt 3 was counted as failed in the summary but recorded as partial. Corrected the historical result classification and count alignment; V 3.1.59 quality verification remains pending.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md"
+          ],
+          "commit_sha": "f2abe47a43671753daaf233763b612592b3f694f",
+          "tests": [
+            {
+              "name": "Python automated test suite",
+              "command": "GitHub Actions run 42481831997 / unittest discovery",
+              "result": "passed",
+              "summary": "479 tests, OK."
+            },
+            {
+              "name": "Legacy graph structural guard",
+              "command": "python tools/graph_guard.py step three/project-graph.md",
+              "result": "passed",
+              "summary": "230 tasks, 422 edges; 0 errors; 1 historical unmapped metadata warning preserved."
+            },
+            {
+              "name": "Legacy graph output/evidence guard",
+              "command": "python tools/graph_guard.py step three/project-graph.md --repo-root .",
+              "result": "passed",
+              "summary": "Repository-backed output/evidence validation completed with 0 errors."
+            },
+            {
+              "name": "Update graph guard",
+              "command": "python tools/graph_guard.py update/Step two/project-graph.md",
+              "result": "failed",
+              "summary": "FAILED_ATTEMPT_COUNT_MISMATCH: summary=1, history=0. This was a ledger classification mismatch, not a task code or requirement failure."
+            },
+            {
+              "name": "Corrected V 3.1.59 quality workflow",
+              "command": ".github/workflows/quality.yml",
+              "result": "not_run",
+              "summary": "Must verify after the next commit."
+            }
+          ],
+          "failure_details": "The guard counts only execution_history entries whose result is exactly failed. The previous update incorrectly incremented failed_attempt_count but left history attempt 3 partial. History attempt 3 is now classified failed and attempt 4 records the corrective work as partial.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the corrected graph guard and full quality workflow on V 3.1.59. Do not mark UPD-S1-008 done.",
+          "device_and_host_details_redacted": "GitHub-hosted quality CI and repository ledger inspection only.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -6745,7 +6802,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T12:42:25Z",
+    "as_of": "2026-11-08T12:46:59Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -6866,7 +6923,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T12:42:25Z",
+  "updated_at": "2026-11-08T12:46:59Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
