@@ -476,9 +476,16 @@
         "UPD-S1-013"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0049.md",
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/App.xaml.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "https://github.com/artinrahimii/project/actions/runs/42486973958",
+        "https://github.com/artinrahimii/project/actions/runs/42486974256"
+      ],
       "review_commit_sha": null
     },
     {
@@ -490,9 +497,18 @@
         "UPD-S1-013"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0050.md",
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "tests/test_wpf_entrypoint.py",
+        "https://github.com/artinrahimii/project/actions/runs/42486973958",
+        "https://github.com/artinrahimii/project/actions/runs/42486974256"
+      ],
       "review_commit_sha": null
     },
     {
@@ -504,9 +520,18 @@
         "UPD-S1-013"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0051.md",
+        "src/Host.Windows/ModelMemoryCompatibilityEstimator.cs",
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "https://github.com/artinrahimii/project/actions/runs/42486973958",
+        "https://github.com/artinrahimii/project/actions/runs/42486974256"
+      ],
       "review_commit_sha": null
     },
     {
@@ -518,9 +543,16 @@
         "UPD-S1-013"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0052.md",
+        "src/Host.Domain/HostCapabilities.cs",
+        "src/Host.Application/HostReadinessEvaluator.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42486973958",
+        "https://github.com/artinrahimii/project/actions/runs/42486974256"
+      ],
       "review_commit_sha": null
     },
     {
@@ -532,9 +564,16 @@
         "UPD-S1-013"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0053.md",
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_host_resource_settings.py",
+        "https://github.com/artinrahimii/project/actions/runs/42486973958",
+        "https://github.com/artinrahimii/project/actions/runs/42486974256"
+      ],
       "review_commit_sha": null
     },
     {
@@ -546,9 +585,19 @@
         "UPD-S1-013"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0054.md",
+        "src/Host.Application/HostReadinessEvaluator.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42486973958",
+        "https://github.com/artinrahimii/project/actions/runs/42486974256"
+      ],
       "review_commit_sha": null
     },
     {
@@ -561,9 +610,19 @@
         "UPD-S1-024"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0055.md",
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/App.xaml.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "tests/test_wpf_entrypoint.py",
+        "https://github.com/artinrahimii/project/actions/runs/42486973958",
+        "https://github.com/artinrahimii/project/actions/runs/42486974256"
+      ],
       "review_commit_sha": null
     },
     {

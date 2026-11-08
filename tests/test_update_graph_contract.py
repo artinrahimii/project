@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 UPDATE_GRAPH_PATH = ROOT / "update" / "Step two" / "project-graph.md"
 LEGACY_GRAPH_PATH = ROOT / "step three" / "project-graph.md"
+RECONCILIATION_PATH = ROOT / "update" / "Step two" / "legacy-task-reconciliation.json"
 QUALITY_PATH = ROOT / ".github" / "workflows" / "quality.yml"
 
 
@@ -32,6 +33,7 @@ class UpdateGraphContractTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.graph = load_graph(UPDATE_GRAPH_PATH)
         cls.legacy = load_graph(LEGACY_GRAPH_PATH)
+        cls.reconciliation = json.loads(RECONCILIATION_PATH.read_text(encoding="utf-8"))
         cls.nodes = {node["id"]: node for node in cls.graph["nodes"]}
         cls.legacy_nodes = {node["id"]: node for node in cls.legacy["nodes"]}
 
@@ -51,13 +53,14 @@ class UpdateGraphContractTests(unittest.TestCase):
         self.assertIn('python tools/graph_guard.py "update/Step two/project-graph.md"', workflow)
         self.assertIn('python tools/graph_guard.py "update/Step two/project-graph.md" --repo-root .', workflow)
 
-    def test_all_legacy_impact_ids_are_mapped_for_re_review(self) -> None:
+    def test_all_legacy_impact_ids_are_mapped_and_review_ledger_is_consistent(self) -> None:
         sync = self.graph["legacy_task_sync"]
         self.assertEqual("review_pending", sync["state"])
         self.assertEqual("valid_parseable_graph", sync["source_graph_state_at_checkpoint"])
         self.assertEqual(168, sync["affected_task_id_count"])
         self.assertEqual(168, sync["matched_legacy_task_id_count"])
         self.assertEqual([], sync["missing_legacy_task_ids"])
+
         impacted = {
             task_id
             for task in self.graph["nodes"]
@@ -65,16 +68,42 @@ class UpdateGraphContractTests(unittest.TestCase):
         }
         self.assertEqual(set(impacted), set(sync["affected_legacy_task_ids"]))
         self.assertEqual(168, len(impacted))
+
+        records = self.reconciliation["records"]
+        records_by_id = {record["legacy_task_id"]: record for record in records}
+        self.assertEqual(168, len(records))
+        self.assertEqual(168, len(records_by_id))
+        self.assertEqual(impacted, set(records_by_id))
+
+        reviewed = sum(record["review_status"] == "reviewed" for record in records)
+        pending = sum(record["review_status"] == "pending" for record in records)
+        self.assertEqual(168, reviewed + pending)
+        self.assertEqual({"reviewed": reviewed, "pending": pending}, sync["review_status_summary"])
+
         for task_id in impacted:
             node = self.legacy_nodes[task_id]
             marker = node["update_impact"]
-            self.assertEqual("pending", marker["review_status"])
-            self.assertEqual("re_review_required", marker["decision"])
+            record = records_by_id[task_id]
             self.assertEqual(node["status"], marker["legacy_status_at_review_start"])
             self.assertFalse(marker["legacy_status_changed"])
-        self.assertEqual(168, self.legacy["update_reconciliation"]["review_status_summary"]["pending"])
+            self.assertEqual(record["baseline_status"], marker["legacy_status_at_review_start"])
+            self.assertEqual(record["update_task_ids"], marker["update_task_ids"])
+            # Legacy graph markers intentionally remain pending until full reconciliation closes.
+            self.assertEqual("pending", marker["review_status"])
+            self.assertEqual("re_review_required", marker["decision"])
+
+            if record["review_status"] == "reviewed":
+                self.assertTrue(record["evidence"], task_id)
+                self.assertIn(record["decision"], {"re_review_required", "unchanged"})
+                self.assertTrue(record.get("review_commit_sha") is None or len(record["review_commit_sha"]) == 40)
+            else:
+                self.assertEqual("pending", record["review_status"])
+
+        legacy_summary = self.legacy["update_reconciliation"]["review_status_summary"]
+        self.assertEqual({"pending": 168, "reviewed": 0}, legacy_summary)
         update_markdown = UPDATE_GRAPH_PATH.read_text(encoding="utf-8")
         self.assertNotIn("خالی بوده، همگام‌سازی وضعیت‌ها", update_markdown)
+
 
     def test_real_product_e2e_rejects_transport_and_model_fixtures(self) -> None:
         contract = self.nodes["UPD-S1-020"]["verification_contract"]

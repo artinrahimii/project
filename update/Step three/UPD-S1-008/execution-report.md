@@ -245,3 +245,84 @@
 - commit واقعی تلاش پیشین `UPD-S1-008-20261108134807` اکنون با SHA کامل `4420970596b16fd09dc7fbf6ef686204e8d27a12` در فیلد `commit_sha` ثبت شده است.
 - بلوک JSON گراف به‌روزرسانی با تورفتگی دو فاصله بازقالب‌بندی شد تا ساختار Markdown و قالب چندخطی تاریخی فایل حفظ شود؛ محتوا و وضعیت گره‌ها/یال‌ها از نسخهٔ V3.1.75 خوانده و Parse مجدد شد.
 - این commit اصلاحی فقط metadata و قالب نگهداری را اصلاح می‌کند؛ هیچ وضعیت وظیفه یا معیار پذیرشی را تکمیل‌شده اعلام نمی‌کند.
+
+
+## بازبینی تکمیلی T0049 تا T0055 — تلاش UPD-S1-008-20261108165337
+
+### T0049 — کشف سیستم‌عامل، RAM و فضای دیسک
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required`؛ رکورد reconciliation به `reviewed` تغییر کرد، زیرا بازبینی محتوایی انجام شد؛ بازبینی مجدد پس از اجرای `UPD-S1-005` و `UPD-S1-013` لازم است.
+- سرویس Windows-only اطلاعات OS/version را از RuntimeInformation/Environment می‌خواند؛ CPU name از Registry و تعداد پردازندهٔ منطقی از Environment.ProcessorCount دریافت می‌شود.
+- RAM واقعی با GlobalMemoryStatusEx و ظرفیت/free space درایو سیستم با DriveInfo اندازه‌گیری و sanity-check می‌شوند.
+- آزمون Windows startup در تاریخچهٔ وظیفه Discover() را روی runner ویندوز فراخوانی کرده و OS، RAM غیرصفر و ظرفیت دیسک را بررسی کرده است؛ source contract نیز API و سیم‌کشی startup را می‌سنجد.
+- محدودیت‌های نهایی مالک و admission باید پس از اجرای UPD-S1-013 روی سرویس اندازه‌گیری اعمال و دوباره آزموده شوند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0049.md`.
+
+### T0050 — کشف GPU و backendهای قابل‌دسترسی
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required`؛ رکورد reconciliation به `reviewed` تغییر کرد، زیرا بازبینی محتوایی انجام شد؛ بازبینی مجدد پس از اجرای `UPD-S1-005` و `UPD-S1-013` لازم است.
+- EnumDisplayDevicesW آداپتورهای نمایشگر را فهرست و mirroring driverها را حذف می‌کند؛ این display inventory است و قابلیت compute یا VRAM را اثبات نمی‌کند.
+- رابط این محدودیت را صریح بیان می‌کند و وضعیت backend را از health/status موتور محلی می‌گیرد؛ از inventory ادعای پشتیبانی GPU compute ساخته نمی‌شود.
+- آزمون‌های source contract و WPF entrypoint مسیر نمایش و تفکیک display inventory از compute capability را بررسی می‌کنند.
+- پشتیبانی محاسباتی GPU/VRAM در این baseline اثبات نشده است؛ قابلیت جدید فقط پس از اندازه‌گیری و اعمال واقعی در UPD-S1-013 قابل پذیرش است.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0050.md`.
+
+### T0051 — تخمین سازگاری حافظهٔ مدل
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required`؛ رکورد reconciliation به `reviewed` تغییر کرد، زیرا بازبینی محتوایی انجام شد؛ بازبینی مجدد پس از اجرای `UPD-S1-005` و `UPD-S1-013` لازم است.
+- Estimator مقدار مثبت requiredMemoryBytes را با AvailablePhysicalMemoryBytes مقایسه و ورودی غیرمثبت را رد می‌کند.
+- پیام نتیجه صریحاً اعلام می‌کند GPU/VRAM، context length، فرمت مدل و overhead backend ارزیابی نشده‌اند؛ این برآورد محدود RAM است، نه تأیید قطعی سازگاری مدل.
+- تست‌ها استفاده از RAM آزاد واقعی، رد ورودی نامعتبر و نمایش محدودیت‌ها در UI را بررسی می‌کنند.
+- سیاست انتخاب مدل و محدودیت خروجی هنوز نیازمند اجرای UPD-S1-023 است؛ estimator به‌تنهایی تأیید کامل مدل/backend را فراهم نمی‌کند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0051.md`.
+
+### T0052 — مدل دامنهٔ HostCapabilities
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required`؛ رکورد reconciliation به `reviewed` تغییر کرد، زیرا بازبینی محتوایی انجام شد؛ بازبینی مجدد پس از اجرای `UPD-S1-005` و `UPD-S1-013` لازم است.
+- HostCapabilities اندازه‌گیری RAM و system-drive را nullable نگه می‌دارد و بررسی‌های memory/disk/backend را جدا ثبت می‌کند.
+- ظرفیت Unknown می‌ماند تا اندازه‌گیری‌ها معتبر و همهٔ بررسی‌ها مثبت باشند؛ fail شناخته‌شده state را Insufficient می‌کند و CanRunInference فقط برای Ready است.
+- HostLifecycle CI روی HEAD دقیق، رفتار Unknown و fail-closed برای measurement ناقص/نامعتبر را PASS ثبت کرده است.
+- UPD-S1-013 باید این مدل را با محدودیت‌های قابل‌اندازه‌گیری مالک و admission واقعی یکپارچه کند؛ شروط idle/power غیرقابل‌سنجش نباید حدس زده شوند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0052.md`.
+
+### T0053 — آزمون ظرفیت ناکافی و backend پشتیبانی‌نشده
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required`؛ رکورد reconciliation به `reviewed` تغییر کرد، زیرا بازبینی محتوایی انجام شد؛ بازبینی مجدد پس از اجرای `UPD-S1-005` و `UPD-S1-013` لازم است.
+- HostCapacityAcceptanceTests مسیرهای low RAM، low disk و unsupported backend را پوشش می‌دهد؛ harness اصلی Unknown capacity را نیز بررسی می‌کند.
+- اجرای HostLifecycle روی HEAD جاری پیام PASS مشخص برای low-RAM، low-disk، unsupported-backend و unknown-capacity ثبت کرده است.
+- tests/test_host_resource_settings.py دوام تنظیمات RAM/disk، migration schema و admission fail-closed/single-inference را بررسی می‌کند.
+- پس از تغییر معیارهای admission یا افزودن منبع پشتیبانی‌شده در UPD-S1-013، ماتریس آزمون باید برای هر قید جدید توسعه و دوباره اجرا شود.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0053.md`.
+
+### T0054 — خارج‌کردن میزبان از Ready در حالت نامناسب
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required`؛ رکورد reconciliation به `reviewed` تغییر کرد، زیرا بازبینی محتوایی انجام شد؛ بازبینی مجدد پس از اجرای `UPD-S1-005` و `UPD-S1-013` لازم است.
+- HostReadinessEvaluator ورودی RAM/disk را finite و مثبت اعتبارسنجی و نیازمندی را با RAM آزاد و فضای درایو سیستم مقایسه می‌کند؛ Unknown یا ناکافی fail-closed است.
+- HostRequestAdmissionPolicy مشارکت خاموش، host/model غیر Ready، mismatch مدل، ظرفیت Unknown/Insufficient و deadline نامعتبر/منقضی را پیش از admission رد می‌کند.
+- HostInferenceSession پیش از inference readiness/backend را ارزیابی می‌کند؛ HostLifecycle CI جاری مسیرهای ظرفیت/admission را PASS ثبت کرده است.
+- UPD-S1-013 هنوز قیود نهایی ظرفیت و اعمال آن‌ها را کامل نکرده است؛ admission/readiness باید پس از آن بازآزمایی شود.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0054.md`.
+
+### T0055 — نمایش CPU، GPU inventory و RAM در رابط میزبان
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required`؛ رکورد reconciliation به `reviewed` تغییر کرد، زیرا بازبینی محتوایی انجام شد؛ بازبینی مجدد پس از اجرای `UPD-S1-005` و `UPD-S1-013` و `UPD-S1-024` لازم است.
+- MainWindow نام CPU، تعداد logical processor، RAM کل/آزاد و display adapterها را از WindowsHostHardwareDiscovery می‌گیرد؛ WPF startup smoke صفحه و کنترل‌های لازم را بازبینی می‌کند.
+- رابط صریحاً display inventory را از GPU compute/VRAM capability تفکیک می‌کند و آن را آمادهٔ پردازش فرض نمی‌کند.
+- tests/test_windows_hardware_discovery.py و tests/test_wpf_entrypoint.py source wiring را بررسی می‌کنند؛ Product CI جاری نیز MainWindow startup و clean shutdown را تأیید کرد.
+- پس از UPD-S1-013 باید readiness و محدودیت‌های قابل اعمال در UI منعکس شوند؛ پس از UPD-S1-024 صفحات، رنگ و آیکون باید دوباره بررسی شوند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0055.md`.
+
+### CI و محدودیت‌های این تلاش
+
+- مبنای دقیق: `6c77fded48253e0b9ddbadd37033e788a43944a5` — `V 3.1.76`.
+- Quality [run 42486973958](https://github.com/artinrahimii/project/actions/runs/42486973958) موفق؛ Product Build [run 42486974256](https://github.com/artinrahimii/project/actions/runs/42486974256) با سه job موفق.
+- WPF startup smoke و installer smoke موفق؛ HostLifecycle دارای ۶۷ PASS و پوشش خطی ۸۵٫۸۸٪ است. آزمون اختیاری real-model در این run SKIP شد و موفقیت inference واقعی ادعا نمی‌شود.
+- آزمون Android-to-Windows فیزیکی، Room E2E، clean install هدف و in-place upgrade اجرا نشده‌اند.
+- reconciliation: **29/168 reviewed** و **139 pending**؛ UPD-S1-008 همچنان `in_progress`.

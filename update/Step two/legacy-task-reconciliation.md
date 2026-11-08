@@ -49,10 +49,10 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**18/168 بازبینی محتوایی فعلی ثبت شده‌اند.** T0012، T0013، T0015، T0016، T0019 و T0020 با تصمیم `unchanged` reviewed هستند؛ T0027، T0032، T0033، T0034، T0035، T0036، T0041، T0042، T0043، T0044، T0199 و T0214 نیز با تصمیم `re_review_required` بازبینی شده‌اند. 150 رکورد همچنان `pending` هستند.
+**29/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای T0027، T0032–T0036، T0041–T0048، T0049–T0055، T0199 و T0214 ثبت شده است. 139 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
-هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 12 رکورد (T0027، T0032–T0036، T0041–T0044، T0199 و T0214)، و `re_review_required/pending` برای 150 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
+هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 23 رکورد (T0027، T0032–T0036، T0041–T0044، T0199 و T0214)، و `re_review_required/pending` برای 139 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
 
 
 ## نتیجهٔ تکمیلی در V 3.1.56
@@ -185,3 +185,15 @@
 - Quality Gate دقیق V3.1.74، run [42486010109](https://github.com/artinrahimii/project/actions/runs/42486010109)، موفق بود. Product run source-identical V3.1.70، [42484937793](https://github.com/artinrahimii/project/actions/runs/42484937793)، هر سه job Windows، Android و HostLifecycle را موفق تکمیل کرد. Product run دقیق V3.1.74، [42486010134](https://github.com/artinrahimii/project/actions/runs/42486010134)، هنگام آخرین بررسی هنوز `in_progress` بود.
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0045.md` تا `review-T0048.md`. تعداد reconciliation اکنون **22/168 reviewed**، **146 pending** و **13.10%** است؛ UPD-S1-008 همچنان `in_progress`.
 - آزمون مدل محلی واقعی، Android-to-Windows فیزیکی، Room E2E، نصب تمیز و in-place upgrade در این بازبینی اجرا نشده‌اند.
+
+
+## بازبینی محتوایی T0049 تا T0055 — V 3.1.76
+
+- مبنای کد: `6c77fded48253e0b9ddbadd37033e788a43944a5`، commit دقیق `V 3.1.76`.
+- هفت وظیفهٔ `T0049` تا `T0055` مستقل در برابر source، test، acceptance history و مصرف‌کنندگان فعلی بررسی شدند.
+- وضعیت پایهٔ هر هفت وظیفه `done` باقی ماند؛ تصمیم هرکدام `re_review_required` و review_status در JSON برابر `reviewed` ثبت شد.
+- UPD-S1-013 هنوز اجرا نشده است. UPD-S1-024 نیز T0055 را متأثر می‌کند. T0050 صرفاً display-adapter inventory را کشف می‌کند و GPU compute/VRAM را اثبات نمی‌کند؛ T0051 estimator محدود RAM است، نه تأیید کامل مدل.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0049.md` تا `review-T0055.md`.
+- Quality CI دقیق HEAD [42486973958](https://github.com/artinrahimii/project/actions/runs/42486973958) و Product CI دقیق HEAD [42486974256](https://github.com/artinrahimii/project/actions/runs/42486974256) موفق بودند. Product CI شامل Windows WPF، Android و HostLifecycle است؛ ۶۷ PASS و یک SKIP اختیاری real-model ثبت شد.
+- جمع reconciliation: **29/168 reviewed (17.26%)**، **139 pending**. هیچ وضعیت قدیمی تغییر نکرد. نشانگرهای `update_impact` در گراف قدیمی طبق قرارداد فعلی تا تکمیل کل reconciliation pending باقی می‌مانند؛ نتیجهٔ فردی در JSON مرجع ثبت می‌شود.
+- آزمون Android-to-Windows فیزیکی، live-model integration در همین run، clean install هدف و in-place upgrade در این دسته اجرا نشده‌اند.
