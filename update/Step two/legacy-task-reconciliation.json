@@ -88,11 +88,32 @@
       "update_task_ids": [
         "UPD-S1-002"
       ],
-      "decision": "re_review_required",
-      "review_status": "pending",
+      "decision": "unchanged",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0019.md",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/requirements.md",
+        "docs/acceptance.md",
+        "README.md",
+        "tests/test_p2p_data_path_decision.py",
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+        "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md",
+        "docs/decisions/ADR-0006-peer-announcement-leases.md",
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+        "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "step three/T0019/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42481932091"
+      ],
+      "review_commit_sha": "32015598e6ff38f3984efb0bc8c5d1797b99cdef"
     },
     {
       "legacy_task_id": "T0020",

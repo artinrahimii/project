@@ -12,7 +12,7 @@
 | `T0013` | done | UPD-S1-006 | unchanged | reviewed | 0 | 1 |
 | `T0015` | done | UPD-S1-001, UPD-S1-024 | re_review_required | pending | 5 | 0 |
 | `T0016` | done | UPD-S1-001, UPD-S1-024 | re_review_required | pending | 6 | 0 |
-| `T0019` | done | UPD-S1-002 | re_review_required | pending | 0 | 1 |
+| `T0019` | done | UPD-S1-002 | unchanged | reviewed | 0 | 1 |
 | `T0020` | done | UPD-S1-006, UPD-S1-008 | re_review_required | pending | 0 | 1 |
 | `T0027` | done | UPD-S1-021 | re_review_required | pending | 0 | 1 |
 | `T0032` | done | UPD-S1-004, UPD-S1-017 | re_review_required | pending | 1 | 1 |
@@ -212,3 +212,8 @@
 ## بازبینی محتوایی تکمیلی در V 3.1.56
 
 `T0012` و `T0013` مستقل بررسی شدند؛ تصمیم هر دو `unchanged` است و وضعیت پایهٔ `done` حفظ شد. شواهد در `update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md` ثبت شده‌اند. 166 شناسهٔ دیگر pending هستند.
+
+
+## بازبینی T0019 در V 3.1.59
+
+تصمیم `unchanged`؛ وظیفهٔ legacy با وضعیت پایهٔ `done` حفظ شد. ماتریس مستقیم P2P/metadata-only در ADR-0002 با REQ-010/011، README، acceptance و آزمون قراردادی تطبیق داده شد. شواهد: `update/Step three/UPD-S1-008/evidence/review-T0019.md`. 165 رکورد legacy همچنان در انتظار بازبینی هستند.
