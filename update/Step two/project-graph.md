@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.37",
+  "commit_intent": "V 3.1.45",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -2415,35 +2415,127 @@
         "هویت بصری، کدهای پنج رنگ، نقش هر توکن و قواعد یکسان استفاده در Windows و Android در نیازمندی‌ها و معیارهای پذیرش ثبت شده باشند؛ این ثبت به‌تنهایی ادعای پیاده‌سازی محسوب نشود.",
         "آستانه‌های کنتراست متن و اجزای ضروری رابط و محدودیت استفاده از muted_teal و antique_gold در سطوح روشن در سند نیازمندی/پذیرش ثبت شده باشند."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "step one/V1.0.md",
         "docs/acceptance.md",
         "update/Step three/UPD-S1-006/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "docs/requirements.md",
+        "docs/acceptance.md",
+        "step one/V1.0.md",
+        "tests/test_acceptance_contract.py",
+        "tests/test_update_step_one_alignment.py",
+        "update/Step three/UPD-S1-006/execution-report.md",
+        "update/Step three/UPD-S1-006/evidence/step-one-alignment.md"
+      ],
+      "evidence": [
+        "tests/test_requirements_contract.py",
+        "tests/test_acceptance_contract.py",
+        "tests/test_update_step_one_alignment.py",
+        "update/Step three/UPD-S1-006/evidence/step-one-alignment.md"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0013, T0020. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-006-20261108111009",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "docs/requirements.md",
+          "docs/acceptance.md",
+          "step one/V1.0.md",
+          "tests/test_acceptance_contract.py",
+          "tests/test_update_step_one_alignment.py",
+          "update/Step three/UPD-S1-006/execution-report.md",
+          "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
+          "update/Step two/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "required",
+          "triggering_contracts": [
+            "REQ-021–REQ-024",
+            "AC-CHAT-01, AC-RETRY-01, AC-STREAM-01, AC-VISUAL-01"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
+            "tests/test_update_step_one_alignment.py",
+            "tests/test_acceptance_contract.py"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-006-20261108111009",
+          "started_at": "2026-11-08T11:10:09.175Z",
+          "ended_at": "2026-11-08T11:10:09.175Z",
+          "result": "partial",
+          "summary": "Updated Step One requirements and acceptance with approved V1.10 decisions; added regression tests for the unchanged 229-task inventory and the new chat/retry/one-shot/visual gates. Exact-commit CI pending.",
+          "changed_files": [
+            "docs/requirements.md",
+            "docs/acceptance.md",
+            "step one/V1.0.md",
+            "tests/test_acceptance_contract.py",
+            "tests/test_update_step_one_alignment.py",
+            "update/Step three/UPD-S1-006/execution-report.md",
+            "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "V1.10/Step One alignment regression",
+              "command": "python -m unittest discover -s tests -p \"test_update_step_one_alignment.py\" -v",
+              "result": "pending",
+              "summary": "Legacy task inventory, approved decisions, exact palette and acceptance traceability."
+            },
+            {
+              "name": "Requirements contract",
+              "command": "python -m unittest discover -s tests -p \"test_requirements_contract.py\" -v",
+              "result": "pending",
+              "summary": "Unique REQ identifiers and mandatory fields."
+            },
+            {
+              "name": "Acceptance matrix contract",
+              "command": "python -m unittest discover -s tests -p \"test_acceptance_contract.py\" -v",
+              "result": "pending",
+              "summary": "Twenty-four requirements map to acceptance gates; gates contain evidence/verification/failure fields."
+            },
+            {
+              "name": "Full Python quality and graph guards",
+              "command": "python -m unittest discover -s tests -v; python -m compileall -q tools tests; graph_guard both graphs in both modes",
+              "result": "pending",
+              "summary": "Exact commit CI must pass."
+            },
+            {
+              "name": "Windows/Android product regression",
+              "command": "GitHub Actions product-build.yml on exact commit",
+              "result": "pending",
+              "summary": "No app source changed; no physical-device claim."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added REQ-021–REQ-024 for Room-backed chat, bounded sequential retry, one-shot response and shared visual identity.",
+            "Added AC-CHAT-01, AC-RETRY-01, AC-STREAM-01 and AC-VISUAL-01; strengthened AC-P2P-01 to physical Android-to-installed-Windows E2E.",
+            "Appended approved V1.10 decisions without changing Txxxx identifiers or checkbox statuses."
+          ],
+          "follow_up": "Run exact-head quality/product CI and record real run IDs and the initial commit SHA in the follow-up graph revision.",
+          "device_and_host_details_redacted": "No physical Android device or target Windows host used; document/contract work only.",
+          "model_revision_and_sha256": "Not applicable.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        }
+      ]
     },
     {
       "id": "UPD-S1-007",
@@ -4645,44 +4737,52 @@
       "from": "UPD-S1-002",
       "to": "UPD-S1-006",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-006 در V1.10، UPD-S1-002 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "The approved direct authenticated P2P, metadata-only rendezvous and fail-closed relay policy must be settled before these product requirements can be made testable. This is a product-decision sequencing dependency, not a shared runtime interface.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "update/Step three/UPD-S1-002/execution-report.md"
       ]
     },
     {
       "from": "UPD-S1-003",
       "to": "UPD-S1-006",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-006 در V1.10، UPD-S1-003 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "The approved one-host-per-round and bounded sequential retry policy is required before host-selection and retry requirements can be made testable. This is sequencing of an approved product decision.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "docs/decisions/ADR-0022-single-host-sequential-retry.md",
+        "update/Step three/UPD-S1-003/execution-report.md"
       ]
     },
     {
       "from": "UPD-S1-004",
       "to": "UPD-S1-006",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-006 در V1.10، UPD-S1-004 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "The approved one-shot terminal response and deferred-streaming scope must precede the matching protocol/UI acceptance requirements. No wire contract is changed by this requirements task.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "docs/decisions/ADR-0023-one-shot-inference-v1.md",
+        "update/Step three/UPD-S1-004/execution-report.md"
       ]
     },
     {
       "from": "UPD-S1-005",
       "to": "UPD-S1-006",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-006 در V1.10، UPD-S1-005 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "The approved opt-in participation, measured readiness/resource policy and single-inference host capacity must be available before the Step One Windows-host acceptance requirements are finalized.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md",
+        "update/Step three/UPD-S1-005/execution-report.md"
       ]
     },
     {
@@ -5763,10 +5863,10 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T09:06:00Z",
+    "as_of": "2026-11-08T11:10:09.175Z",
     "total_tasks": 24,
-    "not_started": 18,
-    "in_progress": 0,
+    "not_started": 17,
+    "in_progress": 1,
     "done": 6,
     "blocked": 0,
     "verified_completion_percentage": 25,
@@ -5884,7 +5984,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T09:06:00Z",
+  "updated_at": "2026-11-08T11:10:09.175Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",

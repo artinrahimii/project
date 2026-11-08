@@ -16,7 +16,7 @@ class AcceptanceContractTests(unittest.TestCase):
 
     def test_every_requirement_has_an_explicit_acceptance_gate_mapping(self):
         requirement_ids = re.findall(r"(?m)^### (REQ-\d{3}) — ", REQUIREMENTS)
-        self.assertEqual(len(requirement_ids), 20)
+        self.assertEqual(len(requirement_ids), 24)
         self.assertEqual(len(requirement_ids), len(set(requirement_ids)))
         traceability = ACCEPTANCE.split("### Requirement-to-gate traceability", 1)[1]
         for requirement_id in requirement_ids:
@@ -30,13 +30,13 @@ class AcceptanceContractTests(unittest.TestCase):
                 self.assertIn(phrase, ACCEPTANCE)
 
     def test_document_does_not_claim_platform_or_p2p_implementation(self):
-        self.assertIn("not yet passed by the product", ACCEPTANCE)
+        self.assertIn("not yet passed as final product acceptance", ACCEPTANCE)
         self.assertIn("All AC-* gates are **NOT RUN for the product**", ACCEPTANCE)
-        self.assertIn("cannot establish that the Windows host, Android client, local inference, or direct P2P transport works", ACCEPTANCE)
+        self.assertIn("cannot establish that the Windows host, Android client, local inference, or direct P2P transport works as a complete product", ACCEPTANCE)
 
     def test_each_acceptance_gate_has_verification_and_failure_condition(self):
         rows = re.findall(r"(?m)^\| (AC-[A-Z0-9-]+) — .*? \| (.*?) \| (.*?) \| (.*?) \|$", ACCEPTANCE)
-        self.assertGreaterEqual(len(rows), 15)
+        self.assertGreaterEqual(len(rows), 19)
         for gate, evidence, verification, failure in rows:
             with self.subTest(gate=gate):
                 self.assertTrue(evidence.strip())

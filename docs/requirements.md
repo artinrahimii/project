@@ -132,6 +132,31 @@ The first release is intended to comprise a Windows host, an Android client, sha
 - **Verification:** Release acceptance review and traceability audit.
 - **Trace:** T0011–T0020 and the relevant implementation tasks referenced above.
 
+
+### REQ-021 — Android conversation lifecycle and request integration
+- **Requirement:** The normal Android conversation experience is the primary request entry point. It must preserve conversation create/open/rename/delete/recovery and ordered local history, submit a user message through the real request runtime, and persist a correlated successful host response in the same Room conversation. The UI must expose request progress and terminal success, error, busy, timeout, cancellation and retry states. Required privacy/trust consent must precede the first applicable request; ordinary use must not require manual entry of peer IDs, IP addresses, ports, model IDs or token limits.
+- **Acceptance:** A conversation can be created, reopened, renamed, deleted and recovered according to the approved lifecycle; message ordering and the same conversation identity survive app restart. Sending from the ordinary chat UI reaches the real runtime, and a successful correlated response is displayed and persisted in that same Room conversation. Typed non-success outcomes never create a success-shaped assistant message. The complete Android-to-Windows model path is separately subject to the physical-device gate and is not passed by UI mocks.
+- **Verification:** Room/DAO and ViewModel unit/instrumentation tests, conversation workflow acceptance, request-runtime correlation tests, and the physical-device end-to-end gate AC-P2P-01.
+- **Trace:** T0141, T0142, T0143, T0144, T0145, T0146, T0147, T0148, T0149, T0150, T0190, T0200, T0202, T0222, T0223.
+
+### REQ-022 — Deterministic first-release host selection and sequential retry
+- **Requirement:** Each first-release inference round selects and dispatches to at most one fresh, trusted, authenticated, opt-in, ready and model-compatible host. The product may use at most three sequential host attempts across at most three rounds. A retry is explicitly initiated by the user; it preserves the logical request ID, creates fresh attempt/round IDs, and consumes the original bounded budget and deadline. No broadcast or concurrent multi-host dispatch is permitted by the first-release runtime.
+- **Acceptance:** Tests prove at most one selected host per round, no overlapping attempts, a maximum of three sequential attempts, rejection of stale/untrusted/unready/incompatible/busy hosts, and correct handling of timeout, disconnect, cancellation, late/duplicate/mismatched responses and explicit retry. A cancelled logical request is terminal and cannot be retried. The retained generic multi-host primitives do not override the first-release runtime restriction.
+- **Verification:** Android selector/runtime/dispatcher tests, shared protocol and correlation tests, Windows admission/cancellation tests, and the exact product CI workflow.
+- **Trace:** T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0191, T0192, T0203, T0204, T0205, T0224, T0225.
+
+### REQ-023 — One complete terminal response in the first release
+- **Requirement:** The first-release wire protocol and UI use one complete terminal inference response per attempt. Token-by-token or chunk-by-chunk response streaming is deferred and must not be implied by a capability flag alone.
+- **Acceptance:** The canonical protocol contains no response chunk/delta sequence; the active Windows backend does not request or advertise streaming; Android accepts only a correctly correlated complete terminal response. Partial output is never rendered as a successful answer. Success, failure, timeout, cancellation and rejection remain distinct terminal outcomes.
+- **Verification:** Protobuf/source contract tests, Windows backend capability tests, Android response-correlation tests and cancellation tests. Any future streaming change requires a separately versioned cross-platform protocol and new acceptance decision.
+- **Trace:** T0032, T0107, T0110, T0111, T0112, T0147, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0200, T0202, T0223.
+
+### REQ-024 — Shared Windows/Android visual identity and accessible five-token palette
+- **Requirement:** Windows and Android share one canonical vector master for the app icon and one semantic five-token design system. The icon is a navy canvas with a white coin, a centered large navy uppercase P and a subtle antique-gold rim. The exact tokens are `midnight_ink=#142537`, `porcelain=#F4F0E8`, `pure_white=#FFFFFF`, `antique_gold=#B89A62`, and `muted_teal=#587C80`; each token has the same semantic role on both platforms.
+- **Acceptance:** Platform-specific icon exports are generated from the same vector master and remain recognizable at launcher/taskbar/window sizes. Both apps use exactly the five named tokens with centralized definitions and matching semantic roles. Normal text contrast is at least 4.5:1, large text at least 3:1, and essential boundaries/indicators at least 3:1. `muted_teal` is not normal-size text on `porcelain`; `antique_gold` is not small text or the sole essential state indicator on light surfaces. Rendered Home, conversation list/detail and important host screens are reviewed on both platforms; a palette declaration or SVG file alone is insufficient.
+- **Verification:** Shared design-token/icon source checks, Windows and Android build tests, rendered-size screenshots, and measured foreground/background contrast evidence for actual screens and states.
+- **Trace:** T0015, T0016, T0041, T0042, T0046, T0055, T0070, T0071, T0088, T0139, T0143, T0145, T0210, T0211, T0216, T0217, T0219, T0229.
+
 ## Implementation status
 
 All requirements above are a testable specification baseline. They are not marked implemented merely because their acceptance criteria are written. The repository must supply the platform code, automated tests, build logs, and transport/backend evidence before any implementation requirement is accepted.
