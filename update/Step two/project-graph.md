@@ -2505,8 +2505,8 @@
         "سیاست عدم ثبت متن درخواست/پاسخ در log عادی و نگهداری موقت مستند باشد.",
         "کنترل‌های احراز هویت، تمامیت، replay و نگهداری کلید به آزمون‌های مشخص متصل باشند."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
       "expected_output_paths": [
         "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
         "src/Shared.Security/",
@@ -2515,15 +2515,70 @@
         "tests/HostLifecycle.Tests/",
         "update/Step three/UPD-S1-007/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+        "docs/security.md",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/decisions/ADR-0019-host-visible-inference-content.md",
+        "docs/decisions/ADR-0020-android-client-local-conversation-storage.md",
+        "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "src/Shared.Security/PeerInferencePrivacyDisclosure.cs",
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+        "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerIdentityStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/security/AndroidKeyStoreProtectedBlobProtector.kt",
+        "tests/test_peer_inference_privacy_disclosure.py",
+        "tests/test_host_content_visibility.py",
+        "tests/test_network_payload_logging.py",
+        "tests/test_host_conversation_retention_policy.py",
+        "tests/test_threat_model_documentation.py",
+        "tests/test_sensitive_artifact_scanning.py",
+        "tests/test_sensitive_buffer_cleanup.py",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
+        "src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidKeyStorePersistenceTest.kt",
+        "update/Step three/UPD-S1-007/execution-report.md",
+        "update/Step three/UPD-S1-007/evidence/security-control-matrix.md"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
+        "tests/test_peer_inference_privacy_disclosure.py",
+        "tests/test_host_content_visibility.py",
+        "tests/test_network_payload_logging.py",
+        "tests/test_host_conversation_retention_policy.py",
+        "tests/test_threat_model_documentation.py",
+        "tests/test_sensitive_artifact_scanning.py",
+        "tests/test_sensitive_buffer_cleanup.py",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
+        "src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidKeyStorePersistenceTest.kt",
+        "https://github.com/artinrahimii/project/actions/runs/42463288660",
+        "https://github.com/artinrahimii/project/actions/runs/42463288704"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0129, T0130, T0131, T0132, T0133, T0134, T0135, T0136, T0137, T0138, T0178, T0179, T0180, T0181, T0182, T0183, T0184, T0185, T0186, T0187, T0188, T0206, T0226, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-007-20261108085400",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+          "update/Step three/UPD-S1-007/execution-report.md",
+          "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
+          "update/Step two/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -2533,10 +2588,87 @@
           "state": "not_required",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
+            "tests/test_peer_inference_privacy_disclosure.py",
+            "tests/test_host_content_visibility.py",
+            "tests/test_network_payload_logging.py",
+            "tests/test_host_conversation_retention_policy.py",
+            "tests/test_threat_model_documentation.py",
+            "tests/test_sensitive_artifact_scanning.py",
+            "tests/test_sensitive_buffer_cleanup.py",
+            "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
+            "src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidKeyStorePersistenceTest.kt",
+            "https://github.com/artinrahimii/project/actions/runs/42463288660",
+            "https://github.com/artinrahimii/project/actions/runs/42463288704"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-007-20261108085400",
+          "started_at": "2026-11-08T08:54:00Z",
+          "ended_at": "2026-11-08T08:54:00Z",
+          "result": "partial",
+          "summary": "Audited Android and Windows consent UX, request-content data flow, metadata-only rendezvous boundary, default-off host retention, SQLCipher local Android storage, payload-free diagnostics, owned-buffer cleanup, peer identity/trust, authenticated transport, replay fencing and response integrity. Exact V 3.1.40 CI passed all 472 Python tests and all Android/Windows/HostLifecycle product jobs. Found a stale ADR-0018 claim that WPF lacked peer-enrollment UI; corrected it to match the current privacy-consent and explicit-PeerId approval flow before host lifecycle creation. Exact-head CI for this ADR correction remains pending.",
+          "changed_files": [
+            "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+            "update/Step three/UPD-S1-007/execution-report.md",
+            "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate on audited implementation",
+              "command": "quality.yml on V 3.1.40 parent",
+              "result": "passed",
+              "run_id": 42463288660,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42463288660",
+              "summary": "472 Python tests passed, including disclosure, endpoint visibility, diagnostic log, retention, threat-model, sensitive artifact and buffer cleanup checks."
+            },
+            {
+              "name": "Windows HostLifecycle security acceptance",
+              "command": "HostLifecycle job within product-build.yml on V 3.1.40",
+              "result": "passed",
+              "run_id": 42463288704,
+              "artifact_id": 13610527167,
+              "summary": "67 critical pass markers, one skip and 85.76% line coverage. Secure-channel identity checks, no plaintext downgrade, tamper/replay/correlation, trust, DPAPI, privacy disclosure, safe diagnostics and retention/canary checks passed."
+            },
+            {
+              "name": "Android tests and Keystore instrumentation",
+              "command": "connectedDebugAndroidTest and test/coverage tasks on V 3.1.40",
+              "result": "passed",
+              "run_id": 42463288704,
+              "artifact_ids": [
+                13610099035,
+                13610895903,
+                13610288694
+              ],
+              "summary": "JUnit validator: 225 tests; 224 passed, zero failures, one skipped. AndroidWindowsLanIntegrationTest was skipped; this is not physical Android-to-Windows acceptance."
+            },
+            {
+              "name": "Windows/Android product build",
+              "command": "product-build.yml on V 3.1.40",
+              "result": "passed",
+              "run_id": 42463288704,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42463288704",
+              "summary": "Android APK, Windows WPF/installer and HostLifecycle jobs succeeded."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head quality/product CI after ADR-0018 correction. If successful, mark UPD-S1-007 done. Physical Android-to-Windows and operational privacy acceptance remain separate gates.",
+          "device_and_host_details_redacted": "GitHub-hosted Windows and Ubuntu runners; Android emulator instrumentation. No physical target handset/host or deployment packet/forensic audit.",
+          "model_revision_and_sha256": "No model inference required for this security/privacy review.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed; installation/upgrade acceptance belongs to separate tasks."
+        }
+      ]
     },
     {
       "id": "UPD-S1-008",
@@ -5466,14 +5598,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T08:22:00Z",
+    "as_of": "2026-11-08T08:54:00Z",
     "total_tasks": 24,
-    "not_started": 19,
+    "not_started": 18,
     "in_progress": 1,
-    "done": 4,
+    "done": 5,
     "blocked": 0,
-    "verified_completion_percentage": 16.67,
-    "calculation": "Only update tasks with real outputs, verified acceptance evidence and successful required tests count as done; 4 / 24 = 16.67%. UPD-S1-004 remains in_progress pending its exact-commit regression CI."
+    "verified_completion_percentage": 20.83,
+    "calculation": "5 / 24 verified done tasks; reconciliation remains a separate measure."
   },
   "visual_identity": {
     "scope": [
@@ -5587,7 +5719,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T08:22:00Z",
+  "updated_at": "2026-11-08T08:54:00Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
