@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.53",
+  "commit_intent": "V 3.1.54",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -4068,8 +4068,8 @@
         "در صورت فعال بودن Streaming، ترتیب قطعه‌ها و پایان نهایی قابل تشخیص باشد.",
         "درخواست منقضی یا تکراری طبق سیاست مصوب رد شود."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "expected_output_paths": [
         "protocol/whitep/v1/messages.proto",
         "src/Shared.Contracts/",
@@ -4096,7 +4096,9 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "tests/test_message_validation.py",
         "tests/test_request_error_codes.py",
-        "tests/test_android_libp2p_transport_contract.py"
+        "tests/test_android_libp2p_transport_contract.py",
+        "update/Step three/UPD-S1-017/execution-report.md",
+        "update/Step three/UPD-S1-017/evidence/protocol-error-correlation.md"
       ],
       "evidence": [
         "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
@@ -4107,14 +4109,17 @@
         "tests/test_message_validation.py",
         "tests/test_request_error_codes.py",
         "tests/test_android_libp2p_transport_contract.py",
-        "update/Step three/UPD-S1-017/evidence/protocol-error-correlation.md"
+        "update/Step three/UPD-S1-017/evidence/protocol-error-correlation.md",
+        "https://github.com/artinrahimii/project/actions/runs/42478793396",
+        "https://github.com/artinrahimii/project/actions/runs/42478793456",
+        "https://github.com/artinrahimii/project/actions/runs/42478793453"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0032, T0033, T0034, T0035, T0036, T0107, T0108, T0109, T0110, T0111, T0112, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0189, T0190, T0191, T0192. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
         "attempt_count": 5,
         "failed_attempt_count": 0,
         "last_attempt_id": "UPD-S1-017-20261108120610",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "protocol/whitep/v1/messages.proto",
           "src/Shared.Contracts/ProtocolMessageValidator.cs",
@@ -4141,7 +4146,8 @@
           "8a4d1b7d1d231ee9f86d970d9db4fa5092bffec2",
           "6b8417d8b607a5da122758d97bf9ccca110db0b5",
           "cd27ca0adbaf12068f14e4c942a0ac7f833a24f0",
-          "04ad9eb9eace198ee14ee3d739321938c0a69f41"
+          "04ad9eb9eace198ee14ee3d739321938c0a69f41",
+          "fe74186f1fbf71ed41e0806d8c3e14c43a3a64e2"
         ],
         "tests_passed": [
           "V3.1.49 quality.yml run 42477241092: 479 tests passed; update graph guard clean; legacy guard 0 errors/1 preserved warning.",
@@ -4157,7 +4163,11 @@
           "V3.1.51 Rendezvous build and smoke passed.",
           "V3.1.52 quality passed 479 Python tests and both graph guards.",
           "V3.1.52 HostLifecycle tests and coverage passed.",
-          "V3.1.52 Rendezvous container build/smoke passed."
+          "V3.1.52 Rendezvous container build/smoke passed.",
+          "V3.1.53: Android lint, debug/release builds, minimum permissions, JVM unit tests (226 passed/1 skipped/0 failed), Keystore instrumentation and generated Protobuf verification all passed.",
+          "V3.1.53: Windows WPF build/publish/installer and HostLifecycle acceptance passed; HostLifecycle line coverage 85.88%.",
+          "V3.1.53: Quality 479 Python tests and both graph guards passed; update graph zero warnings, legacy graph one retained T0001 warning.",
+          "V3.1.53: Rendezvous container and HTTP smoke passed."
         ],
         "tests_failed": [
           "V3.1.49 Android ktlint failed on two new test files; fixed formatting/import order in follow-up attempt.",
@@ -4165,17 +4175,18 @@
           "V3.1.50 Android ktlint: RequestViewModelTest import ordering and multiline error assertion chains failed; fixed in attempt 3.",
           "V3.1.51 Android ktlint reached main source and failed on outcome validator formatting in RequestViewModel.kt; corrected in attempt 4.",
           "V3.1.52 Android ktlint failed on multiline setOf expressions in RequestViewModel outcome validation; moved allowed sets to companion properties in attempt 5.",
-          "Retry of V3.1.49 local inference workflow failed at pinned llama.cpp archive download a second time before checksum/model execution."
+          "Retry of V3.1.49 local inference workflow failed at pinned llama.cpp archive download a second time before checksum/model execution.",
+          "V3.1.49 real-local-inference workflow and one retry failed before checksum/model inference because the pinned llama.cpp b11443 archive endpoint returned transient HTML; this does not block UPD-S1-017's protocol contract tests and remains an independent model/E2E gate."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
-            "Protobuf terminal error_code",
-            "Android allowed error_code/outcome mapping",
-            "Windows and Android consistent terminal state mapping",
-            "Exact attempt/round side-error correlation"
+            "InferenceResponse.error_code terminal outcome mapping",
+            "ProtocolError/HostBusy/UnsupportedModel attempt_id and round_id",
+            "Android exact request/attempt/round/authenticated-peer/stream matching",
+            "Windows backend timeout versus absolute request deadline"
           ],
           "affected_by_contract_changes": [],
           "review_evidence": [
@@ -4193,7 +4204,11 @@
             "https://github.com/artinrahimii/project/actions/runs/42478015591",
             "https://github.com/artinrahimii/project/actions/runs/42478443061",
             "https://github.com/artinrahimii/project/actions/runs/42478443044",
-            "https://github.com/artinrahimii/project/actions/runs/42477241035"
+            "https://github.com/artinrahimii/project/actions/runs/42477241035",
+            "https://github.com/artinrahimii/project/actions/runs/42478793396",
+            "https://github.com/artinrahimii/project/actions/runs/42478793456",
+            "https://github.com/artinrahimii/project/actions/runs/42478793453",
+            "update/Step three/UPD-S1-017/evidence/protocol-error-correlation.md"
           ]
         }
       },
@@ -4539,8 +4554,8 @@
         {
           "attempt_id": "UPD-S1-017-20261108120610",
           "started_at": "2026-11-08T12:06:10Z",
-          "ended_at": "2026-11-08T12:06:10Z",
-          "result": "partial",
+          "ended_at": "2026-11-08T12:18:10Z",
+          "result": "succeeded",
           "summary": "Refactored Android response outcome validation to use private immutable allowed-error-code sets in RequestViewModel's companion object. Terminal branches now perform one-line membership checks while preserving exactly the prior accepted error-code mappings. Exact V3.1.53 CI is pending.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
@@ -4548,37 +4563,79 @@
             "update/Step three/UPD-S1-017/evidence/protocol-error-correlation.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "fe74186f1fbf71ed41e0806d8c3e14c43a3a64e2",
           "tests": [
             {
-              "name": "Android production and test Kotlin lint",
-              "command": "gradle --no-daemon ktlintCheck",
-              "result": "pending",
-              "summary": "Must pass every Kotlin source set."
+              "name": "Android Kotlin lint",
+              "command": "gradle ktlintCheck — production and test source sets",
+              "result": "passed",
+              "run_id": 42478793456,
+              "job_id": 128725973115,
+              "summary": "Full production/test Kotlin formatting and lint passed."
             },
             {
-              "name": "Android debug/release APK and JVM tests",
-              "command": "product-build clean Android job",
-              "result": "pending",
-              "summary": "Build clean APKs and run parser/ViewModel tests."
+              "name": "Android debug APK and release variant",
+              "command": "Clean Android debug APK build; release variant build with disposable CI signing key",
+              "result": "passed",
+              "run_id": 42478793456,
+              "job_id": 128725973115,
+              "summary": "Debug APK built from clean outputs (28,979,402 bytes); release variant built and disposable signing key removed; merged APK minimum permissions passed."
+            },
+            {
+              "name": "Android JVM unit tests and coverage",
+              "command": "Run Android JVM unit tests and generate coverage report",
+              "result": "passed",
+              "run_id": 42478793456,
+              "job_id": 128725973115,
+              "summary": "JUnit summary: 227 tests, 226 passed, 0 failures, 1 skipped; 34 report files and HTML coverage report uploaded."
             },
             {
               "name": "Android Keystore instrumentation",
-              "command": "product-build Android instrumentation",
-              "result": "pending",
-              "summary": "Keystore/emulator tests after APK/JVM."
+              "command": "Run Android Keystore instrumentation tests on CI emulator",
+              "result": "passed",
+              "run_id": 42478793456,
+              "job_id": 128725973115,
+              "summary": "Instrumentation tests passed; reports uploaded. Covers non-exportability, missing keys and tamper detection per CI workflow."
             },
             {
-              "name": "Windows HostLifecycle/shared Protobuf",
-              "command": "product-build Windows and HostLifecycle jobs",
-              "result": "pending",
-              "summary": "C# shared validator, generated Protobuf and mapper tests."
+              "name": "Android generated Protobuf Java/Kotlin verification",
+              "command": "Verify generated Protobuf Java and Kotlin sources",
+              "result": "passed",
+              "run_id": 42478793456,
+              "job_id": 128725973115,
+              "summary": "Generated Java/Kotlin sources verified against the updated messages.proto schema."
             },
             {
-              "name": "Python protocol and quality gate",
-              "command": "quality.yml",
-              "result": "pending",
-              "summary": "479 tests plus graph guards."
+              "name": "Windows WPF build, publish, policy and installer",
+              "command": "Clean Windows restore, formatting, WPF build/publish, startup smoke, process/tool policy, backend capability, DPAPI peer identity/trust, installer",
+              "result": "passed",
+              "run_id": 42478793456,
+              "job_id": 128725973304,
+              "summary": "All 27 steps passed; Windows host, publish and installer artifacts uploaded."
+            },
+            {
+              "name": "Windows HostLifecycle protocol and lifecycle acceptance",
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release with coverage",
+              "result": "passed",
+              "run_id": 42478793456,
+              "job_id": 128725973330,
+              "summary": "All acceptance steps passed; 85.88% line coverage (8,935/10,404 lines), 67 critical-test pass markers, 1 explicit skip marker."
+            },
+            {
+              "name": "Python quality and contract tests",
+              "command": "quality.yml exact V3.1.53 commit",
+              "result": "passed",
+              "run_id": 42478793396,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42478793396",
+              "summary": "479 Python tests; compile/quality checks passed; update graph guard 24 nodes/80 edges with 0 errors/0 warnings in both modes; legacy graph guard 230 nodes/422 edges with 0 errors and 1 preserved T0001 metadata warning."
+            },
+            {
+              "name": "Rendezvous container and HTTP smoke",
+              "command": "rendezvous-container.yml exact V3.1.53 commit",
+              "result": "passed",
+              "run_id": 42478793453,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42478793453",
+              "summary": "Production container build and HTTP smoke passed."
             }
           ],
           "failure_details": null,
@@ -6481,14 +6538,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T12:06:10Z",
+    "as_of": "2026-11-08T12:18:10Z",
     "total_tasks": 24,
     "not_started": 16,
-    "in_progress": 1,
-    "done": 7,
+    "in_progress": 0,
+    "done": 8,
     "blocked": 0,
-    "verified_completion_percentage": 29.166666666666668,
-    "calculation": "7 verified done update tasks / 24 total update tasks = 29.17%. Legacy reconciliation is a separate measure."
+    "verified_completion_percentage": 33.33333333333333,
+    "calculation": "8 verified done update tasks / 24 total update tasks = 33.33%. Legacy reconciliation is tracked separately."
   },
   "visual_identity": {
     "scope": [
@@ -6602,7 +6659,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T12:06:10Z",
+  "updated_at": "2026-11-08T12:18:10Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",

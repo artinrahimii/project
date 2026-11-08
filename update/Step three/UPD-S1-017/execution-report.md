@@ -112,3 +112,28 @@
 - اصلاح پنجم: مجموعه‌های مجاز FAILED/TIMED_OUT/REJECTED اکنون به private immutable companion properties منتقل شده‌اند؛ when branches فقط یک membership check تک‌خطی دارند و enum values تغییر نکرده‌اند.
 - retry دوم workflow مدل محلی روی V3.1.49 نیز در همان مرحلهٔ دانلود آرشیو pinned llama.cpp شکست خورد؛ SHA-256 و inference همچنان اجرا نشده‌اند.
 - UPD-S1-017 همچنان `in_progress` است تا exact V3.1.53 CI.
+
+
+## نتیجهٔ نهایی UPD-S1-017 — تأیید exact V 3.1.53
+
+- وضعیت: **done**؛ معیارهای قرارداد پیام، اعتبارسنجی typed outcome و correlation پاسخ/خطا در Android و Windows تأیید شدند.
+- Commit کد و آزمون‌ها: `fe74186f1fbf71ed41e0806d8c3e14c43a3a64e2` — `V 3.1.53`.
+- Quality [42478793396](https://github.com/artinrahimii/project/actions/runs/42478793396): **success**؛ ۴۷۹ Python tests؛ گراف update با ۲۴/۸۰ صفر خطا و صفر هشدار؛ گراف legacy با ۲۳۰/۴۲۲ صفر خطا و یک هشدار قدیمی T0001.
+- Product [42478793456](https://github.com/artinrahimii/project/actions/runs/42478793456): هر سه job **success**.
+  - Android lint، debug APK، release variant، minimum permissions، JVM unit tests، Keystore instrumentation و generated Protobuf verification همگی passed.
+  - Android JUnit: **۲۲۷ تست، ۲۲۶ موفق، صفر شکست، یک skip**؛ ۳۴ فایل گزارش و دو HTML coverage report بارگذاری شدند.
+  - Windows WPF: clean build، publish، Protobuf source verification، startup smoke، process/policy/backend/DPAPI checks و installer موفق؛ artifactها upload شدند.
+  - HostLifecycle: acceptance و coverage موفق؛ line coverage برابر **۸۵٫۸۸٪ (۸٬۹۳۵ از ۱۰٬۴۰۴ خط)**، ۶۷ pass marker و یک skip marker.
+- Rendezvous [42478793453](https://github.com/artinrahimii/project/actions/runs/42478793453): **success**.
+- Artifactهای ثبت‌شده:
+  - `whitep-android-debug-apk`: ۲۸٬۹۷۹٬۴۰۲ بایت.
+  - `whitep-android-unit-test-reports`: ۹۱٬۳۶۰ بایت.
+  - `whitep-android-keystore-instrumentation-reports`: ۹۹٬۶۶۰ بایت.
+  - `whitep-android-coverage-and-critical-results`: ۵٬۳۷۱ بایت.
+  - `whitep-windows-installer`: ۶۰٬۹۸۸٬۶۰۷ بایت.
+  - `whitep-windows-host`: ۱۰۱٬۵۷۳٬۰۳۱ بایت.
+  - `whitep-windows-publish`: ۱۰٬۰۲۳٬۲۱۴ بایت.
+  - `whitep-host-lifecycle-coverage-and-critical-results`: ۱۱۱٬۸۶۱ بایت.
+- محدودیت مستقل: retry آزمون `real-local-inference` به‌علت دانلود نشدن artifact پین‌شدهٔ llama.cpp پیش از checksum/inference شکست خورد؛ این آزمون، مدل محلی را اجرا نکرد.
+- هیچ آزمون فیزیکی Android-to-Windows، پاسخ زندهٔ مدل در Room، clean install روی دستگاه هدف یا in-place upgrade در این وظیفه انجام نشده است؛ این gates مستقل باقی می‌مانند.
+- نتیجهٔ نهایی این وظیفه بر مبنای تست‌های قرارداد، C#/Kotlin، buildهای clean و CI دقیق commit بالا ثبت شد.
