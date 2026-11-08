@@ -815,3 +815,17 @@
 - شواهد مستقل: `review-T0166.md` تا `review-T0170.md` در مسیر `update/Step three/UPD-S1-008/evidence/`.
 - هیچ کد محصول، وضعیت پایهٔ legacy یا edge در این بازبینی تغییر نکرد.
 - reconciliation پیش از ثبت این batch: 109/168 reviewed و 59 pending؛ بعد از ثبت این پنج مورد باید 114/168 reviewed و 54 pending شود. `UPD-S1-008` همچنان `in_progress` می‌ماند.
+
+
+## بازبینی محتوایی T0171 تا T0175 — 2026-11-08T19:08:16.181Z
+
+- مبنای main: `9e67a8fa942495f7e1702116747bccfe5d4c6d99` (`V 3.1.92`)؛ source محصول دقیقاً از snapshot `db2bfaa62c7816e9f06ed4e9e1a8d1d91cb822fd` (`V 3.1.88`) بررسی شد. commitهای بعدی تا مبنای جاری، مستندات/گراف/reconciliation بوده‌اند.
+- T0171: تاریخچهٔ hostهای امتحان‌شده، حذف پیش‌فرض آن‌ها از round بعدی، allowlist محدود retry و fail-closed در نبود تاریخچهٔ معتبر بررسی شد.
+- T0172: correlation کامل request/attempt/round/host/model و deadline هر دو زمان تکمیل میزبان و دریافت محلی بررسی شد؛ آزمون پاسخ stale، round mismatch و پاسخ بعد deadline وجود دارد.
+- T0173: dedup کارت بر اساس requestId/attemptId با lock، کلید pending transport و replay guard میزبان بررسی شد؛ persistence پس از process restart در همان Room conversation هنوز احراز نشده است.
+- T0174: اتصال دکمهٔ لغو به CancelRequest دارای شناسه‌های دقیق، parser/validator مشترک و لغو token متناظر در Windows بررسی شد؛ first release در هر round فقط یک host فعال دارد.
+- T0175: status mapping، lifecycle persistence، retry دستی، requestId ثابت، attemptId جدید و exclusion میزبان قبلی بررسی شد؛ retry پس از success/cancel ممنوع و بودجه/deadline محدود است.
+- آزمون‌های Android JVM/transport و Windows HostLifecycle در Product CI دقیق source [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) موفق شدند؛ Quality CI دقیق همان source [42510357597](https://github.com/artinrahimii/project/actions/runs/42510357597) نیز موفق بود.
+- اجرای محلی در این محیط انجام نشد (عدم دسترسی DNS برای clone). شواهد CI شامل loopback/native .NET host integration است؛ نه دستگاه Android واقعی، شبکهٔ عمومی، مدل inference واقعی کاربر یا ذخیرهٔ پاسخ در همان Room chat.
+- وضعیت پایهٔ هر پنج وظیفه `done` حفظ شد؛ تصمیم هر پنج `re_review_required` است و هیچ status قدیمی تغییر نکرد. شواهد مستقل در `review-T0171.md` تا `review-T0175.md` ذخیره می‌شود.
+- reconciliation پیش از ثبت این batch: 114/168 reviewed و 54 pending؛ بعد از ثبت باید 119/168 reviewed و 49 pending شود. UPD-S1-008 همچنان `in_progress` باقی می‌ماند.
