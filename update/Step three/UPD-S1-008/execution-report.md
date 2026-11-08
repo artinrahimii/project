@@ -100,3 +100,14 @@
 - تست `tests/test_p2p_data_path_decision.py` در quality run [42481932091](https://github.com/artinrahimii/project/actions/runs/42481932091) اجرا شد؛ 479 آزمون Python، compileall و هر دو graph guard موفق شدند.
 - محدودیت مهم: README و ADR صریحاً می‌گویند انتقال P2P هنوز در مسیر عادی گفت‌وگو یکپارچه نشده و `AC-P2P-01` همچنان NOT RUN است. این بازبینی فقط تصمیم معماری/مستندسازی T0019 را تأیید می‌کند؛ پذیرش runtime نیست.
 - reconciliation: **3/168 reviewed**، **165 pending**، پیشرفت **1.79%**. UPD-S1-008 همچنان `in_progress`.
+
+
+## تلاش ششم — بازبینی محتوایی T0020 روی V 3.1.60
+
+- Attempt: `UPD-S1-008-20261108162441`; زمان `2026-11-08T16:24:41+03:30` تا `2026-11-08T16:25:55+03:30`.
+- commit بررسی‌شده: `c31ac02d39993965bd693b53f626d5cb09be7b2c` — `V 3.1.60`.
+- وضعیت پایهٔ T0020: `done`; تصمیم: `unchanged`; وضعیت قدیمی حفظ شد.
+- دفتر `docs/decisions/README.md` و ADR-0001/0002/0003 بازبینی شدند. Platform links به `global.json`, WPF csproj و Android Gradle وصل‌اند؛ ADR backend به `LlamaCppServerBackend`, host UI, lifecycle tests و AC-LOCAL-01/02 متصل است.
+- `tests/test_decision_traceability.py` و `tests/test_product_build_contract.py` در quality run [42482227315](https://github.com/artinrahimii/project/actions/runs/42482227315) موفق شدند؛ کل suite شامل 479 تست، compileall و graph guards موفق بود.
+- این نتیجه فقط scope دفتر تصمیم‌ها و traceability را می‌پوشاند؛ live model، نصب واقعی یا Android-to-Windows E2E از آن نتیجه‌گیری نشده است. `AC-LOCAL-01/02` و `AC-P2P-01` همچنان NOT RUN هستند.
+- reconciliation: **4/168 reviewed**, **164 pending**, پیشرفت **2.38%**. UPD-S1-008 همچنان `in_progress`.

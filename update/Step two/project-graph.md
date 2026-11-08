@@ -3104,20 +3104,22 @@
         "update/Step two/decision-impact-map.md",
         "update/Step two/legacy-task-reconciliation.md",
         "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0019.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0019.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0020.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
         "update/Step two/decision-impact-map.md",
         "update/Step two/legacy-task-reconciliation.md",
         "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0019.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0019.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0020.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261108124900",
+        "last_attempt_id": "UPD-S1-008-20261108162441",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3128,14 +3130,16 @@
           "update/Step two/legacy-task-reconciliation.json",
           "step three/project-graph.md",
           "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0019.md"
+          "update/Step three/UPD-S1-008/evidence/review-T0019.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0020.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
           "795a2de651f4e43133f352699e34623a3a10df0a",
           "38624cbc7537637086c8ef07aa7f4d15d8315e99",
           "f2abe47a43671753daaf233763b612592b3f694f",
-          "32015598e6ff38f3984efb0bc8c5d1797b99cdef"
+          "32015598e6ff38f3984efb0bc8c5d1797b99cdef",
+          "c31ac02d39993965bd693b53f626d5cb09be7b2c"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -3149,7 +3153,10 @@
           "V 3.1.58 Step Three graph structural and repository output/evidence guards passed: 230 nodes, 422 edges, 0 errors, 1 preserved historical metadata warning.",
           "T0019 content review: ADR-0002, REQ-010/011, README, acceptance matrix, direct source consumers and ADR-0004/0005/0006 were checked at V 3.1.59; decision unchanged; legacy done status preserved.",
           "T0019 source-contract test tests/test_p2p_data_path_decision.py ran in quality run 42481932091; all 479 automated Python tests and both graph validators passed.",
-          "T0019 review confirmed the written decision explicitly does not claim physical Android-to-Windows routing; AC-P2P-01 remains NOT RUN."
+          "T0019 review confirmed the written decision explicitly does not claim physical Android-to-Windows routing; AC-P2P-01 remains NOT RUN.",
+          "T0020 decision-traceability review: decision register and ADR links to actual build configuration, source and test paths verified on V3.1.60.",
+          "tests/test_decision_traceability.py and tests/test_product_build_contract.py passed in exact V3.1.60 quality workflow 42482227315; full suite 479 tests, compileall and both graph guards succeeded.",
+          "T0020 scope remains decision traceability only; live-model and Android-to-Windows runtime gates remain NOT RUN."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -3445,6 +3452,71 @@
           "contract_changes": [],
           "follow_up": "Continue reviewing the remaining 165 affected legacy tasks; preserve original status and the static impact markers. Do not treat this architecture decision as evidence that AC-P2P-01 passed.",
           "device_and_host_details_redacted": "Source review and GitHub-hosted Python quality CI only. No physical Android device or independent-network Windows host was used.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108162441",
+          "started_at": "2026-11-08T16:24:41+03:30",
+          "ended_at": "2026-11-08T16:25:55+03:30",
+          "result": "partial",
+          "summary": "Reviewed T0020 decision-register scope. The current decision register links ADRs to real project configuration/source/tests, and traceability plus build-contract tests passed in exact V3.1.60 quality CI. Decision unchanged; baseline done status and legacy dependencies preserved. Live backend and physical product gates remain separate and unverified; 164 reconciliation records pending.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0020.md"
+          ],
+          "commit_sha": "c31ac02d39993965bd693b53f626d5cb09be7b2c",
+          "tests": [
+            {
+              "name": "Decision register and ADR link review",
+              "command": "Inspect docs/decisions/README.md plus ADR-0001/0002/0003 at V3.1.60.",
+              "result": "passed",
+              "summary": "Decision register maps each choice to configuration/source/test and explicitly distinguishes accepted design from delivered runtime."
+            },
+            {
+              "name": "Decision traceability contract",
+              "command": "tests/test_decision_traceability.py in quality run 42482227315.",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42482227315",
+              "summary": "Registered decision files exist; platform values match project configs; P2P and local backend source/test/acceptance boundaries are linked."
+            },
+            {
+              "name": "Product build contract",
+              "command": "tests/test_product_build_contract.py in quality run 42482227315.",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42482227315",
+              "summary": "Build configuration and workflow source contracts passed in the full test suite."
+            },
+            {
+              "name": "Exact V3.1.60 quality workflow",
+              "command": ".github/workflows/quality.yml",
+              "result": "passed",
+              "run_id": 42482227315,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42482227315",
+              "summary": "479 Python tests, compileall, Step Three and Update graph validation passed."
+            },
+            {
+              "name": "Live local model acceptance",
+              "command": "AC-LOCAL-01/02 on a target Windows host with a supported loaded model.",
+              "result": "not_run",
+              "summary": "Not part of T0020 decision-traceability acceptance; ADR-0003 keeps live-model acceptance NOT RUN."
+            },
+            {
+              "name": "Physical Android-to-Windows",
+              "command": "AC-P2P-01 on a physical Android handset and installed Windows host.",
+              "result": "not_run",
+              "summary": "Separate physical runtime acceptance; not claimed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Review remaining 164 affected legacy tasks individually; preserve old status/dependency data and keep runtime gates NOT RUN until their actual acceptance evidence exists.",
+          "device_and_host_details_redacted": "Repository document/source review and GitHub-hosted quality CI only; no physical Android or target Windows host used.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -6867,7 +6939,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T12:50:26Z",
+    "as_of": "2026-11-08T16:25:55+03:30",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -6988,7 +7060,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T12:50:26Z",
+  "updated_at": "2026-11-08T16:25:55+03:30",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -7171,12 +7243,12 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "pending": 165,
-      "reviewed": 3
+      "pending": 164,
+      "reviewed": 4
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "165 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until all remaining tasks have individual code/test/acceptance evidence and dependency review.",
+    "completion_blocker": "164 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until all remaining tasks have individual code/test/acceptance evidence and dependency review.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",
