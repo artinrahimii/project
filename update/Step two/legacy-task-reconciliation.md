@@ -49,7 +49,7 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**70/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0109 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 98 رکورد همچنان `pending` هستند.
+**80/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0109 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 98 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
 هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 48 رکورد؛ شناسه‌های دقیق در JSON مرجع و فیلد review_status=reviewed ثبت شده‌اند.، و `re_review_required/pending` برای 114 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
@@ -295,3 +295,23 @@
 - Quality Gate [42508306358](https://github.com/artinrahimii/project/actions/runs/42508306358)، HostLifecycle در Product [42508306341](https://github.com/artinrahimii/project/actions/runs/42508306341) و Rendezvous [42508306222](https://github.com/artinrahimii/project/actions/runs/42508306222) موفق بودند. Android/Windows product jobs در زمان snapshot در حال اجرا بودند.
 - نشانگرهای گراف قدیمی تغییر نکردند؛ T0115→T0128 هنوز unreviewed است.
 - مجموع: **70/168 reviewed (41.67%)**، **98 pending (58.33%)**؛ UPD-S1-008 همچنان `in_progress`.
+
+
+## بازبینی T0116 تا T0125 روی V 3.1.84
+
+- commit کد بررسی‌شده: 07b21e2762ea9c03157de9f6c6a379eea07919de.
+- ده وظیفه از نظر کد، تست، معیار legacy و edgeها بررسی شدند؛ وضعیت پایهٔ هر ده done حفظ شد.
+- T0119/T0120 تصمیم unchanged دارند: relay غیرفعال و directory metadata-only حفظ می‌شود. هشت مورد دیگر re_review_required هستند.
+- ADR-0022 برای first release یک peer در هر round، حداکثر سه تلاش ترتیبی و retry دستی تعیین کرده است؛ سه میزبان در هر دور صرفاً generic compatibility است.
+- Product Build V3.1.84: HostLifecycle و Windows موفق، Android در snapshot هنوز در حال اجرا؛ Quality و Rendezvous موفق.
+- reconciliation: **80/168 reviewed (47.62%)**، **88 pending (52.38%)**؛ UPD-S1-008 همچنان in_progress.
+- update/Step three/UPD-S1-008/evidence/review-T0116.md
+- update/Step three/UPD-S1-008/evidence/review-T0117.md
+- update/Step three/UPD-S1-008/evidence/review-T0118.md
+- update/Step three/UPD-S1-008/evidence/review-T0119.md
+- update/Step three/UPD-S1-008/evidence/review-T0120.md
+- update/Step three/UPD-S1-008/evidence/review-T0121.md
+- update/Step three/UPD-S1-008/evidence/review-T0122.md
+- update/Step three/UPD-S1-008/evidence/review-T0123.md
+- update/Step three/UPD-S1-008/evidence/review-T0124.md
+- update/Step three/UPD-S1-008/evidence/review-T0125.md

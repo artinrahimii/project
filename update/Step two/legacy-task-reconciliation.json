@@ -1586,10 +1586,23 @@
         "UPD-S1-016"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0116.md",
+        "src/Host.Windows/Networking/IPeerTransport.cs",
+        "src/Host.Windows/Networking/PeerTransportEndpoint.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0116/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42508641717",
+        "https://github.com/artinrahimii/project/actions/runs/42508641574",
+        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+      ],
+      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
     },
     {
       "legacy_task_id": "T0117",
@@ -1600,10 +1613,26 @@
         "UPD-S1-016"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0117.md",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "src/Host.Windows/Networking/IPeerTransport.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "docs/decisions/ADR-0021-android-libp2p-peer-transport.md",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "tests/test_android_libp2p_transport_contract.py",
+        "step three/T0117/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42508641717",
+        "https://github.com/artinrahimii/project/actions/runs/42508641574",
+        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+      ],
+      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
     },
     {
       "legacy_task_id": "T0118",
@@ -1615,10 +1644,24 @@
         "UPD-S1-016"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0118.md",
+        "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/PeerTransportEndpoint.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md",
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/test_relay_privacy_boundary.py",
+        "step three/T0118/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42508641717",
+        "https://github.com/artinrahimii/project/actions/runs/42508641574",
+        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+      ],
+      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
     },
     {
       "legacy_task_id": "T0119",
@@ -1629,11 +1672,24 @@
         "UPD-S1-014",
         "UPD-S1-016"
       ],
-      "decision": "re_review_required",
-      "review_status": "pending",
+      "decision": "unchanged",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0119.md",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "tests/test_relay_privacy_boundary.py",
+        "tests/test_decision_traceability.py",
+        "step three/T0119/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42508641717",
+        "https://github.com/artinrahimii/project/actions/runs/42508641574",
+        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+      ],
+      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
     },
     {
       "legacy_task_id": "T0120",
@@ -1644,11 +1700,26 @@
         "UPD-S1-014",
         "UPD-S1-016"
       ],
-      "decision": "re_review_required",
-      "review_status": "pending",
+      "decision": "unchanged",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0120.md",
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+        "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "tests/test_relay_privacy_boundary.py",
+        "step three/T0120/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42508641717",
+        "https://github.com/artinrahimii/project/actions/runs/42508641574",
+        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+      ],
+      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
     },
     {
       "legacy_task_id": "T0121",
@@ -1658,10 +1729,27 @@
         "UPD-S1-014"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0121.md",
+        "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+        "src/Rendezvous.Service/Dockerfile",
+        ".github/workflows/rendezvous-container.yml",
+        "docs/deployment/rendezvous-service.md",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/rendezvous_container_smoke.py",
+        "tests/test_decision_traceability.py",
+        "step three/T0121/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42508641717",
+        "https://github.com/artinrahimii/project/actions/runs/42508641574",
+        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+      ],
+      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
     },
     {
       "legacy_task_id": "T0122",
@@ -1671,10 +1759,23 @@
         "UPD-S1-014"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0122.md",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/rendezvous_container_smoke.py",
+        "step three/T0122/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42508641717",
+        "https://github.com/artinrahimii/project/actions/runs/42508641574",
+        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+      ],
+      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
     },
     {
       "legacy_task_id": "T0123",
@@ -1684,10 +1785,25 @@
         "UPD-S1-014"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0123.md",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Host.Infrastructure/ProtocolMessageParser.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0123/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42508641717",
+        "https://github.com/artinrahimii/project/actions/runs/42508641574",
+        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+      ],
+      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
     },
     {
       "legacy_task_id": "T0124",
@@ -1698,10 +1814,23 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0124.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "tests/test_android_host_candidate_selector_contract.py",
+        "step three/T0124/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42508641717",
+        "https://github.com/artinrahimii/project/actions/runs/42508641574",
+        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+      ],
+      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
     },
     {
       "legacy_task_id": "T0125",
@@ -1713,10 +1842,28 @@
         "UPD-S1-015"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0125.md",
+        "docs/decisions/ADR-0022-single-host-sequential-retry.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_android_host_candidate_selector_contract.py",
+        "tests/test_android_inference_attempt_dispatcher_contract.py",
+        "step three/T0125/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42508641717",
+        "https://github.com/artinrahimii/project/actions/runs/42508641574",
+        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+      ],
+      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
     },
     {
       "legacy_task_id": "T0126",

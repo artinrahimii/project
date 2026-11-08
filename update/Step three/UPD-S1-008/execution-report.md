@@ -681,3 +681,31 @@
   - `update/Step three/UPD-S1-008/evidence/review-T0115.md`
 - نتیجهٔ reconciliation: **70/168 reviewed (41.67%)** و **98 pending (58.33%)**؛ UPD-S1-008 همچنان `in_progress`.
 
+
+
+## بازبینی محتوایی T0116 تا T0125 — 2026-11-08T18:16:26.015Z
+
+- مبنای کد: 07b21e2762ea9c03157de9f6c6a379eea07919de — V 3.1.84، شاخهٔ آنلاین main.
+- ده task از نظر قرارداد transport، پیاده‌سازی libp2p، fallback مستقیم TCP/QUIC، مرز relay، directory metadata-only، TTL/expiry، heartbeat احرازشده، انتخاب میزبان و تصمیم cardinality بازبینی شدند.
+- T0116/T0117: IPeerTransport و پیاده‌سازی واقعی libp2p با trust/peer identity و آزمون direct TCP, QUIC, fallback, plaintext/mismatch reject و disconnect موجود است؛ مسیر نهایی Android و شبکهٔ مستقل هنوز باید جداگانه آزموده شود.
+- T0118: fallback فعلی صرفاً direct TCP-to-QUIC برای یک PeerId است؛ NAT traversal و relay را ادعا نمی‌کند.
+- T0119: تصمیم unchanged — Relay در first release عمداً غیرفعال است؛ مسیر direct و خطای صریح عدم اتصال حفظ می‌شود.
+- T0120: تصمیم unchanged — Rendezvous فقط metadata شامل PeerId/address/capability/expiry دارد؛ prompt/response/history ارسال نمی‌شود.
+- T0121/T0122: TTL و renewal پنج‌دقیقه‌ای/یک‌دقیقه‌ای، expiry removal در service و Android client filtering/cache بررسی شد؛ public HTTPS و reachability مستقل تأیید نشده است.
+- T0123: status heartbeat از peer احرازشده با timestamp تازه و بدون cache به Android می‌رسد؛ آزمون loopback/Android JVM وجود دارد.
+- T0124: selector deterministic، authenticated live-probe، READY/capacity/model eligibility دارد؛ اما modelId/maxOutputTokens را از قبل دریافت می‌کند و خودش انتخاب مدل را انجام نمی‌دهد؛ UPD-S1-023 این شکاف را پوشش می‌دهد.
+- T0125: ADR-0022 سیاست first release را یک میزبان در هر round و تا سه تلاش ترتیبی/manual retry تأیید می‌کند؛ generic multi-host فقط compatibility است.
+- وابستگی‌های مستقیم بازبینی‌شده در گراف قدیمی validated بودند؛ هیچ edge یا وضعیت قدیمی تغییر نکرد.
+- Product Build V3.1.84: HostLifecycle و Windows موفق؛ Android هنوز in_progress در snapshot. Quality و Rendezvous موفق.
+- شواهد مستقل:
+  - update/Step three/UPD-S1-008/evidence/review-T0116.md
+  - update/Step three/UPD-S1-008/evidence/review-T0117.md
+  - update/Step three/UPD-S1-008/evidence/review-T0118.md
+  - update/Step three/UPD-S1-008/evidence/review-T0119.md
+  - update/Step three/UPD-S1-008/evidence/review-T0120.md
+  - update/Step three/UPD-S1-008/evidence/review-T0121.md
+  - update/Step three/UPD-S1-008/evidence/review-T0122.md
+  - update/Step three/UPD-S1-008/evidence/review-T0123.md
+  - update/Step three/UPD-S1-008/evidence/review-T0124.md
+  - update/Step three/UPD-S1-008/evidence/review-T0125.md
+- نتیجهٔ reconciliation: **80/168 reviewed (47.62%)** و **88 pending (52.38%)**؛ UPD-S1-008 همچنان in_progress.

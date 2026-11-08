@@ -3188,7 +3188,17 @@
         "update/Step three/UPD-S1-008/evidence/review-T0112.md",
         "update/Step three/UPD-S1-008/evidence/review-T0113.md",
         "update/Step three/UPD-S1-008/evidence/review-T0114.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0115.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0115.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0116.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0117.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0118.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0119.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0120.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0121.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0122.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0123.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0124.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0125.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
@@ -3276,13 +3286,23 @@
         "update/Step three/UPD-S1-008/evidence/review-T0112.md",
         "update/Step three/UPD-S1-008/evidence/review-T0113.md",
         "update/Step three/UPD-S1-008/evidence/review-T0114.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0115.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0115.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0116.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0117.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0118.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0119.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0120.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0121.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0122.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0123.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0124.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0125.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 23,
+        "attempt_count": 24,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261108181019",
+        "last_attempt_id": "UPD-S1-008-20261108181626",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3366,7 +3386,17 @@
           "update/Step three/UPD-S1-008/evidence/review-T0112.md",
           "update/Step three/UPD-S1-008/evidence/review-T0113.md",
           "update/Step three/UPD-S1-008/evidence/review-T0114.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0115.md"
+          "update/Step three/UPD-S1-008/evidence/review-T0115.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0116.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0117.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0118.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0119.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0120.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0121.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0122.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0123.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0124.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0125.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
@@ -3394,7 +3424,8 @@
           "5cba6051583091d8fbfb2cc849a2aa812c983d53",
           "08ba01194adc2acc37593a2586eb79104c7dd650",
           "63ae554809f1d1bc6217b0ad48632f416f3db0f2",
-          "58df066c3feb44020e59d75870a3d1c66642d604"
+          "58df066c3feb44020e59d75870a3d1c66642d604",
+          "07b21e2762ea9c03157de9f6c6a379eea07919de"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -3451,7 +3482,12 @@
           "Exact V3.1.82 Step Three Quality Gate run 42503829570 passed on the reviewed source SHA before this reconciliation-ledger change; this commit's workflow will validate the updated ledger and evidence paths.",
           "Exact V3.1.83 Step Three quality gate run 42508306358 passed on main SHA 58df066c3feb44020e59d75870a3d1c66642d604.",
           "Exact V3.1.83 HostLifecycle job in Product run 42508306341 passed; logs record Protobuf TCP frame/parser, response mapping, safe diagnostic and metadata-only discovery PASS markers.",
-          "Exact V3.1.83 Rendezvous container run 42508306222 passed. Android and Windows Product jobs were still in progress at the time of this attempt."
+          "Exact V3.1.83 Rendezvous container run 42508306222 passed. Android and Windows Product jobs were still in progress at the time of this attempt.",
+          "Exact V3.1.84 Step Three Quality Gate run 42508641717 passed.",
+          "Exact V3.1.84 Rendezvous container build/smoke run 42508641758 passed.",
+          "Exact V3.1.84 HostLifecycle and Windows WPF product jobs passed in run 42508641574; the Android job was still in progress at the review snapshot.",
+          "Exact V3.1.83 HostLifecycle transport acceptance in run 42508306341 passed direct libp2p TCP, authenticated TCP-to-QUIC fallback, replay/trust and metadata-only TTL checks.",
+          "Exact V3.1.82 full Product Build run 42503829586 passed Android JVM/Keystore instrumentation, Windows WPF installer and HostLifecycle; product code reviewed for this batch was unchanged in later reconciliation-only commits."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -4690,7 +4726,7 @@
             "update/Step three/UPD-S1-008/evidence/review-T0108.md",
             "update/Step three/UPD-S1-008/evidence/review-T0109.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "58df066c3feb44020e59d75870a3d1c66642d604",
           "tests": [
             {
               "name": "Exact V3.1.82 HostLifecycle acceptance",
@@ -4749,7 +4785,7 @@
             "update/Step three/UPD-S1-008/evidence/review-T0114.md",
             "update/Step three/UPD-S1-008/evidence/review-T0115.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de",
           "tests": [
             {
               "name": "Exact V3.1.83 Step Three quality gate",
@@ -4795,6 +4831,86 @@
           ],
           "follow_up": "Continue with next pending reconciliation IDs after T0115. Re-review T0110/T0111 after UPD-S1-004/012/017; T0112 after UPD-S1-004/017; T0113 after UPD-S1-018; T0114/T0115 after UPD-S1-012. Preserve unreviewed T0115->T0128 until independently inspected. UPD-S1-008 remains in_progress while 98 records are pending.",
           "device_and_host_details_redacted": "GitHub-hosted HostLifecycle/Windows/Android CI only. No physical Android device paired to an installed target Windows host or public-network path was used for this review.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108181626",
+          "started_at": "2026-11-08T18:16:26.015Z",
+          "ended_at": "2026-11-08T18:16:26.015Z",
+          "result": "partial",
+          "summary": "Reviewed T0116-T0125 individually against exact main V3.1.84 transport, discovery, relay policy, heartbeat, selector, retry policy, acceptance tests and direct legacy dependency edges. Baseline done states were preserved. T0119 and T0120 were reviewed as unchanged because first release intentionally keeps relay disabled and rendezvous metadata-only. T0116-T0118 and T0121-T0125 remain re_review_required because final direct transport, heartbeat/eligibility, ranking, model resolver and single-host policy still require integration/revalidation. UPD-S1-003 ADR-0022 confirms one host per round, at most three sequential attempts and manual retry; generic multi-host compatibility is separate. Earlier attempt commit SHAs were filled. Reconciliation is 80/168 reviewed; 88 pending.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0116.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0117.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0118.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0119.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0120.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0121.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0122.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0123.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0124.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0125.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Exact V3.1.84 Step Three quality gate",
+              "command": ".github/workflows/quality.yml",
+              "result": "passed",
+              "run_id": 42508641717,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42508641717",
+              "summary": "Python quality suite, compileall and graph validators passed."
+            },
+            {
+              "name": "Exact V3.1.84 Rendezvous container",
+              "command": ".github/workflows/rendezvous-container.yml",
+              "result": "passed",
+              "run_id": 42508641758,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42508641758",
+              "summary": "Rendezvous container build and smoke test passed."
+            },
+            {
+              "name": "Exact V3.1.84 HostLifecycle and Windows WPF",
+              "command": ".github/workflows/product-build.yml",
+              "result": "passed",
+              "run_id": 42508641574,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42508641574",
+              "summary": "HostLifecycle and Windows WPF jobs passed; Android job was still in progress at the review snapshot."
+            },
+            {
+              "name": "Exact V3.1.83 HostLifecycle transport acceptance",
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "passed",
+              "run_id": 42508306341,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42508306341",
+              "summary": "Direct libp2p, authenticated TCP-to-QUIC fallback, replay/trust and metadata-only TTL acceptance passed."
+            },
+            {
+              "name": "Exact V3.1.82 full Android/Windows product build",
+              "command": ".github/workflows/product-build.yml",
+              "result": "passed",
+              "run_id": 42503829586,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42503829586",
+              "summary": "Android JVM and Keystore instrumentation, Windows WPF installer and HostLifecycle passed; reviewed product sources are unchanged after that build."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "UPD-S1-002 approves direct authenticated P2P for first release and leaves relay disabled; T0119 is unchanged.",
+            "UPD-S1-003 approves one selected host per round, up to three sequential attempts and manual retry; generic multi-host compatibility is distinct and T0125 requires re-review.",
+            "UPD-S1-014 changes metadata, TTL, heartbeat, eligibility and ranking, requiring revalidation of T0116-T0118 and T0121-T0124.",
+            "UPD-S1-016 changes secure transport and fallback acceptance; the existing direct transport implementation is preserved for revalidation.",
+            "UPD-S1-023 adds deterministic model resolution and output-token policy; T0124 currently validates a prebuilt modelId/token limit and does not implement that selection."
+          ],
+          "follow_up": "Continue reconciliation from T0126. After UPD-S1-014/016 revalidate direct transport, live status and candidate ranking; after UPD-S1-023 wire model resolution before selection; after UPD-S1-003/015 retain one-host first-release flow with sequential manual retry. UPD-S1-008 remains in_progress with 88 pending records.",
+          "device_and_host_details_redacted": "GitHub-hosted Linux/Windows/Android emulator and instrumentation runners only. No physical Android handset paired with an independently reachable installed Windows host was used.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -8217,7 +8333,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T18:10:19.333Z",
+    "as_of": "2026-11-08T18:16:26.015Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -8338,7 +8454,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T18:10:19.333Z",
+  "updated_at": "2026-11-08T18:16:26.015Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -8521,12 +8637,12 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "reviewed": 70,
-      "pending": 98
+      "reviewed": 80,
+      "pending": 88
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "98 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until every required review has individual code/test/acceptance evidence, dependency review and no pending records.",
+    "completion_blocker": "88 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until every required review has individual code/test/acceptance evidence, dependency review and no pending records.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",
