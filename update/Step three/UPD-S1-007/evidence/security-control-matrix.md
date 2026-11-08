@@ -44,3 +44,10 @@
 - packet capture، بررسی provider logs و ممیزی forensic سیستم‌عامل انجام نشده است.
 - pagefile/swap، crash dump، backup، screenshot و ابزار ثالث خارج از تضمین برنامه باقی می‌مانند.
 - `AC-P2P-01` و `AC-PRIV-01` همچنان NOT RUN هستند.
+
+
+## CI failure and correction
+
+- Exact V 3.1.42 quality run: [42465040801](https://github.com/artinrahimii/project/actions/runs/42465040801) — 472 tests ran; 8 subtest assertions failed inside `test_explicit_peer_trust_decision_maps_to_persistent_store_transport_gate_and_acceptance`.
+- The source and runtime controls themselves were not the cause. The regression test requires the historical ADR to keep explicit paths to the portable trust test, Windows trust test, peer-transport test, test Program, product workflow and traceability test, plus two phrases documenting the original V 3.0.443 caller boundary.
+- V 3.1.43 restores those references and phrases as historical evidence while explicitly stating that the former “no WPF prompt” claim is superseded by current code. Exact-head CI remains pending.

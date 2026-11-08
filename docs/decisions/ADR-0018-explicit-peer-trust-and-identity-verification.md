@@ -57,7 +57,8 @@ Exact V 3.1.40 evidence on commit `380c89043d7e2cfce7bc50926419a1a682aaf0cb`:
 
 ### Historical verification at the original ADR baseline
 
-At V 3.0.443 (commit `db6b7f1bf87747bf4d10f4f8e1f227df4264cde3`), the trust store and transport gates had CI evidence, but caller-facing WPF peer-enrollment UI was still absent. That was the historical status at that baseline; it is superseded by the current UI implementation above.
+At V 3.0.443 (commit `db6b7f1bf87747bf4d10f4f8e1f227df4264cde3`), the original caller-boundary wording stated that WPF **“does not yet present a peer-enrollment prompt”**. That phrase is retained here solely as a historical statement about that earlier baseline; it is superseded by the current Windows privacy-consent and explicit PeerId-enrollment UI described above. The earlier verification also stated that **full independent-node E2E remain separate** from the trust-store/transport checks; that remains true for current operational acceptance.
+
 
 ## Limits and outstanding operational acceptance
 
@@ -67,6 +68,10 @@ At V 3.0.443 (commit `db6b7f1bf87747bf4d10f4f8e1f227df4264cde3`), the trust stor
 - `AC-P2P-01` and `AC-PRIV-01` remain **NOT RUN** until physical Android-to-Windows operation, runtime routing, and independent deployment storage/log review are completed. Emulator, CI, loopback tests or source contracts are not substitutes.
 
 ## Traceability
+
+- Core store, transport and protector: `src/Shared.Security/PeerTrustStore.cs`, `src/Host.Windows/Networking/Libp2pPeerTransport.cs`, `src/Host.Windows/Security/WindowsDpapiSecretProtector.cs`.
+- Historical and current executable trust tests: `tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs`, `tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs`, `tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs`, `tests/HostLifecycle.Tests/Program.cs`.
+- CI and regression traceability: `.github/workflows/product-build.yml`, `tests/test_decision_traceability.py`.
 
 - Trust and validation: `src/Shared.Security/PeerTrustStore.cs`, `src/Shared.Security/PeerSecurityPolicy.cs`.
 - Authenticated transport: `src/Host.Windows/Networking/Libp2pPeerTransport.cs`, `PeerAnnouncementHostLifecycle.cs`, `Libp2pPeerMessageProtocol.cs`.

@@ -56,3 +56,17 @@ ADR-0018 هنوز می‌گفت WPF UI پنجرهٔ enrollment ندارد؛ کد
 ## محدودیت
 
 `AC-P2P-01` و `AC-PRIV-01` همچنان NOT RUN هستند تا Android↔Windows فیزیکی، بررسی مسیر ترافیک و ممیزی مستقل نگهداری/log اجرا شوند. CI، emulator و source-contract جایگزین این پذیرش نیستند.
+
+
+## تلاش بعدی — اصلاح خطای traceability در V 3.1.42
+
+- [Quality gate run 42465040801](https://github.com/artinrahimii/project/actions/runs/42465040801) روی SHA `0056553382a43fc21c0c74fe17341df571c0b80e` پس از اجرای ۴۷۲ آزمون با ۸ شکست زیرمجموعه‌ای در یک تست traceability پایان یافت.
+- آزمون `test_explicit_peer_trust_decision_maps_to_persistent_store_transport_gate_and_acceptance` مسیرهای تاریخی `PeerTrustStoreAcceptanceTests.cs`, `WindowsPeerTrustStoreAcceptanceTests.cs`, `PeerTransportContractAcceptanceTests.cs`, `Program.cs`, `product-build.yml`, `test_decision_traceability.py` و دو عبارت baseline قدیمی را در ADR-0018 جست‌وجو می‌کند.
+- نسخهٔ جدید ADR-0018 هر شش مسیر را در بخش traceability ثبت می‌کند و دو عبارت را فقط در بخش تاریخی V 3.0.443 و با تصریح منسوخ‌بودن ادعای نبود UI نگه می‌دارد. رفتار اجرایی Android/Windows تغییر نکرده است.
+- نتیجهٔ CI اصلاحیهٔ V 3.1.43 هنوز pending است؛ UPD-S1-007 همچنان `in_progress` می‌ماند تا quality gate دقیق و product CI همان commit بررسی شوند.
+
+## نتیجهٔ فعلی
+
+- شکست quality در V 3.1.42: هشت assertion در یک آزمون traceability؛ هیچ شکست محصولی در این آزمون گزارش نشده است.
+- Rendezvous container job V 3.1.42 موفق شد.
+- Windows/Android/HostLifecycle product jobهای V 3.1.42 در زمان ثبت گزارش هنوز در حال اجرا بودند؛ تا مشاهدهٔ نتیجه، موفق یا ناموفق محسوب نمی‌شوند.

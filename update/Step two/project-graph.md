@@ -2567,11 +2567,11 @@
         "https://github.com/artinrahimii/project/actions/runs/42463288660",
         "https://github.com/artinrahimii/project/actions/runs/42463288704"
       ],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0129, T0130, T0131, T0132, T0133, T0134, T0135, T0136, T0137, T0138, T0178, T0179, T0180, T0181, T0182, T0183, T0184, T0185, T0186, T0187, T0188, T0206, T0226, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0129, T0130, T0131, T0132, T0133, T0134, T0135, T0136, T0137, T0138, T0178, T0179, T0180, T0181, T0182, T0183, T0184, T0185, T0186, T0187, T0188, T0206, T0226, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. V 3.1.42 quality run 42465040801 failed eight subassertions in a single ADR traceability test; historical path refs/phrases were omitted. They are restored in V 3.1.43 with the prior 'no WPF enrollment prompt' claim explicitly marked historical and superseded. Current task remains in_progress pending exact CI.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-007-20261108085400",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "UPD-S1-007-20261108085719",
         "last_attempt_result": "partial",
         "changed_files": [
           "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
@@ -2579,9 +2579,13 @@
           "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
           "update/Step two/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "0056553382a43fc21c0c74fe17341df571c0b80e"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.1.42 quality run 42465040801: 8 traceability subassertions failed in test_explicit_peer_trust_decision_maps_to_persistent_store_transport_gate_and_acceptance because ADR-0018 omitted 6 required historical path references and 2 baseline phrases; restored as historical-only material in V 3.1.43."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -2589,21 +2593,8 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": [
-            "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
-            "tests/test_peer_inference_privacy_disclosure.py",
-            "tests/test_host_content_visibility.py",
-            "tests/test_network_payload_logging.py",
-            "tests/test_host_conversation_retention_policy.py",
-            "tests/test_threat_model_documentation.py",
-            "tests/test_sensitive_artifact_scanning.py",
-            "tests/test_sensitive_buffer_cleanup.py",
-            "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
-            "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
-            "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
-            "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
-            "src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidKeyStorePersistenceTest.kt",
-            "https://github.com/artinrahimii/project/actions/runs/42463288660",
-            "https://github.com/artinrahimii/project/actions/runs/42463288704"
+            "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+            "tests/test_decision_traceability.py"
           ]
         }
       },
@@ -2667,6 +2658,64 @@
           "device_and_host_details_redacted": "GitHub-hosted Windows and Ubuntu runners; Android emulator instrumentation. No physical target handset/host or deployment packet/forensic audit.",
           "model_revision_and_sha256": "No model inference required for this security/privacy review.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed; installation/upgrade acceptance belongs to separate tasks."
+        },
+        {
+          "attempt_id": "UPD-S1-007-20261108085632",
+          "started_at": "2026-11-08T08:56:32Z",
+          "ended_at": "2026-11-08T08:56:39Z",
+          "result": "failed",
+          "summary": "The exact V 3.1.42 Step Three quality gate ran 472 Python tests and failed eight subtest assertions inside test_explicit_peer_trust_decision_maps_to_persistent_store_transport_gate_and_acceptance. The ADR update had removed six explicit historical source/test/workflow path references and two historical phrases still required by the repository's ADR traceability contract. The failed checks are documentation-traceability omissions; the privacy/runtime source code was not changed by V 3.1.42.",
+          "changed_files": [
+            "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md"
+          ],
+          "commit_sha": "0056553382a43fc21c0c74fe17341df571c0b80e",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact V 3.1.42",
+              "result": "failed",
+              "run_id": 42465040801,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42465040801",
+              "summary": "472 tests executed; eight subtest assertions failed in one ADR traceability test due to missing historical paths and baseline phrases."
+            }
+          ],
+          "failure_details": "The ADR no longer contained tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs, WindowsPeerTrustStoreAcceptanceTests.cs, PeerTransportContractAcceptanceTests.cs, Program.cs, .github/workflows/product-build.yml, tests/test_decision_traceability.py, or the two historical phrases 'does not yet present a peer-enrollment prompt' and 'full independent-node e2e remain separate'.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Restore all required traceability paths and exact historical phrases, clearly label the former no-WPF-prompt statement as superseded historical state, then rerun quality and product workflows on the correction commit.",
+          "device_and_host_details_redacted": "GitHub-hosted Ubuntu quality runner; product jobs were still running at the time of this record.",
+          "model_revision_and_sha256": "Not applicable.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-007-20261108085719",
+          "started_at": "2026-11-08T08:57:19Z",
+          "ended_at": "2026-11-08T08:57:19Z",
+          "result": "partial",
+          "summary": "Restored the explicit historical source/test/workflow paths and the two exact V 3.0.443 baseline phrases in ADR-0018. The historical statement that the WPF enrollment prompt was absent is now explicitly labeled superseded by the current consent/enrollment UI. The exact V 3.1.43 quality/product CI is pending.",
+          "changed_files": [
+            "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+            "update/Step three/UPD-S1-007/execution-report.md",
+            "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact V 3.1.43",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head V 3.1.43 quality and product workflow results. Mark UPD-S1-007 done only after all applicable gates pass.",
+          "device_and_host_details_redacted": "Awaiting GitHub-hosted quality and product runners; no physical Android/Windows pair.",
+          "model_revision_and_sha256": "Not applicable.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
     },
