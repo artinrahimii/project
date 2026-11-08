@@ -3115,7 +3115,9 @@
         "docs/decisions/README.md",
         "docs/decisions/ADR-0003-tcp-request-framing.md",
         "docs/decisions/ADR-0024-tcp-request-framing.md",
-        "tests/test_decision_traceability.py"
+        "tests/test_decision_traceability.py",
+        "update/Step three/UPD-S1-008/evidence/review-T0199.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0214.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
@@ -3131,13 +3133,15 @@
         "docs/decisions/README.md",
         "docs/decisions/ADR-0024-tcp-request-framing.md",
         "docs/decisions/ADR-0003-tcp-request-framing.md",
-        "tests/test_decision_traceability.py"
+        "tests/test_decision_traceability.py",
+        "update/Step three/UPD-S1-008/evidence/review-T0199.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0214.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 8,
+        "attempt_count": 9,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261108130919",
+        "last_attempt_id": "UPD-S1-008-20261108131900",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3156,7 +3160,9 @@
           "docs/decisions/ADR-0003-tcp-request-framing.md",
           "docs/decisions/ADR-0024-tcp-request-framing.md",
           "tests/test_decision_traceability.py",
-          "update/Step three/UPD-S1-008/evidence/review-T0020-ADR-uniqueness.md"
+          "update/Step three/UPD-S1-008/evidence/review-T0020-ADR-uniqueness.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0199.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0214.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
@@ -3168,7 +3174,8 @@
           "a3fa1f54d99db809cc670ece1cfc244239f6a727",
           "422dcd40547f98fab33096e10cd88a1d40366d68",
           "89a7b12ff24449f2b730200939053dedcd91f56f",
-          "365c734e178013fc6ea9499bf08855e91f5d0cbe"
+          "365c734e178013fc6ea9499bf08855e91f5d0cbe",
+          "fe489b7f141a9a969f550b851093e3fcf45c8a19"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -3190,7 +3197,10 @@
           "T0016 content review: Kotlin/Compose/Gradle settings, app configuration, manifest and MainActivity inspected; Android lint, debug/release build and JVM unit tests succeeded in run 42482227320.",
           "Exact quality run 42482227315 passed 479 Python tests, compileall and both graph guards.",
           "Exact V 3.1.62 quality workflow 42483059242 passed for the evidence and ledger commit containing T0015/T0016 reviews: 479 Python tests, compileall, Update graph validation and Step Three graph/output-evidence guards.",
-          "T0020 ADR identifier uniqueness regression passed in exact V3.1.64 quality workflow 42483596179; full Python unit suite, compileall and both graph guards succeeded."
+          "T0020 ADR identifier uniqueness regression passed in exact V3.1.64 quality workflow 42483596179; full Python unit suite, compileall and both graph guards succeeded.",
+          "T0199 review on V3.1.67: canonical protocol, 11 cross-language message round-trips, shared fixtures and new assertions for error message attempt/round IDs, ModelCapability limits and metadata-only discovery passed.",
+          "T0199 exact V3.1.67 Quality Gate 42484306209 passed; source-identical product CI V3.1.61 run 42482672544 passed all Windows/Android/HostLifecycle jobs.",
+          "T0214 review on V3.1.67: README command contract, clean-checkout workflow, packaging, installer smoke and Android APK build/test workflow aligned; V3.1.61 Product build artifacts were inspected."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -3666,6 +3676,73 @@
           ],
           "follow_up": "Continue the 162 outstanding legacy task reviews individually; keep UPD-S1-008 in_progress until each has source, contract, dependency, test, acceptance and review evidence.",
           "device_and_host_details_redacted": "GitHub source review and CI only; no physical Android or target Windows host used.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108131900",
+          "started_at": "2026-11-08T13:19:00Z",
+          "ended_at": "2026-11-08T13:19:41.169Z",
+          "result": "partial",
+          "summary": "Reviewed T0199 and T0214 individually on V3.1.67. Their baseline legacy statuses remain done. Both current review decisions are re_review_required because UPD-S1-019 and UPD-S1-021 expand acceptance scope. Eight of 168 affected legacy tasks are now reviewed; 160 remain pending.",
+          "changed_files": [
+            "update/Step three/UPD-S1-008/evidence/review-T0199.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0214.md",
+            "update/Step two/project-graph.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step two/decision-impact-map.md",
+            "update/Step three/UPD-S1-008/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "T0199 canonical protocol and cross-language contract",
+              "command": "Inspect messages.proto, test_proto_contract.py, 11 shared wire fixtures, C# HostLifecycle and Kotlin ProtoRoundTripTest.",
+              "result": "passed",
+              "summary": "All 11 primary messages are covered in both languages. The current contract test now also validates request/attempt/round IDs for HostBusy, UnsupportedModel and ProtocolError, ModelCapability limits, and metadata-only discovery fields."
+            },
+            {
+              "name": "T0199 exact V3.1.67 quality CI",
+              "command": "GitHub Actions quality run 42484306209.",
+              "result": "passed",
+              "summary": "The exact-head quality workflow passed, including the expanded protocol-contract assertions, Python tests, compileall and both graph guards.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42484306209"
+            },
+            {
+              "name": "T0199 C#/Kotlin product contract suites",
+              "command": "GitHub Actions product build run 42482672544 on source-identical product snapshot V3.1.61.",
+              "result": "passed",
+              "summary": "All Windows, Android and HostLifecycle jobs succeeded; Protobuf generation and C#/Kotlin round-trip/JVM tests passed. Canonical schema, C#/Kotlin consumers and build workflow were unchanged through V3.1.67.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42482672544"
+            },
+            {
+              "name": "T0214 README and clean-checkout package workflow",
+              "command": "Inspect README, test_readme_build_commands.py, test_reproducible_build_contract.py, product-build.yml and quality.yml; verify V3.1.61 product build.",
+              "result": "passed",
+              "summary": "Documented commands matched CI. Windows publish/installer smoke, Android APK/JVM/Keystore instrumentation and HostLifecycle jobs passed; uploaded artifact archive IDs and digests recorded in evidence.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42482672544"
+            },
+            {
+              "name": "Product build exact V3.1.67",
+              "command": "GitHub Actions product build run 42484306205.",
+              "result": "not_run",
+              "summary": "Still in_progress at review time; no exact-commit product-build success is claimed.",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42484306205"
+            },
+            {
+              "name": "Physical clean install, in-place upgrade and Android-to-Windows E2E",
+              "command": "Physical Android handset and installed Windows host.",
+              "result": "not_run",
+              "summary": "No physical handset or user Windows host was accessed; those end-to-end acceptance gates remain unverified."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue reviewing the remaining 160 affected legacy IDs individually. Re-review T0199 after UPD-S1-019 extends retry, timeout, cancellation, trust, replay, tamper and state-mapping tests; re-review T0214 after UPD-S1-021 changes final packages, checksums, licenses, installation guides and in-place upgrades. Preserve all old statuses and static impact markers.",
+          "device_and_host_details_redacted": "Repository source and GitHub-hosted Windows runner/Android emulator CI only; no physical Android handset or user Windows host used.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -7088,7 +7165,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T13:11:24.539Z",
+    "as_of": "2026-11-08T13:19:41.169Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -7209,7 +7286,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T13:11:24.539Z",
+  "updated_at": "2026-11-08T13:19:41.169Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -7392,12 +7469,12 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "pending": 162,
-      "reviewed": 6
+      "pending": 160,
+      "reviewed": 8
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "162 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until all remaining tasks have individual code/test/acceptance evidence and dependency review.",
+    "completion_blocker": "160 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until every affected task has an individual implementation, dependency, test and acceptance review with evidence. T0199 and T0214 have reviewed re_review_required decisions and must be revisited after UPD-S1-019/021.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",

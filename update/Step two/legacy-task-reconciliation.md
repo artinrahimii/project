@@ -49,10 +49,10 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**6/168 بازبینی محتوایی نهایی شده‌اند.** T0012، T0013، T0015، T0016، T0019 و T0020 با تصمیم `unchanged` reviewed هستند؛ 162 رکورد همچنان `pending` هستند. کد، آزمون و معیار پذیرش هر شناسه باید در مرحله‌های بعدی جداگانه بررسی شود. وجود مسیر فایل، evidence یا اجرای قدیمی CI به‌تنهایی تأیید وضعیت امروز آن وظیفه نیست.
+**8/168 بازبینی محتوایی فعلی ثبت شده‌اند.** T0012، T0013، T0015، T0016، T0019 و T0020 با تصمیم `unchanged` reviewed هستند؛ T0199 و T0214 نیز بازبینی شده‌اند اما تصمیم `re_review_required` دارند تا پس از UPD-S1-019 و UPD-S1-021 دوباره بررسی شوند. 160 رکورد همچنان `pending` هستند. کد، آزمون و معیار پذیرش هر شناسه باید در مرحله‌های بعدی جداگانه بررسی شود. وجود مسیر فایل، evidence یا اجرای قدیمی CI به‌تنهایی تأیید وضعیت امروز آن وظیفه نیست.
 
 ## سیاست تغییر وضعیت
-هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم فعلی برای 6 رکورد بازبینی‌شده `unchanged` و برای 162 رکورد باقی‌مانده `re_review_required` است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation در حالت `pending/re_review_required` باقی می‌مانند؛ وضعیت واقعی هر بررسی در همین فایل JSON ثبت می‌شود.
+هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای T0199 و T0214، و `re_review_required/pending` برای 160 رکورد باقی‌مانده ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation در حالت `pending/re_review_required` باقی می‌مانند؛ وضعیت واقعی هر بررسی در همین فایل JSON ثبت می‌شود.
 
 
 ## نتیجهٔ تکمیلی در V 3.1.56
@@ -104,3 +104,14 @@
 - آزمون جدید یکتایی شناسه‌های ADR، suite کامل Python، compileall و هر دو graph guard موفق شدند.
 - تصمیم T0020: `unchanged`؛ وضعیت پایهٔ `done` حفظ شد. SHA بررسی‌شده در `review_commit_sha` فایل JSON ثبت شده است.
 - نتیجهٔ جاری: 6/168 reviewed، 162/168 pending؛ `UPD-S1-008` همچنان `in_progress`.
+
+
+## بازبینی T0199 و T0214 روی V 3.1.67
+
+- مبنای هر دو بازبینی: `fe489b7f141a9a969f550b851093e3fcf45c8a19` — `V 3.1.67`.
+- `T0199`: قرارداد canonical Protobuf، round-trip دو زبان، 11 fixture مشترک، پیام‌های cancel/busy/unsupported/protocol-error، فیلدهای attempt/round، محدودیت‌های ModelCapability و ممنوعیت دادهٔ prompt/response/history در metadata discovery بررسی شدند. Quality CI دقیق V3.1.67 (run [42484306209](https://github.com/artinrahimii/project/actions/runs/42484306209)) موفق شد؛ Product CI منطبق با کد C#/Kotlin در V3.1.61 (run [42482672544](https://github.com/artinrahimii/project/actions/runs/42482672544)) نیز سه job Windows/Android/HostLifecycle را موفق تکمیل کرد.
+- `T0214`: README، آزمون‌های تطبیق فرمان، تست reproducible build و workflowهای clean checkout بررسی شدند. Product run فوق خروجی Windows host/publish/installer و Android APK را ایجاد کرد. digestهای ثبت‌شده مربوط به آرشیوهای GitHub artifact هستند، نه checksum باینری داخلی APK/installer.
+- Product build دقیق V3.1.67 (run [42484306205](https://github.com/artinrahimii/project/actions/runs/42484306205)) هنگام ثبت بازبینی هنوز `in_progress` بود؛ نتیجهٔ موفق برای آن ادعا نمی‌شود.
+- تصمیم T0199 برابر `re_review_required` به‌دلیل توسعهٔ آزمون‌ها در UPD-S1-019؛ تصمیم T0214 برابر `re_review_required` به‌دلیل بسته‌بندی، مستندات و in-place upgrade در UPD-S1-021 است. وضعیت پایهٔ هر دو `done` حفظ شد.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0199.md` و `update/Step three/UPD-S1-008/evidence/review-T0214.md`.
+- نتیجه: **8/168 reviewed (4.76%)، 160 pending (95.24%)**؛ UPD-S1-008 همچنان `in_progress`.

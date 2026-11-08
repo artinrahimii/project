@@ -2069,10 +2069,12 @@
         "UPD-S1-019"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0199.md"
+      ],
+      "review_commit_sha": "fe489b7f141a9a969f550b851093e3fcf45c8a19"
     },
     {
       "legacy_task_id": "T0200",
@@ -2288,10 +2290,12 @@
         "UPD-S1-021"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0214.md"
+      ],
+      "review_commit_sha": "fe489b7f141a9a969f550b851093e3fcf45c8a19"
     },
     {
       "legacy_task_id": "T0215",

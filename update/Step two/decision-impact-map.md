@@ -146,7 +146,7 @@
 | `T0196` | done | UPD-S1-005, UPD-S1-013, UPD-S1-019, UPD-S1-023 | re_review_required | pending | 0 | 6 |
 | `T0197` | done | UPD-S1-019 | re_review_required | pending | 6 | 6 |
 | `T0198` | done | UPD-S1-019 | re_review_required | pending | 6 | 6 |
-| `T0199` | done | UPD-S1-008, UPD-S1-019 | re_review_required | pending | 2 | 5 |
+| `T0199` | done | UPD-S1-008, UPD-S1-019 | re_review_required | reviewed | 2 | 5 |
 | `T0200` | done | UPD-S1-004, UPD-S1-010, UPD-S1-019, UPD-S1-020 | re_review_required | pending | 1 | 3 |
 | `T0201` | done | UPD-S1-019, UPD-S1-020 | re_review_required | pending | 2 | 1 |
 | `T0202` | deferred_final | UPD-S1-004, UPD-S1-010, UPD-S1-019, UPD-S1-020 | re_review_required | pending | 1 | 4 |
@@ -161,7 +161,7 @@
 | `T0211` | done | UPD-S1-021, UPD-S1-024 | re_review_required | pending | 3 | 1 |
 | `T0212` | done | UPD-S1-021 | re_review_required | pending | 1 | 1 |
 | `T0213` | done | UPD-S1-021 | re_review_required | pending | 0 | 1 |
-| `T0214` | done | UPD-S1-008, UPD-S1-021 | re_review_required | pending | 0 | 2 |
+| `T0214` | done | UPD-S1-008, UPD-S1-021 | re_review_required | reviewed | 0 | 2 |
 | `T0215` | in_progress | UPD-S1-021 | re_review_required | pending | 0 | 3 |
 | `T0216` | not_started | UPD-S1-001, UPD-S1-021, UPD-S1-024 | re_review_required | pending | 0 | 0 |
 | `T0217` | not_started | UPD-S1-001, UPD-S1-021, UPD-S1-024 | re_review_required | pending | 0 | 0 |

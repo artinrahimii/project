@@ -148,3 +148,15 @@
 - T0020 با تصمیم `unchanged` و `review_status=reviewed` ثبت شد؛ وضعیت پایهٔ legacy یعنی `done` حفظ شده و هیچ وضعیت/یال گراف قدیمی تغییر نکرده است.
 - reconciliation فعلی: **6/168 reviewed** و **162 pending**. `UPD-S1-008` هنوز `in_progress` است.
 - آزمون محصول کامل Android/Windows، دستگاه فیزیکی Android، live inference، Android-to-Windows، clean install و in-place upgrade در این تلاش اجرا نشده‌اند.
+
+
+## تلاش نهم — بازبینی محتوایی T0199 و T0214 روی V 3.1.67
+
+- Attempt: `UPD-S1-008-20261108131900`; بازبینی از `2026-11-08T13:19:00Z` تا `2026-11-08T13:19:41.169Z`.
+- مبنای کد و گراف: `fe489b7f141a9a969f550b851093e3fcf45c8a19` — `V 3.1.67`.
+- `T0199`: وضعیت پایهٔ `done` حفظ شد؛ schema مشترک، 11 پیام اصلی، شناسه‌های attempt/round، آزمون‌های C#/Kotlin و fixtureهای مشترک بررسی شدند. آزمون جدید، فیلدهای attempt/round را در Busy/UnsupportedModel/ProtocolError، محدودیت‌های ModelCapability و جلوگیری از prompt/response/history در metadata discovery کنترل می‌کند. Quality CI دقیق V3.1.67 موفق شد؛ Product CI برای schema/مصرف‌کنندگان بدون تغییر در V3.1.61 سه job را موفق گذرانده است. تصمیم `re_review_required` است تا پس از UPD-S1-019 آزمون‌های توسعه‌یافته دوباره بررسی شوند.
+- `T0214`: وضعیت پایهٔ `done` حفظ شد؛ دستورهای README و آزمون‌های command/reproducible-build با workflowهای clean checkout تطبیق داده شدند. Product run V3.1.61 همهٔ jobهای Windows/Android/HostLifecycle و upload artifactها را موفق تکمیل کرد. تصمیم `re_review_required` است تا پس از مستندات، بسته‌بندی نهایی و upgrade در UPD-S1-021 بازبینی شود.
+- Quality CI دقیق V3.1.67: [42484306209](https://github.com/artinrahimii/project/actions/runs/42484306209) — success. Product CI دقیق V3.1.67: [42484306205](https://github.com/artinrahimii/project/actions/runs/42484306205) در زمان بازبینی هنوز `in_progress` بود؛ success ادعا نمی‌شود.
+- هیچ وضعیت قدیمی یا وابستگی گراف اولیه تغییر نکرد. آزمون فیزیکی Android-to-Windows، مدل واقعی روی میزبان Windows، clean install و in-place upgrade در این تلاش اجرا نشده‌اند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0199.md` و `update/Step three/UPD-S1-008/evidence/review-T0214.md`.
+- reconciliation: **8/168 reviewed**، **160 pending**، **4.76%**؛ UPD-S1-008 همچنان `in_progress`.
