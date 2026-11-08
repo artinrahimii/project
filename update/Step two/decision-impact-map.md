@@ -13,7 +13,7 @@
 | `T0015` | done | UPD-S1-001, UPD-S1-024 | unchanged | reviewed | 5 | 0 |
 | `T0016` | done | UPD-S1-001, UPD-S1-024 | unchanged | reviewed | 6 | 0 |
 | `T0019` | done | UPD-S1-002 | unchanged | reviewed | 0 | 1 |
-| `T0020` | done | UPD-S1-006, UPD-S1-008 | re_review_required | pending | 0 | 1 |
+| `T0020` | done | UPD-S1-006, UPD-S1-008 | unchanged | reviewed | 0 | 1 |
 | `T0027` | done | UPD-S1-021 | re_review_required | pending | 0 | 1 |
 | `T0032` | done | UPD-S1-004, UPD-S1-017 | re_review_required | pending | 1 | 1 |
 | `T0033` | done | UPD-S1-017 | re_review_required | pending | 1 | 1 |

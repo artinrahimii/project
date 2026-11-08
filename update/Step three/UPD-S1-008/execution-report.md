@@ -139,3 +139,12 @@
 - دو تصمیم مستقل شناسهٔ ADR-0003 تکراری داشتند؛ برای ارجاع بدون ابهام، TCP framing به ADR-0024 منتقل و مسیر قدیمی redirect تاریخی شد.
 - شواهد قبلی حفظ شدند؛ T0020 تا قبولی regression جدید در CI دقیق به `pending/re_review_required` برگشت. وضعیت پایهٔ legacy همچنان `done` است.
 - شواهد اصلاح: `update/Step three/UPD-S1-008/evidence/review-T0020-ADR-uniqueness.md`. Reconciliation موقت: 5/168 reviewed، 163 pending.
+
+
+## تأیید CI و بستن بازبینی T0020
+
+- اصلاح ADR و آزمون یکتایی روی commit `365c734e178013fc6ea9499bf08855e91f5d0cbe` — `V 3.1.64` ثبت شد.
+- Quality workflow دقیق همان commit [42483596179](https://github.com/artinrahimii/project/actions/runs/42483596179) با نتیجهٔ **success** پایان یافت: آزمون یکتایی ADR، full Python suite، compileall و هر دو graph guard موفق شدند.
+- T0020 با تصمیم `unchanged` و `review_status=reviewed` ثبت شد؛ وضعیت پایهٔ legacy یعنی `done` حفظ شده و هیچ وضعیت/یال گراف قدیمی تغییر نکرده است.
+- reconciliation فعلی: **6/168 reviewed** و **162 pending**. `UPD-S1-008` هنوز `in_progress` است.
+- آزمون محصول کامل Android/Windows، دستگاه فیزیکی Android، live inference، Android-to-Windows، clean install و in-place upgrade در این تلاش اجرا نشده‌اند.

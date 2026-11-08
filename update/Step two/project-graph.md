@@ -3166,7 +3166,9 @@
           "32015598e6ff38f3984efb0bc8c5d1797b99cdef",
           "c31ac02d39993965bd693b53f626d5cb09be7b2c",
           "a3fa1f54d99db809cc670ece1cfc244239f6a727",
-          "422dcd40547f98fab33096e10cd88a1d40366d68"
+          "422dcd40547f98fab33096e10cd88a1d40366d68",
+          "89a7b12ff24449f2b730200939053dedcd91f56f",
+          "365c734e178013fc6ea9499bf08855e91f5d0cbe"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -3187,7 +3189,8 @@
           "T0015 content review: current WPF/.NET 10 project files and dependency chain T0014/T0013/T0010 inspected; Windows clean build/publish, WPF startup, installer and HostLifecycle exact run 42482227320 succeeded.",
           "T0016 content review: Kotlin/Compose/Gradle settings, app configuration, manifest and MainActivity inspected; Android lint, debug/release build and JVM unit tests succeeded in run 42482227320.",
           "Exact quality run 42482227315 passed 479 Python tests, compileall and both graph guards.",
-          "Exact V 3.1.62 quality workflow 42483059242 passed for the evidence and ledger commit containing T0015/T0016 reviews: 479 Python tests, compileall, Update graph validation and Step Three graph/output-evidence guards."
+          "Exact V 3.1.62 quality workflow 42483059242 passed for the evidence and ledger commit containing T0015/T0016 reviews: 479 Python tests, compileall, Update graph validation and Step Three graph/output-evidence guards.",
+          "T0020 ADR identifier uniqueness regression passed in exact V3.1.64 quality workflow 42483596179; full Python unit suite, compileall and both graph guards succeeded."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -3615,9 +3618,9 @@
         {
           "attempt_id": "UPD-S1-008-20261108130919",
           "started_at": "2026-11-08T13:09:19.163Z",
-          "ended_at": "2026-11-08T13:09:19.163Z",
+          "ended_at": "2026-11-08T13:11:24.539Z",
           "result": "partial",
-          "summary": "Reopened T0020 after finding duplicate ADR-0003 identifiers. Prior review evidence is retained. TCP framing is renumbered ADR-0024, the former path remains a historical redirect, and a uniqueness regression was added. Exact-commit CI is pending.",
+          "summary": "T0020 re-review completed unchanged after correcting the duplicate ADR-0003 identifier. TCP framing now has canonical ADR-0024; the historical path redirects without breaking older task evidence. Exact V3.1.64 quality CI passed the new uniqueness regression, full Python suite, compileall and both graph guards. UPD-S1-008 remains partial with 162 legacy reviews pending.",
           "changed_files": [
             "docs/decisions/README.md",
             "docs/decisions/ADR-0003-tcp-request-framing.md",
@@ -3630,7 +3633,7 @@
             "update/Step three/UPD-S1-008/execution-report.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "365c734e178013fc6ea9499bf08855e91f5d0cbe",
           "tests": [
             {
               "name": "V3.1.63 pre-correction quality",
@@ -3641,8 +3644,18 @@
             {
               "name": "ADR identifier uniqueness regression",
               "command": "tests/test_decision_traceability.py",
-              "result": "pending",
-              "summary": "New regression must pass on the exact correction commit."
+              "result": "passed",
+              "summary": "Passed in the exact V3.1.64 quality workflow on commit 365c734e178013fc6ea9499bf08855e91f5d0cbe.",
+              "run_id": 42483596179,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42483596179"
+            },
+            {
+              "name": "Exact V3.1.64 quality workflow",
+              "command": ".github/workflows/quality.yml",
+              "result": "passed",
+              "run_id": 42483596179,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42483596179",
+              "summary": "Python unittest discovery, compileall, Update graph structural/output guards and Step Three graph structural/output-evidence guards completed successfully."
             }
           ],
           "failure_details": null,
@@ -3651,7 +3664,7 @@
           "contract_changes": [
             "ADR identifiers must be unique; the old TCP framing path is retained only as a historical redirect."
           ],
-          "follow_up": "Verify the exact V3.1.64 quality run, then close T0020 unchanged/reviewed with the tested SHA. Keep the other 162 pending legacy reviews open.",
+          "follow_up": "Continue the 162 outstanding legacy task reviews individually; keep UPD-S1-008 in_progress until each has source, contract, dependency, test, acceptance and review evidence.",
           "device_and_host_details_redacted": "GitHub source review and CI only; no physical Android or target Windows host used.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
@@ -7075,7 +7088,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T13:09:19.163Z",
+    "as_of": "2026-11-08T13:11:24.539Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -7196,7 +7209,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T13:09:19.163Z",
+  "updated_at": "2026-11-08T13:11:24.539Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -7379,8 +7392,8 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "pending": 163,
-      "reviewed": 5
+      "pending": 162,
+      "reviewed": 6
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
