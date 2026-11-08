@@ -3664,7 +3664,8 @@
           "c569a8a87379f0fa6d2bc672189f07987cdbe65f",
           "1236955162e57c1a70a576fc1d19f679d1fadeff",
           "4e976f8b8c478498708d578d363d8529edb850c6",
-          "dba2cb984f0d4990417922f8a5f56b81c82191a8"
+          "dba2cb984f0d4990417922f8a5f56b81c82191a8",
+          "4eba36c5fd9196fb616b5c0bd888c010cefeea58"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -6177,7 +6178,7 @@
             "update/Step two/legacy-task-reconciliation.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "4eba36c5fd9196fb616b5c0bd888c010cefeea58",
           "tests": [
             {
               "name": "T0209 Windows installer build/install/license acceptance",
@@ -9782,7 +9783,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T20:18:05.645Z",
+  "updated_at": "2026-11-08T20:19:46.275Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",

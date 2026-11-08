@@ -460,3 +460,6 @@
 - تصمیم هر پنج: `re_review_required`؛ وضعیت بازبینی: `reviewed`. UPD-S1-021 و (برای T0210/T0211) UPD-S1-024 باید خروجی‌های نهایی را مجدداً بررسی کنند.
 - شواهد مستقل: `update/Step three/UPD-S1-008/evidence/review-T0209.md` تا `review-T0213.md`.
 - snapshot تازه: **154/168 reviewed (91.67%)**؛ **14/168 pending (8.33%)**. شناسه‌های pending: `T0215,T0216,T0217,T0218,T0219,T0221,T0222,T0223,T0224,T0225,T0226,T0227,T0228,T0229`. UPD-S1-008 همچنان `in_progress` است.
+
+
+- ثبت SHA بازبینی‌های T0209 تا T0213: `4eba36c5fd9196fb616b5c0bd888c010cefeea58` — `V 3.1.107` در شاخهٔ آنلاین `main`.

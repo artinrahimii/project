@@ -923,3 +923,9 @@
 - هر پنج رکورد: تصمیم `re_review_required`، review_status برابر `reviewed`، baseline `done` حفظ، status_changed=false. دلیل re-review وابستگی‌های تحویل UPD-S1-021 و هویت بصری UPD-S1-024 است.
 - شواهد مستقل در evidence پوشهٔ همین وظیفه درج شده‌اند. Reconciliation پس از این تلاش: 154/168 reviewed (91.67%) و 14/168 pending (8.33%).
 - commit مرجع این تلاش پس از ساخت ثبت خواهد شد؛ فیلد review_commit_sha فعلاً null است و SHA حدس زده نمی‌شود.
+
+
+### اتصال بازبینی‌ها به commit ثبت‌شده
+
+- commit ثبت شواهد پنج بازبینی: `4eba36c5fd9196fb616b5c0bd888c010cefeea58` — `V 3.1.107`، شاخهٔ `main`، تأییدشده در GitHub.
+- فیلد `review_commit_sha` رکوردهای T0209 تا T0213 با همین SHA واقعی پر شده است؛ این تغییر فقط metadata ردیابی است و وضعیت baseline یا تصمیم reconciliation را تغییر نمی‌دهد.
