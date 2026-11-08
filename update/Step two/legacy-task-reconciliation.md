@@ -49,10 +49,10 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**29/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای T0027، T0032–T0036، T0041–T0048، T0049–T0055، T0199 و T0214 ثبت شده است. 139 رکورد همچنان `pending` هستند.
+**34/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای T0027، T0032–T0036، T0041–T0060، T0199 و T0214 ثبت شده است. 134 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
-هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 23 رکورد (T0027، T0032–T0036، T0041–T0044، T0199 و T0214)، و `re_review_required/pending` برای 139 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
+هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 28 رکورد (T0027، T0032–T0036، T0041–T0044، T0199 و T0214)، و `re_review_required/pending` برای 134 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
 
 
 ## نتیجهٔ تکمیلی در V 3.1.56
@@ -197,3 +197,15 @@
 - Quality CI دقیق HEAD [42486973958](https://github.com/artinrahimii/project/actions/runs/42486973958) و Product CI دقیق HEAD [42486974256](https://github.com/artinrahimii/project/actions/runs/42486974256) موفق بودند. Product CI شامل Windows WPF، Android و HostLifecycle است؛ ۶۷ PASS و یک SKIP اختیاری real-model ثبت شد.
 - جمع reconciliation: **29/168 reviewed (17.26%)**، **139 pending**. هیچ وضعیت قدیمی تغییر نکرد. نشانگرهای `update_impact` در گراف قدیمی طبق قرارداد فعلی تا تکمیل کل reconciliation pending باقی می‌مانند؛ نتیجهٔ فردی در JSON مرجع ثبت می‌شود.
 - آزمون Android-to-Windows فیزیکی، live-model integration در همین run، clean install هدف و in-place upgrade در این دسته اجرا نشده‌اند.
+
+
+## بازبینی محتوایی T0056 تا T0060 — V 3.1.77
+
+- مبنای کد: `a19595c475752832fdd3701e109dc0e1a088721f` — `V 3.1.77`.
+- T0056: ظرفیت نامشخص در HostCapabilities و WPF به Unknown و عدم آمادگی ختم می‌شود؛ وضعیت پایه done حفظ شد.
+- T0057 و T0058: قرارداد و adapter IInferenceEngine وجود دارند، اما composition فعال MainWindow از IInferenceBackend و LlamaCppServerBackend استفاده می‌کند؛ adapter در مسیر اصلی پنجره به‌کارگرفته نشده است. این مغایرت برای UPD-S1-023 ثبت شد.
+- T0059: launcher امن در MainWindow استفاده می‌شود؛ executable version/SHA-verified، فایل GGUF، loopback، argv جدا و shutdown process-tree دارد. تست فعلی argument construction را بررسی می‌کند، نه inference واقعی.
+- T0060: backend از /health استفاده می‌کند و HostInferenceSession پیش از Ready، health را بررسی می‌کند؛ شکست health آزموده شده است.
+- هر پنج baseline status برابر done ماندند؛ تصمیم‌ها re_review_required و رکوردها reviewed هستند؛ UPD-S1-023 باید قرارداد مدل/backend را بازبینی کند.
+- Quality CI دقیق [42502195218](https://github.com/artinrahimii/project/actions/runs/42502195218) موفق بود. Product Build دقیق V3.1.77 هنگام این ثبت هنوز در حال اجرا بود؛ موفق فرض نشده است.
+- جمع reconciliation: **34/168 reviewed (20.24%)**، **134 pending**. نشانگرهای قدیمی تا بسته‌شدن کل reconciliation pending می‌مانند.

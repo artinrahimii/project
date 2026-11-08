@@ -326,3 +326,63 @@
 - WPF startup smoke و installer smoke موفق؛ HostLifecycle دارای ۶۷ PASS و پوشش خطی ۸۵٫۸۸٪ است. آزمون اختیاری real-model در این run SKIP شد و موفقیت inference واقعی ادعا نمی‌شود.
 - آزمون Android-to-Windows فیزیکی، Room E2E، clean install هدف و in-place upgrade اجرا نشده‌اند.
 - reconciliation: **29/168 reviewed** و **139 pending**؛ UPD-S1-008 همچنان `in_progress`.
+
+
+## بازبینی تکمیلی T0056 تا T0060 — تلاش UPD-S1-008-20261108165615
+
+### T0056 — نمایش ظرفیت نامشخص به‌صورت Unknown
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ ارتباط رسمی: `UPD-S1-005`، `UPD-S1-013`.
+- HostCapabilities اندازه‌گیری ناقص یا بررسی انجام‌نشده را Unknown نگه می‌دارد و CanRunInference فقط برای Ready واقعی true می‌شود.
+- MainWindow هنگام شکست اندازه‌گیری زنده، Capacity را Unknown و میزبان را not Ready نشان می‌دهد؛ جزئیات CPU/RAM ناموجود نیز با پیام امن نمایش داده می‌شوند.
+- Python source contracts و HostLifecycle Program مسیر Unknown را پوشش می‌دهند؛ Quality CI دقیق V3.1.77 موفق شده است.
+- UPD-S1-013 هنوز سیاست نهایی ظرفیت و admission را اعمال نکرده است؛ هر منبع یا قید جدید باید پس از آن در UI و domain دوباره بررسی شود.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0056.md`.
+
+### T0057 — قرارداد IInferenceEngine
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ ارتباط رسمی: `UPD-S1-023`.
+- IInferenceEngine قرارداد Discover/Load/Generate با cancellation، Cancel، Unload و IAsyncDisposable را تعریف می‌کند؛ آزمون contract امضاها و DiscoveryResult را با reflection کنترل می‌کند.
+- در composition واقعی MainWindow، HostInferenceSession با LocalInferenceBackendFactory.Create ساخته می‌شود؛ factory، LlamaCppServerBackend را از طریق IInferenceBackend بازمی‌گرداند. MainWindow ارجاعی به IInferenceEngine یا LlamaCppInferenceEngine ندارد.
+- بنابراین قرارداد و adapter وجود دارند، اما اتصال آن‌ها به مسیر اصلی پنجرهٔ میزبان احراز نشد؛ آزمون فعلی عمدتاً آزمون قرارداد API است، نه اثبات integration مسیر فعال.
+- UPD-S1-023 باید مالکیت قرارداد مدل/backend را تعیین کند و مسیر فعال را بدون ایجاد دو پیاده‌سازی موازی یکپارچه یا adapter بلااستفاده را مستنداً کنار بگذارد. وضعیت پایهٔ legacy حفظ می‌شود اما بازبینی مجدد ضروری است.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0057.md`.
+
+### T0058 — adapter موتور محلی LlamaCppInferenceEngine
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ ارتباط رسمی: `UPD-S1-023`.
+- Adapter از /health و /v1/models برای بررسی backend و وجود model ID پیکربندی‌شده استفاده می‌کند؛ LoadModelAsync وجود مدلی را که process بارگذاری کرده تأیید می‌کند و ادعای بارگذاری مستقل ندارد.
+- GenerateAsync به LlamaCppServerBackend واگذار می‌شود؛ cancellation و operation gate وجود دارند و UnloadModelAsync ادعا نمی‌کند حافظهٔ مدل روی server آزاد شده است.
+- تست‌های source-contract اتصال به backend، مدل بارگذاری‌شده، generation cancellation و عدم log کردن prompt/response را بررسی می‌کنند؛ اما MainWindow مستقیماً مسیر IInferenceBackend را به‌کار می‌گیرد.
+- این adapter در composition اصلی فعلی متصل نیست و با backend مستقیم هم‌پوشانی دارد. UPD-S1-023 باید انتخاب مدل و backend را به یک مسیر فعال و deterministic تبدیل کند؛ تا آن زمان re-review لازم است.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0058.md`.
+
+### T0059 — اجرای امن فرایند موتور محلی
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ ارتباط رسمی: `UPD-S1-023`.
+- Launcher در MainWindow استفاده می‌شود؛ پیش از start نسخه و SHA-256 executable را با مقادیر مورد اعتماد verifier کنترل می‌کند، executable و GGUF را validate می‌کند و فقط loopback/port/alias مجاز را می‌پذیرد.
+- ProcessStartInfo از UseShellExecute=false و ArgumentList جداگانه استفاده می‌کند؛ Stop/Dispose کل process tree را متوقف می‌کند.
+- تست process launcher مسیر دارای فاصله و shell metacharacter، رد non-loopback، alias command-like و executable نامعتبر را بررسی می‌کند؛ این آزمون argument construction است و به‌تنهایی اجرای مدل واقعی نیست.
+- منبع و سیاست catalog برای executable/model pinning و اتصال checksum با مدل انتخابی باید در UPD-S1-023 یکپارچه شوند. اجرای real local inference از تست fixture اثبات نمی‌شود.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0059.md`.
+
+### T0060 — health check واقعی backend پیش از Ready
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ ارتباط رسمی: `UPD-S1-023`.
+- LlamaCppServerBackend.CheckHealthAsync درخواست GET /health واقعی می‌فرستد و خطا/timeout را با پیام امن و IsAvailable=false ثبت می‌کند.
+- HostInferenceSession.CheckBackendCoreAsync ابتدا CheckHealthAsync را اجرا می‌کند، سپس Readiness را ارزیابی و فقط پس از موفقیت هر دو HostState.Ready را تنظیم می‌کند.
+- همین backend مدل فعال را از /v1/models و context را از /props می‌خواند؛ Program test صریحاً شکست health قبل از capacity readiness را PASS می‌کند.
+- UPD-S1-023 باید health/model capability را با catalog معتبر، شناسهٔ دقیق و سقف خروجی انتخاب‌شده یکپارچه کند؛ health endpoint به‌تنهایی انتخاب مدل و آمادگی کل درخواست را اثبات نمی‌کند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0060.md`.
+
+### CI و محدودیت این تلاش
+
+- Quality دقیق V3.1.77 [run 42502195218](https://github.com/artinrahimii/project/actions/runs/42502195218) موفق است.
+- Product Build دقیق V3.1.77 [run 42502195216](https://github.com/artinrahimii/project/actions/runs/42502195216) هنگام این ثبت هنوز در حال اجراست؛ موفقیت آن ادعا نمی‌شود.
+- اجرای واقعی مدل و Android-to-Windows فیزیکی در این بازبینی انجام نشده است.
+- reconciliation: **34/168 reviewed** و **134 pending**؛ UPD-S1-008 همچنان `in_progress`.

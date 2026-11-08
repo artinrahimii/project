@@ -486,7 +486,7 @@
         "https://github.com/artinrahimii/project/actions/runs/42486973958",
         "https://github.com/artinrahimii/project/actions/runs/42486974256"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "a19595c475752832fdd3701e109dc0e1a088721f"
     },
     {
       "legacy_task_id": "T0050",
@@ -509,7 +509,7 @@
         "https://github.com/artinrahimii/project/actions/runs/42486973958",
         "https://github.com/artinrahimii/project/actions/runs/42486974256"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "a19595c475752832fdd3701e109dc0e1a088721f"
     },
     {
       "legacy_task_id": "T0051",
@@ -532,7 +532,7 @@
         "https://github.com/artinrahimii/project/actions/runs/42486973958",
         "https://github.com/artinrahimii/project/actions/runs/42486974256"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "a19595c475752832fdd3701e109dc0e1a088721f"
     },
     {
       "legacy_task_id": "T0052",
@@ -553,7 +553,7 @@
         "https://github.com/artinrahimii/project/actions/runs/42486973958",
         "https://github.com/artinrahimii/project/actions/runs/42486974256"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "a19595c475752832fdd3701e109dc0e1a088721f"
     },
     {
       "legacy_task_id": "T0053",
@@ -574,7 +574,7 @@
         "https://github.com/artinrahimii/project/actions/runs/42486973958",
         "https://github.com/artinrahimii/project/actions/runs/42486974256"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "a19595c475752832fdd3701e109dc0e1a088721f"
     },
     {
       "legacy_task_id": "T0054",
@@ -598,7 +598,7 @@
         "https://github.com/artinrahimii/project/actions/runs/42486973958",
         "https://github.com/artinrahimii/project/actions/runs/42486974256"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "a19595c475752832fdd3701e109dc0e1a088721f"
     },
     {
       "legacy_task_id": "T0055",
@@ -623,7 +623,7 @@
         "https://github.com/artinrahimii/project/actions/runs/42486973958",
         "https://github.com/artinrahimii/project/actions/runs/42486974256"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "a19595c475752832fdd3701e109dc0e1a088721f"
     },
     {
       "legacy_task_id": "T0056",
@@ -634,9 +634,19 @@
         "UPD-S1-013"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0056.md",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "src/Host.Domain/HostCapabilities.cs",
+        "tests/test_windows_hardware_discovery.py",
+        "tests/test_wpf_entrypoint.py",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42502195218"
+      ],
       "review_commit_sha": null
     },
     {
@@ -647,9 +657,17 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0057.md",
+        "src/Host.Application/Inference/IInferenceEngine.cs",
+        "tests/HostLifecycle.Tests/InferenceEngineContractTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42502195218"
+      ],
       "review_commit_sha": null
     },
     {
@@ -660,9 +678,17 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0058.md",
+        "src/Host.Windows/Inference/LlamaCppInferenceEngine.cs",
+        "src/Host.Application/Inference/IInferenceEngine.cs",
+        "tests/test_llama_cpp_inference_engine.py",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42502195218"
+      ],
       "review_commit_sha": null
     },
     {
@@ -673,9 +699,15 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0059.md",
+        "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
+        "tests/HostLifecycle.Tests/LocalInferenceProcessLauncherTests.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42502195218"
+      ],
       "review_commit_sha": null
     },
     {
@@ -686,9 +718,16 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0060.md",
+        "src/Host.Infrastructure/LlamaCppServerBackend.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42502195218"
+      ],
       "review_commit_sha": null
     },
     {
