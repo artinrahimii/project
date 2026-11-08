@@ -447,3 +447,63 @@
 - شواهد real-model/cancellation از runهای تاریخی و commitهای مشخص‌شده‌اند؛ inference زنده روی V3.1.78 ادعا نمی‌شود.
 - packet capture، Android-to-Windows فیزیکی و نصب/ارتقای فیزیکی اجرا نشده‌اند.
 - reconciliation: **39/168 reviewed** و **129 pending**؛ UPD-S1-008 همچنان `in_progress`.
+
+
+## بازبینی تکمیلی T0066 تا T0070 — تلاش UPD-S1-008-20261108170257
+
+### T0066 — اعتبارسنجی نسخه و checksum باینری موتور
+
+- وضعیت پایه: `done`؛ حفظ شد، `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ وظایف به‌روزرسانی مرتبط: `UPD-S1-023`.
+- Verifier قبل از اجرای version probe، SHA-256 را با FixedTimeEquals مقایسه می‌کند؛ نام فایل llama-server.exe را محدود، --version را با ProcessStartInfo.ArgumentList و UseShellExecute=false اجرا، timeout را enforce و پس از probe hash را دوباره بررسی می‌کند.
+- LocalInferenceProcessLauncher پیش از Process.Start verifier را فراخوانی می‌کند و env version/SHA مورد اعتماد را لازم می‌داند؛ regression tests ترتیب hash-before-probe، recheck، shell-free/timeout و verify-before-start را assert می‌کنند.
+- workflow باینری رسمی llama.cpp b11443 را با SHA archive ثابت بررسی و SHA executable را به launcher می‌دهد؛ historical real inference run 40104554823 و product run 40104554847 موفق ثبت شده‌اند.
+- UPD-S1-023 باید executable pin و مدل catalog را به یک سیاست انتخاب backend/model وصل کند؛ مسیر انتخاب و منبع مقادیر مورد اعتماد باید پس از این کار دوباره بررسی شود.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0066.md`.
+
+### T0067 — قرار دادن backend پشت interface مشترک
+
+- وضعیت پایه: `done`؛ حفظ شد، `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ وظایف به‌روزرسانی مرتبط: `UPD-S1-023`.
+- MainWindow از backendFactory: LocalInferenceBackendFactory.Create استفاده می‌کند؛ HostInferenceSession فقط IInferenceBackend را نگه می‌دارد و GenerateAsync را از interface صدا می‌زند، نه از concrete LlamaCppServerBackend.
+- Factory شناسهٔ پشتیبانی‌شدهٔ llama.cpp را ارائه و instance LlamaCppServerBackend را به عنوان IInferenceBackend برمی‌گرداند؛ harness یک alternate backend را بدون تغییر منطق conversation/network اجرا کرده و PASS ثبت کرده است.
+- تست Python جداسازی window/session/factory و تست C# اجرای alternate backend را بررسی می‌کنند؛ runs 40105391421، 40105391441 و real inference 40105391434 موفق ثبت شده‌اند.
+- UPD-S1-023 انتخاب بین backendهای واقعاً پشتیبانی‌شده و capability واقعی را اضافه می‌کند؛ factory فعلی فقط llama.cpp را expose می‌کند. قرارداد و آزمون alternate backend باید با resolver جدید دوباره اعتبارسنجی شود.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0067.md`.
+
+### T0068 — schema نسخه‌دار metadata مدل
+
+- وضعیت پایه: `done`؛ حفظ شد، `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ وظایف به‌روزرسانی مرتبط: `UPD-S1-023`.
+- Schema v1 id/name/GGUF format/size/checksum SHA-256/backend/source URL/license metadata را تعریف می‌کند؛ اضافات را رد و backend را به llama.cpp محدود می‌سازد.
+- license metadata اختیاری است اما missing به review_required و classification unknown منتهی می‌شود؛ schema تصریح می‌کند metadata قانونی اجازهٔ redistribution را ثابت نمی‌کند.
+- tests schema required fields، hash regex، GGUF/backend limits، HTTPS fields و copy-to-output/publish را بررسی می‌کنند؛ runs 40106114209 و 40106114148 موفق‌اند.
+- UPD-S1-023 نیاز به deterministic selection و max-output policy دارد؛ schema v1 به‌تنهایی capability/token-window/backend runtime را نمایش نمی‌دهد. توسعهٔ schema مستلزم بازاعتبارسنجی parser و مصرف‌کنندگان است.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0068.md`.
+
+### T0069 — parser fail-closed و URL allowlist کاتالوگ
+
+- وضعیت پایه: `done`؛ حفظ شد، `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ وظایف به‌روزرسانی مرتبط: `UPD-S1-023`.
+- Parser سقف ۲MB/10,000 مدل دارد، duplicate properties و duplicate model IDs را رد می‌کند، format/backend و SHA-256 را validate و HTTPS URL را به DNS allowlist بدون credentials/port/fragment محدود می‌کند.
+- License status/classification را fail-closed می‌گیرد؛ مدل بدون license را review_required/unknown می‌کند و open_source را بدون status verified + identifier + URL نمی‌پذیرد. Parser خودش network fetch ندارد.
+- C# acceptance و Python source contracts invalid schema، duplicate ID/property، checksum نامعتبر، backend پشتیبانی‌نشده، URL ناامن، license ناموجود، oversize و allowlist خالی را پوشش می‌دهند؛ runs 40113006243 و 40113006228 موفق‌اند.
+- UPD-S1-023 باید parser output را به resolver deterministic و readiness واقعی متصل کند؛ parser فقط metadata را validate می‌کند و نصب یا فعال‌بودن مدل را ثابت نمی‌کند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0069.md`.
+
+### T0070 — اتصال صفحهٔ کاتالوگ به فایل واقعی
+
+- وضعیت پایه: `done`؛ حفظ شد، `status_changed=false`.
+- تصمیم: `re_review_required/reviewed`؛ وظایف به‌روزرسانی مرتبط: `UPD-S1-023`، `UPD-S1-024`.
+- WPF LoadCatalogButton مسیر OfflineModelCatalogStore را اجرا می‌کند؛ store فایل محلی را با ModelCatalogFileLoader/Parser اعتبارسنجی و cache معتبر offline را دوباره parse می‌کند. CatalogItems.ItemsSource از catalog.Models واقعی تغذیه و جزئیات source/license/size/checksum/backend نمایش داده می‌شود.
+- SelectionChanged مقدار ActiveCatalogModelId را فقط به عنوان preference ذخیره می‌کند؛ کد صریحاً می‌گوید مدل را download/install یا در inference backend activate نمی‌کند. ConnectButton_Click هنوز ModelId.Text دستی لازم دارد و GeneratePromptAsync مقدار ثابت 1024 را می‌فرستد.
+- UI contract tests اتصال list به catalog.Models، details، loader، strict UTF-8/byte limit، cache validation و backend allowlist را بررسی می‌کنند؛ HostLifecycle parser/loader acceptance نمونهٔ کاتالوگ را از disk می‌خواند. این صفحه metadata/catalog است، نه auto model selection.
+- UPD-S1-023 باید preference را به مدل واقعاً نصب‌شده/ready، backend resolver و max-output clamp وصل کند؛ UPD-S1-024 نیز UI صفحات مهم میزبان را از نظر هویت بصری و کنتراست تغییر می‌دهد. پس از هر دو باید re-review شود.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0070.md`.
+
+### CI و محدودیت این تلاش
+
+- Quality V3.1.79 [42502772895](https://github.com/artinrahimii/project/actions/runs/42502772895) موفق؛ Rendezvous [42502773013](https://github.com/artinrahimii/project/actions/runs/42502773013) موفق.
+- Product Build V3.1.79 [42502772903](https://github.com/artinrahimii/project/actions/runs/42502772903) هنگام این بررسی در حال اجرا بود؛ موفقیت آن ادعا نمی‌شود.
+- آزمون انتخاب خودکار مدل بدون ورود Model ID، تولید پاسخ از مدل کاتالوگ، و visual contrast پس از UPD-S1-024 در این تلاش اجرا نشده‌اند.
+- reconciliation: **44/168 reviewed** و **124 pending**؛ UPD-S1-008 همچنان `in_progress`.

@@ -49,10 +49,10 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**39/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای T0027، T0032–T0036، T0041–T0065، T0199 و T0214 ثبت شده است. 129 رکورد همچنان `pending` هستند.
+**44/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای T0027، T0032–T0036، T0041–T0070، T0199 و T0214 ثبت شده است. 124 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
-هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 33 رکورد (T0027، T0032–T0036، T0041–T0044، T0199 و T0214)، و `re_review_required/pending` برای 129 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
+هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 38 رکورد (T0027، T0032–T0036، T0041–T0044، T0199 و T0214)، و `re_review_required/pending` برای 124 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
 
 
 ## نتیجهٔ تکمیلی در V 3.1.56
@@ -220,3 +220,15 @@
 - هر پنج baseline status برابر done ماندند؛ هر پنج تصمیم `re_review_required/reviewed` ثبت شدند، زیرا UPD-S1-023 هنوز catalog/selection/backend composition را تغییر خواهد داد.
 - Quality V3.1.78 [42502412081](https://github.com/artinrahimii/project/actions/runs/42502412081) و Rendezvous [42502412120](https://github.com/artinrahimii/project/actions/runs/42502412120) موفق‌اند؛ Product Build V3.1.78 [42502412102](https://github.com/artinrahimii/project/actions/runs/42502412102) هنگام این بازبینی هنوز in_progress بود.
 - جمع reconciliation: **39/168 reviewed (23.21%)**، **129 pending**. وضعیت قدیمی و نشانگرهای update_impact تغییر نکرده‌اند.
+
+
+## بازبینی محتوایی T0066 تا T0070 — V 3.1.79
+
+- مبنای کد: `da866157596ac17ff91eba21555e8821bc06878e` — `V 3.1.79`.
+- T0066: verifier قبل از probe نسخه SHA-256 executable را fixed-time compare و پس از probe دوباره بررسی می‌کند؛ launcher قبل از process start آن را فراخوانی می‌کند. Tests و historical real inference run 40104554823 این مسیر را پوشش داده‌اند.
+- T0067: MainWindow از LocalInferenceBackendFactory و HostInferenceSession از IInferenceBackend استفاده می‌کند؛ alternate backend در C# harness اجرا شده و factory فعلی فقط llama.cpp را پشتیبانی می‌کند.
+- T0068/T0069: schema نسخه‌دار و parser fail-closed، checksum، backend allowlist، HTTPS host allowlist، uniqueness و license status را اعتبارسنجی می‌کنند؛ parser network fetch نمی‌کند.
+- T0070: صفحهٔ WPF رکوردهای واقعی کاتالوگ را بارگذاری و جزئیات را نمایش می‌دهد؛ انتخاب فقط preference است و backend را فعال نمی‌کند. Connect هنوز ModelId دستی و Generate سقف ثابت 1024 دارد.
+- T0066–T0069 به UPD-S1-023 و T0070 به UPD-S1-023/024 نگاشت شده‌اند؛ baseline status همه done حفظ شد.
+- Quality V3.1.79 [42502772895](https://github.com/artinrahimii/project/actions/runs/42502772895) و Rendezvous [42502773013](https://github.com/artinrahimii/project/actions/runs/42502773013) موفق‌اند؛ Product Build V3.1.79 [42502772903](https://github.com/artinrahimii/project/actions/runs/42502772903) هنگام این بازبینی هنوز in_progress بود.
+- جمع reconciliation: **44/168 reviewed (26.19%)**، **124 pending**؛ وضعیت‌های قدیمی و نشانگرهای update_impact تغییر نکردند.
