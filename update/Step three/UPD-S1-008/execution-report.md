@@ -800,3 +800,18 @@
 - شواهد مستقل: `review-T0161.md` تا `review-T0165.md` در مسیر `update/Step three/UPD-S1-008/evidence/`.
 - هیچ کد محصول، وضعیت پایهٔ legacy، وابستگی یا edge تغییر نکرد. آزمون فیزیکی Android-to-Windows، live local inference، same Room persistence، clean install و in-place upgrade در این تلاش اجرا نشدند.
 - reconciliation پس از ثبت این پنج مورد: **109/168 reviewed (64.88%)** و **59 pending (35.12%)**؛ `UPD-S1-008` همچنان `in_progress` است.
+
+
+## بازبینی محتوایی T0166 تا T0170 — 2026-11-08T19:05:25.645Z
+
+- مبنای main در شروع بازبینی: `744c5c4a8c794bd79f0073fb142b1679f4e965fe` (`V 3.1.90`). کد محصول در source baseline `db2bfaa62c7816e9f06ed4e9e1a8d1d91cb822fd` (`V 3.1.88`) بررسی شد؛ تغییرات بعدی تا مبنای فعلی فقط مستندات/گراف/reconciliation بوده‌اند.
+- T0166 تا T0170 جداگانه از نظر کد Kotlin، تست‌های واحد و contract، مصرف‌کنندگان UI/runtime، وابستگی‌های مستقیم و اثر وظایف UPD-S1 بازبینی شدند.
+- وضعیت پایهٔ هر پنج گره `done` است و حفظ شد؛ تصمیم هر پنج `re_review_required` است، چون UPD-S1-015/017 سیاست نهایی میزبان/retry را تغییر می‌دهند و UPD-S1-010 اتصال پاسخ به همان گفت‌وگو و Room را هنوز تکمیل نکرده است.
+- T0166/T0167: کارت مستقل پاسخ با کلید request/attempt و رد پاسخ تکراری پیاده شده و در صفحهٔ New Request نمایش داده می‌شود؛ این state موقت است و ذخیرهٔ پاسخ در همان conversation/Room را اثبات نمی‌کند.
+- T0168: collector با coroutineهای مجزا و awaitAll تا پایان پنجرهٔ مشترک round برای همهٔ attemptهای صف‌شده منتظر می‌ماند؛ failureها جدا و typed می‌مانند.
+- T0169/T0170: generic selector/dispatcher برای سه میزبان در هر round و حداکثر نه attempt سازگاری دارد؛ مسیر production first-release یک میزبان فعال در هر round، حداکثر سه تلاش ترتیبی، retry دستی و بدون auto-retry/broadcast را اجرا می‌کند. این تفاوت با عنوان legacy صریحاً ثبت شد.
+- Product CI دقیق source baseline: [run 42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) شامل Android و Windows و HostLifecycle موفق؛ Quality Gate دقیق همان source: [run 42510357597](https://github.com/artinrahimii/project/actions/runs/42510357597) موفق.
+- اجرای محلی در این محیط انجام نشد، زیرا clone دسترسی DNS به GitHub نداشت. هیچ آزمون فیزیکی Android-to-Windows، پاسخ live model، همان گفت‌وگوی Room، clean install هدف واقعی یا in-place upgrade در این batch اجرا نشده است.
+- شواهد مستقل: `review-T0166.md` تا `review-T0170.md` در مسیر `update/Step three/UPD-S1-008/evidence/`.
+- هیچ کد محصول، وضعیت پایهٔ legacy یا edge در این بازبینی تغییر نکرد.
+- reconciliation پیش از ثبت این batch: 109/168 reviewed و 59 pending؛ بعد از ثبت این پنج مورد باید 114/168 reviewed و 54 pending شود. `UPD-S1-008` همچنان `in_progress` می‌ماند.
