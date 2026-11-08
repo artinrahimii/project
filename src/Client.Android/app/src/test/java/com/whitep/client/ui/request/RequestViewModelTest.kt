@@ -38,9 +38,9 @@ import org.whitep.shared.contracts.v1.HostAnnouncement
 import org.whitep.shared.contracts.v1.HostCapabilities
 import org.whitep.shared.contracts.v1.HostRuntimeState
 import org.whitep.shared.contracts.v1.HostStatus
-import org.whitep.shared.contracts.v1.ModelCapability
 import org.whitep.shared.contracts.v1.InferenceOutcome
 import org.whitep.shared.contracts.v1.InferenceResponse
+import org.whitep.shared.contracts.v1.ModelCapability
 import org.whitep.shared.contracts.v1.ProtocolErrorCode
 import org.whitep.shared.contracts.v1.inferenceResponse
 import java.time.Instant
@@ -186,7 +186,12 @@ class RequestViewModelTest {
                 .setErrorCode(ProtocolErrorCode.PROTOCOL_ERROR_CODE_HOST_BUSY)
                 .build()
         assertTrue(viewModel.recordValidatedResponse(REQUEST_ID, ATTEMPT_A, HOST_A, MODEL_ID, busy))
-        assertEquals(RequestErrorCode.HOST_BUSY, viewModel.hostResponses.value.single().errorCode)
+        assertEquals(
+            RequestErrorCode.HOST_BUSY,
+            viewModel.hostResponses.value
+                .single()
+                .errorCode,
+        )
 
         viewModel.clearHostResponses()
         val unsupported =
@@ -198,7 +203,12 @@ class RequestViewModelTest {
                 .setErrorCode(ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSUPPORTED_MODEL)
                 .build()
         assertTrue(viewModel.recordValidatedResponse(REQUEST_ID, ATTEMPT_B, HOST_B, MODEL_ID, unsupported))
-        assertEquals(RequestErrorCode.MODEL_UNAVAILABLE, viewModel.hostResponses.value.single().errorCode)
+        assertEquals(
+            RequestErrorCode.MODEL_UNAVAILABLE,
+            viewModel.hostResponses.value
+                .single()
+                .errorCode,
+        )
     }
 
     @Test

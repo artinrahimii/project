@@ -40,3 +40,10 @@ C# HostLifecycle/mapper/identity، Kotlin parser/ViewModel و Python source-cont
 - Android job 128721195746 failed at ktlintTestSourceSetCheck before APK/JVM/Keystore steps. Only two test files failed style checks; corrected in second attempt.
 - Real local inference run 42477241035 failed before binary verification because GitHub returned a transient HTML error page instead of the pinned b11443 archive. No GGUF or inference ran.
 - No physical device, Android-to-Windows, clean installation on a target user endpoint or in-place upgrade was tested.
+
+## CI exact V 3.1.50
+- Quality 42477696370: 479 tests passed; update graph guard 24/80 zero errors/warnings; legacy guard 230/422 zero errors/one preserved T0001 warning.
+- HostLifecycle passed with coverage; Rendezvous container build and smoke passed.
+- Android 42477696429 failed only at ktlint in RequestViewModelTest import order and two multiline response-card error assertions; parser file was clean after attempt 2.
+- Windows WPF job remained in progress at this evidence update.
+- APK/JVM/Keystore did not run on V3.1.50. No physical Android-to-Windows test or in-place upgrade performed.

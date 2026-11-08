@@ -75,3 +75,15 @@
 - Attempt: `UPD-S1-017-20261108115240`.
 - تغییرات: فقط دو test file در Android و گزارش/گراف؛ بدون تغییر runtime.
 - آزمون‌های exact V3.1.50: pending.
+
+## نتایج exact V 3.1.50 و اصلاح دوم lint
+
+- Commit: `6b8417d8b607a5da122758d97bf9ccca110db0b5`.
+- Quality [42477696370](https://github.com/artinrahimii/project/actions/runs/42477696370): **success**؛ ۴۷۹ آزمون Python؛ graph guard update ۲۴/۸۰، صفر خطا/هشدار؛ legacy ۲۳۰/۴۲۲، صفر خطا و یک هشدار تاریخی T0001.
+- Rendezvous [42477696426](https://github.com/artinrahimii/project/actions/runs/42477696426): **success**.
+- HostLifecycle: **success** با coverage.
+- Android [42477696429](https://github.com/artinrahimii/project/actions/runs/42477696429): lint دوباره شکست خورد. خطاهای parser test قبلاً رفع شده بودند؛ باقی‌مانده‌ها فقط ترتیب import و دو زنجیرهٔ دسترسی به کد خطا در RequestViewModelTest بودند. APK/JVM/Keystore به علت fail شدن lint اجرا نشدند.
+- اصلاح دوم: ترتیب importهای protobuf مرتب شد و دو assertion مربوط به کد خطای کارت‌ها به زنجیرهٔ چندخطی تبدیل شدند.
+- Windows WPF در زمان آخرین بررسی هنوز در حال اجرا بود؛ نتیجهٔ موفقیت در این گزارش ادعا نمی‌شود.
+- workflow مدل محلی در V3.1.49 پیش از دریافت باینری و checksum به‌دلیل خطای موقت دانلود GitHub متوقف شد؛ در V3.1.50 دوباره اجرا نشد.
+- وضعیت UPD-S1-017 همچنان `in_progress` است تا exact V3.1.51 CI تکمیل شود.
