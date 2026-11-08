@@ -55,3 +55,23 @@
 
 ## محدودیت
 کد و آزمون‌ها به فایل‌های واقعی محصول و test suiteهای موجود افزوده شده‌اند؛ تا اجرای موفق exact-commit CI، هیچ معیار پذیرشی تکمیل‌شده اعلام نمی‌شود.
+
+
+## نتایج exact V 3.1.49 — ثبت خطاها و اصلاح محدود
+
+- Commit: `8a4d1b7d1d231ee9f86d970d9db4fa5092bffec2`.
+- Quality [42477241092](https://github.com/artinrahimii/project/actions/runs/42477241092): **success**؛ ۴۷۹ آزمون Python پاس؛ graph guard گراف update با ۲۴/۸۰ صفر خطا و صفر هشدار؛ legacy graph با ۲۳۰/۴۲۲ صفر خطا و یک هشدار تاریخی T0001.
+- HostLifecycle: **success**؛ build از clean outputs، documented acceptance suite، coverage و critical results.
+- Windows WPF: **success**؛ clean restore، format، build/publish، Protobuf generated source، WPF startup smoke، agent-tool restrictions/policy، backend/model gate، DPAPI host identity/trust، installer و upload artifacts.
+- Rendezvous [42477240994](https://github.com/artinrahimii/project/actions/runs/42477240994): **success**.
+- Android [42477241098](https://github.com/artinrahimii/project/actions/runs/42477241098): **failed** در `ktlintTestSourceSetCheck`; APK، release، JVM test، Keystore instrumentation و generated Java/Kotlin verify همگی به‌علت ترتیب job **skipped** شدند. علت‌های دقیق: سه builder در RemoteRequestErrorParserTest، دو builder در RequestViewModelTest و ترتیب import در RequestViewModelTest.
+- اصلاح سبک فقط در `RemoteRequestErrorParserTest.kt` و `RequestViewModelTest.kt` انجام شد؛ منطق محصول/پروتکل تغییر نکرد.
+- Real local inference [42477241035](https://github.com/artinrahimii/project/actions/runs/42477241035): **failed before inference**؛ endpoint دانلود آرشیو pinned `llama.cpp b11443` صفحهٔ خطای GitHub با متن «We couldn't respond to your request in time» برگرداند. باینری دریافت/اعتبارسنجی نشد؛ checksum و GGUF/model inference اجرا نشدند.
+- این دو شکست در دو دامنهٔ مستقل‌اند؛ lint اصلاح شده و download upstream باید در V3.1.50 دوباره بررسی شود.
+- `UPD-S1-017` همچنان `in_progress` است.
+
+## تلاش اصلاح Ktlint
+
+- Attempt: `UPD-S1-017-20261108115240`.
+- تغییرات: فقط دو test file در Android و گزارش/گراف؛ بدون تغییر runtime.
+- آزمون‌های exact V3.1.50: pending.

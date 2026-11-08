@@ -80,26 +80,32 @@ class RemoteRequestErrorParserTest {
 
     @Test
     fun ignoresTypedErrorsMissingAttemptOrRoundCorrelation() {
-        val protocolError = ProtocolError.newBuilder()
-            .setCode(ProtocolErrorCode.PROTOCOL_ERROR_CODE_HOST_BUSY)
-            .setRequestId("request-only")
-            .build()
-            .toByteArray()
+        val protocolError =
+            ProtocolError
+                .newBuilder()
+                .setCode(ProtocolErrorCode.PROTOCOL_ERROR_CODE_HOST_BUSY)
+                .setRequestId("request-only")
+                .build()
+                .toByteArray()
         assertNull(RemoteRequestErrorParser.parse(protocolError))
 
-        val busy = HostBusy.newBuilder()
-            .setRequestId("request-busy")
-            .setEphemeralHostId("12D3KooWPeerIdentity")
-            .setRetryAfterUnixMs(1_800_000_000_000L)
-            .build()
-            .toByteArray()
+        val busy =
+            HostBusy
+                .newBuilder()
+                .setRequestId("request-busy")
+                .setEphemeralHostId("12D3KooWPeerIdentity")
+                .setRetryAfterUnixMs(1_800_000_000_000L)
+                .build()
+                .toByteArray()
         assertNull(RemoteRequestErrorParser.parse(busy))
 
-        val unsupported = UnsupportedModel.newBuilder()
-            .setRequestId("request-model")
-            .setModelId("model/missing")
-            .build()
-            .toByteArray()
+        val unsupported =
+            UnsupportedModel
+                .newBuilder()
+                .setRequestId("request-model")
+                .setModelId("model/missing")
+                .build()
+                .toByteArray()
         assertNull(RemoteRequestErrorParser.parse(unsupported))
     }
 

@@ -29,3 +29,14 @@
 
 ## آزمون
 C# HostLifecycle/mapper/identity، Kotlin parser/ViewModel و Python source-contract tests اصلاح شده‌اند. نتیجهٔ اجرایی و run ID پس از CI دقیق commit ثبت خواهد شد.
+
+
+## CI exact commit V 3.1.49
+
+- Quality run 42477241092 passed: 479 Python tests; update graph guard 24 nodes/80 edges, zero errors/warnings; legacy guard 230/422, zero errors and one preserved T0001 metadata warning.
+- HostLifecycle job 128721195755 passed including coverage.
+- Windows WPF job 128721195868 passed clean build, publish, startup smoke, policy/DPAPI checks and installer artifact uploads.
+- Rendezvous run 42477240994 passed.
+- Android job 128721195746 failed at ktlintTestSourceSetCheck before APK/JVM/Keystore steps. Only two test files failed style checks; corrected in second attempt.
+- Real local inference run 42477241035 failed before binary verification because GitHub returned a transient HTML error page instead of the pinned b11443 archive. No GGUF or inference ran.
+- No physical device, Android-to-Windows, clean installation on a target user endpoint or in-place upgrade was tested.
