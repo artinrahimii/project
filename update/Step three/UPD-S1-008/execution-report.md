@@ -123,3 +123,11 @@
 - شواهد تفصیلی: `update/Step three/UPD-S1-008/evidence/review-T0015.md` و `update/Step three/UPD-S1-008/evidence/review-T0016.md`.
 - هیچ وضعیت پایه یا وابستگی قدیمی تغییر نکرد؛ نشانگرهای ثابت `update_impact` در گراف Step Three نیز دست‌نخورده ماندند. `UPD-S1-024` هنوز اجرای مستقل آیکون/پالت را لازم دارد.
 - reconciliation: **6/168 reviewed**، **162 pending**، پیشرفت **3.57%**. `UPD-S1-008` همچنان `in_progress`.
+
+
+## تأیید پس از commit — V 3.1.62
+
+- commit شواهد و ledger روی شاخهٔ آنلاین `main`: `422dcd40547f98fab33096e10cd88a1d40366d68` — `V 3.1.62`؛ SHA واقعی در رکورد تلاش هفتم `execution_history.commit_sha` ثبت شد.
+- Quality workflow دقیق همین commit: [42483059242](https://github.com/artinrahimii/project/actions/runs/42483059242) — **success**؛ 479 آزمون Python، compileall، Update graph validation و Step Three graph/output-evidence guards موفق شدند.
+- Product build run [42483059335](https://github.com/artinrahimii/project/actions/runs/42483059335) در آخرین مشاهده هنوز `in_progress` بود؛ نتیجهٔ نهایی Android، Windows و HostLifecycle برای V3.1.62 هنوز ادعا نمی‌شود.
+- فایل reconciliation اصلی `update/Step two/legacy-task-reconciliation.json` نیز به خروجی‌های واقعی UPD-S1-008 افزوده شد. شمارش بازبینی همچنان 6/168 reviewed و 162 pending است.
