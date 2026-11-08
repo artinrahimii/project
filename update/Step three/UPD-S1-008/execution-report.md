@@ -238,3 +238,10 @@
 - Quality Gate دقیق V3.1.74، run [42486010109](https://github.com/artinrahimii/project/actions/runs/42486010109)، موفق بود. Product run source-identical V3.1.70، [42484937793](https://github.com/artinrahimii/project/actions/runs/42484937793)، هر سه job Windows، Android و HostLifecycle را موفق تکمیل کرد. Product run دقیق V3.1.74، [42486010134](https://github.com/artinrahimii/project/actions/runs/42486010134)، هنگام آخرین بررسی هنوز `in_progress` بود.
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0045.md` تا `review-T0048.md`. تعداد reconciliation اکنون **22/168 reviewed**، **146 pending** و **13.10%** است؛ UPD-S1-008 همچنان `in_progress`.
 - آزمون مدل محلی واقعی، Android-to-Windows فیزیکی، Room E2E، نصب تمیز و in-place upgrade در این بازبینی اجرا نشده‌اند.
+
+
+## اصلاح قالب و SHA کامیت تلاش — V 3.1.76
+
+- commit واقعی تلاش پیشین `UPD-S1-008-20261108134807` اکنون با SHA کامل `4420970596b16fd09dc7fbf6ef686204e8d27a12` در فیلد `commit_sha` ثبت شده است.
+- بلوک JSON گراف به‌روزرسانی با تورفتگی دو فاصله بازقالب‌بندی شد تا ساختار Markdown و قالب چندخطی تاریخی فایل حفظ شود؛ محتوا و وضعیت گره‌ها/یال‌ها از نسخهٔ V3.1.75 خوانده و Parse مجدد شد.
+- این commit اصلاحی فقط metadata و قالب نگهداری را اصلاح می‌کند؛ هیچ وضعیت وظیفه یا معیار پذیرشی را تکمیل‌شده اعلام نمی‌کند.
