@@ -3102,34 +3102,43 @@
         "update/Step three/UPD-S1-008/execution-report.md",
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
         "update/Step two/decision-impact-map.md",
-        "update/Step two/legacy-task-reconciliation.md"
+        "update/Step two/legacy-task-reconciliation.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
         "update/Step two/decision-impact-map.md",
-        "update/Step two/legacy-task-reconciliation.md"
+        "update/Step two/legacy-task-reconciliation.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-008-20261108123027",
+        "last_attempt_id": "UPD-S1-008-20261108123530",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
           "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
           "update/Step two/decision-impact-map.md",
           "update/Step two/legacy-task-reconciliation.md",
-          "update/Step two/project-graph.md"
+          "update/Step two/project-graph.md",
+          "update/Step two/legacy-task-reconciliation.json",
+          "step three/project-graph.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md"
         ],
         "related_commits": [
-          "3bc8863cf62044dc23383c675cd18233aed9b581"
+          "3bc8863cf62044dc23383c675cd18233aed9b581",
+          "795a2de651f4e43133f352699e34623a3a10df0a"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
           "Update graph structural inventory: 24 nodes, 80 edges, 13 waves; acyclic; edge review states preserved.",
           "Legacy graph and reconciliation mapping integrity: 230 nodes/422 edges; 168/168 mapped, no missing/duplicate IDs or status/mapping mismatches; no cycles.",
-          "Current recorded-output/evidence path existence: All 1,167 path references exist in the exact HEAD tree."
+          "Current recorded-output/evidence path existence: All 1,167 path references exist in the exact HEAD tree.",
+          "T0012: 24 unique REQ IDs with complete requirement/acceptance/verification/trace fields; dedicated tests passed in exact V3.1.56 quality CI.",
+          "T0013: 21 acceptance gates map all 24 requirements; NOT RUN remains a release blocker; dedicated tests passed in exact V3.1.56 quality CI.",
+          "Exact V3.1.56 quality run 42480966736 passed Python test discovery, compileall and both graph structural/output-evidence guards."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -3204,6 +3213,64 @@
           "contract_changes": [],
           "follow_up": "Review each of the 168 legacy tasks against its current implementation, tests, acceptance criteria, direct/indirect dependencies and linked UPD-S1 tasks. Add individual evidence and only then set review_status=reviewed. Preserve baseline status; do not mark UPD-S1-008 done until every record is reviewed and no required review remains pending.",
           "device_and_host_details_redacted": "Reconciliation audit only; no physical Android device or Windows customer host used.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108123530",
+          "started_at": "2026-11-08T12:35:30Z",
+          "ended_at": "2026-11-08T12:37:35Z",
+          "result": "partial",
+          "summary": "Completed individual content reviews for T0012 and T0013. Both legacy documentation tasks remain satisfied and their baseline done statuses are preserved with unchanged decisions; 166 affected tasks remain pending.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "step three/project-graph.md",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step two/decision-impact-map.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md"
+          ],
+          "commit_sha": "795a2de651f4e43133f352699e34623a3a10df0a",
+          "tests": [
+            {
+              "name": "T0012 requirements review",
+              "command": "Inspect requirements document, original task acceptance, direct test consumers and exact-head quality result.",
+              "result": "passed",
+              "summary": "24 unique REQ identifiers; each has requirement, acceptance, verification and trace; requirements contract and Step One alignment tests passed in full suite."
+            },
+            {
+              "name": "T0013 acceptance-matrix review",
+              "command": "Inspect acceptance matrix, all requirement mappings, fail-closed semantics, direct consumers and exact-head quality result.",
+              "result": "passed",
+              "summary": "21 gates map all 24 REQ IDs; NOT RUN remains a release blocker; acceptance contract and alignment tests passed in full suite."
+            },
+            {
+              "name": "Exact V3.1.56 quality workflow",
+              "command": ".github/workflows/quality.yml",
+              "result": "passed",
+              "run_id": 42480966736,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42480966736"
+            },
+            {
+              "name": "Remaining 166 legacy task reviews",
+              "command": "Individual code/test/acceptance/dependency review",
+              "result": "not_run",
+              "summary": "166 pending; UPD-S1-008 remains in_progress."
+            },
+            {
+              "name": "Physical Android-to-Windows product acceptance",
+              "command": "Physical handset, installed Windows host and loaded model response round-trip",
+              "result": "not_run",
+              "summary": "Not claimed by these documentation-task reviews."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Review remaining affected Txxxx tasks individually, preserving baseline status until current implementation, tests, acceptance and dependencies have been assessed.",
+          "device_and_host_details_redacted": "Documentation review and hosted quality CI only; no physical Android handset or target Windows host used.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -6626,7 +6693,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T12:30:27.605Z",
+    "as_of": "2026-11-08T12:37:35Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -6747,7 +6814,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T12:35:18.017Z",
+  "updated_at": "2026-11-08T12:37:35Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -6930,12 +6997,12 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "pending": 168,
-      "reviewed": 0
+      "pending": 166,
+      "reviewed": 2
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "The impact-to-task mapping now exists, but all 168 task-level reviews and evidence records remain pending. UPD-S1-008 cannot be marked done until each review is completed or an evidence-backed unchanged decision is recorded.",
+    "completion_blocker": "166 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until each remaining task has individual code/test/acceptance evidence and dependency review.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",

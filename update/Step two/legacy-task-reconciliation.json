@@ -21,11 +21,18 @@
         "UPD-S1-006",
         "UPD-S1-008"
       ],
-      "decision": "re_review_required",
-      "review_status": "pending",
+      "decision": "unchanged",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md",
+        "docs/requirements.md",
+        "tests/test_requirements_contract.py",
+        "step one/V1.0.md",
+        "tests/test_update_step_one_alignment.py",
+        "https://github.com/artinrahimii/project/actions/runs/42480966736"
+      ],
+      "review_commit_sha": "795a2de651f4e43133f352699e34623a3a10df0a"
     },
     {
       "legacy_task_id": "T0013",
@@ -34,11 +41,17 @@
       "update_task_ids": [
         "UPD-S1-006"
       ],
-      "decision": "re_review_required",
-      "review_status": "pending",
+      "decision": "unchanged",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md",
+        "docs/acceptance.md",
+        "tests/test_acceptance_contract.py",
+        "tests/test_update_step_one_alignment.py",
+        "https://github.com/artinrahimii/project/actions/runs/42480966736"
+      ],
+      "review_commit_sha": "795a2de651f4e43133f352699e34623a3a10df0a"
     },
     {
       "legacy_task_id": "T0015",

@@ -59,3 +59,16 @@
 
 ## محدودیت محیط
 این اجرا از GitHub API متصل استفاده کرد؛ clone محلی مخزن در محیط اجرایی این نشست به‌دلیل خطای DNS برای github.com ممکن نشد. در نتیجه build یا آزمون محلی Android/Windows ادعا نمی‌شود. آزمون‌های CI دقیق commitهای قبلی به‌عنوان شواهد تاریخی ثبت شده‌اند، نه جایگزین آزمون جدید این commit.
+
+
+## تلاش دوم — بازبینی محتوایی T0012 و T0013 روی V 3.1.56
+
+- Attempt: `UPD-S1-008-20261108123530`; زمان `2026-11-08T12:35:30Z` تا `2026-11-08T12:37:35Z`.
+- commit دقیق بررسی‌شده: `795a2de651f4e43133f352699e34623a3a10df0a` — `V 3.1.56`.
+- `T0012`: `unchanged`؛ سند نیازمندی‌ها 24 شناسهٔ یکتا و فیلدهای requirement/acceptance/verification/trace دارد؛ آزمون‌های اختصاصی در quality CI دقیق موفق شدند.
+- `T0013`: `unchanged`؛ ماتریس پذیرش 21 gate دارد و تمام 24 requirement را نگاشت می‌کند؛ NOT RUN و fail-closed حفظ شده‌اند؛ آزمون‌های اختصاصی در quality CI دقیق موفق شدند.
+- وضعیت legacy دو وظیفه `done` باقی ماند؛ هیچ status یا dependency قدیمی تغییر نکرد.
+- شواهد تفصیلی: `update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md`.
+- Quality CI [42480966736](https://github.com/artinrahimii/project/actions/runs/42480966736) موفق: full Python suite، compileall و graph guards.
+- Product build [42480966731](https://github.com/artinrahimii/project/actions/runs/42480966731) هنگام بررسی در حال اجرا بود؛ Windows و HostLifecycle موفق، Android JVM tests در حال اجرا و instrumentation pending بود؛ build کامل Android ادعا نمی‌شود.
+- reconciliation: **2/168 reviewed** و **166 pending**؛ پیشرفت **1.19%**. UPD-S1-008 همچنان `in_progress`.
