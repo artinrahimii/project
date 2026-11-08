@@ -118,3 +118,16 @@
 - مرز محصول حفظ می‌شود: `RequestViewModel` حداکثر سه تلاش ترتیبی ایجاد می‌کند؛ `AndroidInferenceRequestRuntime` فقط یک peer را در هر round می‌پذیرد؛ `maxRounds` نیز حداکثر سه است. بنابراین اجازهٔ بودجهٔ generic در value object نباید مسیر محصول را چندمیزبانه کند.
 - تصمیم اصلاحی: سقف عمومی `DistributedRequest` با `MultiHostCompatibilityLimits` هم‌راستا می‌شود؛ مقدار پیش‌فرض first-release و enforce کردن یک میزبان در هر round در runtime بدون تغییر می‌ماند.
 - وضعیت UPD-S1-003: **in_progress**؛ تا قبولی آزمون‌های اصلاح‌شده و اعتبارسنجی مجدد معیارهای پذیرش، done نمی‌شود.
+
+
+## اعتبارسنجی دقیق V 3.1.31 — شکست مرحلهٔ ktlint اندروید
+
+- Commit آزموده‌شده: `719f2a4daf0b82c013c617a1a0a4778c625c474c` — `V 3.1.31`.
+- Step Three quality gate: **PASS**، run [42455296797](https://github.com/artinrahimii/project/actions/runs/42455296797).
+- Rendezvous container build/smoke: **PASS**، run [42455296891](https://github.com/artinrahimii/project/actions/runs/42455296891).
+- Windows WPF build، publish، startup smoke و installer: **PASS**، run [42455296829](https://github.com/artinrahimii/project/actions/runs/42455296829).
+- HostLifecycle unit/integration/coverage: **PASS**، run [42455296829](https://github.com/artinrahimii/project/actions/runs/42455296829).
+- Android: **FAIL** در `:app:ktlintTestSourceSetCheck`؛ JVM tests و instrumentation پس از شکست gate اجرا نشدند.
+- بررسی source در همان commit یک خط خالی تکراری میان declarationهای آزمون در `DistributedRequestTest.kt` نشان داد؛ این مورد اصلاح شد. همچنین توضیح ADR-0022 دربارهٔ سقف domain object با جداسازی سقف generic از محدودیت مسیر first-release همگام شد.
+- این شکست به معنای شکست آزمون‌های JVM نیست؛ آن آزمون‌ها در این commit **اجرا نشدند**.
+- وضعیت UPD-S1-003 همچنان `in_progress` است تا lint، JVM tests و سایر آزمون‌های لازم روی commit اصلاحی پاس شوند.

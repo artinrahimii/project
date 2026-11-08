@@ -88,7 +88,6 @@ class DistributedRequestTest {
         )
     }
 
-
     @Test
     fun supportsNineAttemptsForGenericCompatibilityCallers() {
         val request =
