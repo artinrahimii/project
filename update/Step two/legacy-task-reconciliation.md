@@ -49,10 +49,10 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**15/168 بازبینی محتوایی فعلی ثبت شده‌اند.** T0012، T0013، T0015، T0016، T0019 و T0020 با تصمیم `unchanged` reviewed هستند؛ T0027، T0032، T0033، T0034، T0035، T0036، T0041، T0199 و T0214 نیز با تصمیم `re_review_required` بازبینی شده‌اند تا پس از وظایف متأثر مربوط دوباره بررسی شوند. 153 رکورد همچنان `pending` هستند.
+**16/168 بازبینی محتوایی فعلی ثبت شده‌اند.** T0012، T0013، T0015، T0016، T0019 و T0020 با تصمیم `unchanged` reviewed هستند؛ T0027، T0032، T0033، T0034، T0035، T0036، T0041، T0042، T0199 و T0214 نیز با تصمیم `re_review_required` بازبینی شده‌اند تا پس از وظایف متأثر مربوط دوباره بررسی شوند. 152 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
-هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 9 رکورد (T0027، T0032–T0036، T0041، T0199 و T0214)، و `re_review_required/pending` برای 153 رکورد باقی‌مانده ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation در حالت `pending/re_review_required` باقی می‌مانند؛ وضعیت واقعی هر بررسی در همین فایل JSON ثبت می‌شود.
+هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 10 رکورد (T0027، T0032–T0036، T0041، T0042، T0199 و T0214)، و `re_review_required/pending` برای 152 رکورد باقی‌مانده ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation در حالت `pending/re_review_required` باقی می‌مانند؛ وضعیت واقعی هر بررسی در همین فایل JSON ثبت می‌شود.
 
 
 ## نتیجهٔ تکمیلی در V 3.1.56
@@ -146,3 +146,12 @@
 - Blobهای App.xaml، App.xaml.cs، MainWindow XAML/code-behind، آزمون `test_wpf_entrypoint.py` و `product-build.yml` با Product commit `a3fa1f54d99db809cc670ece1cfc244239f6a727` یکسان‌اند. Product run [42482672544](https://github.com/artinrahimii/project/actions/runs/42482672544) روی آن commit با موفقیت کامل سه job Windows، Android و HostLifecycle را اجرا کرد؛ smoke اختصاصی T0041 نیز در [39862296386](https://github.com/artinrahimii/project/actions/runs/39862296386) موفق بود.
 - تصمیم T0041 برابر `re_review_required` است، چون UPD-S1-024 هنوز شروع نشده و هویت بصری/صفحهٔ اصلی Windows را متأثر می‌کند. وضعیت پایهٔ `done` حفظ شد.
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0041.md`. جمع reconciliation: 15/168 reviewed و 153 pending.
+
+
+## بازبینی T0042 — تفکیک لایه‌های Host — V 3.1.70
+
+- کد بررسی‌شده: `8e9aacc84a37e14f04baf48ccd691b59d5de59df`; HEAD جاری در زمان بازبینی: `a259b29171131ce4ec17fecaadca7c24cc7523f2`.
+- پروژه‌های Domain، Application، Infrastructure، Windows UI و Shared.Contracts و جهت وابستگی‌ها ممیزی شدند؛ آزمون `tests/test_host_layer_projects.py` سه قرارداد مرزی را پوشش می‌دهد.
+- Quality CI دقیق V3.1.70 [42484937846](https://github.com/artinrahimii/project/actions/runs/42484937846) موفق بود. در Product run [42484937793](https://github.com/artinrahimii/project/actions/runs/42484937793)، Windows WPF و HostLifecycle موفق شدند؛ Android job هنوز in_progress بود. Product build اولیهٔ T0042 [39907751958](https://github.com/artinrahimii/project/actions/runs/39907751958) به‌طور کامل موفق بود.
+- تصمیم T0042 برابر `re_review_required` ثبت شد، زیرا UPD-S1-012 و UPD-S1-024 هنوز اجرا نشده و UI/منابع میزبان را تغییر خواهند داد. وضعیت پایهٔ `done` حفظ شد.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0042.md`. جمع فعلی: 16/168 reviewed و 152 pending.

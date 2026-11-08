@@ -196,3 +196,13 @@
 - Quality run دقیق V3.1.70 [42484937846](https://github.com/artinrahimii/project/actions/runs/42484937846) موفق بود.
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0041.md`; reconciliation اکنون 15/168 reviewed، 153 pending است.
 - نصب فیزیکی، مدل محلی زنده و ارتباط Android-to-Windows در این بازبینی اجرا نشده‌اند.
+
+
+## بازبینی T0042 — لایه‌های buildable میزبان
+
+- مبنای source review: `8e9aacc84a37e14f04baf48ccd691b59d5de59df` — `V 3.1.70`; HEAD جاری: `a259b29171131ce4ec17fecaadca7c24cc7523f2` — `V 3.1.71`.
+- پروژه‌های Domain/Application/Infrastructure/Windows UI و Shared.Contracts و project references بررسی شدند. Application به Domain و Shared.Contracts وابسته است، نه concrete Infrastructure؛ Shared.Contracts مالک یکتای تولید C# Protobuf است. سه آزمون ساختاری در `tests/test_host_layer_projects.py` ثبت‌اند.
+- Quality run دقیق V3.1.70 [42484937846](https://github.com/artinrahimii/project/actions/runs/42484937846) موفق بود؛ Product run [42484937793](https://github.com/artinrahimii/project/actions/runs/42484937793) Windows WPF و HostLifecycle را با موفقیت اجرا کرد، اما Android job هنوز in_progress بود. Build اصلی هنگام تکمیل T0042 [39907751958](https://github.com/artinrahimii/project/actions/runs/39907751958) همهٔ jobهای Windows/Android/HostLifecycle را موفق تکمیل کرده بود.
+- تصمیم reconciliation T0042: `re_review_required/reviewed`. علت: UPD-S1-012 و UPD-S1-024 هنوز اجرا نشده‌اند و UI/resources پروژه را تحت تأثیر قرار خواهند داد. baseline قدیمی `done` حفظ شد؛ هیچ وابستگی یا status قدیمی تغییر نکرد.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0042.md`; reconciliation برابر 16/168 reviewed و 152 pending است. UPD-S1-008 همچنان `in_progress` است.
+- دستگاه فیزیکی، live inference، Android-to-Windows E2E، clean install و in-place upgrade در این بررسی اجرا نشدند.
