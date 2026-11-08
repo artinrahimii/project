@@ -871,3 +871,17 @@
 - وضعیت پایهٔ هر پنج وظیفه `done` حفظ شد؛ تصمیم هر پنج `re_review_required` است و شواهد مستقل در `review-T0186.md` تا `review-T0190.md` ثبت می‌شود.
 - reconciliation پیش از این batch 129/168 reviewed و 39 pending؛ پس از ثبت 134/168 reviewed و 34 pending خواهد بود.
 - آزمون Android-to-Windows روی دستگاه واقعی، پاسخ مدل محلی، ذخیره در همان گفت‌وگو، clean install و in-place upgrade در این batch اجرا نشدند.
+
+
+## بازبینی محتوایی T0191، T0192، T0193، T0196 و T0197 — 2026-11-08T19:24:50.032Z
+
+- مبنای main: `e06ceddfbbcf74a1116f4c10040e5080b61cca3b` (`V 3.1.100`)، کد محصول: `db2bfaa62c7816e9f06ed4e9e1a8d1d91cb822fd` (`V 3.1.88`).
+- T0191: coordinator یک inference فعال را می‌پذیرد؛ duplicate با Busy رد می‌شود، deadline مطلق cancellation واقعی می‌سازد و failure/cancel gate را آزاد می‌کند.
+- T0192: retry inference فقط در Android و با budget مشخص است؛ fallback اتصال حداکثر ۸ آدرس با هویت PeerId یکسان را امتحان می‌کند؛ Busy retryable نیست و delivery پاسخ مبهم دوباره‌فرستاده نمی‌شود.
+- T0193: host lifecycle هنگام Stop ابتدا admission را می‌بندد و receive loop را cancel می‌کند؛ HostInferenceSession هنگام dispose کار جاری را cancel/drain کرده و سپس backend را dispose می‌کند.
+- T0196: ظرفیت RAM/disk/backend و حالت Unknown fail-closed است؛ تست‌ها ۳۲ و ۶۴ درخواست هم‌زمان و تنها یک inference پذیرفته‌شده را بررسی می‌کنند.
+- T0197: capsule با schema محدود و انتخاب محدود context ساخته می‌شود؛ UTF-8، سقف payload، JSON/metadata و request/response correlation آزمایش شده‌اند.
+- Product CI دقیق source [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) و Quality Gate [42514411385](https://github.com/artinrahimii/project/actions/runs/42514411385) موفق بودند. اجرای محلی در این محیط انجام نشد.
+- وضعیت پایهٔ هر پنج گره `done` حفظ شد و تصمیم هر پنج `re_review_required` است. T0194/T0195 در این دستهٔ affected IDs نیستند و پوشه یا رکوردی برایشان ایجاد نشد.
+- reconciliation پیش از batch 134/168 reviewed و 34 pending؛ پس از batch باید 139/168 reviewed و 29 pending باشد.
+- آزمون با میزبان و دستگاه واقعی، live model inference، clean install و in-place upgrade در این batch انجام نشد.
