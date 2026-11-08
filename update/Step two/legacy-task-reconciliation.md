@@ -49,10 +49,10 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**16/168 بازبینی محتوایی فعلی ثبت شده‌اند.** T0012، T0013، T0015، T0016، T0019 و T0020 با تصمیم `unchanged` reviewed هستند؛ T0027، T0032، T0033، T0034، T0035، T0036، T0041، T0042، T0199 و T0214 نیز با تصمیم `re_review_required` بازبینی شده‌اند تا پس از وظایف متأثر مربوط دوباره بررسی شوند. 152 رکورد همچنان `pending` هستند.
+**17/168 بازبینی محتوایی فعلی ثبت شده‌اند.** T0012، T0013، T0015، T0016، T0019 و T0020 با تصمیم `unchanged` reviewed هستند؛ T0027، T0032، T0033، T0034، T0035، T0036، T0041، T0042، T0043، T0199 و T0214 نیز با تصمیم `re_review_required` بازبینی شده‌اند تا پس از وظایف متأثر مربوط دوباره بررسی شوند. 151 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
-هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 10 رکورد (T0027، T0032–T0036، T0041، T0042، T0199 و T0214)، و `re_review_required/pending` برای 152 رکورد باقی‌مانده ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation در حالت `pending/re_review_required` باقی می‌مانند؛ وضعیت واقعی هر بررسی در همین فایل JSON ثبت می‌شود.
+هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 11 رکورد (T0027، T0032–T0036، T0041–T0043، T0199 و T0214)، و `re_review_required/pending` برای 151 رکورد باقی‌مانده ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation در حالت `pending/re_review_required` باقی می‌مانند؛ وضعیت واقعی هر بررسی در همین فایل JSON ثبت می‌شود.
 
 
 ## نتیجهٔ تکمیلی در V 3.1.56
@@ -155,3 +155,12 @@
 - Quality CI دقیق V3.1.70 [42484937846](https://github.com/artinrahimii/project/actions/runs/42484937846) موفق بود. در Product run [42484937793](https://github.com/artinrahimii/project/actions/runs/42484937793)، Windows WPF و HostLifecycle موفق شدند؛ Android job هنوز in_progress بود. Product build اولیهٔ T0042 [39907751958](https://github.com/artinrahimii/project/actions/runs/39907751958) به‌طور کامل موفق بود.
 - تصمیم T0042 برابر `re_review_required` ثبت شد، زیرا UPD-S1-012 و UPD-S1-024 هنوز اجرا نشده و UI/منابع میزبان را تغییر خواهند داد. وضعیت پایهٔ `done` حفظ شد.
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0042.md`. جمع فعلی: 16/168 reviewed و 152 pending.
+
+
+## بازبینی T0043 بر مبنای V 3.1.70
+
+- منبع کد/آزمون: `8e9aacc84a37e14f04baf48ccd691b59d5de59df`; HEAD فعلی: `d22f96dfaf1997593ac3907f2870713804247cb9`.
+- Quality CI دقیق [42484937846](https://github.com/artinrahimii/project/actions/runs/42484937846) موفق شد؛ Product CI دقیق [42484937793](https://github.com/artinrahimii/project/actions/runs/42484937793) نیز Windows WPF، Android APK و HostLifecycle را با موفقیت تکمیل کرد.
+- HostLifecycle.cs و test project فعلی از نظر Blob SHA با sourceهای اجراشده در Product CI یکسان‌اند؛ state machine پنج‌حالته و مسیرهای مجاز/غیرمجاز در آزمون پوشش داده شده‌اند.
+- تصمیم T0043 برابر `re_review_required` است، زیرا UPD-S1-012 هنوز اجرا نشده و opt-in/stop و وضعیت‌های مشارکت را در میزبان ادغام خواهد کرد. وضعیت پایهٔ `done` حفظ شد.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0043.md`. جمع فعلی: 17/168 reviewed، 151 pending.

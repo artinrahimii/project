@@ -206,3 +206,13 @@
 - تصمیم reconciliation T0042: `re_review_required/reviewed`. علت: UPD-S1-012 و UPD-S1-024 هنوز اجرا نشده‌اند و UI/resources پروژه را تحت تأثیر قرار خواهند داد. baseline قدیمی `done` حفظ شد؛ هیچ وابستگی یا status قدیمی تغییر نکرد.
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0042.md`; reconciliation برابر 16/168 reviewed و 152 pending است. UPD-S1-008 همچنان `in_progress` است.
 - دستگاه فیزیکی، live inference، Android-to-Windows E2E، clean install و in-place upgrade در این بررسی اجرا نشدند.
+
+
+## بازبینی T0043 — HostState lifecycle
+
+- کد بررسی‌شده: `8e9aacc84a37e14f04baf48ccd691b59d5de59df`; HEAD فعلی مخزن: `d22f96dfaf1997593ac3907f2870713804247cb9`.
+- مدل Domain و آزمون‌ها پنج وضعیت Stopped/Starting/Ready/Busy/Error و transitionهای معتبر/نامعتبر را پوشش می‌دهند؛ پیام خالی رد و پیام معتبر trim می‌شود.
+- Quality [42484937846](https://github.com/artinrahimii/project/actions/runs/42484937846) موفق؛ Product CI [42484937793](https://github.com/artinrahimii/project/actions/runs/42484937793) هر سه job ویندوز، اندروید و HostLifecycle را موفق تکمیل کرد. Blobهای source و تست در Product build و HEAD ممیزی یکسان‌اند.
+- تصمیم reconciliation T0043 برابر `re_review_required/reviewed` است، چون UPD-S1-012 هنوز opt-in و stop behavior را یکپارچه نکرده است. baseline قدیمی `done` و وابستگی‌ها دست‌نخورده‌اند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0043.md`; reconciliation: 17/168 reviewed، 151 pending.
+- دستگاه فیزیکی، live inference، Android-to-Windows E2E و upgrade در این بازبینی انجام نشده‌اند.

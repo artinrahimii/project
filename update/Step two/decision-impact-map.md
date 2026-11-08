@@ -22,7 +22,7 @@
 | `T0036` | done | UPD-S1-017 | re_review_required | reviewed | 4 | 1 |
 | `T0041` | done | UPD-S1-001, UPD-S1-012, UPD-S1-024 | re_review_required | reviewed | 1 | 1 |
 | `T0042` | done | UPD-S1-001, UPD-S1-012, UPD-S1-024 | re_review_required | reviewed | 14 | 9 |
-| `T0043` | done | UPD-S1-012 | re_review_required | pending | 2 | 2 |
+| `T0043` | done | UPD-S1-012 | re_review_required | reviewed | 2 | 2 |
 | `T0044` | done | UPD-S1-012 | re_review_required | pending | 1 | 2 |
 | `T0045` | done | UPD-S1-012 | re_review_required | pending | 2 | 1 |
 | `T0046` | done | UPD-S1-012, UPD-S1-024 | re_review_required | pending | 3 | 2 |
