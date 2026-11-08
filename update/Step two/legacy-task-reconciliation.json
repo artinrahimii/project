@@ -375,10 +375,20 @@
         "UPD-S1-012"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0045.md",
+        "step three/T0045/execution-report.md",
+        "step three/T0045/evidence/verification.md",
+        "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42484937793",
+        "https://github.com/artinrahimii/project/actions/runs/42486010109"
+      ],
+      "review_commit_sha": "c933559b3be973f1cdf21e094b786c84742ca7ab"
     },
     {
       "legacy_task_id": "T0046",
@@ -389,10 +399,21 @@
         "UPD-S1-024"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0046.md",
+        "step three/T0046/execution-report.md",
+        "step three/T0046/evidence/verification.md",
+        "src/Host.Application/HostStatusPresentation.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_wpf_entrypoint.py",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42484937793",
+        "https://github.com/artinrahimii/project/actions/runs/42486010109"
+      ],
+      "review_commit_sha": "c933559b3be973f1cdf21e094b786c84742ca7ab"
     },
     {
       "legacy_task_id": "T0047",
@@ -402,10 +423,24 @@
         "UPD-S1-012"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0047.md",
+        "step three/T0047/execution-report.md",
+        "step three/T0047/evidence/verification.md",
+        "src/Host.Application/HostErrorPresentation.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Shared.Contracts/WhiteP.Shared.Contracts.csproj",
+        "protocol/whitep/v1/messages.proto",
+        "tests/HostLifecycle.Tests/HostErrorPresentationAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_wpf_entrypoint.py",
+        "step three/project-graph.md",
+        "https://github.com/artinrahimii/project/actions/runs/42484937793",
+        "https://github.com/artinrahimii/project/actions/runs/42486010109"
+      ],
+      "review_commit_sha": "c933559b3be973f1cdf21e094b786c84742ca7ab"
     },
     {
       "legacy_task_id": "T0048",
@@ -415,10 +450,22 @@
         "UPD-S1-012"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0048.md",
+        "step three/T0048/execution-report.md",
+        "step three/T0048/evidence/verification.md",
+        "src/Host.Application/HostStartup.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/HostLifecycle.Tests/HostInferenceSessionConcurrencyTests.cs",
+        "tests/test_wpf_entrypoint.py",
+        "https://github.com/artinrahimii/project/actions/runs/42484937793",
+        "https://github.com/artinrahimii/project/actions/runs/42486010109"
+      ],
+      "review_commit_sha": "c933559b3be973f1cdf21e094b786c84742ca7ab"
     },
     {
       "legacy_task_id": "T0049",

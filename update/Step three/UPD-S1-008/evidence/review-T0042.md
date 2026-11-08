@@ -35,3 +35,10 @@
 - این بررسی اثبات load/execute مدل محلی، اتصال واقعی Android به Windows، پاسخ واقعی inference، Room persistence، نصب فیزیکی/clean install یا in-place upgrade نیست.
 - Android job مربوط به Product run V3.1.70 در زمان ممیزی کامل نشده بود.
 - وضعیت پایهٔ T0042 و تمام یال‌های گراف قدیمی دست‌نخورده باقی می‌مانند.
+
+
+## تصحیح تطبیق یال با گراف مرجع — V 3.1.74
+
+در بررسی دقیق فایل `step three/project-graph.md` در commit `c933559b3be973f1cdf21e094b786c84742ca7ab`، یال `T0042 → T0043` با طبقه‌بندی `hard_dependency` و وضعیت `validated` ثبت شده است؛ rationale آن مصرف پروژهٔ buildable `Host.Domain` و فایل `HostLifecycle.cs` پس از تفکیک لایه‌هاست. متن قبلی همین گزارش که این یال را `unreviewed` می‌خواند stale بود و با این تصحیح supersede می‌شود. این تصحیح، خود یال یا ترتیب را تغییر نمی‌دهد و وضعیت پایهٔ هیچ وظیفه‌ای را دست‌کاری نمی‌کند.
+
+شواهد گراف: `src/Host.Domain/WhiteP.Host.Domain.csproj`، `src/Host.Domain/HostLifecycle.cs`، `tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj` و `tests/HostLifecycle.Tests/Program.cs`. Blob گراف قدیمی در commit مبنا: `1b51b7452762c85d18b0e2f5acbba6f1624e1f83` (4,014,945 bytes).

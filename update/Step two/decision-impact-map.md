@@ -24,10 +24,10 @@
 | `T0042` | done | UPD-S1-001, UPD-S1-012, UPD-S1-024 | re_review_required | reviewed | 14 | 9 |
 | `T0043` | done | UPD-S1-012 | re_review_required | reviewed | 2 | 2 |
 | `T0044` | done | UPD-S1-012 | re_review_required | reviewed | 1 | 2 |
-| `T0045` | done | UPD-S1-012 | re_review_required | pending | 2 | 1 |
-| `T0046` | done | UPD-S1-012, UPD-S1-024 | re_review_required | pending | 3 | 2 |
-| `T0047` | done | UPD-S1-012 | re_review_required | pending | 2 | 2 |
-| `T0048` | done | UPD-S1-012 | re_review_required | pending | 1 | 1 |
+| `T0045` | done | UPD-S1-012 | re_review_required | reviewed | 2 | 1 |
+| `T0046` | done | UPD-S1-012, UPD-S1-024 | re_review_required | reviewed | 3 | 2 |
+| `T0047` | done | UPD-S1-012 | re_review_required | reviewed | 2 | 2 |
+| `T0048` | done | UPD-S1-012 | re_review_required | reviewed | 1 | 1 |
 | `T0049` | done | UPD-S1-005, UPD-S1-013 | re_review_required | pending | 2 | 1 |
 | `T0050` | done | UPD-S1-005, UPD-S1-013 | re_review_required | pending | 4 | 2 |
 | `T0051` | done | UPD-S1-005, UPD-S1-013 | re_review_required | pending | 4 | 1 |
