@@ -131,3 +131,16 @@
 - بررسی source در همان commit یک خط خالی تکراری میان declarationهای آزمون در `DistributedRequestTest.kt` نشان داد؛ این مورد اصلاح شد. همچنین توضیح ADR-0022 دربارهٔ سقف domain object با جداسازی سقف generic از محدودیت مسیر first-release همگام شد.
 - این شکست به معنای شکست آزمون‌های JVM نیست؛ آن آزمون‌ها در این commit **اجرا نشدند**.
 - وضعیت UPD-S1-003 همچنان `in_progress` است تا lint، JVM tests و سایر آزمون‌های لازم روی commit اصلاحی پاس شوند.
+
+
+## اعتبارسنجی دقیق V 3.1.32 — پنج شکست در آزمون JVM اندروید
+
+- Commit آزموده‌شده: `10303ad6faddd7d4a50096d702d0e9f4a10e2b7d` — `V 3.1.32`.
+- Step Three quality gate: **PASS**، run [42455653912](https://github.com/artinrahimii/project/actions/runs/42455653912).
+- Rendezvous build/smoke: **PASS**، run [42455653892](https://github.com/artinrahimii/project/actions/runs/42455653892).
+- Windows build/publish/startup/installer و HostLifecycle suite/coverage: **PASS**، run [42455653927](https://github.com/artinrahimii/project/actions/runs/42455653927).
+- Android lint، build دیباگ و انتشار و بررسی permissionها: **PASS**؛ اما JVM: **FAIL**، ۲۱۴ آزمون اجرا و ۵ شکست.
+- چهار شکست transport به این علت بود که آزمون‌های قدیمی سه میزبان را در یک round به `AndroidInferenceRequestRuntime` می‌دادند؛ runtime به‌درستی `TOO_MANY_HOSTS` برگرداند. آزمون‌ها اکنون انتخاب یک میزبان از چند candidate و انتخاب میزبان بعدی فقط پس از پایان پنجرهٔ timeout را بررسی می‌کنند.
+- شکست پنجم مربوط به آزمون generic dispatcher بود: بودجهٔ ۹ تلاش عمومی با سقف سه‌تلاشهٔ `FirstReleaseInferenceLimits` مقایسه شده بود. آزمون اکنون بودجهٔ generic نه‌تایی را صریحاً انتخاب می‌کند و با `MultiHostCompatibilityLimits` assert می‌کند.
+- گزارش JUnit از artifact شمارهٔ `13608070526` دریافت و بررسی شد؛ SHA-256 فایل ZIP: `23142a5339df2e98e969b8bf6b6c2738a4bc3095a0803ddc372a2a474d9020cd`.
+- Android Keystore instrumentation به‌دلیل شکست JVM اجرا نشد. وظیفهٔ UPD-S1-003 تا اجرای مجدد مجموعهٔ کامل آزمون‌ها `in_progress` باقی می‌ماند.

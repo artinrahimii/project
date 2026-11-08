@@ -510,7 +510,7 @@ class InferenceAttemptDispatcherTest {
     @Test
     fun enforcesThreeDistinctHostsPerRoundAndNineAttemptsAcrossTheRequest() =
         runBlocking {
-            val request = distributedRequest()
+            val request = distributedRequest(maxRounds = 3, maxTotalHosts = MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS)
             val protocolRequest = validRequest(requestId = request.requestId)
             val candidates =
                 (1..12).map { index ->
@@ -563,7 +563,7 @@ class InferenceAttemptDispatcherTest {
 
                 val attempts = (result as InferenceRoundDispatchResult.Dispatched).attempts
                 assertEquals(selectedIds, attempts.map { it.ephemeralHostId })
-                assertTrue(attempts.size <= FirstReleaseInferenceLimits.MAX_HOSTS_PER_ROUND)
+                assertTrue(attempts.size <= MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND)
 
                 roundHostIds += selectedIds
                 allAttemptedHosts += selectedIds
@@ -572,10 +572,10 @@ class InferenceAttemptDispatcherTest {
             }
 
             assertEquals(FirstReleaseInferenceLimits.MAX_ROUNDS, progress.roundsDispatched)
-            assertEquals(FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS, progress.hostsAttempted)
-            assertEquals(9, transport.requests.size)
-            assertEquals(9, allAttemptedHosts.size)
-            assertEquals(9, allAttemptedHosts.toSet().size)
+            assertEquals(MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS, progress.hostsAttempted)
+            assertEquals(MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS, transport.requests.size)
+            assertEquals(MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS, allAttemptedHosts.size)
+            assertEquals(MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS, allAttemptedHosts.toSet().size)
             assertTrue(roundHostIds.all { ids -> ids.size == ids.toSet().size })
 
             val fourthRound =

@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.32",
+  "commit_intent": "V 3.1.33",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -999,13 +999,14 @@
         "tests/test_android_manual_retry_contract.py",
         "tests/test_request_retry_budget_boundary.py",
         "update/Step three/UPD-S1-003/evidence/ci-3.1.30.md",
-        "update/Step three/UPD-S1-003/evidence/ci-3.1.31.md"
+        "update/Step three/UPD-S1-003/evidence/ci-3.1.31.md",
+        "update/Step three/UPD-S1-003/evidence/ci-3.1.32.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. New decision ADR-0022 records the first-release one-host/sequential-retry policy. The generic three-host selector and dispatcher remain compatibility primitives and do not change the production runtime's one-host admission boundary. The implementation attempt is partial pending exact-commit CI. V 3.1.29 quality gate found five residual contract/documentation assertions; the exact tests and register row were corrected in the next partial attempt. Do not mark done until CI passes.",
       "execution_summary": {
-        "attempt_count": 5,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "UPD-S1-003-20261108063417",
+        "attempt_count": 6,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "UPD-S1-003-20261108063938",
         "last_attempt_result": "failed",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -1024,12 +1025,15 @@
           "update/Step three/UPD-S1-003/execution-report.md",
           "tests/test_android_inference_round_response_collector_contract.py",
           "update/Step two/project-graph.md",
-          "update/Step three/UPD-S1-003/evidence/ci-3.1.30.md"
+          "update/Step three/UPD-S1-003/evidence/ci-3.1.30.md",
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt"
         ],
         "related_commits": [
           "89042d5feba3c3859d63a7527aac0c7b2669cb88",
           "cb6050e9b6e9f8fd60d2266efbf57af2534a16c0",
-          "719f2a4daf0b82c013c617a1a0a4778c625c474c"
+          "719f2a4daf0b82c013c617a1a0a4778c625c474c",
+          "10303ad6faddd7d4a50096d702d0e9f4a10e2b7d"
         ],
         "tests_passed": [
           "Rendezvous container build and smoke",
@@ -1041,12 +1045,19 @@
           "Step Three quality gate — run 42455296797",
           "Rendezvous container build and smoke — run 42455296891",
           "Windows WPF build/publish/startup/installer — run 42455296829",
-          "HostLifecycle tests — run 42455296829"
+          "HostLifecycle tests — run 42455296829",
+          "Step Three quality gate — run 42455653912",
+          "Rendezvous container build/smoke — run 42455653892",
+          "Windows WPF build and installer — run 42455653927",
+          "HostLifecycle unit/integration and coverage — run 42455653927",
+          "Android ktlint — run 42455653927",
+          "Android debug/release APK build and permission checks — run 42455653927"
         ],
         "tests_failed": [
           "Step Three quality gate",
           "Android JVM unit tests — 33 of 213 failed in run 42417548687",
-          "Android ktlintTestSourceSetCheck — run 42455296829; JVM/instrumentation tests not run"
+          "Android ktlintTestSourceSetCheck — run 42455296829; JVM/instrumentation tests not run",
+          "Android JVM :app:testDebugUnitTest — 5 of 214 failed in run 42455653927"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1067,7 +1078,8 @@
           "review_evidence": [
             "update/Step three/UPD-S1-003/evidence/decision-matrix.md",
             "update/Step three/UPD-S1-003/evidence/ci-baseline.md",
-            "update/Step three/UPD-S1-003/evidence/ci-3.1.31.md"
+            "update/Step three/UPD-S1-003/evidence/ci-3.1.31.md",
+            "update/Step three/UPD-S1-003/evidence/ci-3.1.32.md"
           ]
         }
       },
@@ -1331,6 +1343,104 @@
           "device_and_host_details_redacted": "GitHub Actions runner evidence only. No physical Android handset or externally installed Windows host was attached; no physical Android-to-Windows model inference or install/upgrade test was run.",
           "model_revision_and_sha256": "Not applicable; no local model inference was executed.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable; no in-place upgrade was executed."
+        },
+        {
+          "attempt_id": "UPD-S1-003-20261108063938",
+          "started_at": "2026-11-08T06:39:38Z",
+          "ended_at": "2026-11-08T06:45:30Z",
+          "result": "failed",
+          "summary": "V 3.1.32 exact-commit CI: quality gate, Rendezvous, Windows WPF build/installer, HostLifecycle suite/coverage, Android lint, debug/release APK builds, and merged-manifest permission checks passed. Android JVM unit tests ran 214 tests and failed 5. Four failures were legacy libp2p transport tests that submitted three peers in one call to AndroidInferenceRequestRuntime, which correctly rejected the product-path batch with TOO_MANY_HOSTS. The fifth was a generic dispatcher compatibility test comparing its nine-host budget with the first-release three-attempt constant. Android Keystore instrumentation was skipped after the JVM failure.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt"
+          ],
+          "commit_sha": "10303ad6faddd7d4a50096d702d0e9f4a10e2b7d",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": ".github/workflows/quality.yml on V 3.1.32",
+              "result": "passed",
+              "run_id": 42455653912,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42455653912",
+              "summary": "Exact commit quality gate passed."
+            },
+            {
+              "name": "Rendezvous container build/smoke",
+              "command": ".github/workflows/rendezvous-container.yml on V 3.1.32",
+              "result": "passed",
+              "run_id": 42455653892,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42455653892",
+              "summary": "Exact commit container build and smoke passed."
+            },
+            {
+              "name": "Windows WPF build and installer",
+              "command": "product-build.yml / Build Windows WPF host",
+              "result": "passed",
+              "run_id": 42455653927,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42455653927",
+              "summary": "Clean Windows build, publish, startup smoke, identity/trust gates and installer acceptance passed."
+            },
+            {
+              "name": "HostLifecycle unit/integration and coverage",
+              "command": "product-build.yml / Host lifecycle unit and integration tests",
+              "result": "passed",
+              "run_id": 42455653927,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42455653927",
+              "summary": "Host lifecycle suite and coverage validation passed."
+            },
+            {
+              "name": "Android lint",
+              "command": "gradle --no-daemon ktlintCheck",
+              "result": "passed",
+              "run_id": 42455653927,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42455653927",
+              "summary": "Kotlin formatting and lint passed."
+            },
+            {
+              "name": "Android debug and release APK builds",
+              "command": ":app:assembleDebug and release variant using a disposable CI signing key",
+              "result": "passed",
+              "run_id": 42455653927,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42455653927",
+              "summary": "Both variants built; temporary signing key removed."
+            },
+            {
+              "name": "Android merged manifest permission checks",
+              "command": "Verify minimum permissions in merged Android APK",
+              "result": "passed",
+              "run_id": 42455653927,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42455653927",
+              "summary": "Minimum required permissions validation passed."
+            },
+            {
+              "name": "Android JVM unit tests",
+              "command": ":app:testDebugUnitTest",
+              "result": "failed",
+              "run_id": 42455653927,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42455653927",
+              "summary": "214 tests completed; five failed: four tests passed three peers to the single-host production runtime and one generic dispatcher test compared nine compatibility attempts with the three-attempt product limit."
+            },
+            {
+              "name": "Android Keystore instrumentation",
+              "command": "Connected Android instrumentation test task",
+              "result": "skipped",
+              "run_id": 42455653927,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42455653927",
+              "summary": "Skipped after JVM test failure."
+            }
+          ],
+          "failure_details": "The JUnit HTML report artifact 13608070526 (ZIP SHA-256 23142a5339df2e98e969b8bf6b6c2738a4bc3095a0803ddc372a2a474d9020cd) identifies four tests that submit three peers in one AndroidInferenceRequestRuntime.dispatchRound and are rejected with TOO_MANY_HOSTS, plus one generic dispatcher test comparing nine compatibility attempts to FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS=3. The first-release runtime restriction remains intentional. Repairs keep transport/integration tests to one selected peer and explicit subsequent attempts only after timeout; generic dispatcher tests explicitly request the generic nine-attempt budget.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "AndroidInferenceRequestRuntime remains limited to one selected peer per round and three total first-release attempts.",
+            "Kotlin and .NET transport tests no longer submit multiple peers in one product round; the failover test advances only after the previous peer's response window times out.",
+            "Generic dispatcher compatibility tests use MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS explicitly."
+          ],
+          "follow_up": "Re-run exact-commit Android lint, JVM, Keystore instrumentation, APK builds, Windows and HostLifecycle checks. Do not mark UPD-S1-003 done until all acceptance evidence passes.",
+          "device_and_host_details_redacted": "CI runner only. Native .NET interop uses local peer-process fixtures; no external physical Windows host or model was used. No physical Android handset or in-place upgrade was tested.",
+          "model_revision_and_sha256": "Not applicable; no local model inference executed.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; no install or upgrade was run."
         }
       ]
     },
@@ -4603,7 +4713,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T06:39:30.611Z",
+    "as_of": "2026-11-08T06:54:15.441Z",
     "total_tasks": 24,
     "not_started": 21,
     "in_progress": 1,
