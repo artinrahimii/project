@@ -252,7 +252,8 @@ public static class ProtocolMessageValidator
         ulong completedAtUnixMs,
         string? modelId,
         string? errorMessage,
-        long serializedMessageBytes)
+        long serializedMessageBytes,
+        int errorCodeValue = 0)
     {
         if (string.IsNullOrWhiteSpace(requestId) ||
             string.IsNullOrWhiteSpace(attemptId) ||
@@ -266,6 +267,24 @@ public static class ProtocolMessageValidator
         if (outcomeValue < 1 || outcomeValue > 5)
         {
             return InvalidMessage("InferenceResponse outcome is unspecified or contains an unknown enum value.");
+        }
+
+        if (errorCodeValue < 0 || errorCodeValue > 7)
+        {
+            return InvalidMessage("InferenceResponse contains an unknown protocol error code.");
+        }
+
+        var errorCodeMatchesOutcome = outcomeValue switch
+        {
+            1 or 3 => errorCodeValue == 0,
+            2 => errorCodeValue is 0 or 4 or 6 or 7,
+            4 => errorCodeValue is 0 or 5,
+            5 => errorCodeValue is 0 or 1 or 2 or 3 or 5 or 6 or 7,
+            _ => false
+        };
+        if (!errorCodeMatchesOutcome)
+        {
+            return InvalidMessage("InferenceResponse error code is inconsistent with its terminal outcome.");
         }
 
         var limitsResult = FromLimitResult(ProtocolMessageLimits.ValidateInferenceResponse(

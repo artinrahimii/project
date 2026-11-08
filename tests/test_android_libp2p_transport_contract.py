@@ -85,6 +85,9 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         correlation = RESPONSE_CORRELATION.read_text(encoding="utf-8")
         self.assertIn("InferenceResponseCorrelationValidator.matches(", source)
         self.assertIn("pending.roundId", source)
+        self.assertIn("val key = AttemptKey(remoteError.requestId, remoteError.attemptId)", source)
+        self.assertIn("pending.roundId == remoteError.roundId", source)
+        self.assertNotIn("pendingAttempts.entries.filter", source)
         self.assertIn("pending.deadlineUnixMs", source)
         for marker in (
             "response.requestId",

@@ -635,6 +635,13 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
             PeerResponseCorrelationValidator.Validate(request, parsedResponse, LocalPeerIdentity);
             await transport.SendMessageAsync(responseWire, lifetimeToken).ConfigureAwait(false);
         }
+        catch (TimeoutException) when (
+            !lifetimeToken.IsCancellationRequested &&
+            DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() >= (long)request.DeadlineUnixMs)
+        {
+            // The logical deadline expired. Never emit a fabricated response after that deadline;
+            // Android's original absolute deadline owns the terminal timeout state.
+        }
         catch (OperationCanceledException) when (lifetimeToken.IsCancellationRequested)
         {
             // The peer session or participation lifecycle ended; no response can be delivered.
@@ -698,7 +705,8 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
             OutputText = string.Empty,
             CompletedAtUnixMs = (ulong)completedAt,
             ModelId = request.ModelId,
-            ErrorMessage = "The host is busy and cannot accept another active inference request."
+            ErrorMessage = "The host is busy and cannot accept another active inference request.",
+            ErrorCode = ProtocolErrorCode.HostBusy
         };
         PeerResponseCorrelationValidator.Validate(request, response, LocalPeerIdentity);
         return response;
@@ -715,7 +723,8 @@ public sealed class PeerAnnouncementHostLifecycle : IAsyncDisposable
             OutputText = string.Empty,
             CompletedAtUnixMs = (ulong)Math.Max(1L, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
             ModelId = request.ModelId,
-            ErrorMessage = "A duplicate or untracked request was rejected."
+            ErrorMessage = "A duplicate or untracked request was rejected.",
+            ErrorCode = ProtocolErrorCode.InvalidMessage
         };
 
     public async ValueTask DisposeAsync()

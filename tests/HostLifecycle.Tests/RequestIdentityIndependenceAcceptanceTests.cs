@@ -43,6 +43,7 @@ internal static class RequestIdentityIndependenceAcceptanceTests
             ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
             RequestId = correlatedRequestId,
             AttemptId = "attempt_identity_independence",
+            RoundId = "round_identity_independence",
             ModelId = "fixture-model",
             Prompt = "identity boundary acceptance",
             DeadlineUnixMs = 4_102_444_800_000UL,
@@ -53,9 +54,12 @@ internal static class RequestIdentityIndependenceAcceptanceTests
         Assert(parseResult.Message!.RequestId == correlatedRequestId,
             "Protocol parsing must preserve the request correlation ID without converting it to a stable identity.");
 
-        var mappedFailure = NetworkInferenceRequestResponseMapper.CreateInternalError(correlatedRequestId);
+        var mappedFailure = NetworkInferenceRequestResponseMapper.CreateInternalError(
+            correlatedRequestId, request.AttemptId, request.RoundId);
         Assert(mappedFailure.RequestId == correlatedRequestId,
             "A typed protocol failure must correlate to the originating request ID.");
+        Assert(mappedFailure.AttemptId == request.AttemptId && mappedFailure.RoundId == request.RoundId,
+            "A typed protocol failure must preserve exact attempt/round correlation.");
         Assert(!mappedFailure.RequestId.Contains(userId, StringComparison.Ordinal) &&
                !mappedFailure.RequestId.Contains(persistentConversationId, StringComparison.Ordinal),
             "Failure correlation must not replace the opaque request ID with account or conversation identity.");

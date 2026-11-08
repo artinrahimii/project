@@ -1283,15 +1283,27 @@ public partial class MainWindow : Window
         {
             throw;
         }
+        catch (TimeoutException)
+        {
+            if (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() >= (long)request.DeadlineUnixMs)
+                throw;
+            return CreatePeerInferenceResponse(
+                request,
+                currentService.LocalPeerIdentity,
+                InferenceOutcome.TimedOut,
+                string.Empty,
+                "The host inference backend timed out before the request deadline.",
+                ProtocolErrorCode.RequestExpired).ToByteArray();
+        }
         catch (Exception)
         {
-            var failed = CreatePeerInferenceResponse(
+            return CreatePeerInferenceResponse(
                 request,
                 currentService.LocalPeerIdentity,
                 InferenceOutcome.Failed,
                 string.Empty,
-                "The host could not process the request.");
-            return failed.ToByteArray();
+                "The host could not process the request.",
+                ProtocolErrorCode.Internal).ToByteArray();
         }
 
         if (outcome.Status == HostRequestStatus.Completed && outcome.Result is not null)
@@ -1304,23 +1316,46 @@ public partial class MainWindow : Window
                 string.Empty).ToByteArray();
         }
 
-        var errorText = outcome.Status == HostRequestStatus.Busy
-            ? "The host is busy or temporarily unavailable; retry later."
-            : "The host cannot currently admit this request.";
+        if (outcome.Status == HostRequestStatus.Rejected &&
+            outcome.AdmissionFailure == HostRequestAdmissionFailure.DeadlineExpired)
+            throw new TimeoutException("The logical request deadline expired before admission.");
+
+        var busy = outcome.Status == HostRequestStatus.Busy ||
+            (outcome.Status == HostRequestStatus.Rejected &&
+             (outcome.AdmissionFailure == HostRequestAdmissionFailure.InactiveParticipation ||
+              outcome.AdmissionFailure == HostRequestAdmissionFailure.ModelNotReady));
+        var errorCode = busy
+            ? ProtocolErrorCode.HostBusy
+            : MapAdmissionErrorCode(outcome.AdmissionFailure ?? HostRequestAdmissionFailure.InvalidDeadline);
         return CreatePeerInferenceResponse(
             request,
             currentService.LocalPeerIdentity,
-            outcome.Status == HostRequestStatus.Busy ? InferenceOutcome.Failed : InferenceOutcome.Rejected,
+            busy ? InferenceOutcome.Failed : InferenceOutcome.Rejected,
             string.Empty,
-            errorText).ToByteArray();
+            busy ? "The host is busy or temporarily unavailable; retry later." : "The host cannot currently admit this request.",
+            errorCode).ToByteArray();
     }
+
+    private static ProtocolErrorCode MapAdmissionErrorCode(HostRequestAdmissionFailure failure) =>
+        failure switch
+        {
+            HostRequestAdmissionFailure.ModelMismatch => ProtocolErrorCode.UnsupportedModel,
+            HostRequestAdmissionFailure.ModelNotReady or HostRequestAdmissionFailure.InactiveParticipation =>
+                ProtocolErrorCode.HostBusy,
+            HostRequestAdmissionFailure.CapacityUnknown or HostRequestAdmissionFailure.CapacityInsufficient =>
+                ProtocolErrorCode.ResourceLimit,
+            HostRequestAdmissionFailure.DeadlineExpired => ProtocolErrorCode.RequestExpired,
+            HostRequestAdmissionFailure.InvalidDeadline => ProtocolErrorCode.InvalidMessage,
+            _ => ProtocolErrorCode.Internal
+        };
 
     private static InferenceResponse CreatePeerInferenceResponse(
         InferenceRequest request,
         string localPeerIdentity,
         InferenceOutcome outcome,
         string outputText,
-        string errorMessage)
+        string errorMessage,
+        ProtocolErrorCode errorCode = ProtocolErrorCode.Unspecified)
     {
         var response = new InferenceResponse
         {
@@ -1332,7 +1367,8 @@ public partial class MainWindow : Window
             OutputText = outputText,
             CompletedAtUnixMs = (ulong)Math.Max(1L, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
             ModelId = request.ModelId,
-            ErrorMessage = errorMessage
+            ErrorMessage = errorMessage,
+            ErrorCode = errorCode
         };
 
         PeerResponseCorrelationValidator.Validate(request, response, localPeerIdentity);

@@ -412,6 +412,18 @@ var oversizedResponseMessage = ProtocolMessageValidator.ValidateInferenceRespons
 Assert(!oversizedResponseMessage.IsValid, "An oversized serialized InferenceResponse must be rejected.");
 Assert(oversizedResponseMessage.ErrorCodeName == ProtocolMessageLimits.ResourceLimitErrorCode, "An oversized response must map to ResourceLimit.");
 
+var inconsistentResponseErrorCode = ProtocolMessageValidator.ValidateInferenceResponse(
+    "request-id", "attempt-id", "host-id", 1, "generated text", 1770000000999,
+    "fixture-model", string.Empty, 64, (int)ProtocolErrorCode.HostBusy);
+Assert(!inconsistentResponseErrorCode.IsValid,
+    "A successful inference response must not carry a non-empty protocol error code.");
+
+var validBusyFailureErrorCode = ProtocolMessageValidator.ValidateInferenceResponse(
+    "request-id", "attempt-id", "host-id", 2, string.Empty, 1770000000999,
+    "fixture-model", "busy", 64, (int)ProtocolErrorCode.HostBusy);
+Assert(validBusyFailureErrorCode.IsValid,
+    "A FAILED response must preserve the typed HOST_BUSY code.");
+
 Console.WriteLine("PASS: malformed, incomplete, oversized, incompatible-version and invalid-value messages are rejected.");
 
 

@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.whitep.shared.contracts.v1.InferenceOutcome
 import org.whitep.shared.contracts.v1.InferenceResponse
+import org.whitep.shared.contracts.v1.ProtocolErrorCode
 import java.net.URI
 import java.util.UUID
 
@@ -914,13 +915,51 @@ class RequestViewModel(
             return false
         }
 
+        val errorCodeIsConsistent = when (response.outcome) {
+            InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED,
+            InferenceOutcome.INFERENCE_OUTCOME_CANCELLED -> response.errorCode == ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED
+            InferenceOutcome.INFERENCE_OUTCOME_FAILED ->
+                response.errorCode in setOf(
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED,
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_HOST_BUSY,
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_RESOURCE_LIMIT,
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_INTERNAL,
+                )
+            InferenceOutcome.INFERENCE_OUTCOME_TIMED_OUT ->
+                response.errorCode in setOf(
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED,
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_REQUEST_EXPIRED,
+                )
+            InferenceOutcome.INFERENCE_OUTCOME_REJECTED ->
+                response.errorCode in setOf(
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED,
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_INVALID_MESSAGE,
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSUPPORTED_VERSION,
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSUPPORTED_MODEL,
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_REQUEST_EXPIRED,
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_RESOURCE_LIMIT,
+                    ProtocolErrorCode.PROTOCOL_ERROR_CODE_INTERNAL,
+                )
+            else -> false
+        }
+        if (!errorCodeIsConsistent) return false
+
         val errorCode =
             when (response.outcome) {
                 InferenceOutcome.INFERENCE_OUTCOME_SUCCEEDED -> null
-                InferenceOutcome.INFERENCE_OUTCOME_FAILED -> RequestErrorCode.INTERNAL
+                InferenceOutcome.INFERENCE_OUTCOME_FAILED ->
+                    if (response.errorCode == ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED) {
+                        RequestErrorCode.INTERNAL
+                    } else RequestErrorCode.fromProtocolCode(response.errorCode)
                 InferenceOutcome.INFERENCE_OUTCOME_CANCELLED -> RequestErrorCode.CANCELLED
-                InferenceOutcome.INFERENCE_OUTCOME_TIMED_OUT -> RequestErrorCode.REQUEST_EXPIRED
-                InferenceOutcome.INFERENCE_OUTCOME_REJECTED -> RequestErrorCode.VALIDATION_FAILED
+                InferenceOutcome.INFERENCE_OUTCOME_TIMED_OUT ->
+                    if (response.errorCode == ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED) {
+                        RequestErrorCode.REQUEST_EXPIRED
+                    } else RequestErrorCode.fromProtocolCode(response.errorCode)
+                InferenceOutcome.INFERENCE_OUTCOME_REJECTED ->
+                    if (response.errorCode == ProtocolErrorCode.PROTOCOL_ERROR_CODE_UNSPECIFIED) {
+                        RequestErrorCode.VALIDATION_FAILED
+                    } else RequestErrorCode.fromProtocolCode(response.errorCode)
                 else -> RequestErrorCode.UNKNOWN
             }
         val card =

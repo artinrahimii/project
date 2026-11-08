@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.47",
+  "commit_intent": "V 3.1.49",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -4068,8 +4068,8 @@
         "در صورت فعال بودن Streaming، ترتیب قطعه‌ها و پایان نهایی قابل تشخیص باشد.",
         "درخواست منقضی یا تکراری طبق سیاست مصوب رد شود."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "protocol/whitep/v1/messages.proto",
         "src/Shared.Contracts/",
@@ -4079,28 +4079,156 @@
         "tests/contracts/",
         "update/Step three/UPD-S1-017/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "protocol/whitep/v1/messages.proto",
+        "src/Shared.Contracts/ProtocolMessageValidator.cs",
+        "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RemoteRequestErrorParser.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RemoteRequestErrorParserTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "tests/test_message_validation.py",
+        "tests/test_request_error_codes.py",
+        "tests/test_android_libp2p_transport_contract.py"
+      ],
+      "evidence": [
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RemoteRequestErrorParserTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_message_validation.py",
+        "tests/test_request_error_codes.py",
+        "tests/test_android_libp2p_transport_contract.py",
+        "update/Step three/UPD-S1-017/evidence/protocol-error-correlation.md"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0032, T0033, T0034, T0035, T0036, T0107, T0108, T0109, T0110, T0111, T0112, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0189, T0190, T0191, T0192. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-017-20261108114610",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "protocol/whitep/v1/messages.proto",
+          "src/Shared.Contracts/ProtocolMessageValidator.cs",
+          "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+          "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/RemoteRequestErrorParser.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/RemoteRequestErrorParserTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+          "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
+          "tests/test_message_validation.py",
+          "tests/test_request_error_codes.py",
+          "tests/test_android_libp2p_transport_contract.py",
+          "update/Step three/UPD-S1-017/execution-report.md",
+          "update/Step three/UPD-S1-017/evidence/protocol-error-correlation.md",
+          "update/Step two/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
+          "state": "required",
+          "triggering_contracts": [
+            "Protobuf typed terminal error_code",
+            "ProtocolError/HostBusy/UnsupportedModel request-attempt-round correlation",
+            "Android authenticated peer/stream exact-match rule",
+            "Windows backend timeout versus absolute request deadline"
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "update/Step three/UPD-S1-017/evidence/protocol-error-correlation.md",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/RemoteRequestErrorParserTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-017-20261108114610",
+          "started_at": "2026-11-08T11:46:10.532Z",
+          "ended_at": "2026-11-08T11:46:10.532Z",
+          "result": "partial",
+          "summary": "Added typed Protobuf terminal error codes and strict request/attempt/round correlation for side-error envelopes across Windows and Android. Updated C#, Kotlin and Python tests. Exact-commit CI is pending.",
+          "changed_files": [
+            "protocol/whitep/v1/messages.proto",
+            "src/Shared.Contracts/ProtocolMessageValidator.cs",
+            "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+            "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/RemoteRequestErrorParser.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/RemoteRequestErrorParserTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/RequestIdentityIndependenceAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/Program.cs",
+            "tests/test_message_validation.py",
+            "tests/test_request_error_codes.py",
+            "tests/test_android_libp2p_transport_contract.py",
+            "update/Step three/UPD-S1-017/execution-report.md",
+            "update/Step three/UPD-S1-017/evidence/protocol-error-correlation.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Windows HostLifecycle/shared protocol validator",
+              "command": "dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "pending",
+              "summary": "Typed error mapper, outcome/code validator and exact attempt/round echo."
+            },
+            {
+              "name": "Android unit tests",
+              "command": "gradle --no-daemon testDebugUnitTest",
+              "result": "pending",
+              "summary": "Error parser rejects missing attempt/round; ViewModel preserves typed HOST_BUSY/UNSUPPORTED_MODEL outcomes."
+            },
+            {
+              "name": "Python protocol/error/transport contracts",
+              "command": "python -m unittest tests.test_message_validation tests.test_request_error_codes tests.test_android_libp2p_transport_contract -v",
+              "result": "pending",
+              "summary": "Source contracts for additive fields, terminal error validation and exact pending attempt matching."
+            },
+            {
+              "name": "Exact-head quality/product workflows",
+              "command": "quality.yml and product-build.yml on the exact commit",
+              "result": "pending",
+              "summary": "All Python tests, C# HostLifecycle and Android build/unit tests must pass."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Added InferenceResponse.error_code field 10 and attempt_id/round_id on ProtocolError, HostBusy and UnsupportedModel.",
+            "Windows now maps real admission/backend failures to stable typed outcomes; absolute deadline expiry does not emit a late response.",
+            "Android side-errors only complete the exact pending AttemptKey and matching round/peer/controller/model; UI displays typed protocol codes."
+          ],
+          "follow_up": "Run exact-head quality and product CI. Fix only failures demonstrated on this commit, then record exact run IDs and commit SHA.",
+          "device_and_host_details_redacted": "No physical Android handset or target Windows user host was used; validation is through controlled CI/harness only.",
+          "model_revision_and_sha256": "Not applicable.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        }
+      ]
     },
     {
       "id": "UPD-S1-018",
@@ -5348,33 +5476,39 @@
       "from": "UPD-S1-002",
       "to": "UPD-S1-017",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-017 در V1.10، UPD-S1-002 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "The approved direct authenticated P2P and metadata-only rendezvous boundary defines the trust and error-origin assumptions for the shared request/response envelope; the updated side-error correlation is enforced only on the authenticated peer stream.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs"
       ]
     },
     {
       "from": "UPD-S1-003",
       "to": "UPD-S1-017",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-017 در V1.10، UPD-S1-003 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "The approved one-host-per-round, sequential-attempt and explicit-retry policy requires every response/error to bind to one exact attempt and round; request-ID-only matching could fail multiple attempts for one logical request.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "docs/decisions/ADR-0022-single-host-sequential-retry.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/InferenceResponseCorrelationValidator.kt"
       ]
     },
     {
       "from": "UPD-S1-004",
       "to": "UPD-S1-017",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-017 در V1.10، UPD-S1-004 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "The approved first release uses one complete terminal response and defers streaming; the additive error_code extends that terminal envelope and adds no response chunks or streaming state.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "docs/decisions/ADR-0023-one-shot-inference-v1.md",
+        "protocol/whitep/v1/messages.proto",
+        "src/Host.Windows/MainWindow.xaml.cs"
       ]
     },
     {
@@ -5982,10 +6116,10 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T11:24:50.814Z",
+    "as_of": "2026-11-08T11:46:10.532Z",
     "total_tasks": 24,
-    "not_started": 17,
-    "in_progress": 0,
+    "not_started": 16,
+    "in_progress": 1,
     "done": 7,
     "blocked": 0,
     "verified_completion_percentage": 29.166666666666668,
@@ -6103,7 +6237,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T11:24:50.814Z",
+  "updated_at": "2026-11-08T11:46:10.532Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",

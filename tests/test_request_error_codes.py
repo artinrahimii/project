@@ -69,6 +69,15 @@ class RequestErrorCodeTests(unittest.TestCase):
         self.assertNotIn("unsupported.message", PARSER)
         self.assertIn("RemoteRequestErrorParser.parse(payload)", TRANSPORT)
         self.assertIn("RequestExecutionException(remoteError.errorCode)", TRANSPORT)
+        self.assertIn("val attemptId: String", PARSER)
+        self.assertIn("val roundId: String", PARSER)
+        self.assertIn("error.attemptId.isNotBlank()", PARSER)
+        self.assertIn("error.roundId.isNotBlank()", PARSER)
+        self.assertIn("val key = AttemptKey(remoteError.requestId, remoteError.attemptId)", TRANSPORT)
+        self.assertIn("pending.roundId == remoteError.roundId", TRANSPORT)
+        self.assertNotIn("pendingAttempts.entries.filter", TRANSPORT)
+        self.assertIn("response.errorCode", VIEW_MODEL)
+        self.assertIn("ProtocolErrorCode error_code = 10;", PROTO)
 
     def test_each_failed_android_attempt_keeps_a_user_displayable_code(self):
         self.assertIn("val errorCode: RequestErrorCode?", VIEW_MODEL)

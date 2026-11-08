@@ -19,6 +19,8 @@ class RemoteRequestErrorParserTest {
                 .newBuilder()
                 .setCode(ProtocolErrorCode.PROTOCOL_ERROR_CODE_RESOURCE_LIMIT)
                 .setRequestId("request-resource")
+                .setAttemptId("attempt-resource")
+                .setRoundId("round-resource")
                 .setMessage("C:\\private\\token.json")
                 .setRetryable(false)
                 .build()
@@ -26,6 +28,8 @@ class RemoteRequestErrorParserTest {
 
         val parsed = requireNotNull(RemoteRequestErrorParser.parse(payload))
         assertEquals("request-resource", parsed.requestId)
+        assertEquals("attempt-resource", parsed.attemptId)
+        assertEquals("round-resource", parsed.roundId)
         assertEquals(RequestErrorCode.RESOURCE_LIMIT, parsed.errorCode)
         assertNull(parsed.ephemeralHostId)
         assertNull(parsed.modelId)
@@ -37,6 +41,8 @@ class RemoteRequestErrorParserTest {
             HostBusy
                 .newBuilder()
                 .setRequestId("request-busy")
+                .setAttemptId("attempt-busy")
+                .setRoundId("round-busy")
                 .setEphemeralHostId("12D3KooWPeerIdentity")
                 .setRetryAfterUnixMs(1_800_000_000_000L)
                 .setMessage("untrusted busy detail")
@@ -45,6 +51,8 @@ class RemoteRequestErrorParserTest {
 
         val parsed = requireNotNull(RemoteRequestErrorParser.parse(payload))
         assertEquals("request-busy", parsed.requestId)
+        assertEquals("attempt-busy", parsed.attemptId)
+        assertEquals("round-busy", parsed.roundId)
         assertEquals(RequestErrorCode.HOST_BUSY, parsed.errorCode)
         assertEquals("12D3KooWPeerIdentity", parsed.ephemeralHostId)
     }
@@ -55,6 +63,8 @@ class RemoteRequestErrorParserTest {
             UnsupportedModel
                 .newBuilder()
                 .setRequestId("request-model")
+                .setAttemptId("attempt-model")
+                .setRoundId("round-model")
                 .setModelId("model/missing")
                 .setMessage("private model server detail")
                 .build()
@@ -62,8 +72,35 @@ class RemoteRequestErrorParserTest {
 
         val parsed = requireNotNull(RemoteRequestErrorParser.parse(payload))
         assertEquals("request-model", parsed.requestId)
+        assertEquals("attempt-model", parsed.attemptId)
+        assertEquals("round-model", parsed.roundId)
         assertEquals("model/missing", parsed.modelId)
         assertEquals(RequestErrorCode.MODEL_UNAVAILABLE, parsed.errorCode)
+    }
+
+    @Test
+    fun ignoresTypedErrorsMissingAttemptOrRoundCorrelation() {
+        val protocolError = ProtocolError.newBuilder()
+            .setCode(ProtocolErrorCode.PROTOCOL_ERROR_CODE_HOST_BUSY)
+            .setRequestId("request-only")
+            .build()
+            .toByteArray()
+        assertNull(RemoteRequestErrorParser.parse(protocolError))
+
+        val busy = HostBusy.newBuilder()
+            .setRequestId("request-busy")
+            .setEphemeralHostId("12D3KooWPeerIdentity")
+            .setRetryAfterUnixMs(1_800_000_000_000L)
+            .build()
+            .toByteArray()
+        assertNull(RemoteRequestErrorParser.parse(busy))
+
+        val unsupported = UnsupportedModel.newBuilder()
+            .setRequestId("request-model")
+            .setModelId("model/missing")
+            .build()
+            .toByteArray()
+        assertNull(RemoteRequestErrorParser.parse(unsupported))
     }
 
     @Test

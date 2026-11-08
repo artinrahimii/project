@@ -55,6 +55,8 @@ class InvalidMessageContractTests(unittest.TestCase):
             "deadlineUnixMs <= (ulong)nowUnixMs",
             "maxOutputTokens == 0",
             "outcomeValue < 1 || outcomeValue > 5",
+            "errorCodeValue < 0 || errorCodeValue > 7",
+            "errorCodeMatchesOutcome",
         ):
             with self.subTest(check=required):
                 self.assertIn(required, VALIDATOR)

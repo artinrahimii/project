@@ -31,7 +31,7 @@ public static class PeerResponseCorrelationValidator
         var validation = ProtocolMessageValidator.ValidateInferenceResponse(
             response.RequestId, response.AttemptId, response.EphemeralHostId, (int)response.Outcome,
             response.OutputText, response.CompletedAtUnixMs, response.ModelId, response.ErrorMessage,
-            response.CalculateSize());
+            response.CalculateSize(), (int)response.ErrorCode);
         if (!validation.IsValid)
             throw new InvalidDataException("The peer response does not satisfy the protocol message contract.");
     }

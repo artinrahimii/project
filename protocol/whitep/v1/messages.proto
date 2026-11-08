@@ -90,6 +90,7 @@ message InferenceResponse {
   string error_message = 8;
   // Must echo the request's ephemeral dispatch round identifier.
   string round_id = 9;
+  ProtocolErrorCode error_code = 10;
 }
 
 message CancelRequest {
@@ -103,12 +104,16 @@ message HostBusy {
   string ephemeral_host_id = 2;
   uint64 retry_after_unix_ms = 3;
   string message = 4;
+  string attempt_id = 5;
+  string round_id = 6;
 }
 
 message UnsupportedModel {
   string request_id = 1;
   string model_id = 2;
   string message = 3;
+  string attempt_id = 4;
+  string round_id = 5;
 }
 
 message HostStatusRequest {
@@ -130,4 +135,6 @@ message ProtocolError {
   string message = 2;
   string request_id = 3;
   bool retryable = 4;
+  string attempt_id = 5;
+  string round_id = 6;
 }

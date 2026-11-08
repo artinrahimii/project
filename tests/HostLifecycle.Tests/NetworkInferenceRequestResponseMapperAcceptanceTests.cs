@@ -22,16 +22,18 @@ internal static class NetworkInferenceRequestResponseMapperAcceptanceTests
     {
         var now = DateTimeOffset.FromUnixTimeMilliseconds(1_800_000_000_000);
         var busy = NetworkInferenceRequestResponseMapper.MapAdmissionOutcome(
-            HostRequestOutcome<string>.Busy(), "request-busy", "model-a", "host-a", now);
+            HostRequestOutcome<string>.Busy(), "request-busy", "attempt-busy", "round-busy", "model-a", "host-a", now);
         Assert(busy is HostBusy, "A Busy admission outcome must map to the HostBusy contract.");
         var response = (HostBusy)busy;
         Assert(response.RequestId == "request-busy", "HostBusy must preserve the request ID.");
+        Assert(response.AttemptId == "attempt-busy" && response.RoundId == "round-busy",
+            "HostBusy must preserve the exact attempt/round IDs.");
         Assert(response.EphemeralHostId == "host-a", "HostBusy must identify the responding host.");
         Assert(response.RetryAfterUnixMs > (ulong)now.ToUnixTimeMilliseconds(), "HostBusy must suggest a future retry time.");
 
         var notReady = NetworkInferenceRequestResponseMapper.MapAdmissionOutcome(
             HostRequestOutcome<string>.Rejected(HostRequestAdmissionFailure.ModelNotReady, "private-state"),
-            "request-not-ready", "model-a", "host-a", now);
+            "request-not-ready", "attempt-not-ready", "round-not-ready", "model-a", "host-a", now);
         Assert(notReady is HostBusy, "A not-ready host must map to a retryable busy-state contract rather than a model mismatch.");
         Assert(((HostBusy)notReady).Message == "The host is busy or temporarily unavailable.", "Busy messages must be stable and sanitized.");
     }
@@ -41,28 +43,32 @@ internal static class NetworkInferenceRequestResponseMapperAcceptanceTests
         var outcome = HostRequestOutcome<string>.Rejected(
             HostRequestAdmissionFailure.ModelMismatch, "internal model lookup detail");
         var mapped = NetworkInferenceRequestResponseMapper.MapAdmissionOutcome(
-            outcome, "request-model", "missing/model", "host-a",
+            outcome, "request-model", "attempt-model", "round-model", "missing/model", "host-a",
             DateTimeOffset.FromUnixTimeMilliseconds(1_800_000_000_000));
         Assert(mapped is UnsupportedModel, "A model mismatch must map to the UnsupportedModel contract.");
         var response = (UnsupportedModel)mapped;
         Assert(response.RequestId == "request-model" && response.ModelId == "missing/model", "UnsupportedModel must preserve request/model identifiers.");
+        Assert(response.AttemptId == "attempt-model" && response.RoundId == "round-model",
+            "UnsupportedModel must preserve attempt/round identifiers.");
         Assert(!response.Message.Contains("internal model lookup detail", StringComparison.Ordinal), "UnsupportedModel must not expose internal admission details.");
     }
 
     private static void InvalidRequestCodesMapToProtocolErrors()
     {
         var invalid = NetworkInferenceRequestResponseMapper.CreateInvalidRequest(
-            "request-invalid",
+            "request-invalid", "attempt-invalid", "round-invalid",
             new ProtocolMessageValidationResult(
                 ProtocolMessageValidationKind.InvalidMessage,
                 ProtocolVersionPolicy.InvalidMessageErrorCode,
                 "untrusted request text"));
         Assert(invalid.Code == ProtocolErrorCode.InvalidMessage && invalid.RequestId == "request-invalid", "Invalid requests must map to ProtocolError INVALID_MESSAGE.");
+        Assert(invalid.AttemptId == "attempt-invalid" && invalid.RoundId == "round-invalid",
+            "ProtocolError must preserve attempt/round identifiers.");
         Assert(!invalid.Retryable, "Invalid requests must not be marked retryable.");
         Assert(!invalid.Message.Contains("untrusted request text", StringComparison.Ordinal), "Validation details must not echo untrusted request content.");
 
         var unsupported = NetworkInferenceRequestResponseMapper.CreateInvalidRequest(
-            "request-version",
+            "request-version", "attempt-version", "round-version",
             new ProtocolMessageValidationResult(
                 ProtocolMessageValidationKind.UnsupportedVersion,
                 ProtocolVersionPolicy.UnsupportedVersionErrorCode,
@@ -70,7 +76,7 @@ internal static class NetworkInferenceRequestResponseMapperAcceptanceTests
         Assert(unsupported.Code == ProtocolErrorCode.UnsupportedVersion, "Unsupported request versions must retain the UnsupportedVersion contract code.");
 
         var expired = NetworkInferenceRequestResponseMapper.CreateInvalidRequest(
-            "request-expired",
+            "request-expired", "attempt-expired", "round-expired",
             new ProtocolMessageValidationResult(
                 ProtocolMessageValidationKind.RequestExpired,
                 ProtocolMessageValidator.RequestExpiredErrorCode,
@@ -82,7 +88,7 @@ internal static class NetworkInferenceRequestResponseMapperAcceptanceTests
     {
         var mapped = NetworkInferenceRequestResponseMapper.MapAdmissionOutcome(
             HostRequestOutcome<string>.Rejected(HostRequestAdmissionFailure.CapacityInsufficient, "private capacity detail"),
-            "request-capacity", "model-a", "host-a",
+            "request-capacity", "attempt-capacity", "round-capacity", "model-a", "host-a",
             DateTimeOffset.FromUnixTimeMilliseconds(1_800_000_000_000));
         Assert(mapped is ProtocolError, "Capacity failure must use the ProtocolError contract.");
         Assert(((ProtocolError)mapped).Code == ProtocolErrorCode.ResourceLimit, "Capacity failure must map to RESOURCE_LIMIT.");
@@ -91,9 +97,11 @@ internal static class NetworkInferenceRequestResponseMapperAcceptanceTests
 
     private static void InternalFailureIsSanitized()
     {
-        var response = NetworkInferenceRequestResponseMapper.CreateInternalError("request-internal");
+        var response = NetworkInferenceRequestResponseMapper.CreateInternalError("request-internal", "attempt-internal", "round-internal");
         Assert(response.Code == ProtocolErrorCode.Internal, "Internal failures must map to PROTOCOL_ERROR_CODE_INTERNAL.");
         Assert(response.RequestId == "request-internal", "Internal error must preserve the request ID.");
+        Assert(response.AttemptId == "attempt-internal" && response.RoundId == "round-internal",
+            "Internal error must preserve attempt/round identifiers.");
         Assert(response.Message == "The host could not process the request.", "Internal errors must use a stable message without exception details.");
         Assert(!response.Retryable, "Internal failures must not be advertised as retryable without evidence that retry is safe.");
     }

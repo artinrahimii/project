@@ -609,26 +609,21 @@ class Libp2pInferenceRequestTransport(
 
         val remoteError = RemoteRequestErrorParser.parse(payload)
         if (remoteError != null) {
-            val matchingAttempts =
-                pendingAttempts.entries.filter { entry ->
-                    val key = entry.key
-                    val pending = entry.value
-                    key.requestId == remoteError.requestId &&
-                        pending.peerId == authenticatedPeerId &&
-                        pending.controller === controller &&
-                        (remoteError.ephemeralHostId == null || remoteError.ephemeralHostId == authenticatedPeerId) &&
-                        (remoteError.modelId == null || remoteError.modelId == pending.modelId)
-                }
-            if (matchingAttempts.isEmpty()) {
+            val key = AttemptKey(remoteError.requestId, remoteError.attemptId)
+            val pending = pendingAttempts[key]
+            val exactMatch =
+                pending != null &&
+                    pending.peerId == authenticatedPeerId &&
+                    pending.controller === controller &&
+                    pending.roundId == remoteError.roundId &&
+                    (remoteError.ephemeralHostId == null || remoteError.ephemeralHostId == authenticatedPeerId) &&
+                    (remoteError.modelId == null || remoteError.modelId == pending.modelId)
+            if (!exactMatch || pending == null) {
                 unmatchedResponseFrames.incrementAndGet()
                 lastUnmatchedPayloadBytes.set(payload.size.toLong())
                 lastUnmatchedFirstTag.set(payload.firstOrNull()?.toUByte()?.toLong() ?: -1L)
             } else {
-                matchingAttempts.forEach { entry ->
-                    entry.value.response.completeExceptionally(
-                        RequestExecutionException(remoteError.errorCode),
-                    )
-                }
+                pending.response.completeExceptionally(RequestExecutionException(remoteError.errorCode))
             }
             return
         }
