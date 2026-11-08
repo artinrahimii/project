@@ -65,11 +65,14 @@ class ProtoContractTests(unittest.TestCase):
         for declaration in (
             r"string\s+request_id\s*=\s*1\s*;",
             r"string\s+attempt_id\s*=\s*2\s*;",
+            r"string\s+ephemeral_host_id\s*=\s*3\s*;",
             r"InferenceOutcome\s+outcome\s*=\s*4\s*;",
             r"string\s+output_text\s*=\s*5\s*;",
             r"uint64\s+completed_at_unix_ms\s*=\s*6\s*;",
+            r"string\s+model_id\s*=\s*7\s*;",
             r"string\s+error_message\s*=\s*8\s*;",
             r"string\s+round_id\s*=\s*9\s*;",
+            r"ProtocolErrorCode\s+error_code\s*=\s*10\s*;",
         ):
             with self.subTest(field=declaration):
                 self.assertRegex(body, declaration)
@@ -92,13 +95,35 @@ class ProtoContractTests(unittest.TestCase):
                 self.assertRegex(announcement_body, declaration)
         for declaration in (
             r"string\s+ephemeral_host_id\s*=\s*1\s*;",
+            r"string\s+protocol_version\s*=\s*2\s*;",
             r"repeated\s+ModelCapability\s+models\s*=\s*3\s*;",
             r"uint32\s+max_concurrent_requests\s*=\s*4\s*;",
+            r"uint64\s+max_context_capsule_bytes\s*=\s*5\s*;",
+            r"uint64\s+max_prompt_bytes\s*=\s*6\s*;",
         ):
             with self.subTest(capability_field=declaration):
                 self.assertRegex(capabilities_body, declaration)
-        self.assertNotRegex(announcement_body, r"(?i)\b(?:prompt|request_text|user_id|permanent_user_id|account_id)\b")
-        self.assertNotRegex(capabilities_body, r"(?i)\b(?:prompt|request_text|user_id|permanent_user_id|account_id)\b")
+
+        model_capability = re.search(r"message\s+ModelCapability\s*\{([^{}]*)\}", SCHEMA, re.S)
+        self.assertIsNotNone(model_capability)
+        for declaration in (
+            r"string\s+model_id\s*=\s*1\s*;",
+            r"string\s+display_name\s*=\s*2\s*;",
+            r"uint64\s+max_context_tokens\s*=\s*3\s*;",
+            r"uint64\s+max_output_tokens\s*=\s*4\s*;",
+            r"bool\s+supports_streaming\s*=\s*5\s*;",
+        ):
+            with self.subTest(model_capability_field=declaration):
+                self.assertRegex(model_capability.group(1), declaration)
+
+        forbidden_discovery_fields = r"(?i)\b(?:prompt|request_text|user_id|permanent_user_id|account_id|conversation_history|response_text)\b"
+        for message_name, message_body in (
+            ("HostAnnouncement", announcement_body),
+            ("HostCapabilities", capabilities_body),
+            ("ModelCapability", model_capability.group(1)),
+        ):
+            with self.subTest(message=message_name):
+                self.assertNotRegex(message_body, forbidden_discovery_fields)
 
 
     def test_cancellation_busy_unsupported_model_and_protocol_error_messages_have_required_fields(self):
