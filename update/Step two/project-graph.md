@@ -1755,8 +1755,8 @@
         "اگر Streaming انتخاب شد، ترتیب قطعه‌ها، پایان، خطا، timeout و لغو تعریف شده باشند.",
         "اگر به نسخهٔ بعد منتقل شد، رفتار قابل‌قبول نسخهٔ اولیه و محدودهٔ تعویق ثبت شده باشد."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "expected_output_paths": [
         "docs/decisions/",
         "protocol/whitep/v1/messages.proto",
@@ -1777,21 +1777,25 @@
         "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
         "tests/test_inference_streaming_scope.py",
         "update/Step three/UPD-S1-004/execution-report.md",
-        "update/Step three/UPD-S1-004/evidence/decision-review.md"
+        "update/Step three/UPD-S1-004/evidence/decision-review.md",
+        "docs/decisions/README.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-004/evidence/decision-review.md",
         "tests/test_inference_streaming_scope.py",
         "tests/test_proto_contract.py",
         "tests/test_android_libp2p_transport_contract.py",
-        "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs"
+        "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42463288660",
+        "https://github.com/artinrahimii/project/actions/runs/42463288704",
+        "https://github.com/artinrahimii/project/actions/runs/42463288598"
       ],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0032, T0107, T0110, T0111, T0112, T0147, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. تصمیم اجرای نسخهٔ نخست: پاسخ terminal یک‌باره؛ Streaming تا نسخهٔ بعد deferred. فیلد supports_streaming فقط metadata باقی می‌ماند و backend فعلی false گزارش می‌کند؛ قرارداد و کد سالم Protobuf تغییر نکرده‌اند. گزارش و آزمون regression افزوده شده‌اند؛ CI دقیق commit این تلاش هنوز pending است. CI commit V 3.1.39 run 42463139418 شکست آزمون quality را گزارش کرد: regexهای test جدید بیش‌ازحد escape شده بودند، assertion ساخت RequestBuilder با چینش چندخطی سازگار نبود و ADR در README register نشده بود. این سه نقص تست/ردیابی در V 3.1.40 اصلاح شده‌اند؛ محصول دست‌نخورده مانده و CI اصلاحیه pending است.",
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0032, T0107, T0110, T0111, T0112, T0147, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. تصمیم اجرای نسخهٔ نخست: پاسخ terminal یک‌باره؛ Streaming تا نسخهٔ بعد deferred. فیلد supports_streaming فقط metadata باقی می‌ماند و backend فعلی false گزارش می‌کند؛ قرارداد و کد سالم Protobuf تغییر نکرده‌اند. گزارش و آزمون regression افزوده شده‌اند؛ CI دقیق commit این تلاش هنوز pending است. CI commit V 3.1.39 run 42463139418 شکست آزمون quality را گزارش کرد: regexهای test جدید بیش‌ازحد escape شده بودند، assertion ساخت RequestBuilder با چینش چندخطی سازگار نبود و ADR در README register نشده بود. این سه نقص تست/ردیابی در V 3.1.40 اصلاح شده‌اند؛ محصول دست‌نخورده مانده و CI اصلاحیه pending است. تکمیل تأیید شد: V 3.1.40 با SHA دقیق 380c89043d7e2cfce7bc50926419a1a682aaf0cb؛ چهار آزمون streaming-scope، کل quality gate (۴۷۲ تست)، Android/Windows/HostLifecycle و Rendezvous موفق شدند. تصمیم نسخهٔ نخست پاسخ نهایی یک‌باره است و Streaming تا طراحی قرارداد chunk مجزا به تعویق افتاده است.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-004-20261108083100",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "UPD-S1-004-20261108084203",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "docs/decisions/ADR-0023-one-shot-inference-v1.md",
           "tests/test_inference_streaming_scope.py",
@@ -1801,10 +1805,15 @@
           "docs/decisions/README.md"
         ],
         "related_commits": [
-          "71ddc79726691c4c437ea4d8f97ca9866618eb9c"
+          "71ddc79726691c4c437ea4d8f97ca9866618eb9c",
+          "380c89043d7e2cfce7bc50926419a1a682aaf0cb"
         ],
         "tests_passed": [
-          "Existing Protobuf contract, Android transport contract and Windows backend capability tests pass in the exact V 3.1.38 CI suite."
+          "Existing Protobuf contract, Android transport contract and Windows backend capability tests pass in the exact V 3.1.38 CI suite.",
+          "V 3.1.40 quality gate: all 472 Python tests passed, including four inference streaming scope regression tests; graph and decision traceability validation passed (run 42463288660).",
+          "V 3.1.40 product build: Android debug APK build and test suites, Windows WPF/installer build and HostLifecycle acceptance all passed (run 42463288704).",
+          "Android JUnit: 224 passed, 0 failed, 1 skipped; HostLifecycle 67 critical PASS markers, 1 skip, 85.76% line coverage (artifacts 13610895903, 13610099035, 13610288694, 13610527167).",
+          "V 3.1.40 rendezvous container build and smoke passed (run 42463288598)."
         ],
         "tests_failed": [
           "V 3.1.39 quality run 42463139418: 472 Python tests ran; 4 failures were in the new test/decision-register changes (over-escaped regexes, single-line builder assertion, and missing ADR registration). Corrected in V 3.1.40; exact CI pending."
@@ -1818,7 +1827,9 @@
           "review_evidence": [
             "docs/decisions/ADR-0023-one-shot-inference-v1.md",
             "docs/decisions/README.md",
-            "tests/test_inference_streaming_scope.py"
+            "tests/test_inference_streaming_scope.py",
+            "https://github.com/artinrahimii/project/actions/runs/42463288660",
+            "https://github.com/artinrahimii/project/actions/runs/42463288704"
           ]
         }
       },
@@ -1923,6 +1934,76 @@
           "device_and_host_details_redacted": "Awaiting GitHub-hosted CI; no physical device or host access.",
           "model_revision_and_sha256": "Not applicable.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-004-20261108084203",
+          "started_at": "2026-11-08T08:31:22Z",
+          "ended_at": "2026-11-08T08:42:03Z",
+          "result": "succeeded",
+          "summary": "The exact V 3.1.40 commit passed all required checks for the first-release one-shot response decision. The complete Step Three quality gate passed all 472 Python tests, including all four new inference-streaming scope regression tests. Windows, Android and HostLifecycle product jobs all succeeded; Android uploaded a real debug APK, Android JVM/instrumentation reports show 224 passed, 0 failed and 1 skipped; Windows uploaded the built WPF host, installer and publish outputs; HostLifecycle logged 67 pass markers with 85.76% line coverage. Rendezvous container build/smoke also passed. The accepted first-release decision is one complete correlated terminal response; streaming is deferred until a separately versioned chunk protocol is designed and accepted.",
+          "changed_files": [
+            "docs/decisions/ADR-0023-one-shot-inference-v1.md",
+            "docs/decisions/README.md",
+            "tests/test_inference_streaming_scope.py",
+            "update/Step three/UPD-S1-004/execution-report.md",
+            "update/Step three/UPD-S1-004/evidence/decision-review.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": "380c89043d7e2cfce7bc50926419a1a682aaf0cb",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact V 3.1.40",
+              "result": "passed",
+              "run_id": 42463288660,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42463288660",
+              "summary": "All 472 Python tests passed. The four test_inference_streaming_scope regression tests passed; graph guards, decision traceability and update contract tests passed."
+            },
+            {
+              "name": "Windows, Android and HostLifecycle product build",
+              "command": "product-build.yml on exact V 3.1.40",
+              "result": "passed",
+              "run_id": 42463288704,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42463288704",
+              "summary": "Android build job, Windows WPF/installer job and HostLifecycle job all succeeded. Artifacts include Android debug APK, Windows installer, Windows publish and host outputs, Android JUnit/coverage reports and HostLifecycle critical/coverage report."
+            },
+            {
+              "name": "Android tests and coverage",
+              "command": "product-build.yml Android unit/JVM/instrumentation tests",
+              "result": "passed",
+              "run_id": 42463288704,
+              "artifact_ids": [
+                13610895903,
+                13610099035,
+                13610288694
+              ],
+              "summary": "JUnit artifact validator recorded 225 tests: 224 passed, 0 failures, 1 skipped; Android instrumentation used emulator runner. This is not physical handset acceptance."
+            },
+            {
+              "name": "Windows HostLifecycle acceptance",
+              "command": "product-build.yml HostLifecycle executable tests",
+              "result": "passed",
+              "run_id": 42463288704,
+              "artifact_id": 13610527167,
+              "summary": "67 critical pass markers, one skip marker, 85.76% line coverage; replay, message integrity/correlation, consent disclosure, identity/trust, secure channel, logging, memory cleanup and request lifecycle acceptance markers passed."
+            },
+            {
+              "name": "Rendezvous container build and smoke",
+              "command": "rendezvous-container.yml on exact V 3.1.40",
+              "result": "passed",
+              "run_id": 42463288598,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42463288598",
+              "summary": "Container build and smoke job passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue with UPD-S1-007, then UPD-S1-006. Physical Android-to-Windows acceptance, product clean install on target devices, in-place upgrade and release packaging remain separate requirements.",
+          "device_and_host_details_redacted": "GitHub-hosted Ubuntu Android runner and GitHub-hosted Windows runner. The Android tests included emulator instrumentation; Windows used CI runner startup/installer checks. No physical user handset or external target Windows host was connected.",
+          "model_revision_and_sha256": "This task is limited to the one-shot response scope and contract decision; local model SHA evidence is recorded under UPD-S1-005 and does not imply Android-to-Windows product E2E.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed. No clean installation or in-place upgrade is claimed by UPD-S1-004."
         }
       ]
     },
