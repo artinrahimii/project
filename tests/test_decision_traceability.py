@@ -531,6 +531,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
             "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
             "tests/HostLifecycle.Tests/Program.cs",
             "tests/test_local_config_safety.py",
+            "tests/test_host_resource_settings.py",
             ".github/workflows/product-build.yml",
         )
         self.assertTrue((ROOT / "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md").is_file())
@@ -547,7 +548,11 @@ class DecisionTraceabilityTests(unittest.TestCase):
         safety_tests = (ROOT / "tests/test_local_config_safety.py").read_text(encoding="utf-8")
 
         self.assertIn("REQ-014", requirements)
-        self.assertIn("CurrentSchemaVersion = 1", store)
+        self.assertIn("CurrentSchemaVersion = 2", store)
+        self.assertIn("document.SchemaVersion != 1", store)
+        self.assertIn("document.SchemaVersion == 1", store)
+        self.assertIn("RequiredModelMemoryGiB", store)
+        self.assertIn("MinimumFreeDiskGiB", store)
         self.assertIn("Environment.SpecialFolder.LocalApplicationData", store)
         self.assertIn("endpoint.IsLoopback", store)
         self.assertIn("endpoint.UserInfo.Length != 0", store)
@@ -558,12 +563,15 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("settingsLoadFailed = true;", window)
         self.assertIn("LocalHostSettingsPersistenceTests.Run();", harness)
         self.assertIn("LoadsLegacySettingsWithoutSelection", persistence_tests)
+        self.assertIn("RejectsInvalidCapacityRequirements", persistence_tests)
+        self.assertIn("Schema v1 migration must use the documented 4 GiB RAM default.", persistence_tests)
         self.assertIn("Failed validation must not rewrite the user's invalid settings file.", persistence_tests)
         self.assertIn("test_wpf_startup_contains_semantically_invalid_or_unreadable_settings", safety_tests)
         self.assertIn("test_environment_example_is_allowlisted_and_non_secret", safety_tests)
         self.assertIn("not auto-loaded", (ROOT / ".env.example").read_text(encoding="utf-8"))
         self.assertIn("LocalHostSettingsStore.cs", ADR12_LOCAL_SETTINGS)
         self.assertIn("This is not an OS permission/ACL audit", ADR12_LOCAL_SETTINGS)
+        self.assertIn("tests/test_host_resource_settings.py", ADR12_LOCAL_SETTINGS)
         self.assertIn("ADR-0012-local-settings-validation-and-persistence.md", REGISTER)
 
 

@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.36",
+  "commit_intent": "V 3.1.37",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -1799,8 +1799,8 @@
         "شرایط عدم پذیرش درخواست و توقف مشارکت مشخص باشند.",
         "سقف یک inference هم‌زمان حفظ شود مگر اینکه تصمیم مستند و آزمون ظرفیت آن را تغییر دهد."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
       "expected_output_paths": [
         "src/Host.Domain/",
         "src/Host.Application/",
@@ -1808,28 +1808,123 @@
         "tests/HostLifecycle.Tests/",
         "update/Step three/UPD-S1-005/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0049, T0050, T0051, T0052, T0053, T0054, T0055, T0056, T0098, T0099, T0100, T0101, T0102, T0103, T0104, T0105, T0106, T0107, T0196. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
+      "actual_output_paths": [
+        "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
+        "tests/test_host_resource_settings.py",
+        "tests/test_decision_traceability.py",
+        "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md",
+        "update/Step three/UPD-S1-005/execution-report.md",
+        "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
+      ],
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0049, T0050, T0051, T0052, T0053, T0054, T0055, T0056, T0098, T0099, T0100, T0101, T0102, T0103, T0104, T0105, T0106, T0107, T0196. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. حدهای RAM و فضای دیسکِ قابل اندازه‌گیری به تنظیمات پایدار منتقل شدند. CPU/GPU/VRAM/idle/AC به‌علت نبود سنجش و enforce معتبر، محدودیت قابل‌تنظیم معرفی نشده‌اند. CI کد جدید pending است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-005-20261108073039",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/MainWindow.xaml",
+          "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
+          "tests/test_host_resource_settings.py",
+          "tests/test_decision_traceability.py",
+          "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md",
+          "update/Step three/UPD-S1-005/execution-report.md",
+          "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
+        ],
         "related_commits": [],
-        "tests_passed": [],
+        "tests_passed": [
+          "V 3.1.36 Windows build/installer and HostLifecycle tests passed before this change; baseline only."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "required",
+          "triggering_contracts": [
+            "LocalHostSettings persisted schema",
+            "WPF resource-threshold UI",
+            "Host readiness and peer admission"
+          ],
+          "affected_by_contract_changes": [
+            "Windows settings load/save",
+            "HostLifecycle persistence tests",
+            "Python source contracts"
+          ],
+          "review_evidence": [
+            "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-005-20261108073039",
+          "started_at": "2026-11-08T07:30:39.022Z",
+          "ended_at": "2026-11-08T07:30:39.022Z",
+          "result": "partial",
+          "summary": "Persisted owner-configured live-measured RAM and system-drive free-space limits in settings schema v2, added schema-v1 migration, restored values in WPF, and wired save/revalidation before connection, local inference and peer hosting. Added C# migration/round-trip/bounds tests and Python wiring contracts. Exact-commit CI pending.",
+          "changed_files": [
+            "src/Host.Infrastructure/LocalHostSettingsStore.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/MainWindow.xaml",
+            "tests/HostLifecycle.Tests/LocalHostSettingsPersistenceTests.cs",
+            "tests/test_host_resource_settings.py",
+            "tests/test_decision_traceability.py",
+            "docs/decisions/ADR-0012-local-settings-validation-and-persistence.md",
+            "update/Step three/UPD-S1-005/execution-report.md",
+            "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "V 3.1.36 Windows build and installer baseline",
+              "command": "product-build.yml",
+              "result": "passed",
+              "run_id": 42457409040,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42457409040",
+              "summary": "Baseline before this change only."
+            },
+            {
+              "name": "V 3.1.36 HostLifecycle baseline",
+              "command": "product-build.yml",
+              "result": "passed",
+              "run_id": 42457409040,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42457409040",
+              "summary": "Baseline before this change only."
+            },
+            {
+              "name": "Schema-v1 migration, schema-v2 round-trip and bounds",
+              "command": "LocalHostSettingsPersistenceTests.Run",
+              "result": "pending",
+              "note": "Must pass on exact commit."
+            },
+            {
+              "name": "Python resource settings and traceability contracts",
+              "command": "python -m unittest discover -s tests -v",
+              "result": "pending",
+              "note": "Must pass on exact commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "LocalHostSettings schema v2 adds owner-configured RAM and minimum free system-drive thresholds; schema v1 loads with 4/1 GiB defaults and upgrades on next save.",
+            "WPF restores/persists both thresholds and revalidates before local inference and peer hosting."
+          ],
+          "follow_up": "Validate exact-commit Python quality, graph guards, Windows build/installer and HostLifecycle persistence tests. Task remains in_progress until all pass.",
+          "device_and_host_details_redacted": "No physical Windows host or Android handset was accessed.",
+          "model_revision_and_sha256": "Not applicable.",
+          "pre_upgrade_post_upgrade_snapshot": "No product in-place upgrade; settings migration test awaits CI."
+        }
+      ]
     },
     {
       "id": "UPD-S1-006",
@@ -3794,11 +3889,13 @@
       "from": "UPD-S1-001",
       "to": "UPD-S1-005",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-005 در V1.10، UPD-S1-001 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "UPD-S1-005 consumes the completed baseline audit to distinguish existing owner-consent, readiness, measurement and admission behavior from real implementation gaps. It consumes no new API, type or executable artifact from UPD-S1-001; the dependency is sequencing_only and the conservative blocks order remains.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step three/UPD-S1-001/execution-report.md",
+        "update/Step three/UPD-S1-001/evidence/baseline-audit.md",
+        "update/Step three/UPD-S1-005/evidence/resource-policy-review.md"
       ]
     },
     {
@@ -4923,10 +5020,10 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T07:06:14.852Z",
+    "as_of": "2026-11-08T07:30:39.022Z",
     "total_tasks": 24,
-    "not_started": 21,
-    "in_progress": 1,
+    "not_started": 20,
+    "in_progress": 2,
     "done": 2,
     "blocked": 0,
     "verified_completion_percentage": 8.33,
@@ -5044,7 +5141,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-07T21:47:42.902Z",
+  "updated_at": "2026-11-08T07:30:39.022Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -5241,5 +5338,4 @@
       "UPD-S1-008 remains incomplete while any required review is pending."
     ]
   }
-}
-```
+}```

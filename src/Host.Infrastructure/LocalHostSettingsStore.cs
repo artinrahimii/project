@@ -7,11 +7,11 @@ namespace WhiteP.Host.Infrastructure;
 /// Validated settings for the local llama.cpp-compatible inference endpoint.
 /// The persisted document is explicitly schema-versioned so future changes fail closed.
 /// </summary>
-public sealed record LocalHostSettings(string ServerUrl, string ModelId, int RequestTimeoutSeconds, string? EngineExecutablePath = null, string? ModelFilePath = null, string? ActiveCatalogModelId = null, bool PersistHostConversation = false)
+public sealed record LocalHostSettings(string ServerUrl, string ModelId, int RequestTimeoutSeconds, string? EngineExecutablePath = null, string? ModelFilePath = null, string? ActiveCatalogModelId = null, bool PersistHostConversation = false, double RequiredModelMemoryGiB = 4d, double MinimumFreeDiskGiB = 1d)
 {
-    public const int CurrentSchemaVersion = 1;
+    public const int CurrentSchemaVersion = 2;
     public static LocalHostSettings Defaults { get; } =
-        new("http://127.0.0.1:8080/", "local-model", 300);
+        new("http://127.0.0.1:8080/", "local-model", 300, RequiredModelMemoryGiB: 4d, MinimumFreeDiskGiB: 1d);
 
     public static LocalHostSettings Validate(LocalHostSettings settings)
     {
@@ -36,11 +36,25 @@ public sealed record LocalHostSettings(string ServerUrl, string ModelId, int Req
             throw new ArgumentOutOfRangeException(nameof(settings), "Request timeout must be between 1 and 3600 seconds.");
         }
 
+        if (!IsValidCapacityRequirement(settings.RequiredModelMemoryGiB))
+        {
+            throw new ArgumentOutOfRangeException(nameof(settings), "Required model memory must be finite, positive, and no greater than 1,048,576 GiB.");
+        }
+
+        if (!IsValidCapacityRequirement(settings.MinimumFreeDiskGiB))
+        {
+            throw new ArgumentOutOfRangeException(nameof(settings), "Minimum free system-drive space must be finite, positive, and no greater than 1,048,576 GiB.");
+        }
+
         var activeCatalogModelId = NormalizeOptionalModelId(settings.ActiveCatalogModelId);
         return new LocalHostSettings(endpoint.ToString(), model, settings.RequestTimeoutSeconds,
             NormalizeOptionalPath(settings.EngineExecutablePath, nameof(settings.EngineExecutablePath)),
-            NormalizeOptionalPath(settings.ModelFilePath, nameof(settings.ModelFilePath)), activeCatalogModelId, settings.PersistHostConversation);
+            NormalizeOptionalPath(settings.ModelFilePath, nameof(settings.ModelFilePath)), activeCatalogModelId, settings.PersistHostConversation,
+            settings.RequiredModelMemoryGiB, settings.MinimumFreeDiskGiB);
     }
+
+    private static bool IsValidCapacityRequirement(double requiredGiB) =>
+        double.IsFinite(requiredGiB) && requiredGiB > 0 && requiredGiB <= 1_048_576d;
 
     private static string? NormalizeOptionalModelId(string? modelId)
     {
@@ -98,10 +112,14 @@ public sealed class LocalHostSettingsStore
             using var stream = File.OpenRead(_filePath);
             var document = JsonSerializer.Deserialize<SettingsDocument>(stream, JsonOptions)
                 ?? throw new InvalidDataException("Local settings document is empty.");
-            if (document.SchemaVersion != LocalHostSettings.CurrentSchemaVersion)
+            if (document.SchemaVersion != 1 && document.SchemaVersion != LocalHostSettings.CurrentSchemaVersion)
             {
                 throw new InvalidDataException($"Unsupported local settings schema version: {document.SchemaVersion}.");
             }
+
+            // Schema v1 predates owner-configured resource limits; migrate with existing UI defaults.
+            var requiredModelMemoryGiB = document.SchemaVersion == 1 ? LocalHostSettings.Defaults.RequiredModelMemoryGiB : document.RequiredModelMemoryGiB;
+            var minimumFreeDiskGiB = document.SchemaVersion == 1 ? LocalHostSettings.Defaults.MinimumFreeDiskGiB : document.MinimumFreeDiskGiB;
 
             return LocalHostSettings.Validate(new LocalHostSettings(
                 document.ServerUrl ?? string.Empty,
@@ -110,7 +128,9 @@ public sealed class LocalHostSettingsStore
                 document.EngineExecutablePath,
                 document.ModelFilePath,
                 document.ActiveCatalogModelId,
-                document.PersistHostConversation));
+                document.PersistHostConversation,
+                requiredModelMemoryGiB,
+                minimumFreeDiskGiB));
         }
         catch (JsonException exception)
         {
@@ -134,7 +154,9 @@ public sealed class LocalHostSettingsStore
             EngineExecutablePath = validated.EngineExecutablePath,
             ModelFilePath = validated.ModelFilePath,
             ActiveCatalogModelId = validated.ActiveCatalogModelId,
-            PersistHostConversation = validated.PersistHostConversation
+            PersistHostConversation = validated.PersistHostConversation,
+            RequiredModelMemoryGiB = validated.RequiredModelMemoryGiB,
+            MinimumFreeDiskGiB = validated.MinimumFreeDiskGiB
         };
         var temporaryPath = _filePath + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
@@ -182,5 +204,11 @@ public sealed class LocalHostSettingsStore
 
         [JsonPropertyName("persistHostConversation")]
         public bool PersistHostConversation { get; init; }
+
+        [JsonPropertyName("requiredModelMemoryGiB")]
+        public double RequiredModelMemoryGiB { get; init; }
+
+        [JsonPropertyName("minimumFreeDiskGiB")]
+        public double MinimumFreeDiskGiB { get; init; }
     }
 }

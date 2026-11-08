@@ -77,6 +77,10 @@ public partial class MainWindow : Window
         ModelId.Text = _settings.ModelId;
         EngineExecutablePath.Text = _settings.EngineExecutablePath ?? string.Empty;
         ModelFilePath.Text = _settings.ModelFilePath ?? string.Empty;
+        ModelMemoryRequirementGiB.Text = _settings.RequiredModelMemoryGiB.ToString("0.###", CultureInfo.InvariantCulture);
+        MinimumFreeDiskGiB.Text = _settings.MinimumFreeDiskGiB.ToString("0.###", CultureInfo.InvariantCulture);
+        _requestedModelMemoryRequirementText = ModelMemoryRequirementGiB.Text;
+        _requestedMinimumFreeDiskRequirementText = MinimumFreeDiskGiB.Text;
         _conversation.UpdateRetentionPolicy(
             HostConversationRetentionPolicy.FromOwnerConsent(_settings.PersistHostConversation));
         _suppressConversationRetentionToggle = true;
@@ -427,12 +431,15 @@ public partial class MainWindow : Window
 
     private async void ConnectButton_Click(object sender, RoutedEventArgs e)
     {
-        _requestedModelMemoryRequirementText = ModelMemoryRequirementGiB.Text;
-        _requestedMinimumFreeDiskRequirementText = MinimumFreeDiskGiB.Text;
         ConnectButton.IsEnabled = false;
         GenerateButton.IsEnabled = false;
         try
         {
+            if (!TryPersistCapacityRequirements())
+            {
+                return;
+            }
+
             if (!Uri.TryCreate(ServerUrl.Text.Trim(), UriKind.Absolute, out var endpoint) ||
                 (endpoint.Scheme != Uri.UriSchemeHttp && endpoint.Scheme != Uri.UriSchemeHttps))
             {
@@ -448,16 +455,15 @@ public partial class MainWindow : Window
 
             try
             {
-                _settings = _settingsStore.Save(new LocalHostSettings(
-                    endpoint.ToString(),
-                    ModelId.Text,
-                    _settings.RequestTimeoutSeconds,
-                    EngineExecutablePath.Text,
-                    ModelFilePath.Text,
-                    _settings.ActiveCatalogModelId,
-                    _settings.PersistHostConversation));
+                _settings = _settingsStore.Save(_settings with
+                {
+                    ServerUrl = endpoint.ToString(),
+                    ModelId = ModelId.Text,
+                    EngineExecutablePath = EngineExecutablePath.Text,
+                    ModelFilePath = ModelFilePath.Text
+                });
             }
-            catch (ArgumentException exception)
+            catch (Exception exception) when (exception is ArgumentException or IOException or UnauthorizedAccessException)
             {
                 LifecycleState.Text = $"Error — {HostErrorPresentation.ToUserMessage(exception)}";
                 return;
@@ -546,14 +552,23 @@ public partial class MainWindow : Window
             return;
         }
 
-        if (!_session.IsConnected || !_capacityReady)
+        if (!_session.IsConnected)
         {
             LifecycleState.Text = "Connect to a ready local backend and verify host capacity before sending a message.";
             return;
         }
 
-        _requestedModelMemoryRequirementText = ModelMemoryRequirementGiB.Text;
-        _requestedMinimumFreeDiskRequirementText = MinimumFreeDiskGiB.Text;
+        if (!TryPersistCapacityRequirements())
+        {
+            return;
+        }
+
+        RenderStatus(_session.Status);
+        if (!_capacityReady)
+        {
+            LifecycleState.Text = "The configured RAM/disk requirements are not satisfied by current measured host capacity.";
+            return;
+        }
         AppendConversationMessage(ConversationMessageRole.User, prompt);
         ChatMessages.ScrollIntoView(ChatMessages.Items[ChatMessages.Items.Count - 1]);
         PromptInput.Clear();
@@ -904,6 +919,51 @@ public partial class MainWindow : Window
     }
 
 
+    private bool TryPersistCapacityRequirements()
+    {
+        _requestedModelMemoryRequirementText = ModelMemoryRequirementGiB.Text;
+        _requestedMinimumFreeDiskRequirementText = MinimumFreeDiskGiB.Text;
+
+        if (!TryParseCapacityRequirement(_requestedModelMemoryRequirementText, out var requiredModelMemoryGiB) ||
+            !TryParseCapacityRequirement(_requestedMinimumFreeDiskRequirementText, out var minimumFreeDiskGiB))
+        {
+            RenderStatus(_session.Status);
+            LifecycleState.Text = "Not Ready — enter positive, finite RAM and minimum free-disk requirements in GiB.";
+            return false;
+        }
+
+        try
+        {
+            _settings = _settingsStore.Save(_settings with
+            {
+                RequiredModelMemoryGiB = requiredModelMemoryGiB,
+                MinimumFreeDiskGiB = minimumFreeDiskGiB
+            });
+            return true;
+        }
+        catch (Exception exception) when (exception is ArgumentException or IOException or UnauthorizedAccessException)
+        {
+            _capacityReady = false;
+            GenerateButton.IsEnabled = false;
+            CapacityStatus.Text = "Capacity: Unknown — configured resource limits could not be saved locally.";
+            LifecycleState.Text = "Resource limits could not be saved; inference and network admission are disabled until settings can be written.";
+            return false;
+        }
+    }
+
+    private void CapacityRequirement_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (_windowClosing)
+        {
+            return;
+        }
+
+        if (TryPersistCapacityRequirements())
+        {
+            RenderStatus(_session.Status);
+        }
+    }
+
     private Task<HostReadinessResult> EvaluateHostReadinessAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -1038,6 +1098,10 @@ public partial class MainWindow : Window
                 return;
             }
 
+            if (!TryPersistCapacityRequirements())
+                throw new InvalidOperationException("The configured RAM and disk requirements could not be validated and saved.");
+
+            RenderStatus(_session.Status);
             if (!_session.IsConnected || !_capacityReady)
                 throw new InvalidOperationException("Connect to a healthy local inference backend and verify host capacity before enabling peer inference.");
 
