@@ -4,7 +4,7 @@
 - تعداد کل وظایف قدیمی: 230
 - تعداد شناسه‌های متأثر: 168
 - تعداد رکوردهای مستقل: 168
-- وضعیت جاری مطابق JSON اصلی است؛ 144 مورد محتوایی reviewed و 24 مورد همچنان pending هستند.
+- وضعیت جاری مطابق JSON اصلی است؛ 149 مورد محتوایی reviewed و 19 مورد همچنان pending هستند.
 
 | شناسهٔ قدیمی | وضعیت پایه | شناسه‌های UPD-S1 مرتبط | تصمیم اولیه | وضعیت بازبینی | فایل‌های کد/قرارداد | فایل‌های آزمون |
 |---|---|---|---|---:|---:|---:|
@@ -151,11 +151,11 @@
 | `T0201` | done | UPD-S1-019, UPD-S1-020 | re_review_required | reviewed | 2 | 1 |
 | `T0202` | deferred_final | UPD-S1-004, UPD-S1-010, UPD-S1-019, UPD-S1-020 | re_review_required | reviewed | 1 | 4 |
 | `T0203` | done | UPD-S1-003, UPD-S1-015, UPD-S1-019, UPD-S1-020 | re_review_required | reviewed | 1 | 3 |
-| `T0204` | done | UPD-S1-003, UPD-S1-015, UPD-S1-019, UPD-S1-020 | re_review_required | pending | 1 | 3 |
-| `T0205` | done | UPD-S1-019, UPD-S1-020 | re_review_required | pending | 0 | 1 |
-| `T0206` | done | UPD-S1-002, UPD-S1-007, UPD-S1-016, UPD-S1-018, UPD-S1-019, UPD-S1-020 | re_review_required | pending | 1 | 2 |
-| `T0207` | done | UPD-S1-019, UPD-S1-021 | re_review_required | pending | 1 | 1 |
-| `T0208` | done | UPD-S1-019, UPD-S1-021 | re_review_required | pending | 1 | 3 |
+| `T0204` | done | UPD-S1-003, UPD-S1-015, UPD-S1-019, UPD-S1-020 | re_review_required | reviewed | 1 | 3 |
+| `T0205` | done | UPD-S1-019, UPD-S1-020 | re_review_required | reviewed | 0 | 1 |
+| `T0206` | done | UPD-S1-002, UPD-S1-007, UPD-S1-016, UPD-S1-018, UPD-S1-019, UPD-S1-020 | unchanged | reviewed | 1 | 2 |
+| `T0207` | done | UPD-S1-019, UPD-S1-021 | re_review_required | reviewed | 1 | 1 |
+| `T0208` | done | UPD-S1-019, UPD-S1-021 | re_review_required | reviewed | 1 | 3 |
 | `T0209` | done | UPD-S1-021 | re_review_required | pending | 1 | 2 |
 | `T0210` | done | UPD-S1-021, UPD-S1-024 | re_review_required | pending | 1 | 1 |
 | `T0211` | done | UPD-S1-021, UPD-S1-024 | re_review_required | pending | 3 | 1 |
@@ -283,3 +283,10 @@
 - شواهد مستقل: `review-T0198.md`, `review-T0200.md`, `review-T0201.md`, `review-T0202.md`, `review-T0203.md`؛ commit `4e976f8b8c478498708d578d363d8529edb850c6`.
 - وضعیت پایه حفظ شده است؛ تصمیم هر پنج مورد `re_review_required` ثبت شده و status گراف قدیمی تغییر نکرده است.
 - نتیجه: **144 reviewed / 24 pending از 168 شناسهٔ متأثر**. T0202 همچنان `deferred_final` و فاقد LAN acceptance است.
+
+
+## بازبینی T0204 تا T0208 روی V 3.1.104
+
+- شواهد: `review-T0204.md` تا `review-T0208.md` در `update/Step three/UPD-S1-008/evidence/`; commit شواهد `dba2cb984f0d4990417922f8a5f56b81c82191a8`.
+- وضعیت پایهٔ هر پنج مورد `done` حفظ شد. T0206 برابر `unchanged` و چهار مورد دیگر `re_review_required` هستند؛ status قدیمی تغییر نکرد.
+- ماتریس جاری: **149 reviewed / 19 pending از 168 شناسهٔ متأثر**.
