@@ -144,3 +144,15 @@
 - شکست پنجم مربوط به آزمون generic dispatcher بود: بودجهٔ ۹ تلاش عمومی با سقف سه‌تلاشهٔ `FirstReleaseInferenceLimits` مقایسه شده بود. آزمون اکنون بودجهٔ generic نه‌تایی را صریحاً انتخاب می‌کند و با `MultiHostCompatibilityLimits` assert می‌کند.
 - گزارش JUnit از artifact شمارهٔ `13608070526` دریافت و بررسی شد؛ SHA-256 فایل ZIP: `23142a5339df2e98e969b8bf6b6c2738a4bc3095a0803ddc372a2a474d9020cd`.
 - Android Keystore instrumentation به‌دلیل شکست JVM اجرا نشد. وظیفهٔ UPD-S1-003 تا اجرای مجدد مجموعهٔ کامل آزمون‌ها `in_progress` باقی می‌ماند.
+
+
+## اعتبارسنجی دقیق V 3.1.33 — شکست ktlint اندروید
+
+- Commit آزموده‌شده: `b881d980419be1998e32eeb6a55d0d13d5a4cc3e` — `V 3.1.33`.
+- Step Three quality gate: **PASS**، run [42456615858](https://github.com/artinrahimii/project/actions/runs/42456615858).
+- Rendezvous build/smoke: **PASS**، run [42456615879](https://github.com/artinrahimii/project/actions/runs/42456615879).
+- Windows WPF build و installer: **PASS**؛ HostLifecycle suite/coverage: **PASS**، run [42456615891](https://github.com/artinrahimii/project/actions/runs/42456615891).
+- Android: **FAIL** در `:app:ktlintTestSourceSetCheck`. بنابراین APKهای debug/release، آزمون JVM و Keystore instrumentation روی این commit اجرا نشدند.
+- گزارش ktlint به‌صورت artifact بارگذاری نشده بود. بررسی source دقیق commit دو خط ۱۲۱ نویسه‌ای را در فایل‌های تست Kotlin مشخص کرد؛ هر دو در اصلاح بعدی line-wrap شدند.
+- پنج شکست JVM ثبت‌شده برای V 3.1.32 در V 3.1.33 دوباره اجرا نشدند، چون lint پیش از مرحلهٔ JVM متوقف شد.
+- UPD-S1-003 همچنان `in_progress` است تا lint و آزمون‌های کامل Android روی commit اصلاحی پاس شوند.

@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.33",
+  "commit_intent": "V 3.1.34",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -1000,13 +1000,14 @@
         "tests/test_request_retry_budget_boundary.py",
         "update/Step three/UPD-S1-003/evidence/ci-3.1.30.md",
         "update/Step three/UPD-S1-003/evidence/ci-3.1.31.md",
-        "update/Step three/UPD-S1-003/evidence/ci-3.1.32.md"
+        "update/Step three/UPD-S1-003/evidence/ci-3.1.32.md",
+        "update/Step three/UPD-S1-003/evidence/ci-3.1.33.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. New decision ADR-0022 records the first-release one-host/sequential-retry policy. The generic three-host selector and dispatcher remain compatibility primitives and do not change the production runtime's one-host admission boundary. The implementation attempt is partial pending exact-commit CI. V 3.1.29 quality gate found five residual contract/documentation assertions; the exact tests and register row were corrected in the next partial attempt. Do not mark done until CI passes.",
       "execution_summary": {
-        "attempt_count": 6,
-        "failed_attempt_count": 3,
-        "last_attempt_id": "UPD-S1-003-20261108063938",
+        "attempt_count": 7,
+        "failed_attempt_count": 4,
+        "last_attempt_id": "UPD-S1-003-20261108065423",
         "last_attempt_result": "failed",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -1033,7 +1034,8 @@
           "89042d5feba3c3859d63a7527aac0c7b2669cb88",
           "cb6050e9b6e9f8fd60d2266efbf57af2534a16c0",
           "719f2a4daf0b82c013c617a1a0a4778c625c474c",
-          "10303ad6faddd7d4a50096d702d0e9f4a10e2b7d"
+          "10303ad6faddd7d4a50096d702d0e9f4a10e2b7d",
+          "b881d980419be1998e32eeb6a55d0d13d5a4cc3e"
         ],
         "tests_passed": [
           "Rendezvous container build and smoke",
@@ -1051,13 +1053,18 @@
           "Windows WPF build and installer — run 42455653927",
           "HostLifecycle unit/integration and coverage — run 42455653927",
           "Android ktlint — run 42455653927",
-          "Android debug/release APK build and permission checks — run 42455653927"
+          "Android debug/release APK build and permission checks — run 42455653927",
+          "Step Three quality gate — run 42456615858",
+          "Rendezvous container build/smoke — run 42456615879",
+          "Windows WPF build and installer — run 42456615891",
+          "HostLifecycle unit/integration and coverage — run 42456615891"
         ],
         "tests_failed": [
           "Step Three quality gate",
           "Android JVM unit tests — 33 of 213 failed in run 42417548687",
           "Android ktlintTestSourceSetCheck — run 42455296829; JVM/instrumentation tests not run",
-          "Android JVM :app:testDebugUnitTest — 5 of 214 failed in run 42455653927"
+          "Android JVM :app:testDebugUnitTest — 5 of 214 failed in run 42455653927",
+          "Android ktlintTestSourceSetCheck — run 42456615891; APK/JVM/instrumentation not run"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1079,7 +1086,8 @@
             "update/Step three/UPD-S1-003/evidence/decision-matrix.md",
             "update/Step three/UPD-S1-003/evidence/ci-baseline.md",
             "update/Step three/UPD-S1-003/evidence/ci-3.1.31.md",
-            "update/Step three/UPD-S1-003/evidence/ci-3.1.32.md"
+            "update/Step three/UPD-S1-003/evidence/ci-3.1.32.md",
+            "update/Step three/UPD-S1-003/evidence/ci-3.1.33.md"
           ]
         }
       },
@@ -1441,6 +1449,72 @@
           "device_and_host_details_redacted": "CI runner only. Native .NET interop uses local peer-process fixtures; no external physical Windows host or model was used. No physical Android handset or in-place upgrade was tested.",
           "model_revision_and_sha256": "Not applicable; no local model inference executed.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable; no install or upgrade was run."
+        },
+        {
+          "attempt_id": "UPD-S1-003-20261108065423",
+          "started_at": "2026-11-08T06:54:23Z",
+          "ended_at": "2026-11-08T06:58:08Z",
+          "result": "failed",
+          "summary": "V 3.1.33 exact-commit CI: Windows WPF build/installer and HostLifecycle suite/coverage passed; Android failed at ktlintTestSourceSetCheck before APK build, JVM tests, or Keystore instrumentation. The workflow did not upload the ktlint report. Exact-commit source inspection found two 121-character Kotlin test-source lines, now wrapped in this follow-up. The five V 3.1.32 JVM failures were not rerun on V 3.1.33 because lint stopped the job before the JVM step.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt"
+          ],
+          "commit_sha": "b881d980419be1998e32eeb6a55d0d13d5a4cc3e",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": ".github/workflows/quality.yml on V 3.1.33",
+              "result": "passed",
+              "run_id": 42456615858,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456615858",
+              "summary": "Exact commit quality gate passed."
+            },
+            {
+              "name": "Rendezvous container build/smoke",
+              "command": ".github/workflows/rendezvous-container.yml on V 3.1.33",
+              "result": "passed",
+              "run_id": 42456615879,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456615879",
+              "summary": "Exact commit container build and smoke passed."
+            },
+            {
+              "name": "Windows WPF build and installer",
+              "command": "product-build.yml / Build Windows WPF host",
+              "result": "passed",
+              "run_id": 42456615891,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456615891",
+              "summary": "Windows clean build, publish/startup checks, host identity/trust and installer acceptance passed."
+            },
+            {
+              "name": "HostLifecycle unit/integration and coverage",
+              "command": "product-build.yml / Host lifecycle unit and integration tests",
+              "result": "passed",
+              "run_id": 42456615891,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456615891",
+              "summary": "Host lifecycle suite and coverage validation passed."
+            },
+            {
+              "name": "Android ktlint",
+              "command": "gradle --no-daemon ktlintCheck",
+              "result": "failed",
+              "run_id": 42456615891,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456615891",
+              "summary": "ktlintTestSourceSetCheck failed. Debug/release APK, JVM unit tests and Keystore instrumentation did not run after lint stopped the job."
+            }
+          ],
+          "failure_details": "The V 3.1.33 Android job failed specifically at :app:ktlintTestSourceSetCheck. The workflow did not upload the report. Source inspection of the exact commit identified two Kotlin test-source lines of 121 characters: the capsule expression in the native .NET sequential failover test and the generic dispatcher request factory call. Both are line-wrapped in this follow-up. The five V 3.1.32 JVM failures were not re-tested in V 3.1.33 because lint stopped the job first.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Production Android runtime remains one selected peer per request round and at most three first-release sequential attempts.",
+            "V 3.1.33 changed transport tests to one-host product dispatch and sequential failover, while generic dispatcher tests explicitly use MultiHostCompatibilityLimits.",
+            "V 3.1.33 follow-up only wraps two long Kotlin test lines; no product runtime code is loosened."
+          ],
+          "follow_up": "Run exact-commit Android lint, debug/release APK, JVM suite, Keystore instrumentation, Windows and HostLifecycle checks. Do not mark UPD-S1-003 done until all required tests pass.",
+          "device_and_host_details_redacted": "CI runners only. No physical Android device, external target Windows host, local model inference, or in-place upgrade was used.",
+          "model_revision_and_sha256": "Not applicable; no local inference model loaded.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; no installation/upgrade tested."
         }
       ]
     },
@@ -4713,7 +4787,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T06:54:15.441Z",
+    "as_of": "2026-11-08T06:59:29.848Z",
     "total_tasks": 24,
     "not_started": 21,
     "in_progress": 1,

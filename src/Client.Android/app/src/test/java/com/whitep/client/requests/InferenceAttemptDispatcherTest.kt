@@ -510,7 +510,11 @@ class InferenceAttemptDispatcherTest {
     @Test
     fun enforcesThreeDistinctHostsPerRoundAndNineAttemptsAcrossTheRequest() =
         runBlocking {
-            val request = distributedRequest(maxRounds = 3, maxTotalHosts = MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS)
+            val request =
+                distributedRequest(
+                    maxRounds = 3,
+                    maxTotalHosts = MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS,
+                )
             val protocolRequest = validRequest(requestId = request.requestId)
             val candidates =
                 (1..12).map { index ->

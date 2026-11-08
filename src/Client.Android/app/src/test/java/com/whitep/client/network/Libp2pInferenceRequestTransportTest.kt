@@ -984,7 +984,10 @@ class Libp2pInferenceRequestTransportTest {
                         selectedHosts = secondSelection,
                         modelId = MODEL_ID,
                         currentMessage = "The next Windows peer responds after the previous peer timed out",
-                        capsule = ConversationContextCapsule(goal = "Verify a different peer is used in the next round"),
+                        capsule =
+                            ConversationContextCapsule(
+                                goal = "Verify a different peer is used in the next round",
+                            ),
                         maxOutputTokens = 8,
                         protocolVersion = PROTOCOL_VERSION,
                     )
