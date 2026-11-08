@@ -16,7 +16,7 @@ ACCEPTANCE = (ROOT / "docs/acceptance.md").read_text(encoding="utf-8")
 ADR1 = (ROOT / "docs/decisions/ADR-0001-platform-build-baselines.md").read_text(encoding="utf-8")
 ADR2 = (ROOT / "docs/decisions/ADR-0002-direct-p2p-data-path.md").read_text(encoding="utf-8")
 ADR3 = (ROOT / "docs/decisions/ADR-0003-local-inference-backend.md").read_text(encoding="utf-8")
-ADR3_TCP = (ROOT / "docs/decisions/ADR-0003-tcp-request-framing.md").read_text(encoding="utf-8")
+ADR24_TCP = (ROOT / "docs/decisions/ADR-0024-tcp-request-framing.md").read_text(encoding="utf-8")
 ADR4_RELAY = (ROOT / "docs/decisions/ADR-0004-encrypted-relay-boundary.md").read_text(encoding="utf-8")
 ADR5_TRANSPORT = (ROOT / "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md").read_text(encoding="utf-8")
 ADR6_LEASE = (ROOT / "docs/decisions/ADR-0006-peer-announcement-leases.md").read_text(encoding="utf-8")
@@ -41,7 +41,7 @@ class DecisionTraceabilityTests(unittest.TestCase):
             "docs/decisions/ADR-0001-platform-build-baselines.md",
             "docs/decisions/ADR-0002-direct-p2p-data-path.md",
             "docs/decisions/ADR-0003-local-inference-backend.md",
-            "docs/decisions/ADR-0003-tcp-request-framing.md",
+            "docs/decisions/ADR-0024-tcp-request-framing.md",
             "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md",
             "docs/decisions/ADR-0008-local-engine-process-ownership.md",
             "src/Host.Windows/Inference/LocalInferenceProcessLauncher.cs",
@@ -133,9 +133,9 @@ class DecisionTraceabilityTests(unittest.TestCase):
         csharp_tests = (ROOT / "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs").read_text(encoding="utf-8")
         entrypoint = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
 
-        self.assertIn("ADR-0003-tcp-request-framing.md", REGISTER)
-        self.assertIn("protocol_version = 1.0.0", ADR3_TCP)
-        self.assertIn("MaximumRequestMessageBytes", ADR3_TCP)
+        self.assertIn("ADR-0024-tcp-request-framing.md", REGISTER)
+        self.assertIn("protocol_version = 1.0.0", ADR24_TCP)
+        self.assertIn("MaximumRequestMessageBytes", ADR24_TCP)
         self.assertIn("BinaryPrimitives.ReadUInt32BigEndian(prefix)", reader)
         self.assertIn("payloadLength > ProtocolMessageLimits.MaximumRequestMessageBytes", reader)
         self.assertIn("ProtocolMessageParser.ParseInferenceRequest(payload)", reader)
@@ -790,9 +790,37 @@ class DecisionTraceabilityTests(unittest.TestCase):
                 self.assertTrue(cells[4], f"{decision_doc.name} must state its evidence boundary.")
 
 
+    def test_registered_adr_identifiers_are_unique_and_legacy_redirect_is_not_a_decision(self):
+        rows = [line for line in REGISTER.splitlines() if line.startswith("| [ADR-")]
+        registered_ids = []
+        for row in rows:
+            match = re.search(r"\[(ADR-\d{4})\s+[—:]", row)
+            self.assertIsNotNone(match, row)
+            registered_ids.append(match.group(1))
+        self.assertEqual(len(registered_ids), len(set(registered_ids)))
+
+        decision_dir = ROOT / "docs" / "decisions"
+        redirect_path = decision_dir / "ADR-0003-tcp-request-framing.md"
+        redirect_text = redirect_path.read_text(encoding="utf-8")
+        self.assertIn("not an adr", redirect_text.lower())
+        self.assertIn("ADR-0024-tcp-request-framing.md", redirect_text)
+
+        decision_ids = []
+        for path in decision_dir.glob("ADR-*.md"):
+            if path.name == redirect_path.name:
+                continue
+            match = re.match(r"ADR-(\d{4})-", path.name)
+            self.assertIsNotNone(match, path.name)
+            decision_ids.append(match.group(1))
+        self.assertEqual(len(decision_ids), len(set(decision_ids)))
+
     def test_every_adr_document_is_registered(self):
         decision_dir = ROOT / "docs" / "decisions"
-        decision_files = sorted(path.name for path in decision_dir.glob("ADR-*.md"))
+        historical_redirect_name = "ADR-0003-tcp-request-framing.md"
+        decision_files = sorted(
+            path.name for path in decision_dir.glob("ADR-*.md")
+            if path.name != historical_redirect_name
+        )
         registered_files = []
 
         for line in REGISTER.splitlines():

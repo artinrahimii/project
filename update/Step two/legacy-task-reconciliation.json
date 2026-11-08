@@ -149,8 +149,8 @@
         "UPD-S1-006",
         "UPD-S1-008"
       ],
-      "decision": "unchanged",
-      "review_status": "reviewed",
+      "decision": "re_review_required",
+      "review_status": "pending",
       "status_changed": false,
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/review-T0020.md",
@@ -166,9 +166,12 @@
         "src/Host.Infrastructure/LlamaCppServerBackend.cs",
         "tests/HostLifecycle.Tests/Program.cs",
         "README.md",
-        "https://github.com/artinrahimii/project/actions/runs/42482227315"
+        "https://github.com/artinrahimii/project/actions/runs/42482227315",
+        "update/Step three/UPD-S1-008/evidence/review-T0020-ADR-uniqueness.md",
+        "docs/decisions/ADR-0024-tcp-request-framing.md",
+        "docs/decisions/ADR-0003-tcp-request-framing.md"
       ],
-      "review_commit_sha": "c31ac02d39993965bd693b53f626d5cb09be7b2c"
+      "review_commit_sha": null
     },
     {
       "legacy_task_id": "T0027",

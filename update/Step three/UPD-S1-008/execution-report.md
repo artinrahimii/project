@@ -131,3 +131,11 @@
 - Quality workflow دقیق همین commit: [42483059242](https://github.com/artinrahimii/project/actions/runs/42483059242) — **success**؛ 479 آزمون Python، compileall، Update graph validation و Step Three graph/output-evidence guards موفق شدند.
 - Product build run [42483059335](https://github.com/artinrahimii/project/actions/runs/42483059335) در آخرین مشاهده هنوز `in_progress` بود؛ نتیجهٔ نهایی Android، Windows و HostLifecycle برای V3.1.62 هنوز ادعا نمی‌شود.
 - فایل reconciliation اصلی `update/Step two/legacy-task-reconciliation.json` نیز به خروجی‌های واقعی UPD-S1-008 افزوده شد. شمارش بازبینی همچنان 6/168 reviewed و 162 pending است.
+
+
+## بازگشایی مجدد T0020 — یکتایی شناسهٔ ADR
+
+- مبنا: `89a7b12ff24449f2b730200939053dedcd91f56f` — `V 3.1.63`.
+- دو تصمیم مستقل شناسهٔ ADR-0003 تکراری داشتند؛ برای ارجاع بدون ابهام، TCP framing به ADR-0024 منتقل و مسیر قدیمی redirect تاریخی شد.
+- شواهد قبلی حفظ شدند؛ T0020 تا قبولی regression جدید در CI دقیق به `pending/re_review_required` برگشت. وضعیت پایهٔ legacy همچنان `done` است.
+- شواهد اصلاح: `update/Step three/UPD-S1-008/evidence/review-T0020-ADR-uniqueness.md`. Reconciliation موقت: 5/168 reviewed، 163 pending.

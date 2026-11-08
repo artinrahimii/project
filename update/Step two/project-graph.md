@@ -3096,7 +3096,9 @@
         "update/Step two/legacy-task-reconciliation.json",
         "update/Step two/legacy-task-reconciliation.md",
         "step three/project-graph.md",
-        "update/Step three/UPD-S1-008/execution-report.md"
+        "update/Step three/UPD-S1-008/execution-report.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0020-ADR-uniqueness.md",
+        "docs/decisions/ADR-0024-tcp-request-framing.md"
       ],
       "actual_output_paths": [
         "update/Step three/UPD-S1-008/execution-report.md",
@@ -3108,7 +3110,12 @@
         "update/Step three/UPD-S1-008/evidence/review-T0020.md",
         "update/Step three/UPD-S1-008/evidence/review-T0015.md",
         "update/Step three/UPD-S1-008/evidence/review-T0016.md",
-        "update/Step two/legacy-task-reconciliation.json"
+        "update/Step two/legacy-task-reconciliation.json",
+        "update/Step three/UPD-S1-008/evidence/review-T0020-ADR-uniqueness.md",
+        "docs/decisions/README.md",
+        "docs/decisions/ADR-0003-tcp-request-framing.md",
+        "docs/decisions/ADR-0024-tcp-request-framing.md",
+        "tests/test_decision_traceability.py"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
@@ -3119,13 +3126,18 @@
         "update/Step three/UPD-S1-008/evidence/review-T0020.md",
         "update/Step three/UPD-S1-008/evidence/review-T0015.md",
         "update/Step three/UPD-S1-008/evidence/review-T0016.md",
-        "update/Step two/legacy-task-reconciliation.json"
+        "update/Step two/legacy-task-reconciliation.json",
+        "update/Step three/UPD-S1-008/evidence/review-T0020-ADR-uniqueness.md",
+        "docs/decisions/README.md",
+        "docs/decisions/ADR-0024-tcp-request-framing.md",
+        "docs/decisions/ADR-0003-tcp-request-framing.md",
+        "tests/test_decision_traceability.py"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 7,
+        "attempt_count": 8,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261108130231",
+        "last_attempt_id": "UPD-S1-008-20261108130919",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3139,7 +3151,12 @@
           "update/Step three/UPD-S1-008/evidence/review-T0019.md",
           "update/Step three/UPD-S1-008/evidence/review-T0020.md",
           "update/Step three/UPD-S1-008/evidence/review-T0015.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0016.md"
+          "update/Step three/UPD-S1-008/evidence/review-T0016.md",
+          "docs/decisions/README.md",
+          "docs/decisions/ADR-0003-tcp-request-framing.md",
+          "docs/decisions/ADR-0024-tcp-request-framing.md",
+          "tests/test_decision_traceability.py",
+          "update/Step three/UPD-S1-008/evidence/review-T0020-ADR-uniqueness.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
@@ -3592,6 +3609,50 @@
           "contract_changes": [],
           "follow_up": "Continue the remaining 162 legacy reviews individually. Keep UPD-S1-008 in_progress until every affected Txxxx record has current code/test/acceptance/dependency evidence. Continue independent UPD-S1 tasks without claiming physical product acceptance.",
           "device_and_host_details_redacted": "Source review and GitHub-hosted Windows/Android CI only; no physical Android handset or customer Windows host used.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108130919",
+          "started_at": "2026-11-08T13:09:19.163Z",
+          "ended_at": "2026-11-08T13:09:19.163Z",
+          "result": "partial",
+          "summary": "Reopened T0020 after finding duplicate ADR-0003 identifiers. Prior review evidence is retained. TCP framing is renumbered ADR-0024, the former path remains a historical redirect, and a uniqueness regression was added. Exact-commit CI is pending.",
+          "changed_files": [
+            "docs/decisions/README.md",
+            "docs/decisions/ADR-0003-tcp-request-framing.md",
+            "docs/decisions/ADR-0024-tcp-request-framing.md",
+            "tests/test_decision_traceability.py",
+            "update/Step three/UPD-S1-008/evidence/review-T0020-ADR-uniqueness.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step two/decision-impact-map.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "V3.1.63 pre-correction quality",
+              "command": "GitHub Actions quality workflow on exact base",
+              "result": "passed",
+              "summary": "The pre-correction suite and graph guards passed; they did not enforce ADR identifier uniqueness."
+            },
+            {
+              "name": "ADR identifier uniqueness regression",
+              "command": "tests/test_decision_traceability.py",
+              "result": "pending",
+              "summary": "New regression must pass on the exact correction commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": "Duplicate ADR-0003 identifier found after prior T0020 review.",
+          "contract_changes": [
+            "ADR identifiers must be unique; the old TCP framing path is retained only as a historical redirect."
+          ],
+          "follow_up": "Verify the exact V3.1.64 quality run, then close T0020 unchanged/reviewed with the tested SHA. Keep the other 162 pending legacy reviews open.",
+          "device_and_host_details_redacted": "GitHub source review and CI only; no physical Android or target Windows host used.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -7014,14 +7075,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T13:04:04.324Z",
+    "as_of": "2026-11-08T13:09:19.163Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
     "done": 8,
     "blocked": 0,
     "verified_completion_percentage": 33.33333333333333,
-    "calculation": "8 verified done update tasks / 24 total update tasks = 33.33%. UPD-S1-008 has started but remains incomplete; legacy reconciliation is separate."
+    "calculation": "8 verified done update tasks / 24 total update tasks = 33.33%. UPD-S1-008 remains incomplete; legacy reconciliation is separate."
   },
   "visual_identity": {
     "scope": [
@@ -7135,7 +7196,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T13:04:04.324Z",
+  "updated_at": "2026-11-08T13:09:19.163Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -7318,8 +7379,8 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "pending": 162,
-      "reviewed": 6
+      "pending": 163,
+      "reviewed": 5
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
