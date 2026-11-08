@@ -846,7 +846,7 @@
         ".github/workflows/real-inference.yml",
         "https://github.com/artinrahimii/project/actions/runs/42502772895"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "5cba6051583091d8fbfb2cc849a2aa812c983d53"
     },
     {
       "legacy_task_id": "T0067",
@@ -868,7 +868,7 @@
         "tests/HostLifecycle.Tests/Program.cs",
         "https://github.com/artinrahimii/project/actions/runs/42502772895"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "5cba6051583091d8fbfb2cc849a2aa812c983d53"
     },
     {
       "legacy_task_id": "T0068",
@@ -888,7 +888,7 @@
         "src/Host.Windows/Inference/LocalInferenceBackendFactory.cs",
         "https://github.com/artinrahimii/project/actions/runs/42502772895"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "5cba6051583091d8fbfb2cc849a2aa812c983d53"
     },
     {
       "legacy_task_id": "T0069",
@@ -909,7 +909,7 @@
         "tests/test_model_catalog_parser.py",
         "https://github.com/artinrahimii/project/actions/runs/42502772895"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "5cba6051583091d8fbfb2cc849a2aa812c983d53"
     },
     {
       "legacy_task_id": "T0070",
@@ -933,7 +933,7 @@
         "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
         "https://github.com/artinrahimii/project/actions/runs/42502772895"
       ],
-      "review_commit_sha": null
+      "review_commit_sha": "5cba6051583091d8fbfb2cc849a2aa812c983d53"
     },
     {
       "legacy_task_id": "T0071",
@@ -944,9 +944,18 @@
         "UPD-S1-024"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0071.md",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "tests/test_model_catalog_ui.py",
+        "https://github.com/artinrahimii/project/actions/runs/42502980246",
+        "https://github.com/artinrahimii/project/actions/runs/42502980194",
+        "https://github.com/artinrahimii/project/actions/runs/42502980229"
+      ],
       "review_commit_sha": null
     },
     {
@@ -957,9 +966,18 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0072.md",
+        "src/Host.Windows/Models/Catalog/ModelCatalogModels.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_model_catalog_ui.py",
+        "https://github.com/artinrahimii/project/actions/runs/42502980246",
+        "https://github.com/artinrahimii/project/actions/runs/42502980194",
+        "https://github.com/artinrahimii/project/actions/runs/42502980229"
+      ],
       "review_commit_sha": null
     },
     {
@@ -970,9 +988,19 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0073.md",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_model_catalog_parser.py",
+        "tests/test_model_catalog_schema.py",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+        "https://github.com/artinrahimii/project/actions/runs/42502980246",
+        "https://github.com/artinrahimii/project/actions/runs/42502980194",
+        "https://github.com/artinrahimii/project/actions/runs/42502980229"
+      ],
       "review_commit_sha": null
     },
     {
@@ -983,9 +1011,18 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0074.md",
+        "src/Host.Windows/Models/Catalog/sample-model-catalog.json",
+        "src/Host.Windows/Models/Catalog/model-catalog-v1.schema.json",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42502980246",
+        "https://github.com/artinrahimii/project/actions/runs/42502980194",
+        "https://github.com/artinrahimii/project/actions/runs/42502980229"
+      ],
       "review_commit_sha": null
     },
     {
@@ -996,9 +1033,19 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0075.md",
+        "src/Host.Windows/Models/Catalog/OfflineModelCatalogStore.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogFileLoader.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42502980246",
+        "https://github.com/artinrahimii/project/actions/runs/42502980194",
+        "https://github.com/artinrahimii/project/actions/runs/42502980229"
+      ],
       "review_commit_sha": null
     },
     {

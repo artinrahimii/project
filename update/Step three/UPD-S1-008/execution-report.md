@@ -507,3 +507,66 @@
 - Product Build V3.1.79 [42502772903](https://github.com/artinrahimii/project/actions/runs/42502772903) هنگام این بررسی در حال اجرا بود؛ موفقیت آن ادعا نمی‌شود.
 - آزمون انتخاب خودکار مدل بدون ورود Model ID، تولید پاسخ از مدل کاتالوگ، و visual contrast پس از UPD-S1-024 در این تلاش اجرا نشده‌اند.
 - reconciliation: **44/168 reviewed** و **124 pending**؛ UPD-S1-008 همچنان `in_progress`.
+
+
+## بازبینی تکمیلی T0071 تا T0075 — تلاش UPD-S1-008-20261108170611
+
+### T0071 — جزئیات مجوز، منبع، اندازه و محدودیت مدل
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم reconciliation: `re_review_required/reviewed`؛ وظایف به‌روزرسانی مرتبط: `UPD-S1-023`، `UPD-S1-024`.
+- پنل جزئیات WPF پس از انتخاب ModelCatalogEntry واقعی، نام/شناسه، فرمت، اندازه، URL منبع، وضعیت و شناسهٔ license، URL مجوز، backendهای پشتیبانی‌شده، checksum و محدودیت‌های استفاده را نمایش می‌دهد.
+- لیبل مجوز بین review_required، restricted و ادعای open_source تمایز می‌گذارد؛ حتی وضعیت verified را تأیید مستقل حقوقی جلوه نمی‌دهد. UI و Python contract test وجود این فیلدها و عدم overclaim را assert می‌کنند.
+- تاریخچهٔ exact source commit 33f6ada3bddda0aad99c5322b2960454be0afc35، Quality run 40115099003 و Windows Product run 40115099007 را موفق ثبت کرده است؛ هیچ model download یا inference در این task ادعا نشده.
+- UPD-S1-023 اتصال کاتالوگ به انتخاب مدل/backend فعال را تغییر می‌دهد و UPD-S1-024 UI میزبان را از نظر palette/icon/contrast بازطراحی می‌کند؛ پس از هر دو باید جزئیات واقعی و rendered UI دوباره بررسی شوند.
+- شواهد مستقل: `update/Step three/UPD-S1-008/evidence/review-T0071.md`.
+
+### T0072 — هشدار واضح برای مجوز ناموجود یا نامعتبر
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم reconciliation: `re_review_required/reviewed`؛ وظایف به‌روزرسانی مرتبط: `UPD-S1-023`.
+- ModelLicenseMetadata.RequiresReview برای statusهای review_required/unknown و classification unknown true است؛ ReviewLabel برای missing/unknown هشدار می‌دهد و برای open_source اعلام می‌کند این فقط ادعای کاتالوگ است، نه بررسی حقوقی مستقل.
+- یک ستون Review state در ListView وضعیت را بدون انتخاب سطر نیز نشان می‌دهد؛ acceptance در C# و Python مسیر missing/unknown/declared verified را بررسی می‌کند تا UI مجوز را overclaim نکند.
+- تاریخچه exact commit 3ee8fffe1624c17addfb9e8f07744d4c6a7e18d1، HostLifecycle run40122299496 job120956288798، WPF job120956288933 و real-inference run40122299478 را موفق ثبت کرده است.
+- UPD-S1-023 سیاست catalog/model activation را تغییر می‌دهد؛ هشدار مجوز باید روی مدل انتخابی واقعی، مسیر update/download و هر نمایش جدید دوباره بررسی شود. این برچسب خودش اجازهٔ استفاده یا redistribution نیست.
+- شواهد مستقل: `update/Step three/UPD-S1-008/evidence/review-T0072.md`.
+
+### T0073 — آزمون parser، checksum، backend و URLهای ناامن
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم reconciliation: `re_review_required/reviewed`؛ وظایف به‌روزرسانی مرتبط: `UPD-S1-023`.
+- C# acceptance و Python source tests ورودی معتبر/نامعتبر، checksum اشتباه، backend و format پشتیبانی‌نشده، duplicate model ID و JSON property، URL غیر HTTPS/خارج allowlist، license ناموجود/نامشخص و محدودیت اندازه/تعداد را پوشش می‌دهند.
+- parser 2MB و سقف 10,000 entry دارد، duplicate properties را رد و allowlist source/license را از trusted configuration می‌گیرد؛ parser خودش HTTP fetch یا Process.Start نمی‌کند.
+- Exact V3.0.227 Quality run40122299470 و HostLifecycle parser harness run40122299496 job120956288798 به‌عنوان evidence تاریخی ثبت شده‌اند؛ آن‌ها اجرای parser tests هستند، نه آزمون auto-selection مدل در UI.
+- UPD-S1-023 resolver مدل و سقف خروجی را اضافه می‌کند؛ آزمون‌ها باید بعد از اتصال واقعی catalog -> installed model -> ready backend گسترش یابند.
+- شواهد مستقل: `update/Step three/UPD-S1-008/evidence/review-T0073.md`.
+
+### T0074 — کاتالوگ نمونه با metadata، checksum و license declaration
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم reconciliation: `re_review_required/reviewed`؛ وظایف به‌روزرسانی مرتبط: `UPD-S1-023`.
+- فایل sample-model-catalog.json یک رکورد metadata برای SmolLM2-135M-Instruct Q4_K_M دارد: source bartowski، size اعلامی 105454432 bytes، SHA-256 برابر 2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d، backend llama.cpp و license claim Apache-2.0.
+- C# acceptance آن را از فایل واقعی disk با ModelCatalogFileLoader و supported backend registry و allowlistهای صریح بارگذاری می‌کند؛ این آزمون اعتبارسنجی metadata است، نه دانلود/بارگذاری/اجرای وزن‌ها.
+- این sample با artifact workflow تاریخی real-inference یکسان فرض نمی‌شود: workflow از QuantFactory revision a6b7826ed969c3926a98359e39912af137b464cb، size 105454144 و SHA 8030f04528538d47bda434f6f0bdf3952c40a58123e4d5e755332f23731a8684 استفاده می‌کرد. دو source/revision/checksum متفاوت‌اند و تطبیق byte-level ندارند.
+- تاریخچه exact V3.0.228 run40123058807 quality، run40123058861 Product (Windows/Android/HostLifecycle jobs) و run40123058748 real inference را برای همان commit گزارش کرده است؛ real inference evidence به model workflow pin شده خودش مربوط است، نه این sample JSON.
+- UPD-S1-023 باید catalog model identity/checksum/license را با دانلود، نصب و backend واقعی مرتبط کند؛ metadata sample به‌تنهایی اثبات مدل نصب‌شده یا اجرای همان وزن‌ها نیست.
+- شواهد مستقل: `update/Step three/UPD-S1-008/evidence/review-T0074.md`.
+
+### T0075 — fallback آفلاین فقط به آخرین کاتالوگ معتبر
+
+- وضعیت پایه: `done`؛ حفظ شد و `status_changed=false`.
+- تصمیم reconciliation: `re_review_required/reviewed`؛ وظایف به‌روزرسانی مرتبط: `UPD-S1-023`.
+- OfflineModelCatalogStore فایل منبع را با loader/parser strict UTF-8 و size/schema checks اعتبارسنجی می‌کند و فقط پس از موفقیت، نسخهٔ معتبر را به cache محلی می‌نویسد.
+- در شکست فایل منبع، cache موجود را با همان allowlist و parser مجدداً validate می‌کند؛ اگر cache نیز missing یا invalid باشد InvalidDataException می‌دهد. Cache یک catalog metadata است، نه مدل وزن‌دار.
+- MainWindow صریحاً هنگام استفاده از cache می‌گوید catalog metadata از آخرین cache محلی معتبر نمایش داده شده و هیچ مدل دانلود یا نصب نشده است. Acceptance test مسیر malformed-source/cache fallback را پوشش می‌دهد.
+- تاریخچهٔ T0075 run40161618780 quality، HostLifecycle job121074200657، WPF job121074200813 و real local inference run40161618719 را روی exact source head f2758759cb5a28fcf9cfd2251918d21d93fcf3ce موفق ثبت کرده است؛ real inference مربوط به engine است، نه اثبات catalog auto-selection.
+- UPD-S1-023 باید catalog selection را به مدل نصب‌شده و backend ready وصل کند؛ fallback آفلاین فقط metadata را برمی‌گرداند و مسیر inference را تغییر نمی‌دهد. پس از تغییر resolver و تنظیمات، cache و UI باید دوباره آزموده شوند.
+- شواهد مستقل: `update/Step three/UPD-S1-008/evidence/review-T0075.md`.
+
+### CI و مرز شواهد
+
+- Quality V3.1.80 [42502980246](https://github.com/artinrahimii/project/actions/runs/42502980246) موفق؛ Rendezvous [42502980194](https://github.com/artinrahimii/project/actions/runs/42502980194) موفق.
+- HostLifecycle در Product Build [42502980229](https://github.com/artinrahimii/project/actions/runs/42502980229) موفق، ۶۷ PASS و ۸۵٫۸۹٪ coverage، یک opt-in real-model test SKIP.
+- Windows WPF و Android APK jobs در زمان این ثبت هنوز in_progress بودند؛ Product Build کلی موفق اعلام نمی‌شود.
+- انتخاب خودکار مدل، inference واقعی با مدل نمونهٔ کاتالوگ، آزمون بصری UPD-S1-024، Android-to-Windows فیزیکی، clean install و in-place upgrade در این دسته اجرا نشده‌اند.
+- reconciliation: **49/168 reviewed**, **119 pending**؛ UPD-S1-008 همچنان `in_progress`.

@@ -49,10 +49,10 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**44/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای T0027، T0032–T0036، T0041–T0070، T0199 و T0214 ثبت شده است. 124 رکورد همچنان `pending` هستند.
+**49/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای T0027، T0032–T0036، T0041–T0075، T0199 و T0214 ثبت شده است. 119 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
-هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 38 رکورد (T0027، T0032–T0036، T0041–T0044، T0199 و T0214)، و `re_review_required/pending` برای 124 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
+هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 43 رکورد (T0027، T0032–T0036، T0041–T0044، T0199 و T0214)، و `re_review_required/pending` برای 119 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
 
 
 ## نتیجهٔ تکمیلی در V 3.1.56
@@ -232,3 +232,16 @@
 - T0066–T0069 به UPD-S1-023 و T0070 به UPD-S1-023/024 نگاشت شده‌اند؛ baseline status همه done حفظ شد.
 - Quality V3.1.79 [42502772895](https://github.com/artinrahimii/project/actions/runs/42502772895) و Rendezvous [42502773013](https://github.com/artinrahimii/project/actions/runs/42502773013) موفق‌اند؛ Product Build V3.1.79 [42502772903](https://github.com/artinrahimii/project/actions/runs/42502772903) هنگام این بازبینی هنوز in_progress بود.
 - جمع reconciliation: **44/168 reviewed (26.19%)**، **124 pending**؛ وضعیت‌های قدیمی و نشانگرهای update_impact تغییر نکردند.
+
+
+## بازبینی محتوایی T0071 تا T0075 — V 3.1.80
+
+- مبنای کد: `5cba6051583091d8fbfb2cc849a2aa812c983d53` — `V 3.1.80`.
+- T0071: جزئیات نام/شناسه/فرمت/اندازه/source/license/backend/checksum و limitation نمایش داده می‌شود؛ وضعیت مجوز فقط metadata است، نه legal opinion. این UI با UPD-S1-024 نیز تحت تأثیر است.
+- T0072: وضعیت مجوز ناموجود/نامشخص و برچسب REVIEW REQUIRED به‌صورت fail-closed نمایش داده می‌شود؛ وضعیت verified در کاتالوگ به معنای تأیید حقوقی مستقل نیست.
+- T0073: C# و Python tests مسیرهای checksum، duplicate IDs/properties، backend/format/URL allowlists، license states و اندازه را پوشش می‌دهند؛ این tests auto model selection را اثبات نمی‌کنند.
+- T0074: sample metadata یک entry از bartowski، size 105454432 و SHA-256 `2e8040ceae7815abe0dcb3540b9995eaa1fa0d2ca9e797d0a635ae4433c68c2d` دارد. مدل workflow تاریخی real-inference از QuantFactory revision `a6b7826ed969c3926a98359e39912af137b464cb`, size 105454144 و SHA-256 `8030f04528538d47bda434f6f0bdf3952c40a58123e4d5e755332f23731a8684` استفاده می‌کرد؛ این دو artifact یکسان فرض نمی‌شوند.
+- T0075: OfflineModelCatalogStore فقط metadata معتبر را cache و دوباره validate می‌کند؛ fallback به cache به معنای نصب یا فعال‌بودن مدل نیست. این محدودیت در MainWindow نیز نمایش داده می‌شود.
+- هر پنج baseline status برابر done حفظ شدند؛ تصمیم همه re_review_required/reviewed است، چون UPD-S1-023 activation/selection مدل و T0071 همچنین UPD-S1-024 UI بصری را تغییر می‌دهد.
+- Quality V3.1.80 [42502980246](https://github.com/artinrahimii/project/actions/runs/42502980246) و Rendezvous [42502980194](https://github.com/artinrahimii/project/actions/runs/42502980194) موفق. HostLifecycle در Product run [42502980229](https://github.com/artinrahimii/project/actions/runs/42502980229) موفق با ۶۷ PASS، پوشش ۸۵٫۸۹٪ و یک SKIP اختیاری real-model است؛ Windows و Android jobs در زمان این ثبت در حال اجرا بودند.
+- جمع reconciliation: **49/168 reviewed (29.17%)**، **119 pending**. وضعیت‌های قدیمی و update_impact markers تغییر نکردند.
