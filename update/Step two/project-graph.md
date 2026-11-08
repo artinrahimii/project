@@ -3288,7 +3288,8 @@
         "update/Step three/UPD-S1-008/evidence/review-T0228.md",
         "update/Step three/UPD-S1-008/evidence/review-T0229.md",
         "docs/release-limitations.md",
-        "update/Step two/project-graph.md"
+        "update/Step two/project-graph.md",
+        "update/Step three/UPD-S1-008/evidence/dependency-edge-review.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
@@ -3469,26 +3470,12 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 38,
+        "attempt_count": 39,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261109-current-main-review",
+        "last_attempt_id": "UPD-S1-008-20261109-dependency-edge-review",
         "last_attempt_result": "partial",
         "changed_files": [
-          "update/Step three/UPD-S1-008/evidence/review-T0215.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0216.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0217.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0218.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0219.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0221.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0222.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0223.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0224.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0225.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0226.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0227.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0228.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0229.md",
-          "docs/release-limitations.md",
+          "update/Step three/UPD-S1-008/evidence/dependency-edge-review.md",
           "update/Step three/UPD-S1-008/execution-report.md",
           "update/Step two/legacy-task-reconciliation.json",
           "update/Step two/legacy-task-reconciliation.md",
@@ -3662,7 +3649,7 @@
             "update/Step two/legacy-task-reconciliation.md"
           ]
         },
-        "follow_up": "All 168 affected legacy records now have individual current-main evidence and reviewed decisions; all legacy baseline statuses and Step Three update_impact markers remain unchanged. UPD-S1-008 remains in_progress because 70/80 Update graph edges are still unreviewed and the dependency/consumer audit is not closed. Physical product E2E, final release and in-place-upgrade gates remain open.",
+        "follow_up": "All 168/168 reconciliation records have current review decisions and real evidence; the 70 formerly unreviewed edges have been classified and validated from V1.10 prerequisites plus producer/consumer source and test evidence (total 80/80 validated). The next step is to synchronize the reviewed markers in the legacy graph, update its contract tests, and pass both graph guards; keep UPD-S1-008 in_progress until that cross-graph commit passes CI. Product E2E and upgrade/release gates remain separate.",
         "failure_details": null
       },
       "execution_history": [
@@ -6140,7 +6127,7 @@
             "update/Step two/legacy-task-reconciliation.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "ae7725fd30f98a75968edb78082fe0d64ce409cd",
           "tests": [
             {
               "name": "Exact-head Quality Gate",
@@ -6173,6 +6160,37 @@
           "contract_changes": [],
           "follow_up": "Validate the reconciliation commit with the Quality Gate and Product Build. Then record its actual review commit SHA in all fourteen records with a sequential follow-up commit. Review the 70 unreviewed Update graph edges before closing UPD-S1-008. Do not claim physical E2E, final release or in-place upgrade.",
           "device_and_host_details_redacted": "Source and automated CI review only: GitHub-hosted runners. No user Android device, target Windows host, physical LAN inference, external provider log audit, target-device clean install or in-place upgrade was performed.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261109-dependency-edge-review",
+          "started_at": "2026-11-08T21:35:18.058Z",
+          "ended_at": "2026-11-08T21:35:18.058Z",
+          "result": "partial",
+          "summary": "Reviewed all 70 remaining graph edges. Every edge is explicitly listed as a prerequisite in approved V1.10; classification is based on whether producer outputs are hard acceptance gates, contracts/interfaces, or sequencing-only. All 80 total edges are now validated; no edge was deleted and execution order/waves were preserved. Reconciliation has 168/168 records reviewed with review SHAs. UPD-S1-008 remains in_progress pending synchronization of the Step Three legacy graph markers and post-change contract/graph-guard CI.",
+          "changed_files": [
+            "update/Step three/UPD-S1-008/evidence/dependency-edge-review.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Prerequisite reconciliation",
+              "command": "V1.10.json task prerequisites vs all 70 unreviewed graph edges",
+              "result": "passed",
+              "summary": "All 70 edges matched explicit V1.10 prerequisite declarations; all evidence paths exist in exact main tree; producer and consumer source/test references checked."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Synchronize all 168 Step Three update_impact markers with reviewed reconciliation decisions; update the legacy graph contract tests and run the exact Update/Step Three graph guards. Keep UPD-S1-008 in_progress until that CI run passes.",
+          "device_and_host_details_redacted": "This attempt used source/contract/test review and exact main Git tree. No physical device or host acceptance was performed.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -8428,22 +8446,26 @@
       "from": "UPD-S1-001",
       "to": "UPD-S1-004",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-004 در V1.10، UPD-S1-001 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-001 را به‌عنوان پیش‌نیاز UPD-S1-004 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-001/evidence/baseline-audit.md",
+        "docs/decisions/ADR-0023-one-shot-inference-v1.md"
       ]
     },
     {
       "from": "UPD-S1-002",
       "to": "UPD-S1-004",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-004 در V1.10، UPD-S1-002 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-002 را پیش‌نیاز UPD-S1-004 تعیین کرده است. تصمیم/خروجی تصمیم‌گیری دربارهٔ مسیر انتقال و مرز اعتماد سیاست یا قرارداد مورد استفادهٔ تعیین محدودهٔ Streaming در نسخهٔ هدف را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-002/evidence/verification.md",
+        "docs/decisions/ADR-0023-one-shot-inference-v1.md"
       ]
     },
     {
@@ -8515,440 +8537,520 @@
       "from": "UPD-S1-002",
       "to": "UPD-S1-007",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-007 در V1.10، UPD-S1-002 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-002 را پیش‌نیاز UPD-S1-007 تعیین کرده است. تصمیم/خروجی تصمیم‌گیری دربارهٔ مسیر انتقال و مرز اعتماد سیاست یا قرارداد مورد استفادهٔ بازنگری مدل امنیت و حریم خصوصی را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-002/evidence/verification.md",
+        "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md"
       ]
     },
     {
       "from": "UPD-S1-005",
       "to": "UPD-S1-007",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-007 در V1.10، UPD-S1-005 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-005 را پیش‌نیاز UPD-S1-007 تعیین کرده است. تصمیم/خروجی تعریف رضایت و سیاست قابل‌اندازه‌گیری منابع میزبان سیاست یا قرارداد مورد استفادهٔ بازنگری مدل امنیت و حریم خصوصی را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-005/evidence/resource-policy-review.md",
+        "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md"
       ]
     },
     {
       "from": "UPD-S1-006",
       "to": "UPD-S1-008",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-008 در V1.10، UPD-S1-006 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-006 را پیش‌نیاز UPD-S1-008 تعیین کرده است. خروجی به‌روزرسانی نیازمندی‌ها و معیارهای پذیرش Step One برای عبور از معیارهای پذیرش تهیهٔ نقشهٔ اثر تغییر برای مراحل دوم و سوم ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
+        "tests/test_update_graph_contract.py"
       ]
     },
     {
       "from": "UPD-S1-007",
       "to": "UPD-S1-008",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-008 در V1.10، UPD-S1-007 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-007 را پیش‌نیاز UPD-S1-008 تعیین کرده است. خروجی بازنگری مدل امنیت و حریم خصوصی برای عبور از معیارهای پذیرش تهیهٔ نقشهٔ اثر تغییر برای مراحل دوم و سوم ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
+        "tests/test_update_graph_contract.py"
       ]
     },
     {
       "from": "UPD-S1-006",
       "to": "UPD-S1-009",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-009 در V1.10، UPD-S1-006 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-006 را به‌عنوان پیش‌نیاز UPD-S1-009 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt"
       ]
     },
     {
       "from": "UPD-S1-008",
       "to": "UPD-S1-009",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-009 در V1.10، UPD-S1-008 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-008 را به‌عنوان پیش‌نیاز UPD-S1-009 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt"
       ]
     },
     {
       "from": "UPD-S1-024",
       "to": "UPD-S1-009",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-009 در V1.10، UPD-S1-024 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-024 را به‌عنوان پیش‌نیاز UPD-S1-009 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/App.xaml",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt"
       ]
     },
     {
       "from": "UPD-S1-009",
       "to": "UPD-S1-010",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-010 در V1.10، UPD-S1-009 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-009 را پیش‌نیاز UPD-S1-010 تعیین کرده است. خروجی ممیزی و تکمیل مدیریت محلی موجود گفت‌وگوها در اندروید برای عبور از معیارهای پذیرش اتصال رابط گفت‌وگوی موجود به چرخهٔ ارسال و دریافت ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "tests/test_android_conversation_detail_contract.py"
       ]
     },
     {
       "from": "UPD-S1-017",
       "to": "UPD-S1-010",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-010 در V1.10، UPD-S1-017 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-017 را پیش‌نیاز UPD-S1-010 تعیین کرده است. تصمیم/خروجی تعریف قرارداد پیام و وضعیت چرخهٔ درخواست سیاست یا قرارداد مورد استفادهٔ اتصال رابط گفت‌وگوی موجود به چرخهٔ ارسال و دریافت را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_android_conversation_detail_contract.py"
       ]
     },
     {
       "from": "UPD-S1-022",
       "to": "UPD-S1-010",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-010 در V1.10، UPD-S1-022 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-022 را پیش‌نیاز UPD-S1-010 تعیین کرده است. تصمیم/خروجی تعریف اعتماد اولیهٔ یک‌باره و مدیریت اعتماد ماندگار همتا سیاست یا قرارداد مورد استفادهٔ اتصال رابط گفت‌وگوی موجود به چرخهٔ ارسال و دریافت را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+        "tests/test_android_conversation_detail_contract.py"
       ]
     },
     {
       "from": "UPD-S1-023",
       "to": "UPD-S1-010",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-010 در V1.10، UPD-S1-023 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-023 را پیش‌نیاز UPD-S1-010 تعیین کرده است. تصمیم/خروجی تعریف سیاست انتخاب خودکار مدل و سقف خروجی سیاست یا قرارداد مورد استفادهٔ اتصال رابط گفت‌وگوی موجود به چرخهٔ ارسال و دریافت را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "tests/test_android_conversation_detail_contract.py"
       ]
     },
     {
       "from": "UPD-S1-024",
       "to": "UPD-S1-010",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-010 در V1.10، UPD-S1-024 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-024 را به‌عنوان پیش‌نیاز UPD-S1-010 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/App.xaml",
+        "tests/test_android_conversation_detail_contract.py"
       ]
     },
     {
       "from": "UPD-S1-006",
       "to": "UPD-S1-011",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-011 در V1.10، UPD-S1-006 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-006 را به‌عنوان پیش‌نیاز UPD-S1-011 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
+        "tests/test_android_conversation_detail_contract.py"
       ]
     },
     {
       "from": "UPD-S1-007",
       "to": "UPD-S1-011",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-011 در V1.10، UPD-S1-007 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-007 را پیش‌نیاز UPD-S1-011 تعیین کرده است. تصمیم/خروجی بازنگری مدل امنیت و حریم خصوصی سیاست یا قرارداد مورد استفادهٔ حذف تنظیمات فنی از مسیر عادی و افزودن رضایت اندروید را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
+        "tests/test_android_conversation_detail_contract.py"
       ]
     },
     {
       "from": "UPD-S1-014",
       "to": "UPD-S1-011",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-011 در V1.10، UPD-S1-014 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-014 را پیش‌نیاز UPD-S1-011 تعیین کرده است. تصمیم/خروجی تکمیل کشف metadata-only و غربالگری میزبان‌های قابل‌انتخاب سیاست یا قرارداد مورد استفادهٔ حذف تنظیمات فنی از مسیر عادی و افزودن رضایت اندروید را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
+        "tests/test_android_conversation_detail_contract.py"
       ]
     },
     {
       "from": "UPD-S1-023",
       "to": "UPD-S1-011",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-011 در V1.10، UPD-S1-023 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-023 را پیش‌نیاز UPD-S1-011 تعیین کرده است. تصمیم/خروجی تعریف سیاست انتخاب خودکار مدل و سقف خروجی سیاست یا قرارداد مورد استفادهٔ حذف تنظیمات فنی از مسیر عادی و افزودن رضایت اندروید را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "tests/test_android_conversation_detail_contract.py"
       ]
     },
     {
       "from": "UPD-S1-024",
       "to": "UPD-S1-011",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-011 در V1.10، UPD-S1-024 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-024 را به‌عنوان پیش‌نیاز UPD-S1-011 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/App.xaml",
+        "tests/test_android_conversation_detail_contract.py"
       ]
     },
     {
       "from": "UPD-S1-006",
       "to": "UPD-S1-012",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-012 در V1.10، UPD-S1-006 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-006 را به‌عنوان پیش‌نیاز UPD-S1-012 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
+        "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs"
       ]
     },
     {
       "from": "UPD-S1-008",
       "to": "UPD-S1-012",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-012 در V1.10، UPD-S1-008 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-008 را به‌عنوان پیش‌نیاز UPD-S1-012 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
+        "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs"
       ]
     },
     {
       "from": "UPD-S1-024",
       "to": "UPD-S1-012",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-012 در V1.10، UPD-S1-024 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-024 را به‌عنوان پیش‌نیاز UPD-S1-012 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/App.xaml",
+        "tests/HostLifecycle.Tests/HostNetworkListenerParticipationTests.cs"
       ]
     },
     {
       "from": "UPD-S1-005",
       "to": "UPD-S1-013",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-013 در V1.10، UPD-S1-005 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-005 را پیش‌نیاز UPD-S1-013 تعیین کرده است. تصمیم/خروجی تعریف رضایت و سیاست قابل‌اندازه‌گیری منابع میزبان سیاست یا قرارداد مورد استفادهٔ اعمال محدودیت منابع و آمادگی واقعی میزبان ویندوز را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-005/evidence/resource-policy-review.md",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs"
       ]
     },
     {
       "from": "UPD-S1-012",
       "to": "UPD-S1-013",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-013 در V1.10، UPD-S1-012 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-012 را پیش‌نیاز UPD-S1-013 تعیین کرده است. تصمیم/خروجی پیاده‌سازی مشارکت اختیاری در میزبان ویندوز سیاست یا قرارداد مورد استفادهٔ اعمال محدودیت منابع و آمادگی واقعی میزبان ویندوز را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs"
       ]
     },
     {
       "from": "UPD-S1-024",
       "to": "UPD-S1-013",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-013 در V1.10، UPD-S1-024 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-024 را به‌عنوان پیش‌نیاز UPD-S1-013 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/App.xaml",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs"
       ]
     },
     {
       "from": "UPD-S1-002",
       "to": "UPD-S1-014",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-014 در V1.10، UPD-S1-002 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-002 را پیش‌نیاز UPD-S1-014 تعیین کرده است. تصمیم/خروجی تصمیم‌گیری دربارهٔ مسیر انتقال و مرز اعتماد سیاست یا قرارداد مورد استفادهٔ تکمیل کشف metadata-only و غربالگری میزبان‌های قابل‌انتخاب را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-002/evidence/verification.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
       ]
     },
     {
       "from": "UPD-S1-003",
       "to": "UPD-S1-014",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-014 در V1.10، UPD-S1-003 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-003 را پیش‌نیاز UPD-S1-014 تعیین کرده است. تصمیم/خروجی تصمیم‌گیری دربارهٔ تعداد میزبان و سیاست تلاش مجدد سیاست یا قرارداد مورد استفادهٔ تکمیل کشف metadata-only و غربالگری میزبان‌های قابل‌انتخاب را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-003/evidence/decision-matrix.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
       ]
     },
     {
       "from": "UPD-S1-013",
       "to": "UPD-S1-014",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-014 در V1.10، UPD-S1-013 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-013 را پیش‌نیاز UPD-S1-014 تعیین کرده است. تصمیم/خروجی اعمال محدودیت منابع و آمادگی واقعی میزبان ویندوز سیاست یا قرارداد مورد استفادهٔ تکمیل کشف metadata-only و غربالگری میزبان‌های قابل‌انتخاب را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
       ]
     },
     {
       "from": "UPD-S1-017",
       "to": "UPD-S1-014",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-014 در V1.10، UPD-S1-017 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-017 را پیش‌نیاز UPD-S1-014 تعیین کرده است. تصمیم/خروجی تعریف قرارداد پیام و وضعیت چرخهٔ درخواست سیاست یا قرارداد مورد استفادهٔ تکمیل کشف metadata-only و غربالگری میزبان‌های قابل‌انتخاب را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "protocol/whitep/v1/messages.proto",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
       ]
     },
     {
       "from": "UPD-S1-022",
       "to": "UPD-S1-014",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-014 در V1.10، UPD-S1-022 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-022 را پیش‌نیاز UPD-S1-014 تعیین کرده است. تصمیم/خروجی تعریف اعتماد اولیهٔ یک‌باره و مدیریت اعتماد ماندگار همتا سیاست یا قرارداد مورد استفادهٔ تکمیل کشف metadata-only و غربالگری میزبان‌های قابل‌انتخاب را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
       ]
     },
     {
       "from": "UPD-S1-023",
       "to": "UPD-S1-014",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-014 در V1.10، UPD-S1-023 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-023 را پیش‌نیاز UPD-S1-014 تعیین کرده است. تصمیم/خروجی تعریف سیاست انتخاب خودکار مدل و سقف خروجی سیاست یا قرارداد مورد استفادهٔ تکمیل کشف metadata-only و غربالگری میزبان‌های قابل‌انتخاب را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
       ]
     },
     {
       "from": "UPD-S1-024",
       "to": "UPD-S1-014",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-014 در V1.10، UPD-S1-024 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-024 را به‌عنوان پیش‌نیاز UPD-S1-014 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/App.xaml",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt"
       ]
     },
     {
       "from": "UPD-S1-003",
       "to": "UPD-S1-015",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-015 در V1.10، UPD-S1-003 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-003 را پیش‌نیاز UPD-S1-015 تعیین کرده است. تصمیم/خروجی تصمیم‌گیری دربارهٔ تعداد میزبان و سیاست تلاش مجدد سیاست یا قرارداد مورد استفادهٔ تخصیص میزبان طبق cardinality مصوب و retry امن را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-003/evidence/decision-matrix.md",
+        "tests/test_android_inference_attempt_budget_acceptance.py"
       ]
     },
     {
       "from": "UPD-S1-014",
       "to": "UPD-S1-015",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-015 در V1.10، UPD-S1-014 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-014 را پیش‌نیاز UPD-S1-015 تعیین کرده است. خروجی تکمیل کشف metadata-only و غربالگری میزبان‌های قابل‌انتخاب برای عبور از معیارهای پذیرش تخصیص میزبان طبق cardinality مصوب و retry امن ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
+        "tests/test_android_inference_attempt_budget_acceptance.py"
       ]
     },
     {
       "from": "UPD-S1-016",
       "to": "UPD-S1-015",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-015 در V1.10، UPD-S1-016 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-016 را پیش‌نیاز UPD-S1-015 تعیین کرده است. تصمیم/خروجی پیاده‌سازی انتقال امن و مسیر جایگزین مصوب سیاست یا قرارداد مورد استفادهٔ تخصیص میزبان طبق cardinality مصوب و retry امن را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "tests/test_android_inference_attempt_budget_acceptance.py"
       ]
     },
     {
       "from": "UPD-S1-017",
       "to": "UPD-S1-015",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-015 در V1.10، UPD-S1-017 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-017 را پیش‌نیاز UPD-S1-015 تعیین کرده است. تصمیم/خروجی تعریف قرارداد پیام و وضعیت چرخهٔ درخواست سیاست یا قرارداد مورد استفادهٔ تخصیص میزبان طبق cardinality مصوب و retry امن را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "protocol/whitep/v1/messages.proto",
+        "tests/test_android_inference_attempt_budget_acceptance.py"
       ]
     },
     {
       "from": "UPD-S1-024",
       "to": "UPD-S1-015",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-015 در V1.10، UPD-S1-024 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-024 را به‌عنوان پیش‌نیاز UPD-S1-015 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/App.xaml",
+        "tests/test_android_inference_attempt_budget_acceptance.py"
       ]
     },
     {
       "from": "UPD-S1-002",
       "to": "UPD-S1-016",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-016 در V1.10، UPD-S1-002 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-002 را پیش‌نیاز UPD-S1-016 تعیین کرده است. تصمیم/خروجی تصمیم‌گیری دربارهٔ مسیر انتقال و مرز اعتماد سیاست یا قرارداد مورد استفادهٔ پیاده‌سازی انتقال امن و مسیر جایگزین مصوب را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-002/evidence/verification.md",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-007",
       "to": "UPD-S1-016",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-016 در V1.10، UPD-S1-007 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-007 را پیش‌نیاز UPD-S1-016 تعیین کرده است. تصمیم/خروجی بازنگری مدل امنیت و حریم خصوصی سیاست یا قرارداد مورد استفادهٔ پیاده‌سازی انتقال امن و مسیر جایگزین مصوب را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-008",
       "to": "UPD-S1-016",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-016 در V1.10، UPD-S1-008 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-008 را به‌عنوان پیش‌نیاز UPD-S1-016 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-017",
       "to": "UPD-S1-016",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-016 در V1.10، UPD-S1-017 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-017 را پیش‌نیاز UPD-S1-016 تعیین کرده است. تصمیم/خروجی تعریف قرارداد پیام و وضعیت چرخهٔ درخواست سیاست یا قرارداد مورد استفادهٔ پیاده‌سازی انتقال امن و مسیر جایگزین مصوب را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "protocol/whitep/v1/messages.proto",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-022",
       "to": "UPD-S1-016",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-016 در V1.10، UPD-S1-022 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-022 را پیش‌نیاز UPD-S1-016 تعیین کرده است. تصمیم/خروجی تعریف اعتماد اولیهٔ یک‌باره و مدیریت اعتماد ماندگار همتا سیاست یا قرارداد مورد استفادهٔ پیاده‌سازی انتقال امن و مسیر جایگزین مصوب را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs"
       ]
     },
     {
@@ -8994,308 +9096,364 @@
       "from": "UPD-S1-007",
       "to": "UPD-S1-018",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-018 در V1.10، UPD-S1-007 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-007 را پیش‌نیاز UPD-S1-018 تعیین کرده است. تصمیم/خروجی بازنگری مدل امنیت و حریم خصوصی سیاست یا قرارداد مورد استفادهٔ اجرای کنترل‌های حریم خصوصی و پاک‌سازی داده را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
+        "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-016",
       "to": "UPD-S1-018",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-018 در V1.10، UPD-S1-016 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-016 را پیش‌نیاز UPD-S1-018 تعیین کرده است. تصمیم/خروجی پیاده‌سازی انتقال امن و مسیر جایگزین مصوب سیاست یا قرارداد مورد استفادهٔ اجرای کنترل‌های حریم خصوصی و پاک‌سازی داده را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-017",
       "to": "UPD-S1-018",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-018 در V1.10، UPD-S1-017 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-017 را پیش‌نیاز UPD-S1-018 تعیین کرده است. تصمیم/خروجی تعریف قرارداد پیام و وضعیت چرخهٔ درخواست سیاست یا قرارداد مورد استفادهٔ اجرای کنترل‌های حریم خصوصی و پاک‌سازی داده را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "protocol/whitep/v1/messages.proto",
+        "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-009",
       "to": "UPD-S1-019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-019 در V1.10، UPD-S1-009 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-009 را پیش‌نیاز UPD-S1-019 تعیین کرده است. خروجی ممیزی و تکمیل مدیریت محلی موجود گفت‌وگوها در اندروید برای عبور از معیارهای پذیرش افزودن آزمون‌های واحد و یکپارچه ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "tests/HostLifecycle.Tests/Program.cs"
       ]
     },
     {
       "from": "UPD-S1-010",
       "to": "UPD-S1-019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-019 در V1.10، UPD-S1-010 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-010 را پیش‌نیاز UPD-S1-019 تعیین کرده است. خروجی اتصال رابط گفت‌وگوی موجود به چرخهٔ ارسال و دریافت برای عبور از معیارهای پذیرش افزودن آزمون‌های واحد و یکپارچه ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "tests/HostLifecycle.Tests/Program.cs"
       ]
     },
     {
       "from": "UPD-S1-011",
       "to": "UPD-S1-019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-019 در V1.10، UPD-S1-011 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-011 را پیش‌نیاز UPD-S1-019 تعیین کرده است. خروجی حذف تنظیمات فنی از مسیر عادی و افزودن رضایت اندروید برای عبور از معیارهای پذیرش افزودن آزمون‌های واحد و یکپارچه ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "tests/HostLifecycle.Tests/Program.cs"
       ]
     },
     {
       "from": "UPD-S1-012",
       "to": "UPD-S1-019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-019 در V1.10، UPD-S1-012 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-012 را پیش‌نیاز UPD-S1-019 تعیین کرده است. خروجی پیاده‌سازی مشارکت اختیاری در میزبان ویندوز برای عبور از معیارهای پذیرش افزودن آزمون‌های واحد و یکپارچه ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/Networking/ParticipationGatedNetworkListener.cs",
+        "tests/HostLifecycle.Tests/Program.cs"
       ]
     },
     {
       "from": "UPD-S1-013",
       "to": "UPD-S1-019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-019 در V1.10، UPD-S1-013 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-013 را پیش‌نیاز UPD-S1-019 تعیین کرده است. خروجی اعمال محدودیت منابع و آمادگی واقعی میزبان ویندوز برای عبور از معیارهای پذیرش افزودن آزمون‌های واحد و یکپارچه ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs"
       ]
     },
     {
       "from": "UPD-S1-014",
       "to": "UPD-S1-019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-019 در V1.10، UPD-S1-014 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-014 را پیش‌نیاز UPD-S1-019 تعیین کرده است. خروجی تکمیل کشف metadata-only و غربالگری میزبان‌های قابل‌انتخاب برای عبور از معیارهای پذیرش افزودن آزمون‌های واحد و یکپارچه ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
+        "tests/HostLifecycle.Tests/Program.cs"
       ]
     },
     {
       "from": "UPD-S1-015",
       "to": "UPD-S1-019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-019 در V1.10، UPD-S1-015 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-015 را پیش‌نیاز UPD-S1-019 تعیین کرده است. خروجی تخصیص میزبان طبق cardinality مصوب و retry امن برای عبور از معیارهای پذیرش افزودن آزمون‌های واحد و یکپارچه ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "tests/HostLifecycle.Tests/Program.cs"
       ]
     },
     {
       "from": "UPD-S1-016",
       "to": "UPD-S1-019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-019 در V1.10، UPD-S1-016 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-016 را پیش‌نیاز UPD-S1-019 تعیین کرده است. خروجی پیاده‌سازی انتقال امن و مسیر جایگزین مصوب برای عبور از معیارهای پذیرش افزودن آزمون‌های واحد و یکپارچه ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "tests/HostLifecycle.Tests/Program.cs"
       ]
     },
     {
       "from": "UPD-S1-017",
       "to": "UPD-S1-019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-019 در V1.10، UPD-S1-017 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-017 را پیش‌نیاز UPD-S1-019 تعیین کرده است. خروجی تعریف قرارداد پیام و وضعیت چرخهٔ درخواست برای عبور از معیارهای پذیرش افزودن آزمون‌های واحد و یکپارچه ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "protocol/whitep/v1/messages.proto",
+        "tests/HostLifecycle.Tests/Program.cs"
       ]
     },
     {
       "from": "UPD-S1-018",
       "to": "UPD-S1-019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-019 در V1.10، UPD-S1-018 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-018 را پیش‌نیاز UPD-S1-019 تعیین کرده است. خروجی اجرای کنترل‌های حریم خصوصی و پاک‌سازی داده برای عبور از معیارهای پذیرش افزودن آزمون‌های واحد و یکپارچه ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/SafeDiagnosticLog.kt",
+        "tests/HostLifecycle.Tests/Program.cs"
       ]
     },
     {
       "from": "UPD-S1-023",
       "to": "UPD-S1-019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-019 در V1.10، UPD-S1-023 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-023 را پیش‌نیاز UPD-S1-019 تعیین کرده است. خروجی تعریف سیاست انتخاب خودکار مدل و سقف خروجی برای عبور از معیارهای پذیرش افزودن آزمون‌های واحد و یکپارچه ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "tests/HostLifecycle.Tests/Program.cs"
       ]
     },
     {
       "from": "UPD-S1-024",
       "to": "UPD-S1-019",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-019 در V1.10، UPD-S1-024 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-024 را پیش‌نیاز UPD-S1-019 تعیین کرده است. خروجی تعریف و اعمال هویت بصری مشترک، آیکون P و پالت پنج‌رنگ در ویندوز و اندروید برای عبور از معیارهای پذیرش افزودن آزمون‌های واحد و یکپارچه ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/App.xaml",
+        "tests/HostLifecycle.Tests/Program.cs"
       ]
     },
     {
       "from": "UPD-S1-019",
       "to": "UPD-S1-020",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-020 در V1.10، UPD-S1-019 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-019 را پیش‌نیاز UPD-S1-020 تعیین کرده است. خروجی افزودن آزمون‌های واحد و یکپارچه برای عبور از معیارهای پذیرش اعتبارسنجی انتها‌به‌انتها روی دستگاه‌های واقعی ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        ".github/workflows/product-build.yml",
+        "src/Client.Android/app/src/androidTest/java/com/whitep/client/network/AndroidWindowsLanIntegrationTest.kt"
       ]
     },
     {
       "from": "UPD-S1-020",
       "to": "UPD-S1-021",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-021 در V1.10، UPD-S1-020 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-020 را پیش‌نیاز UPD-S1-021 تعیین کرده است. خروجی اعتبارسنجی انتها‌به‌انتها روی دستگاه‌های واقعی برای عبور از معیارهای پذیرش آماده‌سازی اسناد، بسته‌ها و شواهد تحویل ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        ".github/workflows/android-windows-lan-acceptance.yml",
+        "docs/release-assets.md"
       ]
     },
     {
       "from": "UPD-S1-024",
       "to": "UPD-S1-021",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-021 در V1.10، UPD-S1-024 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "hard_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-024 را پیش‌نیاز UPD-S1-021 تعیین کرده است. خروجی تعریف و اعمال هویت بصری مشترک، آیکون P و پالت پنج‌رنگ در ویندوز و اندروید برای عبور از معیارهای پذیرش آماده‌سازی اسناد، بسته‌ها و شواهد تحویل ورودی/گیت لازم است؛ نبود آن اجرای معتبر مصرف‌کننده را متوقف می‌کند، بنابراین وابستگی از نوع سخت است. شاهد قرارداد نیازمندی، خروجی تولیدکننده و کد/آزمون مصرف‌کننده در evidence آمده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/App.xaml",
+        "docs/release-assets.md"
       ]
     },
     {
       "from": "UPD-S1-001",
       "to": "UPD-S1-022",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-022 در V1.10، UPD-S1-001 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-001 را به‌عنوان پیش‌نیاز UPD-S1-022 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-001/evidence/baseline-audit.md",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-007",
       "to": "UPD-S1-022",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-022 در V1.10، UPD-S1-007 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-007 را پیش‌نیاز UPD-S1-022 تعیین کرده است. تصمیم/خروجی بازنگری مدل امنیت و حریم خصوصی سیاست یا قرارداد مورد استفادهٔ تعریف اعتماد اولیهٔ یک‌باره و مدیریت اعتماد ماندگار همتا را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-007/evidence/security-control-matrix.md",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-024",
       "to": "UPD-S1-022",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-022 در V1.10، UPD-S1-024 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-024 را به‌عنوان پیش‌نیاز UPD-S1-022 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/App.xaml",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-001",
       "to": "UPD-S1-023",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-023 در V1.10، UPD-S1-001 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-001 را به‌عنوان پیش‌نیاز UPD-S1-023 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-001/evidence/baseline-audit.md",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-005",
       "to": "UPD-S1-023",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-023 در V1.10، UPD-S1-005 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-005 را پیش‌نیاز UPD-S1-023 تعیین کرده است. تصمیم/خروجی تعریف رضایت و سیاست قابل‌اندازه‌گیری منابع میزبان سیاست یا قرارداد مورد استفادهٔ تعریف سیاست انتخاب خودکار مدل و سقف خروجی را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-005/evidence/resource-policy-review.md",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-006",
       "to": "UPD-S1-023",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-023 در V1.10، UPD-S1-006 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-006 را پیش‌نیاز UPD-S1-023 تعیین کرده است. تصمیم/خروجی به‌روزرسانی نیازمندی‌ها و معیارهای پذیرش Step One سیاست یا قرارداد مورد استفادهٔ تعریف سیاست انتخاب خودکار مدل و سقف خروجی را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-024",
       "to": "UPD-S1-023",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-023 در V1.10، UPD-S1-024 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-024 را به‌عنوان پیش‌نیاز UPD-S1-023 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "src/Host.Windows/App.xaml",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs"
       ]
     },
     {
       "from": "UPD-S1-001",
       "to": "UPD-S1-024",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-024 در V1.10، UPD-S1-001 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-001 را به‌عنوان پیش‌نیاز UPD-S1-024 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-001/evidence/baseline-audit.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
       ]
     },
     {
       "from": "UPD-S1-006",
       "to": "UPD-S1-024",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-024 در V1.10، UPD-S1-006 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "contract_or_interface_dependency",
+      "validation_status": "validated",
+      "rationale": "V1.10 صریحاً UPD-S1-006 را پیش‌نیاز UPD-S1-024 تعیین کرده است. تصمیم/خروجی به‌روزرسانی نیازمندی‌ها و معیارهای پذیرش Step One سیاست یا قرارداد مورد استفادهٔ تعریف و اعمال هویت بصری مشترک، آیکون P و پالت پنج‌رنگ در ویندوز و اندروید را تعیین می‌کند؛ شواهد کد/آزمون دو سوی مرز در evidence آمده است. این وابستگی صرفاً ترتیب زمانی نیست، اما نباید به‌عنوان نیاز به اجرای هم‌زمان تعبیر شود.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
       ]
     },
     {
       "from": "UPD-S1-008",
       "to": "UPD-S1-024",
       "type": "blocks",
-      "dependency_classification": "unreviewed",
-      "validation_status": "unreviewed",
-      "rationale": "UPD-S1-024 در V1.10، UPD-S1-008 را صریحاً پیش‌نیاز اعلام کرده است. این گراف رابطه را حفظ می‌کند؛ ماهیت فنی/قراردادی آن باید پیش از اجرای گسترده با کد و آزمون اعتبارسنجی شود.",
+      "dependency_classification": "sequencing_only",
+      "validation_status": "validated",
+      "rationale": "V1.10 UPD-S1-008 را به‌عنوان پیش‌نیاز UPD-S1-024 ثبت کرده است، اما بررسی خروجی‌ها و مصرف‌کنندگان نشان می‌دهد این رابطه قرارداد اجرایی مشترک یا رابط مستقیم را منتقل نمی‌کند؛ الزام از جنس ترتیب محافظه‌کارانهٔ طراحی/ممیزی/یکپارچه‌سازی است. برای حفظ ترتیب مصوب، یال و type=blocks نگه داشته شده و فقط classification به sequencing_only تبدیل شده است.",
       "evidence": [
-        "update/Step one/Output/V1.10.json"
+        "update/Step one/Output/V1.10.json",
+        "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt"
       ]
     }
   ],
@@ -9595,7 +9753,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T21:20:31.030Z",
+    "as_of": "2026-11-08T21:35:18.058Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -9904,7 +10062,7 @@
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "All 168 affected legacy reconciliation records have individual reviews, non-empty evidence and preserved baseline statuses. UPD-S1-008 remains in_progress because 70 of 80 Update graph edges remain unreviewed; their technical/contract/sequencing classes and direct/indirect consumer evidence must be completed before the dependency audit can close. Physical Android-to-Windows acceptance, final release workflow and in-place upgrade are separate open product gates.",
+    "completion_blocker": "All 168 reconciliation records are reviewed with decisions, evidence and real review commit SHAs. All 80/80 Update graph edges are classified and validated with explicit V1.10 prerequisite, producer/consumer source and test evidence. UPD-S1-008 remains in_progress until the 168 Step Three update_impact markers and legacy graph summary are synchronized with the ledger, the legacy graph contract tests are updated, and both graph guards pass on the resulting commit. Physical Android-to-Windows, release and in-place-upgrade requirements remain separate product acceptance gates.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",

@@ -966,3 +966,14 @@ Review baseline: `a9a12e8326d05e3b4aaeafb33eaeddb68e631c0e` (`V 3.1.108`). The f
 Exact-head CI before this change: Quality Gate [42519571303](https://github.com/artinrahimii/project/actions/runs/42519571303), Product Build [42519571320](https://github.com/artinrahimii/project/actions/runs/42519571320), Rendezvous container [42519571350](https://github.com/artinrahimii/project/actions/runs/42519571350); all passed. These runs precede this reconciliation commit, so the new commit must be validated separately.
 
 **Record-level reconciliation: 168/168 reviewed (100%); 0 record pending.** All legacy baseline statuses and original Step Three `update_impact` markers remain unchanged. This is not the completion percentage of the 24 update tasks. `UPD-S1-008` remains `in_progress` because 70/80 Update graph edges are still `unreviewed` and the dependency audit remains open.
+
+
+## Dependency-edge audit — 2026-11-09
+
+- Exact source main commit: `ae7725fd30f98a75968edb78082fe0d64ce409cd` (`V 3.1.109`). All 70 previously `unreviewed` edges were checked against the corresponding `prerequisites` arrays in approved `V1.10.json`; every edge was an explicit prerequisite, and all referenced source/test evidence paths exist in the exact Git tree.
+- Classification of the 70 reviewed edges: 19 `hard_dependency`, 31 `contract_or_interface_dependency`, 20 `sequencing_only`. No edge was deleted, no order was relaxed, and the 13 execution waves were preserved.
+- Combined edge totals: **80/80 validated** — 19 hard, 34 contract/interface, 27 sequencing-only; 0 unreviewed and 0 disputed.
+- Edge-level rationale and evidence: `update/Step three/UPD-S1-008/evidence/dependency-edge-review.md`.
+- All 168 reconciliation rows now contain decisions/evidence and the actual review commit SHA `ae7725fd30f98a75968edb78082fe0d64ce409cd`; baseline Step Three task statuses remain unchanged.
+- This attempt is partial: the old graph's 168 `update_impact` markers and global summary have not yet been synchronized with the ledger, and the old-graph contract test must be updated. `UPD-S1-008` remains `in_progress` until both graph guards pass after that synchronization.
+- Product Build for exact commit `V 3.1.109` is still in progress as of the latest poll; Windows and HostLifecycle jobs have passed, while Android is still uploading coverage/finishing its final steps. This is not physical Android-to-Windows acceptance.
