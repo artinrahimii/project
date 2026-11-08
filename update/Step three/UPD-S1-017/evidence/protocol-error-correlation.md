@@ -47,3 +47,11 @@ C# HostLifecycle/mapper/identity، Kotlin parser/ViewModel و Python source-cont
 - Android 42477696429 failed only at ktlint in RequestViewModelTest import order and two multiline response-card error assertions; parser file was clean after attempt 2.
 - Windows WPF job remained in progress at this evidence update.
 - APK/JVM/Keystore did not run on V3.1.50. No physical Android-to-Windows test or in-place upgrade performed.
+
+
+## CI exact V 3.1.51
+- Quality 42478015523 passed: 479 Python tests; update graph guard zero errors/warnings; legacy graph zero errors and one retained warning.
+- HostLifecycle 128723595644 passed with coverage.
+- Windows WPF 128723595595 passed clean build/publish/generated Protobuf/startup/policy/DPAPI/installer checks.
+- Rendezvous 42478015406 passed.
+- Android 128723595688 passed test-source lint but failed main-source ktlint in RequestViewModel terminal error-code validation; APK/JVM/Keystore steps skipped.

@@ -87,3 +87,16 @@
 - Windows WPF در زمان آخرین بررسی هنوز در حال اجرا بود؛ نتیجهٔ موفقیت در این گزارش ادعا نمی‌شود.
 - workflow مدل محلی در V3.1.49 پیش از دریافت باینری و checksum به‌دلیل خطای موقت دانلود GitHub متوقف شد؛ در V3.1.50 دوباره اجرا نشد.
 - وضعیت UPD-S1-017 همچنان `in_progress` است تا exact V3.1.51 CI تکمیل شود.
+
+
+## نتایج exact V 3.1.51 و اصلاح main-source ktlint
+
+- Commit: `cd27ca0adbaf12068f14e4c942a0ac7f833a24f0`.
+- Quality [42478015523](https://github.com/artinrahimii/project/actions/runs/42478015523): **success**؛ ۴۷۹ آزمون Python و graph guards موفق؛ گراف update ۲۴/۸۰ بدون خطا/هشدار؛ گراف legacy ۲۳۰/۴۲۲ بدون خطا و یک هشدار قدیمی T0001.
+- Rendezvous [42478015406](https://github.com/artinrahimii/project/actions/runs/42478015406): **success**.
+- HostLifecycle [42478015591]: **success** همراه coverage.
+- Windows WPF [42478015591]: **success**؛ build/publish، generated Protobuf، WPF startup، policy/backend gate، DPAPI/peer trust و installer.
+- Android [42478015591]: **failed** در ktlint main source. Test source lint در این نسخه پاس شد؛ خطاها به validator outcome در RequestViewModel منتقل شدند: assignment/when wrapping، چند expression چندخطی و سه شاخهٔ if/else بدون brace.
+- اصلاح main-source در تلاش بعدی انجام شد و منطق allowed error codes همان مقدارهای قبلی را حفظ می‌کند.
+- APK، release، JVM unit tests و Keystore instrumentation در این نسخه به دلیل lint اجرا نشدند.
+- آزمون فیزیکی Android-to-Windows، clean install کاربر و in-place upgrade هنوز اجرا نشده‌اند.
