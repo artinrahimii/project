@@ -659,3 +659,25 @@
   - `update/Step three/UPD-S1-008/evidence/review-T0109.md`
 - نتیجهٔ reconciliation: **64/168 reviewed (38.10%)** و **104 pending**؛ UPD-S1-008 همچنان `in_progress`.
 
+
+
+## بازبینی محتوایی T0110 تا T0115 — 2026-11-08T18:10:19.333Z
+
+- مبنای دقیق کد: `58df066c3feb44020e59d75870a3d1c66642d604` — `V 3.1.83`، شاخهٔ `main`.
+- هر شش وظیفه جداگانه در برابر parser، validator، response mapper، listener، logging tests، production peer lifecycle و گراف قدیمی بررسی شدند؛ وضعیت پایهٔ هر شش `done` حفظ شد.
+- T0110: parser مشترک در TCP loopback frame reader و نیز در مسیر تولیدی libp2p مستقیماً استفاده می‌شود؛ قاب‌بندی چهار‌بایتی TCP را با message framing libp2p یکی فرض نکردم.
+- T0111: semantic validator اندازه، نسخه، شناسه‌ها، مدل، prompt، deadline و سقف خروجی را fail-closed کنترل می‌کند؛ auth peer و opt-in نیز پیش از handler انجام می‌شود.
+- T0112: helper mapper typed به‌طور مستقل آزموده شده، ولی مسیر production peer پاسخ InferenceResponse را از سازنده‌های lifecycle/MainWindow می‌سازد؛ یکسان‌سازی/بازبینی مجدد لازم است.
+- T0113: runtime canary و source scan از عدم ثبت prompt/response در sinkهای بررسی‌شده حمایت می‌کنند؛ بافرهای request/response در lifecycle پاک می‌شوند.
+- T0114: listener legacy TCP loopback-only است؛ production peer hosting از bind/advertised address مشخص و تأیید operator/trust/consent استفاده می‌کند؛ reachability عمومی توسط برنامه probe نمی‌شود.
+- T0115: آزمون‌های disconnect، malformed/oversized/truncated، repeated connection، cancellation و shutdown در loopback وجود دارند؛ آزمون مستقل شبکهٔ عمومی یا Android فیزیکی نیستند.
+- CI دقیق V3.1.83: Quality [42508306358](https://github.com/artinrahimii/project/actions/runs/42508306358) موفق؛ HostLifecycle در Product [42508306341](https://github.com/artinrahimii/project/actions/runs/42508306341) موفق؛ Rendezvous [42508306222](https://github.com/artinrahimii/project/actions/runs/42508306222) موفق. Android JVM/Keystore و Windows installer در زمان ثبت هنوز in_progress بودند.
+- شواهد مستقل:
+  - `update/Step three/UPD-S1-008/evidence/review-T0110.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0111.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0112.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0113.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0114.md`
+  - `update/Step three/UPD-S1-008/evidence/review-T0115.md`
+- نتیجهٔ reconciliation: **70/168 reviewed (41.67%)** و **98 pending (58.33%)**؛ UPD-S1-008 همچنان `in_progress`.
+
