@@ -72,3 +72,11 @@
 - Quality CI [42480966736](https://github.com/artinrahimii/project/actions/runs/42480966736) موفق: full Python suite، compileall و graph guards.
 - Product build [42480966731](https://github.com/artinrahimii/project/actions/runs/42480966731) هنگام بررسی در حال اجرا بود؛ Windows و HostLifecycle موفق، Android JVM tests در حال اجرا و instrumentation pending بود؛ build کامل Android ادعا نمی‌شود.
 - reconciliation: **2/168 reviewed** و **166 pending**؛ پیشرفت **1.19%**. UPD-S1-008 همچنان `in_progress`.
+
+
+## اصلاح اعتبارسنجی پس از V 3.1.57
+
+- CI دقیق commit `38624cbc7537637086c8ef07aa7f4d15d8315e99` (V 3.1.57)، workflow [42481482201](https://github.com/artinrahimii/project/actions/runs/42481482201)، در `test_all_legacy_impact_ids_are_mapped_for_re_review` شکست خورد.
+- علت: قرارداد آزمون گراف قدیمی الزام می‌کند نشانگرهای `update_impact` برای هر 168 وظیفه همچنان `review_status=pending` و `decision=re_review_required` باشند و خلاصهٔ گراف قدیمی `pending=168` را حفظ کند. این نشانگر، ثبت اثر اولیهٔ V1.10 است؛ وضعیت بازبینی واقعی و تصمیم نهایی به‌صورت مستقل در `legacy-task-reconciliation.json` نگهداری می‌شود.
+- دو نشانگر T0012/T0013 و شمارندهٔ گراف قدیمی که در V3.1.57 به reviewed تغییر کرده بودند، در این اصلاح به نسخهٔ قراردادی اولیه برمی‌گردند. رکوردهای واقعی reconciliation برای دو وظیفه بدون تغییر `reviewed/unchanged` باقی می‌مانند؛ 166 مورد دیگر `pending` هستند.
+- هیچ آزمون یا شرط پذیرشی تضعیف/حذف نشده است. اجرای مجدد quality workflow روی commit اصلاحی V3.1.58 برای تأیید نهایی لازم است.

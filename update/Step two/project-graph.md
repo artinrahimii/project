@@ -3113,9 +3113,9 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-008-20261108123530",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "UPD-S1-008-20261108124213",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3129,7 +3129,8 @@
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
-          "795a2de651f4e43133f352699e34623a3a10df0a"
+          "795a2de651f4e43133f352699e34623a3a10df0a",
+          "38624cbc7537637086c8ef07aa7f4d15d8315e99"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -3140,7 +3141,9 @@
           "T0013: 21 acceptance gates map all 24 requirements; NOT RUN remains a release blocker; dedicated tests passed in exact V3.1.56 quality CI.",
           "Exact V3.1.56 quality run 42480966736 passed Python test discovery, compileall and both graph structural/output-evidence guards."
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -3271,6 +3274,55 @@
           "contract_changes": [],
           "follow_up": "Review remaining affected Txxxx tasks individually, preserving baseline status until current implementation, tests, acceptance and dependencies have been assessed.",
           "device_and_host_details_redacted": "Documentation review and hosted quality CI only; no physical Android handset or target Windows host used.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108124213",
+          "started_at": "2026-11-08T12:42:13Z",
+          "ended_at": "2026-11-08T12:42:25Z",
+          "result": "partial",
+          "summary": "Quality CI exposed an incorrect mutation of the legacy graph's static update_impact markers. The marker contract remains pending/re_review_required for all affected tasks; individual content-review outcomes remain only in the reconciliation JSON. Restore the legacy graph blob to the exact pre-review checkpoint and re-run CI.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "step three/project-graph.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md"
+          ],
+          "commit_sha": "38624cbc7537637086c8ef07aa7f4d15d8315e99",
+          "tests": [
+            {
+              "name": "Step Three quality run V 3.1.57",
+              "command": "GitHub Actions run 42481482201 / test_update_graph_contract.py",
+              "result": "failed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42481482201",
+              "summary": "479 tests executed; one failure in test_all_legacy_impact_ids_are_mapped_for_re_review because T0012 update_impact.review_status was changed to reviewed instead of remaining pending."
+            },
+            {
+              "name": "Diagnosis and contract-source inspection",
+              "command": "Read tests/test_update_graph_contract.py::test_all_legacy_impact_ids_are_mapped_for_re_review",
+              "result": "passed",
+              "summary": "Confirmed required marker review_status=pending, decision=re_review_required and legacy graph summary pending=168 for all 168 impact markers."
+            },
+            {
+              "name": "Corrective graph restoration",
+              "command": "Restore exact legacy graph source blob 1b51b7452762c85d18b0e2f5acbba6f1624e1f83",
+              "result": "passed",
+              "summary": "Static impact markers and original graph summary restored; actual per-task review results remain in reconciliation JSON."
+            },
+            {
+              "name": "Quality workflow on V 3.1.58",
+              "command": ".github/workflows/quality.yml",
+              "result": "not_run",
+              "summary": "Will be triggered by the corrective commit; do not claim pass until it finishes."
+            }
+          ],
+          "failure_details": "V 3.1.57 changed the legacy impact marker's review_status and decision. Existing graph contract intentionally requires all such markers to remain pending/re_review_required while task-level review records are maintained independently in legacy-task-reconciliation.json.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify V 3.1.58 quality run passes all graph contracts and unit tests; keep all legacy impact markers pending until the complete reconciliation criteria permit otherwise.",
+          "device_and_host_details_redacted": "GitHub-hosted CI and repository source inspection only; no physical handset or target Windows host used.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -6693,7 +6745,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T12:37:35Z",
+    "as_of": "2026-11-08T12:42:25Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -6814,7 +6866,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T12:37:35Z",
+  "updated_at": "2026-11-08T12:42:25Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
