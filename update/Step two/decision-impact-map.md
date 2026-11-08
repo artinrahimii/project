@@ -4,7 +4,7 @@
 - تعداد کل وظایف قدیمی: 230
 - تعداد شناسه‌های متأثر: 168
 - تعداد رکوردهای مستقل: 168
-- وضعیت جاری مطابق JSON اصلی است؛ 129 مورد محتوایی reviewed و 39 مورد همچنان pending هستند.
+- وضعیت جاری مطابق JSON اصلی است؛ 134 مورد محتوایی reviewed و 34 مورد همچنان pending هستند.
 
 | شناسهٔ قدیمی | وضعیت پایه | شناسه‌های UPD-S1 مرتبط | تصمیم اولیه | وضعیت بازبینی | فایل‌های کد/قرارداد | فایل‌های آزمون |
 |---|---|---|---|---:|---:|---:|
@@ -135,11 +135,11 @@
 | `T0183` | done | UPD-S1-007, UPD-S1-018 | re_review_required | reviewed | 7 | 6 |
 | `T0184` | done | UPD-S1-007, UPD-S1-018 | re_review_required | reviewed | 4 | 5 |
 | `T0185` | done | UPD-S1-007, UPD-S1-018 | unchanged | reviewed | 1 | 1 |
-| `T0186` | done | UPD-S1-007, UPD-S1-011, UPD-S1-018, UPD-S1-022 | re_review_required | pending | 3 | 3 |
-| `T0187` | done | UPD-S1-007, UPD-S1-018 | re_review_required | pending | 2 | 6 |
-| `T0188` | done | UPD-S1-007, UPD-S1-018 | re_review_required | pending | 0 | 1 |
-| `T0189` | done | UPD-S1-017 | re_review_required | pending | 11 | 6 |
-| `T0190` | done | UPD-S1-010, UPD-S1-017 | re_review_required | pending | 5 | 4 |
+| `T0186` | done | UPD-S1-007, UPD-S1-011, UPD-S1-018, UPD-S1-022 | re_review_required | reviewed | 3 | 3 |
+| `T0187` | done | UPD-S1-007, UPD-S1-018 | re_review_required | reviewed | 2 | 6 |
+| `T0188` | done | UPD-S1-007, UPD-S1-018 | re_review_required | reviewed | 0 | 1 |
+| `T0189` | done | UPD-S1-017 | re_review_required | reviewed | 11 | 6 |
+| `T0190` | done | UPD-S1-010, UPD-S1-017 | re_review_required | reviewed | 5 | 4 |
 | `T0191` | done | UPD-S1-017 | re_review_required | pending | 1 | 1 |
 | `T0192` | done | UPD-S1-017 | re_review_required | pending | 0 | 1 |
 | `T0193` | done | UPD-S1-012 | re_review_required | pending | 3 | 6 |
@@ -261,3 +261,11 @@
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0181.md` تا `review-T0185.md`؛ commit `bf9ba99b17d12df86197064e3576afb0046153b0`.
 - وضعیت پایهٔ هر پنج مورد `done` حفظ شد؛ T0181-T0184 برابر `re_review_required` و T0185 برابر `unchanged` است؛ هر پنج reviewed شدند.
 - نتیجهٔ جاری: **129 reviewed / 39 pending از 168 شناسهٔ متأثر**.
+
+
+## بازبینی T0186 تا T0190 روی V 3.1.98
+
+- شواهد مستقل: `update/Step three/UPD-S1-008/evidence/review-T0186.md` تا `review-T0190.md`؛ commit `c569a8a87379f0fa6d2bc672189f07987cdbe65f`.
+- وضعیت پایهٔ پنج وظیفه `done` حفظ شد؛ وضعیت بازبینی هر پنج مورد `reviewed` و تصمیم `re_review_required` است.
+- T0190 هنوز به اصلاح دو متن وضعیت و E2E گفت‌وگوی عادی نیاز دارد.
+- ماتریس جاری: **134 reviewed / 34 pending از 168 شناسهٔ متأثر**.
