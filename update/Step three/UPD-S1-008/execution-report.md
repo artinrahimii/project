@@ -185,3 +185,14 @@
 - آزمون دستگاه واقعی، Android-to-Windows end-to-end، live inference، clean install و in-place upgrade اجرا نشده‌اند.
 - شواهد مستقل در `update/Step three/UPD-S1-008/evidence/review-T0027.md` و `review-T0032.md` تا `review-T0036.md` ثبت شده‌اند.
 - reconciliation: **14/168 reviewed**، **154 pending**، **8.33%**؛ UPD-S1-008 همچنان `in_progress`.
+
+
+## بازبینی T0041 — نقطهٔ ورود WPF
+
+- مبنا: `8e9aacc84a37e14f04baf48ccd691b59d5de59df` — `V 3.1.70`.
+- وضعیت پایهٔ T0041 و T0040 هر دو `done` هستند؛ یال `T0040 → T0041` به‌صورت `sequencing_only` حفظ شد.
+- Blobهای WPF entry point، MainWindow، smoke test و product-build workflow در V3.1.70 با Product commit `a3fa1f54d99db809cc670ece1cfc244239f6a727` یکسان‌اند؛ run [42482672544](https://github.com/artinrahimii/project/actions/runs/42482672544) سه job Windows/Android/HostLifecycle را موفق تکمیل کرد. گزارش task-specific نیز [39862296386](https://github.com/artinrahimii/project/actions/runs/39862296386) را موفق ثبت کرده است.
+- تصمیم T0041: `re_review_required`؛ علت: UPD-S1-024 هنوز اجرا نشده و صفحات/هویت بصری میزبان را متأثر می‌کند. وضعیت پایهٔ قدیمی تغییر نکرد.
+- Quality run دقیق V3.1.70 [42484937846](https://github.com/artinrahimii/project/actions/runs/42484937846) موفق بود.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0041.md`; reconciliation اکنون 15/168 reviewed، 153 pending است.
+- نصب فیزیکی، مدل محلی زنده و ارتباط Android-to-Windows در این بازبینی اجرا نشده‌اند.

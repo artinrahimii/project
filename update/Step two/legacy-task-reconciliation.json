@@ -275,10 +275,23 @@
         "UPD-S1-024"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0041.md",
+        "step three/T0041/execution-report.md",
+        "step three/T0041/evidence/verification.md",
+        "src/Host.Windows/App.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/test_wpf_entrypoint.py",
+        ".github/workflows/product-build.yml",
+        "https://github.com/artinrahimii/project/actions/runs/42484937846",
+        "https://github.com/artinrahimii/project/actions/runs/42482672544",
+        "https://github.com/artinrahimii/project/actions/runs/39862296386"
+      ],
+      "review_commit_sha": "8e9aacc84a37e14f04baf48ccd691b59d5de59df"
     },
     {
       "legacy_task_id": "T0042",
