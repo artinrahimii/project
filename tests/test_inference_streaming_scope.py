@@ -12,7 +12,7 @@ def source(path: str) -> str:
 
 def message_body(proto: str, name: str) -> str:
     match = re.search(
-        rf"message\\s+{re.escape(name)}\\s*\\{{([^{{}}]*)\\}}",
+        rf"message\s+{re.escape(name)}\s*\{{([^{{}}]*)\}}",
         proto,
         re.S,
     )
@@ -42,19 +42,19 @@ class InferenceStreamingScopeTests(unittest.TestCase):
     def test_wire_contract_is_one_terminal_response_not_a_chunk_protocol(self):
         response = message_body(PROTO, "InferenceResponse")
         for declaration in (
-            r"string\\s+request_id\\s*=\\s*1\\s*;",
-            r"string\\s+attempt_id\\s*=\\s*2\\s*;",
-            r"InferenceOutcome\\s+outcome\\s*=\\s*4\\s*;",
-            r"string\\s+output_text\\s*=\\s*5\\s*;",
-            r"uint64\\s+completed_at_unix_ms\\s*=\\s*6\\s*;",
-            r"string\\s+round_id\\s*=\\s*9\\s*;",
+            r"string\s+request_id\s*=\s*1\s*;",
+            r"string\s+attempt_id\s*=\s*2\s*;",
+            r"InferenceOutcome\s+outcome\s*=\s*4\s*;",
+            r"string\s+output_text\s*=\s*5\s*;",
+            r"uint64\s+completed_at_unix_ms\s*=\s*6\s*;",
+            r"string\s+round_id\s*=\s*9\s*;",
         ):
             with self.subTest(declaration=declaration):
                 self.assertRegex(response, declaration)
 
         self.assertNotRegex(
             PROTO,
-            r"(?m)^\\s*message\\s+\\w*(?:Chunk|Delta|Stream)\\w*\\s*\\{",
+            r"(?m)^\s*message\s+\w*(?:Chunk|Delta|Stream)\w*\s*\{",
         )
 
     def test_active_windows_backend_does_not_advertise_or_request_streaming(self):
@@ -64,13 +64,13 @@ class InferenceStreamingScopeTests(unittest.TestCase):
             HOST_CAPABILITY_TEST,
         )
         request_record = re.search(
-            r"private sealed record ChatCompletionRequest\\((.*?)\\);",
+            r"private sealed record ChatCompletionRequest\((.*?)\);",
             BACKEND,
             re.S,
         )
         self.assertIsNotNone(request_record)
         self.assertIn("MaxTokens", request_record.group(1))
-        self.assertNotRegex(request_record.group(1), r"(?i)\\bstream\\b")
+        self.assertNotRegex(request_record.group(1), r"(?i)\bstream\b")
         self.assertIn("public async Task<string> GenerateAsync(", BACKEND)
         self.assertIn("public async Task<string> GenerateAsync(", ENGINE)
 
@@ -96,7 +96,8 @@ class InferenceStreamingScopeTests(unittest.TestCase):
         )[1].split(
             "private fun closeStreamAfterPendingWriteFailure", 1
         )[0]
-        self.assertIn("CancelRequest.newBuilder()", cancel_body)
+        self.assertIn("CancelRequest", cancel_body)
+        self.assertIn(".newBuilder()", cancel_body)
         self.assertIn(".setRequestId(requestId)", cancel_body)
         self.assertIn(".setAttemptId(attemptId)", cancel_body)
         self.assertIn("message CancelRequest", PROTO)

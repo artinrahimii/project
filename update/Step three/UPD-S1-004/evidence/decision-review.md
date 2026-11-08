@@ -2,32 +2,24 @@
 
 مبنای ممیزی کد: `2cc12c32cfc2663316c93064543e6ce62caaa5cb` (`V 3.1.38`).
 
-## قرارداد canonical
+## قرارداد و backend
 
-- `protocol/whitep/v1/messages.proto`: `InferenceResponse` یک بدنهٔ کامل با `output_text` و outcome نهایی دارد. هیچ پیام chunk/delta/stream response در schema فعلی تعریف نشده است.
-- `ModelCapability.supports_streaming` یک بیت capability است؛ ترتیب، framing، terminal chunk، backpressure و انتقال جزئی پاسخ را تعریف نمی‌کند.
-
-## Windows
-
-- `src/Host.Infrastructure/LlamaCppServerBackend.cs`: snapshot مدل فعال `SupportsStreaming: false` برمی‌گرداند.
-- ساختار `ChatCompletionRequest` فقط model، messages و max_tokens دارد؛ گزینهٔ stream ارسال نمی‌کند.
-- `src/Host.Windows/Inference/LlamaCppInferenceEngine.cs`: API تولید، `Task<string>` کامل دارد و cancellation را برای generation فعال اعمال می‌کند.
-- `tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs`: صریحاً عدم پشتیبانی backend فعلی از streamed responses را assert می‌کند.
+- `protocol/whitep/v1/messages.proto`: یک `InferenceResponse` با بدنهٔ کامل و outcome نهایی؛ بدون پیام chunk/delta.
+- `ModelCapability.supports_streaming` فقط metadata capability است.
+- `LlamaCppServerBackend` مقدار `SupportsStreaming: false` را گزارش می‌کند و payload درخواستش stream flag ندارد.
+- `LlamaCppInferenceEngine.GenerateAsync` یک `Task<string>` دارد.
+- `HostPeerRuntimeCapabilitiesAcceptanceTests` عدم پشتیبانی backend فعال از streamed responses را صریحاً بررسی می‌کند.
 
 ## Android
 
-- `Libp2pInferenceRequestTransport.awaitResponse` یک پاسخ pending را دریافت می‌کند، سپس entry همان request/attempt را پاک می‌کند.
-- پاسخ با PeerId احرازشده، requestId، attemptId، roundId، model و deadline بررسی می‌شود.
-- `AndroidInferenceRequestRuntime` برای هر attempt همین پاسخ correlate‌شده را می‌گیرد؛ `RequestViewModel` پس از جمع‌آوری نتایج terminal، output کامل را به گفت‌وگو متصل می‌کند.
-- `cancelAttempts` پیام typed `CancelRequest` را با requestId و attemptId دقیق می‌فرستد.
+- `Libp2pInferenceRequestTransport.awaitResponse` یک پاسخ pending را می‌گیرد و کلید همان request/attempt را در پایان پاک می‌کند.
+- پاسخ با peer احرازشده، requestId، attemptId، roundId، model و deadline بررسی می‌شود.
+- `AndroidInferenceRequestRuntime` پاسخ correlate‌شدهٔ هر attempt را جمع‌آوری می‌کند؛ `RequestViewModel` خروجی کامل را بعد از پایان این مسیر ثبت می‌کند.
+- `cancelAttempts` پیام typed `CancelRequest` را برای requestId و attemptId همان تلاش ارسال می‌کند.
 
-## آزمون‌ها
+## آزمون و CI
 
-- منابع موجود: `tests/test_proto_contract.py`، `tests/test_android_libp2p_transport_contract.py` و `tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs`.
-- آزمون regression جدید: `tests/test_inference_streaming_scope.py`.
-- فرمان CI برای آزمون جدید: `python -m unittest discover -s tests -p test_inference_streaming_scope.py -v`.
-- کیفیت CI روی مبنای قبلی موفق بوده است؛ نتیجهٔ اجرای آزمون تازه روی commit این تلاش هنوز pending است.
-
-## مرز شواهد
-
-این تصمیم به معنی موفقیت آزمون واقعی Android-to-Windows نیست. تست transport/CI موجود به‌تنهایی جای گوشی فیزیکی و میزبان Windows هدف را نمی‌گیرد. هیچ ادعایی دربارهٔ Streaming زنده، محصول end-to-end فیزیکی یا clean/in-place upgrade ارائه نمی‌شود.
+- آزمون regression جدید `tests/test_inference_streaming_scope.py` به کنترل کیفیت اضافه شده است.
+- [V 3.1.39 quality gate — run 42463139418](https://github.com/artinrahimii/project/actions/runs/42463139418): ۴۷۲ آزمون؛ ۴ شکست در test جدید و ADR registry. علت‌ها در گزارش اجرا ثبت شدند.
+- در V 3.1.40 دو نوع خطای آزمون (escapeهای regex و شکل چندخطی CancelRequest builder) اصلاح و فایل ADR-0023 در `docs/decisions/README.md` ثبت شد.
+- نتیجهٔ CI اصلاحیه هنوز pending است؛ هیچ موفقیتی پیش از سبزشدن CI اعلام نمی‌شود.

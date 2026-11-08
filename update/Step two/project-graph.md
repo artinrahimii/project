@@ -1786,24 +1786,29 @@
         "tests/test_android_libp2p_transport_contract.py",
         "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs"
       ],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0032, T0107, T0110, T0111, T0112, T0147, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. تصمیم اجرای نسخهٔ نخست: پاسخ terminal یک‌باره؛ Streaming تا نسخهٔ بعد deferred. فیلد supports_streaming فقط metadata باقی می‌ماند و backend فعلی false گزارش می‌کند؛ قرارداد و کد سالم Protobuf تغییر نکرده‌اند. گزارش و آزمون regression افزوده شده‌اند؛ CI دقیق commit این تلاش هنوز pending است.",
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0032, T0107, T0110, T0111, T0112, T0147, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. تصمیم اجرای نسخهٔ نخست: پاسخ terminal یک‌باره؛ Streaming تا نسخهٔ بعد deferred. فیلد supports_streaming فقط metadata باقی می‌ماند و backend فعلی false گزارش می‌کند؛ قرارداد و کد سالم Protobuf تغییر نکرده‌اند. گزارش و آزمون regression افزوده شده‌اند؛ CI دقیق commit این تلاش هنوز pending است. CI commit V 3.1.39 run 42463139418 شکست آزمون quality را گزارش کرد: regexهای test جدید بیش‌ازحد escape شده بودند، assertion ساخت RequestBuilder با چینش چندخطی سازگار نبود و ADR در README register نشده بود. این سه نقص تست/ردیابی در V 3.1.40 اصلاح شده‌اند؛ محصول دست‌نخورده مانده و CI اصلاحیه pending است.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-004-20261108082200",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "UPD-S1-004-20261108083100",
         "last_attempt_result": "partial",
         "changed_files": [
           "docs/decisions/ADR-0023-one-shot-inference-v1.md",
           "tests/test_inference_streaming_scope.py",
           "update/Step three/UPD-S1-004/execution-report.md",
           "update/Step three/UPD-S1-004/evidence/decision-review.md",
-          "update/Step two/project-graph.md"
+          "update/Step two/project-graph.md",
+          "docs/decisions/README.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "71ddc79726691c4c437ea4d8f97ca9866618eb9c"
+        ],
         "tests_passed": [
           "Existing Protobuf contract, Android transport contract and Windows backend capability tests pass in the exact V 3.1.38 CI suite."
         ],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.1.39 quality run 42463139418: 472 Python tests ran; 4 failures were in the new test/decision-register changes (over-escaped regexes, single-line builder assertion, and missing ADR registration). Corrected in V 3.1.40; exact CI pending."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -1812,6 +1817,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": [
             "docs/decisions/ADR-0023-one-shot-inference-v1.md",
+            "docs/decisions/README.md",
             "tests/test_inference_streaming_scope.py"
           ]
         }
@@ -1855,6 +1861,68 @@
           "device_and_host_details_redacted": "Source inspection and GitHub-hosted CI evidence only. No physical Android handset or target Windows host was accessed.",
           "model_revision_and_sha256": "No live model inference required for this scope decision; real local inference on the parent commit is documented in UPD-S1-005 and is not Android-to-Windows product acceptance.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed; no product installation or in-place upgrade."
+        },
+        {
+          "attempt_id": "UPD-S1-004-20261108082921",
+          "started_at": "2026-11-08T08:29:21Z",
+          "ended_at": "2026-11-08T08:29:29Z",
+          "result": "failed",
+          "summary": "Exact V 3.1.39 quality gate ran 472 Python tests and failed four checks: the newly added test used over-escaped regexes for Protobuf and the ChatCompletionRequest record, its CancelRequest builder assertion assumed a single-line expression, and the ADR register was not updated. The remaining quality checks were not treated as passed. Windows/Android product workflow continued separately.",
+          "changed_files": [
+            "tests/test_inference_streaming_scope.py",
+            "docs/decisions/README.md",
+            "docs/decisions/ADR-0023-one-shot-inference-v1.md",
+            "update/Step three/UPD-S1-004/execution-report.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": "71ddc79726691c4c437ea4d8f97ca9866618eb9c",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact V 3.1.39",
+              "result": "failed",
+              "run_id": 42463139418,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42463139418",
+              "summary": "472 tests ran; four failures: three new streaming scope assertions and one missing ADR register row."
+            }
+          ],
+          "failure_details": "The test regex patterns contained two literal backslashes instead of one; the CancelRequest builder uses a multi-line Kotlin builder chain; docs/decisions/README.md lacked the ADR-0023 table row. No product implementation regression was reported by this workflow.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Correct the Python raw regex patterns, assert the multi-line CancelRequest builder without assuming same-line formatting, add ADR-0023 to the decision register with source/test links, and rerun the complete exact-commit quality gate.",
+          "device_and_host_details_redacted": "GitHub-hosted Ubuntu quality runner; no physical device or host access.",
+          "model_revision_and_sha256": "Not applicable to source-contract decision test.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-004-20261108083100",
+          "started_at": "2026-11-08T08:29:30Z",
+          "ended_at": "2026-11-08T08:31:00Z",
+          "result": "partial",
+          "summary": "Corrected the Python source-contract regex escapes and the multi-line CancelRequest builder assertion. Registered ADR-0023 in docs/decisions/README.md with concrete source, test and workflow links. Exact V 3.1.40 quality gate is pending; task remains in_progress.",
+          "changed_files": [
+            "tests/test_inference_streaming_scope.py",
+            "docs/decisions/README.md",
+            "update/Step three/UPD-S1-004/execution-report.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Exact V 3.1.40 quality gate",
+              "command": "quality.yml on exact V 3.1.40",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the new regression test and full decision traceability suite on the V 3.1.40 commit.",
+          "device_and_host_details_redacted": "Awaiting GitHub-hosted CI; no physical device or host access.",
+          "model_revision_and_sha256": "Not applicable.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
     },
