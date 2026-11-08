@@ -2415,8 +2415,8 @@
         "هویت بصری، کدهای پنج رنگ، نقش هر توکن و قواعد یکسان استفاده در Windows و Android در نیازمندی‌ها و معیارهای پذیرش ثبت شده باشند؛ این ثبت به‌تنهایی ادعای پیاده‌سازی محسوب نشود.",
         "آستانه‌های کنتراست متن و اجزای ضروری رابط و محدودیت استفاده از muted_teal و antique_gold در سطوح روشن در سند نیازمندی/پذیرش ثبت شده باشند."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "expected_output_paths": [
         "step one/V1.0.md",
         "docs/acceptance.md",
@@ -2442,7 +2442,7 @@
         "attempt_count": 3,
         "failed_attempt_count": 0,
         "last_attempt_id": "UPD-S1-006-20261108112329",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "docs/requirements.md",
           "docs/acceptance.md",
@@ -2455,11 +2455,13 @@
         ],
         "related_commits": [
           "fc36774e3349558650e764476b70a721e4ed63a1",
-          "4076dd840ff8a0b4c15e2f6ed87d8c86fa41c478"
+          "4076dd840ff8a0b4c15e2f6ed87d8c86fa41c478",
+          "fc021d5435c4f3005b350a6f01afcc81611d3009"
         ],
         "tests_passed": [
           "V 3.1.46 quality run 42474804276: 479 Python tests, compileall and graph guards passed.",
-          "V 3.1.46 rendezvous build/smoke run 42474804268 passed."
+          "V 3.1.46 rendezvous build/smoke run 42474804268 passed.",
+          "V 3.1.47 Step Three quality gate run 42475559519: 479 Python tests passed; compileall passed; both graph guards passed (legacy graph: 0 errors/1 preserved warning; update graph: 0 errors/0 warnings)."
         ],
         "tests_failed": [
           "V 3.1.45 quality run 42474633661: one failure in test_claims_audit due to removed legacy acceptance phrase; corrected for V 3.1.46."
@@ -2467,16 +2469,18 @@
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "required",
+          "state": "passed",
           "triggering_contracts": [
-            "AC-VISUAL-01 exact five palette tokens/HEX and contrast criteria",
-            "REQ-021–REQ-024"
+            "REQ-021–REQ-024",
+            "AC-CHAT-01, AC-RETRY-01, AC-STREAM-01, AC-VISUAL-01",
+            "AC-P2P-01 physical-device evidence boundary"
           ],
           "affected_by_contract_changes": [],
           "review_evidence": [
-            "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
+            "tests/test_acceptance_contract.py",
             "tests/test_update_step_one_alignment.py",
-            "https://github.com/artinrahimii/project/actions/runs/42474804276"
+            "https://github.com/artinrahimii/project/actions/runs/42475559519",
+            "update/Step three/UPD-S1-006/evidence/step-one-alignment.md"
           ]
         }
       },
@@ -2593,8 +2597,8 @@
         {
           "attempt_id": "UPD-S1-006-20261108112329",
           "started_at": "2026-11-08T11:23:29.876Z",
-          "ended_at": "2026-11-08T11:23:29.876Z",
-          "result": "partial",
+          "ended_at": "2026-11-08T11:24:50.814Z",
+          "result": "succeeded",
           "summary": "Made the five exact palette token names/HEX values explicit in AC-VISUAL-01 itself and added regression assertions against the acceptance row. Exact V3.1.47 quality validation is pending.",
           "changed_files": [
             "docs/acceptance.md",
@@ -2603,7 +2607,7 @@
             "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "fc021d5435c4f3005b350a6f01afcc81611d3009",
           "tests": [
             {
               "name": "V3.1.46 exact-head quality",
@@ -2622,10 +2626,20 @@
               "summary": "Windows WPF and HostLifecycle passed; Android debug/release and JVM tests passed, Keystore instrumentation still in progress at last check."
             },
             {
-              "name": "V3.1.47 final requirements quality",
-              "command": "quality.yml on exact next commit",
-              "result": "pending",
-              "summary": "Must validate exact palette values in acceptance row."
+              "name": "Step Three quality gate — exact V 3.1.47",
+              "command": ".github/workflows/quality.yml on exact commit fc021d5435c4f3005b350a6f01afcc81611d3009",
+              "result": "passed",
+              "summary": "479 Python tests passed; compileall passed; graph_guard legacy 230/422: 0 errors, 1 preserved T0001 metadata warning; update graph 24/80: 0 errors, 0 warnings in both structure and repo-root modes.",
+              "run_id": 42475559519,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42475559519"
+            },
+            {
+              "name": "Product build workflow — general regression, not a UPD-S1-006 acceptance gate",
+              "command": "product-build.yml on exact V 3.1.47",
+              "result": "in_progress_not_required_for_task_scope",
+              "run_id": 42475559291,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42475559291",
+              "summary": "This task changes only requirements/acceptance documentation and contract tests, not Windows/Android product source. Windows and HostLifecycle jobs were running; Android instrumentation was still in progress. No product/device success is claimed and this workflow does not block this documentation task's acceptance criteria."
             }
           ],
           "failure_details": null,
@@ -5968,14 +5982,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T11:23:29.876Z",
+    "as_of": "2026-11-08T11:24:50.814Z",
     "total_tasks": 24,
     "not_started": 17,
-    "in_progress": 1,
-    "done": 6,
+    "in_progress": 0,
+    "done": 7,
     "blocked": 0,
-    "verified_completion_percentage": 25,
-    "calculation": "6 verified done update tasks / 24 total update tasks = 25.00%. Legacy reconciliation is a separate measure."
+    "verified_completion_percentage": 29.166666666666668,
+    "calculation": "7 verified done update tasks / 24 total update tasks = 29.17%. Legacy reconciliation is a separate measure."
   },
   "visual_identity": {
     "scope": [
@@ -6089,7 +6103,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T11:23:29.876Z",
+  "updated_at": "2026-11-08T11:24:50.814Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",

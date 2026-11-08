@@ -73,3 +73,15 @@
 - تلاش: `UPD-S1-006-20261108112329`.
 - آزمون اختصاصی `test_update_step_one_alignment.py` و quality gate روی commit نسخهٔ بعدی: **pending**.
 - وضعیت `UPD-S1-006`: `in_progress` تا موفقیت exact-commit quality gate پس از افزودن assertهای HEX.
+
+
+## نتیجهٔ نهایی UPD-S1-006 — exact V 3.1.47
+
+- وضعیت: **done** برای دامنهٔ تعریف‌شدهٔ UPD-S1-006 (هم‌ترازی Step One requirements/acceptance و تصمیم‌های مصوب).
+- Commit تأییدشدهٔ فایل‌ها: `fc021d5435c4f3005b350a6f01afcc81611d3009` — `V 3.1.47`.
+- Quality gate دقیق: [42475559519](https://github.com/artinrahimii/project/actions/runs/42475559519) — **success**؛ ۴۷۹ آزمون Python، compileall و هر دو graph_guard برای هر دو گراف اجرا شدند.
+- نتایج graph_guard: گراف legacy با ۲۳۰ گره/۴۲۲ یال، صفر خطا و یک هشدار تاریخی و حفظ‌شدهٔ T0001؛ گراف update با ۲۴ گره/۸۰ یال، صفر خطا و صفر هشدار.
+- آزمون alignment جدید، ۲۲۹ شناسهٔ یکتای Txxxx را با همان اثرانگشت حفظ کرد و پنج جفت palette/HEX را در متن acceptance row سنجید.
+- Product build run [42475559291](https://github.com/artinrahimii/project/actions/runs/42475559291) یک regression عمومی و خارج از معیارهای این وظیفه بود؛ در زمان ثبت وضعیت، Windows/HostLifecycle و Android instrumentation هنوز نهایی نشده بودند. هیچ‌یک موفق اعلام نشده و این کار هیچ source محصول یا build target را تغییر نداده است.
+- آزمون rendered theme، تصویر واقعی دو پلتفرم، گوشی فیزیکی Android، Android-to-Windows E2E، clean install و in-place upgrade **در این وظیفه اجرا نشده‌اند** و gates مستقل مربوط باقی می‌مانند.
+- زمان تأیید معیارهای وظیفه: `2026-11-08T11:24:50.814Z`.

@@ -31,3 +31,12 @@
 ## کنترل مقادیر دقیق در جدول acceptance
 
 ردیف AC-VISUAL-01 نام و HEX هر پنج توکن را به‌صورت مستقیم ثبت می‌کند و آزمون `test_update_step_one_alignment.py` تمام این جفت‌ها و آستانه‌های 4.5:1 و 3:1 را از همان ردیف کنترل می‌کند. این فقط انطباق نیازمندی/معیار را اثبات می‌کند، نه اعمال واقعی theme یا صحت screenshotهای Android/Windows.
+
+
+## نتیجهٔ نهایی quality gate
+- Commit `fc021d5435c4f3005b350a6f01afcc81611d3009` / `V 3.1.47`.
+- Run [42475559519](https://github.com/artinrahimii/project/actions/runs/42475559519): **success**, 479 Python tests passed; compileall passed.
+- Legacy graph guard: 230 nodes/422 edges, 0 errors, 1 preserved warning concerning T0001 metadata.
+- Update graph guard: 24 nodes/80 edges, 0 errors and 0 warnings in both structural and repository-backed modes.
+- AC-VISUAL-01 includes all exact five token/HEX pairs and measured contrast thresholds; the source-contract test checks the acceptance row itself.
+- No app source, rendered visual evidence or physical end-to-end result is claimed by UPD-S1-006.
