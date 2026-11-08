@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.45",
+  "commit_intent": "V 3.1.46",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -2439,9 +2439,9 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0013, T0020. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-006-20261108111009",
+        "last_attempt_id": "UPD-S1-006-20261108111311",
         "last_attempt_result": "partial",
         "changed_files": [
           "docs/requirements.md",
@@ -2453,14 +2453,19 @@
           "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
           "update/Step two/project-graph.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "fc36774e3349558650e764476b70a721e4ed63a1"
+        ],
         "tests_passed": [],
-        "tests_failed": [],
+        "tests_failed": [
+          "V 3.1.45 quality run 42474633661: one failure in test_claims_audit due to removed legacy acceptance phrase; corrected for V 3.1.46."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "required",
           "triggering_contracts": [
+            "AC-CLAIMS-01 documentation wording",
             "REQ-021–REQ-024",
             "AC-CHAT-01, AC-RETRY-01, AC-STREAM-01, AC-VISUAL-01"
           ],
@@ -2468,7 +2473,8 @@
           "review_evidence": [
             "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
             "tests/test_update_step_one_alignment.py",
-            "tests/test_acceptance_contract.py"
+            "tests/test_acceptance_contract.py",
+            "https://github.com/artinrahimii/project/actions/runs/42474633661"
           ]
         }
       },
@@ -2489,7 +2495,7 @@
             "update/Step three/UPD-S1-006/evidence/step-one-alignment.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "fc36774e3349558650e764476b70a721e4ed63a1",
           "tests": [
             {
               "name": "V1.10/Step One alignment regression",
@@ -2533,6 +2539,53 @@
           "follow_up": "Run exact-head quality/product CI and record real run IDs and the initial commit SHA in the follow-up graph revision.",
           "device_and_host_details_redacted": "No physical Android device or target Windows host used; document/contract work only.",
           "model_revision_and_sha256": "Not applicable.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-006-20261108111311",
+          "started_at": "2026-11-08T11:13:11.265Z",
+          "ended_at": "2026-11-08T11:13:11.265Z",
+          "result": "partial",
+          "summary": "Exact V 3.1.45 quality gate found one legacy documentation-contract assertion failure. The acceptance text was corrected to preserve the expected phrase while accurately stating that hosted inference does not prove inference on the target installed product or physical Android-to-Windows chat path. Re-validation on the correction commit is pending.",
+          "changed_files": [
+            "docs/acceptance.md",
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-006/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate V 3.1.45",
+              "command": "GitHub Actions quality.yml on fc36774e3349558650e764476b70a721e4ed63a1",
+              "result": "failed",
+              "run_id": 42474633661,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42474633661",
+              "summary": "479 Python tests; one failure in test_claims_audit.ClaimsAuditTests.test_acceptance_document_matches_existing_platform_projects because the required phrase 'does not establish real local inference' had been removed."
+            },
+            {
+              "name": "Acceptance claims regression correction",
+              "command": "Restore the exact historical acceptance phrase with explicit target-host/physical-E2E qualifier.",
+              "result": "pending",
+              "summary": "Must pass in the exact-head V 3.1.46 quality run."
+            },
+            {
+              "name": "Exact-head quality/product/Rendezvous",
+              "command": "quality.yml, product-build.yml and rendezvous-container.yml on V 3.1.46",
+              "result": "pending",
+              "summary": "Await exact commit runs; prior V3.1.45 product jobs were still running at last inspection."
+            }
+          ],
+          "failure_details": [
+            "The only quality failure was a source/document contract assertion because docs/acceptance.md omitted one established sentence fragment. The wording has been restored without weakening any acceptance gate."
+          ],
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Restored the established test_claims_audit wording and explicitly limited the inference statement to hosted CI evidence versus target Windows/physical Android-to-Windows runtime."
+          ],
+          "follow_up": "Run all exact-head V 3.1.46 workflows. Keep UPD-S1-006 in_progress until every acceptance criterion and its tests pass.",
+          "device_and_host_details_redacted": "Hosted CI runners only; no physical Android handset or separate target Windows product host was connected.",
+          "model_revision_and_sha256": "Not applicable to this documentation correction.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
@@ -5863,7 +5916,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T11:10:09.175Z",
+    "as_of": "2026-11-08T11:13:11.265Z",
     "total_tasks": 24,
     "not_started": 17,
     "in_progress": 1,
@@ -5984,7 +6037,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T11:10:09.175Z",
+  "updated_at": "2026-11-08T11:13:11.265Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",

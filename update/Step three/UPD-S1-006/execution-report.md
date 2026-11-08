@@ -44,3 +44,14 @@
 - آیکون، palette، screenshots و contrast بررسی‌شدهٔ UI در این وظیفه تولید یا تأیید نشده‌اند؛ این‌ها خروجی اجرایی UPD-S1-024 هستند.
 - آزمون فیزیکی Android-to-Windows، clean install و in-place upgrade در این تلاش اجرا نشده‌اند.
 - وضعیت نهایی این وظیفه فقط پس از موفقیت آزمون‌های دقیق commit و بررسی کامل پوشش تصمیم‌ها قابل تغییر به `done` است.
+
+
+## اعتبارسنجی دقیق commit V 3.1.45 — شکست قرارداد متنی و اصلاح
+
+- Commit: `fc36774e3349558650e764476b70a721e4ed63a1` — `V 3.1.45`.
+- Step Three quality run: [42474633661](https://github.com/artinrahimii/project/actions/runs/42474633661) — **FAIL**؛ ۴۷۹ آزمون اجرا شد و یک آزمون ناموفق بود.
+- آزمون ناموفق: `test_claims_audit.ClaimsAuditTests.test_acceptance_document_matches_existing_platform_projects`.
+- علت دقیق: آزمون، وجود عبارت تاریخی `does not establish real local inference` را در `docs/acceptance.md` الزام می‌کرد. بازنویسی معرفی معیار پذیرش این عبارت را حذف کرد، در حالی که معنای محدودیت همچنان معتبر است.
+- اصلاح: عبارت به‌صورت دقیق و محدود بازگردانده شد: آزمون hosted local-inference، اجرای مدل واقعی روی میزبان Windows نصب‌شدهٔ کاربر یا مسیر گفت‌وگوی فیزیکی Android-to-Windows را اثبات نمی‌کند. هیچ معیار محصولی حذف یا آسان نشده است.
+- build اندروید، build ویندوز/HostLifecycle و rendezvous در زمان ثبت این گزارش هنوز نتیجهٔ نهایی نداشتند؛ وضعیت آن‌ها جداگانه بررسی می‌شود.
+- این اصلاح فقط خطای قرارداد متنی را هدف می‌گیرد. `UPD-S1-006` تا موفقیت کامل quality gate روی commit اصلاحی همچنان `in_progress` است.
