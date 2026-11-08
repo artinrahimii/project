@@ -64,6 +64,7 @@ class ProtoContractTests(unittest.TestCase):
         body = match.group(1)
         for declaration in (
             r"string\s+request_id\s*=\s*1\s*;",
+            r"string\s+attempt_id\s*=\s*2\s*;",
             r"InferenceOutcome\s+outcome\s*=\s*4\s*;",
             r"string\s+output_text\s*=\s*5\s*;",
             r"uint64\s+completed_at_unix_ms\s*=\s*6\s*;",
@@ -112,17 +113,23 @@ class ProtoContractTests(unittest.TestCase):
                 r"string\s+ephemeral_host_id\s*=\s*2\s*;",
                 r"uint64\s+retry_after_unix_ms\s*=\s*3\s*;",
                 r"string\s+message\s*=\s*4\s*;",
+                r"string\s+attempt_id\s*=\s*5\s*;",
+                r"string\s+round_id\s*=\s*6\s*;",
             ),
             "UnsupportedModel": (
                 r"string\s+request_id\s*=\s*1\s*;",
                 r"string\s+model_id\s*=\s*2\s*;",
                 r"string\s+message\s*=\s*3\s*;",
+                r"string\s+attempt_id\s*=\s*4\s*;",
+                r"string\s+round_id\s*=\s*5\s*;",
             ),
             "ProtocolError": (
                 r"ProtocolErrorCode\s+code\s*=\s*1\s*;",
                 r"string\s+message\s*=\s*2\s*;",
                 r"string\s+request_id\s*=\s*3\s*;",
                 r"bool\s+retryable\s*=\s*4\s*;",
+                r"string\s+attempt_id\s*=\s*5\s*;",
+                r"string\s+round_id\s*=\s*6\s*;",
             ),
         }
         for message_name, declarations in expected_fields.items():
