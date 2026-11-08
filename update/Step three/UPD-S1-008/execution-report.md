@@ -783,3 +783,20 @@
 - update/Step three/UPD-S1-008/evidence/review-T0149.md
 - update/Step three/UPD-S1-008/evidence/review-T0150.md
 - reconciliation: **104/168 reviewed (61.90%)**، **64 pending (38.10%)**؛ UPD-S1-008 همچنان in_progress.
+
+
+## بازبینی محتوایی T0161 تا T0165 — 2026-11-08T18:59:26.040Z
+
+- **مبنای دقیق:** `db2bfaa62c7816e9f06ed4e9e1a8d1d91cb822fd` — `V 3.1.88`، شاخهٔ آنلاین `main`.
+- پنج گرهٔ legacy یعنی T0161، T0162، T0163، T0164 و T0165 به‌صورت مستقل از روی کد، آزمون‌ها، قرارداد مشترک، وابستگی‌ها و معیار پذیرش بازبینی شدند.
+- وضعیت پایهٔ هر پنج گره `done` بود و بدون تغییر حفظ شد. تصمیم هر پنج مورد `re_review_required` است؛ وضعیت reconciliation آن‌ها `reviewed` خواهد بود، اما به‌دلیل وابستگی به UPD-S1-015 و بازآزمایی مصرف‌کنندگان، بازاعتبارسنجی آینده همچنان الزامی است.
+- T0161: مدل DistributedRequest، شناسهٔ UUID، deadline، بودجهٔ دور/تلاش و تاریخچهٔ peer بررسی شد.
+- T0162: selector عمومی تا سه میزبان را برای compatibility نگه می‌دارد؛ مسیر production first-release در runtime انتخاب و dispatch را به یک میزبان محدود می‌کند. این تفاوت صریحاً ثبت شد.
+- T0163: تولید attempt ID، اعتبارسنجی payload پیش از dispatch و correlation transport بر اساس request/attempt/peer بررسی شد.
+- T0164: Clock تزریق‌پذیر، timeout مستقل هر round و محدودشدن آن به deadline مطلق درخواست بررسی شد.
+- T0165: قرارداد Protobuf و اعتبارسنجی correlation در Android و Windows، شامل شناسه‌ها، peer identity، model و deadline بررسی شد.
+- آزمون‌های Android JVM و Keystore instrumentation، آزمون‌های Windows HostLifecycle و build هر دو محصول در Product Build دقیق همین commit، run [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567)، موفق شدند. Quality Gate دقیق همین commit، run [42510357597](https://github.com/artinrahimii/project/actions/runs/42510357597)، نیز موفق بود.
+- اجرای محلی مستقل در این محیط انجام نشد؛ clone از GitHub به‌علت خطای DNS ممکن نبود. آزمون‌های فوق از CI دقیق commit خوانده شده‌اند.
+- شواهد مستقل: `review-T0161.md` تا `review-T0165.md` در مسیر `update/Step three/UPD-S1-008/evidence/`.
+- هیچ کد محصول، وضعیت پایهٔ legacy، وابستگی یا edge تغییر نکرد. آزمون فیزیکی Android-to-Windows، live local inference، same Room persistence، clean install و in-place upgrade در این تلاش اجرا نشدند.
+- reconciliation پس از ثبت این پنج مورد: **109/168 reviewed (64.88%)** و **59 pending (35.12%)**؛ `UPD-S1-008` همچنان `in_progress` است.
