@@ -104,3 +104,17 @@
 - Rendezvous container build: موفق؛ HostLifecycle tests: موفق.
 - Windows WPF build و Android APK هنگام آخرین بررسی هنوز در حال اجرا بودند.
 - وضعیت: partial تا اجرای مجدد CI روی commit اصلاحی.
+
+
+## اعتبارسنجی دقیق V 3.1.30 و علت شکست Android
+
+- مبنای آنلاین: `cb6050e9b6e9f8fd60d2266efbf57af2534a16c0` — `V 3.1.30`.
+- Step Three quality gate: **PASS**، run [42417548666](https://github.com/artinrahimii/project/actions/runs/42417548666).
+- Rendezvous container build/smoke: **PASS**، run [42417548709](https://github.com/artinrahimii/project/actions/runs/42417548709).
+- Windows WPF clean build، publish، startup smoke، identity/trust checks و installer acceptance: **PASS**، run [42417548687](https://github.com/artinrahimii/project/actions/runs/42417548687).
+- HostLifecycle unit/integration و coverage validation: **PASS**، run [42417548687](https://github.com/artinrahimii/project/actions/runs/42417548687).
+- Android debug APK، release APK، lint و merged-manifest permission checks: **PASS**؛ اما JVM tests: **FAIL**، ۲۱۳ آزمون اجرا و ۳۳ شکست، در همان run محصول.
+- علت ریشه‌ای: `DistributedRequest` بودجهٔ کل را به سقف first-release یعنی ۳ محدود می‌کند؛ آزمون‌های سازگاری selector/dispatcher و transport به‌درستی بودجه‌های ۴، ۶ و ۹ را برای مسیر generic می‌سازند. شکست‌ها در constructor رخ داده‌اند، نه در transport واقعی.
+- مرز محصول حفظ می‌شود: `RequestViewModel` حداکثر سه تلاش ترتیبی ایجاد می‌کند؛ `AndroidInferenceRequestRuntime` فقط یک peer را در هر round می‌پذیرد؛ `maxRounds` نیز حداکثر سه است. بنابراین اجازهٔ بودجهٔ generic در value object نباید مسیر محصول را چندمیزبانه کند.
+- تصمیم اصلاحی: سقف عمومی `DistributedRequest` با `MultiHostCompatibilityLimits` هم‌راستا می‌شود؛ مقدار پیش‌فرض first-release و enforce کردن یک میزبان در هر round در runtime بدون تغییر می‌ماند.
+- وضعیت UPD-S1-003: **in_progress**؛ تا قبولی آزمون‌های اصلاح‌شده و اعتبارسنجی مجدد معیارهای پذیرش، done نمی‌شود.

@@ -79,6 +79,10 @@ data class DistributedRequestProgress(
 /**
  * One short-lived distributed inference request owned by the Android client.
  *
+ * The value object supports the bounded generic selector/dispatcher compatibility budget.
+ * The first-release product path remains narrower: RequestViewModel creates at most three
+ * total attempts and AndroidInferenceRequestRuntime enforces one selected peer per round.
+ *
  * [requestId] is an ephemeral identifier for this execution and maps directly to
  * InferenceRequest.request_id. It must not be reused as a conversation or user identifier.
  * [deadlineUnixMs] is an absolute UTC Unix timestamp in milliseconds.
@@ -101,11 +105,11 @@ data class DistributedRequest(
         require(maxRounds in 1..FirstReleaseInferenceLimits.MAX_ROUNDS) {
             "maxRounds must be between one and the first-release maximum"
         }
-        require(maxTotalHosts in 1..FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS) {
-            "maxTotalHosts must be within the first-release maximum"
+        require(maxTotalHosts in 1..MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS) {
+            "maxTotalHosts must be within the generic compatibility maximum"
         }
-        require(maxTotalHosts <= maxRounds * FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST) {
-            "maxTotalHosts cannot exceed the configured first-release round capacity"
+        require(maxTotalHosts <= maxRounds * MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND) {
+            "maxTotalHosts cannot exceed the configured compatibility round capacity"
         }
     }
 

@@ -16,7 +16,9 @@ class AndroidInferenceAttemptBudgetAcceptanceTests(unittest.TestCase):
         self.assertIn("const val MAX_ACTIVE_HOSTS_PER_REQUEST = 1", source)
         self.assertIn("const val MAX_TOTAL_HOSTS = MAX_ROUNDS * MAX_ACTIVE_HOSTS_PER_REQUEST", source)
         self.assertIn("const val MAX_HOSTS_PER_ROUND = 3", source)
-        self.assertIn("maxTotalHosts <= maxRounds * FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST", source)
+        self.assertIn("maxTotalHosts in 1..MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS", source)
+        self.assertIn("maxTotalHosts <= maxRounds * MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND", source)
+        self.assertIn("minOf(\n            maxRounds,\n            FirstReleaseInferenceLimits.MAX_ROUNDS,\n        ) * FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST", source)
 
     def test_selector_caps_each_round_and_remaining_request_budget(self):
         source = SELECTOR.read_text(encoding="utf-8")

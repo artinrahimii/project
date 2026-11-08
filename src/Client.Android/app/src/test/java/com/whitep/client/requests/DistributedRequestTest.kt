@@ -88,6 +88,20 @@ class DistributedRequestTest {
         )
     }
 
+
+    @Test
+    fun supportsNineAttemptsForGenericCompatibilityCallers() {
+        val request =
+            DistributedRequest(
+                requestId = "compatibility-request",
+                deadlineUnixMs = 1_798_000_000_000L,
+                maxRounds = 3,
+                maxTotalHosts = MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS,
+            )
+
+        assertEquals(9, request.maxTotalHosts)
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun rejectsMoreThanThreeRounds() {
         DistributedRequest(
@@ -98,22 +112,22 @@ class DistributedRequestTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun rejectsMoreThanThreeTotalHosts() {
+    fun rejectsMoreThanNineCompatibilityHosts() {
         DistributedRequest(
             requestId = "request-1",
             deadlineUnixMs = 1_798_000_000_000L,
             maxRounds = 3,
-            maxTotalHosts = 4,
+            maxTotalHosts = 10,
         )
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun rejectsTotalHostBudgetLargerThanRoundCapacity() {
+    fun rejectsTotalHostBudgetLargerThanCompatibilityRoundCapacity() {
         DistributedRequest(
             requestId = "request-1",
             deadlineUnixMs = 1_798_000_000_000L,
             maxRounds = 2,
-            maxTotalHosts = 3,
+            maxTotalHosts = 7,
         )
     }
 

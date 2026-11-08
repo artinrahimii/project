@@ -41,8 +41,9 @@ class RetryPolicyBoundaryTests(unittest.TestCase):
         self.assertIn("object MultiHostCompatibilityLimits", DISTRIBUTED_REQUEST)
         self.assertIn("const val MAX_HOSTS_PER_ROUND = 3", DISTRIBUTED_REQUEST)
         self.assertIn("maxRounds in 1..FirstReleaseInferenceLimits.MAX_ROUNDS", DISTRIBUTED_REQUEST)
-        self.assertIn("maxTotalHosts in 1..FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS", DISTRIBUTED_REQUEST)
-        self.assertIn("maxTotalHosts <= maxRounds * FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST", DISTRIBUTED_REQUEST)
+        self.assertIn("maxTotalHosts in 1..MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS", DISTRIBUTED_REQUEST)
+        self.assertIn("maxTotalHosts <= maxRounds * MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND", DISTRIBUTED_REQUEST)
+        self.assertIn("FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST", DISTRIBUTED_REQUEST)
         self.assertIn("attemptedEphemeralHostIds = attemptedEphemeralHostIds + hostIds", DISTRIBUTED_REQUEST)
 
     def test_one_round_dispatch_times_out_instead_of_replaying_a_host_submission(self):
