@@ -829,3 +829,16 @@
 - اجرای محلی در این محیط انجام نشد (عدم دسترسی DNS برای clone). شواهد CI شامل loopback/native .NET host integration است؛ نه دستگاه Android واقعی، شبکهٔ عمومی، مدل inference واقعی کاربر یا ذخیرهٔ پاسخ در همان Room chat.
 - وضعیت پایهٔ هر پنج وظیفه `done` حفظ شد؛ تصمیم هر پنج `re_review_required` است و هیچ status قدیمی تغییر نکرد. شواهد مستقل در `review-T0171.md` تا `review-T0175.md` ذخیره می‌شود.
 - reconciliation پیش از ثبت این batch: 114/168 reviewed و 54 pending؛ بعد از ثبت باید 119/168 reviewed و 49 pending شود. UPD-S1-008 همچنان `in_progress` باقی می‌ماند.
+
+
+## بازبینی محتوایی T0176 تا T0180 — 2026-11-08T19:11:37.767Z
+
+- مبنای main: `93a6b094ac3114780b02a821c553b13cf3ed2f4d` (`V 3.1.94`)؛ source محصول دقیقاً از `db2bfaa62c7816e9f06ed4e9e1a8d1d91cb822fd` (`V 3.1.88`) بررسی شد.
+- T0176: آزمون صفر، یک و سه پاسخ، duplicate، late response، timeout و cancellation وجود دارد؛ تست صریح دو پاسخ معتبر در فهرست تست‌ها پیدا نشد، بنابراین این شکاف برای re-review ثبت شد.
+- T0177: سقف generic سه peer در هر round/نه تلاش با سقف first-release تک‌میزبان/سه تلاش ترتیبی تفکیک شده؛ تطبیق نهایی با UPD-S1-003/015 باقی است.
+- T0178: retention میزبان به‌صورت پیش‌فرض process-session-only است؛ تاریخچهٔ پایدار فقط با رضایت جداگانهٔ مالک Windows و محافظت DPAPI فعال می‌شود. محدودیت crash dump/paging/backup در هشدار UI اعلام می‌شود.
+- T0179: API تشخیصی Android و Windows فقط enumهای ثابت، outcome و duration را می‌پذیرد و سقف ۸۰ رکورد/process دارد؛ آزمون‌ها numeric schema و عدم حضور canaryهای حساس را می‌سنجند.
+- T0180: پاک‌سازی بافرهای موقت در decoder/transport/lifecycle و نگهداری bounded بافرهای Windows تا ack/response یا teardown بررسی شد؛ پاک‌سازی فوری همهٔ بافرها در لحظهٔ timeout و forensic حافظه اثبات نشده است.
+- Product CI دقیق source [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) و Quality CI [42510357597](https://github.com/artinrahimii/project/actions/runs/42510357597) موفق شدند. اجرای محلی در این محیط به‌علت عدم دسترسی DNS ممکن نشد.
+- وضعیت پایهٔ هر پنج وظیفه `done` حفظ شد؛ تصمیم `re_review_required` و شواهد مستقل در `review-T0176.md` تا `review-T0180.md` ذخیره می‌شود.
+- reconciliation قبل از این batch: 119/168 reviewed و 49 pending؛ پس از آن: **124/168 reviewed (73.81%)** و **44 pending (26.19%)**. UPD-S1-008 همچنان `in_progress` می‌ماند.
