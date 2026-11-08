@@ -49,7 +49,7 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**99/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0109 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 98 رکورد همچنان `pending` هستند.
+**104/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0109 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 98 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
 هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 48 رکورد؛ شناسه‌های دقیق در JSON مرجع و فیلد review_status=reviewed ثبت شده‌اند.، و `re_review_required/pending` برای 114 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
@@ -352,3 +352,17 @@
 - update/Step three/UPD-S1-008/evidence/review-T0143.md
 - update/Step three/UPD-S1-008/evidence/review-T0144.md
 - update/Step three/UPD-S1-008/evidence/review-T0145.md
+
+
+## بازبینی T0146 تا T0150 روی V 3.1.87
+
+- پنج شناسهٔ متأثر T0146 تا T0150 در برابر کد، تست، معیار پذیرش و edgeهای مستقیم بررسی شدند؛ وضعیت پایهٔ همه حفظ شد.
+- status UI و SavedStateHandle/Room storage پیاده‌سازی واقعی دارند، اما runtime درخواست میزبان در chat detail هنوز preview/local-only است.
+- آزمون file-backed close/reopen و Android CI با آزمون in-place upgrade روی دستگاه نصب‌شده یکسان نیست.
+- Quality و Rendezvous V3.1.87 موفق؛ HostLifecycle موفق؛ Android و Windows installer jobs در زمان snapshot در حال اجرا بودند.
+- reconciliation: **104/168 reviewed (61.90%)**، **64 pending (38.10%)**.
+- update/Step three/UPD-S1-008/evidence/review-T0146.md
+- update/Step three/UPD-S1-008/evidence/review-T0147.md
+- update/Step three/UPD-S1-008/evidence/review-T0148.md
+- update/Step three/UPD-S1-008/evidence/review-T0149.md
+- update/Step three/UPD-S1-008/evidence/review-T0150.md

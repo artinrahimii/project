@@ -2396,10 +2396,21 @@
         "UPD-S1-010"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0146.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/domain/ConversationMessageValidator.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/domain/ConversationMessageValidatorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "tests/test_android_conversation_detail_contract.py",
+        "step three/T0146/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42510164070",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "01c2374e37b8e8d874ea06d1498991adeeefe15d"
     },
     {
       "legacy_task_id": "T0147",
@@ -2411,10 +2422,22 @@
         "UPD-S1-010"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0147.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestStatusPresentation.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestStatusPresentationTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/test_android_request_architecture.py",
+        "step three/T0147/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42510164070",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "01c2374e37b8e8d874ea06d1498991adeeefe15d"
     },
     {
       "legacy_task_id": "T0148",
@@ -2425,10 +2448,19 @@
         "UPD-S1-010"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0148.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "tests/test_android_conversation_detail_contract.py",
+        "step three/T0148/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42510164070",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "01c2374e37b8e8d874ea06d1498991adeeefe15d"
     },
     {
       "legacy_task_id": "T0149",
@@ -2439,10 +2471,23 @@
         "UPD-S1-010"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0149.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ConversationEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/MessageEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/EncryptedClientDatabaseFactory.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseTest.kt",
+        "tests/test_android_local_storage_boundary.py",
+        "src/Client.Android/app/src/androidTest/java/com/whitep/client/data/EncryptedClientDatabaseAcceptanceTest.kt",
+        "step three/T0149/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42510164070",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "01c2374e37b8e8d874ea06d1498991adeeefe15d"
     },
     {
       "legacy_task_id": "T0150",
@@ -2454,10 +2499,23 @@
         "UPD-S1-019"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0150.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationListViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "tests/test_android_conversation_management_contract.py",
+        "step three/T0150/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42510164070",
+        "https://github.com/artinrahimii/project/actions/runs/42503829586"
+      ],
+      "review_commit_sha": "01c2374e37b8e8d874ea06d1498991adeeefe15d"
     },
     {
       "legacy_task_id": "T0161",

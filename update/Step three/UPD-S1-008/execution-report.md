@@ -763,3 +763,23 @@
 - update/Step three/UPD-S1-008/evidence/review-T0144.md
 - update/Step three/UPD-S1-008/evidence/review-T0145.md
 - reconciliation: **99/168 reviewed (58.93%)**، **69 pending (41.07%)**؛ UPD-S1-008 همچنان in_progress.
+
+
+## بازبینی محتوایی T0146 تا T0150 — 2026-11-08T18:30:26.354Z
+
+- مبنای کد: 01c2374e37b8e8d874ea06d1498991adeeefe15d — V 3.1.87، شاخهٔ main.
+- T0146: validator پیام خالی و بیش‌ازحد را پیش از درج Room رد می‌کند؛ این اعتبارسنجی محلی composer است نه prompt validation نهایی در transport.
+- T0147: RequestStateEntity و RequestStatusPresentation وضعیت‌های typed و cardهای UI را دارند؛ اما source chat هنوز preview بدون host transport است، پس نمایش status type تکمیل request واقعی را ثابت نمی‌کند.
+- T0148: SavedStateHandle متن unsent draft را با handle بازیابی‌شده به ViewModel جدید می‌دهد؛ تست واحد دارد اما Android process kill/relaunch فیزیکی اجرا نشده.
+- T0149: آزمون file-backed Room دیتابیس را می‌بندد و دوباره باز می‌کند و message/request-state را بازیابی می‌کند؛ این معادل in-place upgrade کل اپ و Keystore نیست.
+- T0150: آزمون integration محلی create/send/reopen را در ViewModel/Room بررسی می‌کند؛ ارسال به میزبان ندارد و پاسخ assistant واقعی در آن نیست.
+- یال‌های T0145→T0146، T0146→T0147، T0147→T0148، T0148→T0149 و T0149→T0150 دارای rationale/evidence بودند و حفظ شدند؛ downstream unreviewed edgeهای نامرتبط دست‌نخورده ماندند.
+- V3.1.87 Quality [42510164070] و Rendezvous [42510164017] موفق؛ HostLifecycle در Product [42510164037] موفق؛ Android build/JVM/instrumentation و Windows installer در زمان snapshot هنوز in_progress بودند.
+- Full Product Build V3.1.82 [42503829586] Android و Windows را با موفقیت ساخت؛ Android 226 pass، 1 skip، 0 failed از 227 تست.
+- شواهد مستقل:
+- update/Step three/UPD-S1-008/evidence/review-T0146.md
+- update/Step three/UPD-S1-008/evidence/review-T0147.md
+- update/Step three/UPD-S1-008/evidence/review-T0148.md
+- update/Step three/UPD-S1-008/evidence/review-T0149.md
+- update/Step three/UPD-S1-008/evidence/review-T0150.md
+- reconciliation: **104/168 reviewed (61.90%)**، **64 pending (38.10%)**؛ UPD-S1-008 همچنان in_progress.
