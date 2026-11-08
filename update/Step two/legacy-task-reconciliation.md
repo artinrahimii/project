@@ -49,10 +49,10 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**17/168 بازبینی محتوایی فعلی ثبت شده‌اند.** T0012، T0013، T0015، T0016، T0019 و T0020 با تصمیم `unchanged` reviewed هستند؛ T0027، T0032، T0033، T0034، T0035، T0036، T0041، T0042، T0043، T0199 و T0214 نیز با تصمیم `re_review_required` بازبینی شده‌اند تا پس از وظایف متأثر مربوط دوباره بررسی شوند. 151 رکورد همچنان `pending` هستند.
+**18/168 بازبینی محتوایی فعلی ثبت شده‌اند.** T0012، T0013، T0015، T0016، T0019 و T0020 با تصمیم `unchanged` reviewed هستند؛ T0027، T0032، T0033، T0034، T0035، T0036، T0041، T0042، T0043، T0044، T0199 و T0214 نیز با تصمیم `re_review_required` بازبینی شده‌اند. 150 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
-هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 11 رکورد (T0027، T0032–T0036، T0041–T0043، T0199 و T0214)، و `re_review_required/pending` برای 151 رکورد باقی‌مانده ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation در حالت `pending/re_review_required` باقی می‌مانند؛ وضعیت واقعی هر بررسی در همین فایل JSON ثبت می‌شود.
+هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 12 رکورد (T0027، T0032–T0036، T0041–T0044، T0199 و T0214)، و `re_review_required/pending` برای 150 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
 
 
 ## نتیجهٔ تکمیلی در V 3.1.56
@@ -164,3 +164,12 @@
 - HostLifecycle.cs و test project فعلی از نظر Blob SHA با sourceهای اجراشده در Product CI یکسان‌اند؛ state machine پنج‌حالته و مسیرهای مجاز/غیرمجاز در آزمون پوشش داده شده‌اند.
 - تصمیم T0043 برابر `re_review_required` است، زیرا UPD-S1-012 هنوز اجرا نشده و opt-in/stop و وضعیت‌های مشارکت را در میزبان ادغام خواهد کرد. وضعیت پایهٔ `done` حفظ شد.
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0043.md`. جمع فعلی: 17/168 reviewed، 151 pending.
+
+
+## بازبینی T0044 — ماتریس HostLifecycle — V 3.1.70
+
+- source/test commit: `8e9aacc84a37e14f04baf48ccd691b59d5de59df`; HEAD فعلی: `fd15be99a60d34fc4f08cc21857b436f1e747884`.
+- state machine پنج‌حالته و ماتریس مجاز/غیرمجاز در source و HostLifecycle tests بررسی شدند.
+- Quality [42484937846](https://github.com/artinrahimii/project/actions/runs/42484937846) و Product [42484937793](https://github.com/artinrahimii/project/actions/runs/42484937793) موفق؛ سه job ویندوز، اندروید و HostLifecycle در Product CI موفق شدند.
+- تصمیم T0044 برابر `re_review_required` است، چون UPD-S1-012 هنوز opt-in/stop behavior را اضافه نکرده و ممکن است transitionهای lifecycle را متأثر کند. baseline `done` حفظ شد.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0044.md`. مجموع: 18/168 reviewed و 150 pending.

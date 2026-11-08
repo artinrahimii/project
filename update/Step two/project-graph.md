@@ -3101,7 +3101,8 @@
         "docs/decisions/ADR-0024-tcp-request-framing.md",
         "update/Step three/UPD-S1-008/evidence/review-T0041.md",
         "update/Step three/UPD-S1-008/evidence/review-T0042.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0043.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0043.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0044.md"
       ],
       "actual_output_paths": [
         "update/Step three/UPD-S1-008/execution-report.md",
@@ -3129,7 +3130,8 @@
         "update/Step three/UPD-S1-008/evidence/review-T0036.md",
         "update/Step three/UPD-S1-008/evidence/review-T0041.md",
         "update/Step three/UPD-S1-008/evidence/review-T0042.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0043.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0043.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0044.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
@@ -3162,13 +3164,14 @@
         "https://github.com/artinrahimii/project/actions/runs/42484937793",
         "https://github.com/artinrahimii/project/actions/runs/39907751958",
         "update/Step three/UPD-S1-008/evidence/review-T0043.md",
-        "https://github.com/artinrahimii/project/actions/runs/39910955252"
+        "https://github.com/artinrahimii/project/actions/runs/39910955252",
+        "update/Step three/UPD-S1-008/evidence/review-T0044.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 13,
+        "attempt_count": 14,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261108133743",
+        "last_attempt_id": "UPD-S1-008-20261108133929",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3198,7 +3201,8 @@
           "update/Step three/UPD-S1-008/evidence/review-T0036.md",
           "update/Step three/UPD-S1-008/evidence/review-T0041.md",
           "update/Step three/UPD-S1-008/evidence/review-T0042.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0043.md"
+          "update/Step three/UPD-S1-008/evidence/review-T0043.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0044.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
@@ -3248,7 +3252,8 @@
           "T0041 WPF startup smoke, Windows build, Android build and HostLifecycle jobs passed on identical source/workflow hashes in Product CI run 42482672544; exact V3.1.70 quality run 42484937846 passed.",
           "T0042 project-layer boundary tests and V3.1.70 exact quality gate 42484937846 passed.",
           "T0042 full historical product build 39907751958 passed Windows WPF, Android APK/Protobuf generation and HostLifecycle; current V3.1.70 Windows and HostLifecycle jobs passed in run 42484937793, Android job remained in_progress.",
-          "HostState five-state transition regression and current HostLifecycle project build passed in exact V3.1.70 Product run 42484937793; all Windows, Android and HostLifecycle jobs successful, and exact Quality run 42484937846 successful."
+          "HostState five-state transition regression and current HostLifecycle project build passed in exact V3.1.70 Product run 42484937793; all Windows, Android and HostLifecycle jobs successful, and exact Quality run 42484937846 successful.",
+          "Five-state HostLifecycle transition matrix regression and exact V3.1.70 Quality + full Product CI passed; Windows, Android and HostLifecycle jobs succeeded."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -4042,6 +4047,48 @@
           "contract_changes": [],
           "follow_up": "Re-review T0043 after UPD-S1-012 completes its host opt-in/stop implementation and state integration. Then continue all 151 remaining pending legacy reviews; do not close UPD-S1-008.",
           "device_and_host_details_redacted": "GitHub-hosted Windows and Android runners only; no physical Android handset or separately installed Windows target host was used.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108133929",
+          "started_at": "2026-11-08T13:39:29.366Z",
+          "ended_at": "2026-11-08T13:39:29.366Z",
+          "result": "partial",
+          "summary": "Reviewed T0044's explicit five-state HostLifecycle transition matrix, allowed and denied edges, message normalization and exact source/test/build evidence. Exact V3.1.70 Quality and full Product CI passed; Windows, Android and HostLifecycle jobs succeeded. Decision re_review_required because UPD-S1-012 will introduce opt-in/stop participation state transitions. Legacy baseline done status and edges are preserved.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step two/decision-impact-map.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0044.md"
+          ],
+          "commit_sha": "8e9aacc84a37e14f04baf48ccd691b59d5de59df",
+          "tests": [
+            {
+              "name": "Exact V3.1.70 Quality CI",
+              "command": ".github/workflows/quality.yml",
+              "result": "passed",
+              "run_id": 42484937846,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42484937846",
+              "summary": "Quality tests and graph guards passed."
+            },
+            {
+              "name": "Exact V3.1.70 Product CI",
+              "command": ".github/workflows/product-build.yml",
+              "result": "passed",
+              "run_id": 42484937793,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42484937793",
+              "summary": "Windows WPF build, Android APK, and HostLifecycle unit/integration jobs all succeeded."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Re-review T0044 after UPD-S1-012 introduces participation opt-in and immediate stop; extend/re-run the full transition matrix against the new lifecycle. Continue the other 150 pending reconciliation records; UPD-S1-008 remains in_progress.",
+          "device_and_host_details_redacted": "GitHub-hosted Windows/Android CI runners only; no physical Android or customer Windows host.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -7464,7 +7511,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T13:37:43.240Z",
+    "as_of": "2026-11-08T13:39:29.366Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -7585,7 +7632,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T13:37:43.240Z",
+  "updated_at": "2026-11-08T13:39:29.366Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -7768,12 +7815,12 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "pending": 151,
-      "reviewed": 17
+      "pending": 150,
+      "reviewed": 18
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "151 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until all remaining tasks have individual code/test/acceptance evidence and dependency review.",
+    "completion_blocker": "150 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until all remaining tasks have individual code/test/acceptance evidence and dependency review.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",

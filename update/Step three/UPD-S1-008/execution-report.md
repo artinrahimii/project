@@ -216,3 +216,13 @@
 - تصمیم reconciliation T0043 برابر `re_review_required/reviewed` است، چون UPD-S1-012 هنوز opt-in و stop behavior را یکپارچه نکرده است. baseline قدیمی `done` و وابستگی‌ها دست‌نخورده‌اند.
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0043.md`; reconciliation: 17/168 reviewed، 151 pending.
 - دستگاه فیزیکی، live inference، Android-to-Windows E2E و upgrade در این بازبینی انجام نشده‌اند.
+
+
+## بازبینی T0044 — ماتریس انتقال HostLifecycle
+
+- source/test مبنا: `8e9aacc84a37e14f04baf48ccd691b59d5de59df` — `V 3.1.70`.
+- ماتریس Stopped/Starting/Ready/Busy/Error، انتقال‌های مجاز و غیرمجاز و رد پیام خالی در HostLifecycle و آزمون‌های آن بررسی شد.
+- Quality run [42484937846](https://github.com/artinrahimii/project/actions/runs/42484937846) و Product run [42484937793](https://github.com/artinrahimii/project/actions/runs/42484937793) موفق بودند؛ Windows WPF، Android APK و HostLifecycle jobs همگی سبز شدند.
+- تصمیم T0044: `re_review_required/reviewed` به دلیل UPD-S1-012 که opt-in/stop را به lifecycle اضافه می‌کند. وضعیت پایهٔ قدیمی `done` بدون تغییر ماند.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0044.md`; reconciliation اکنون 18/168 reviewed و 150 pending است.
+- آزمون دستگاه واقعی، live inference، Android-to-Windows، clean install و in-place upgrade اجرا نشده‌اند.
