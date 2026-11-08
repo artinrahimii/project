@@ -736,3 +736,30 @@
 - update/Step three/UPD-S1-008/evidence/review-T0134.md
 - update/Step three/UPD-S1-008/evidence/review-T0135.md
 - نتیجهٔ reconciliation: **90/168 reviewed (53.57%)** و **78 pending (46.43%)**؛ UPD-S1-008 همچنان in_progress و T0128 همچنان deferred_final است.
+
+
+## بازبینی محتوایی T0136 تا T0145 — 2026-11-08T18:28:01.737Z
+
+- مبنای بررسی: c4b7076392dba6034db3d22200f8d9ab86419814 — V 3.1.86، شاخهٔ آنلاین main.
+- T0136: شناسهٔ request با RNG رمزنگارانه در helper Windows و UUID در Android تولید می‌شود؛ request/attempt/round از شناسه‌های پایدار مکالمه/کاربر جدا هستند؛ تست‌های RNG و Protobuf descriptor این مرز را کنترل می‌کنند.
+- T0137: replay guard، response correlation و secure peer identity در مسیر میزبان وجود دارد؛ آزمون‌های HostLifecycle replay، tamper و peer identity rejection را پوشش می‌دهند، نه حملهٔ شبکهٔ عمومی.
+- T0138: unchanged؛ ADR-0019 و README/requirements/acceptance، افشای قابل‌خواندن بودن prompt و capsule برای میزبان را مستند کرده‌اند؛ Android نیز در prompt field، pre-trust dialog و Privacy page آن را تکرار می‌کند.
+- T0139: Compose launcher و navigation shell واقعی با Home، Request، Connections، Privacy و conversation list/detail وجود دارد؛ build/test قبلی موفق، اما visual inspection فیزیکی و chat runtime integration هنوز جداگانه لازم‌اند.
+- T0141: Room واقعی با conversation/message/request-state/draft/capsule metadata وجود دارد؛ SQLCipher و Keystore-protected DB key، persistence/reopen و fail-closed missing key.
+- T0142: Room migrations 1→2→3→4→5 و legacy plaintext-to-SQLCipher migration با checkpoint, integrity check و atomic rename وجود دارد؛ migration و instrument tests وجود دارند، اما این معادل نصب و ارتقای واقعی کل برنامه نیست.
+- T0143/T0144: فهرست و CRUD به Flow واقعی Room متصل‌اند و create/rename/open/delete/cascade را اجرا می‌کنند؛ تست‌های ViewModel/contract آن‌ها را پوشش می‌دهند.
+- T0145: صفحه detail پیام user را در Room ذخیره می‌کند، اما source صریحاً می‌گوید درخواست به میزبان ارسال نمی‌شود و repository وضعیت TRANSPORT_UNAVAILABLE می‌دهد؛ پاسخ assistant واقعی هنوز به همان مکالمه وصل نیست. این شکاف برای UPD-S1-010 باقی است.
+- T0140 در mapping دارای update_task_ids خالی است؛ بنابراین عضو ۱۶۸ شناسهٔ متأثر نیست و رکورد reconciliation برایش ایجاد نشد.
+- V3.1.86 Quality [42509600997] و Rendezvous [42509601113] موفق؛ HostLifecycle در Product [42509601072] موفق؛ Windows و Android jobs در snapshot مبنا در حال اجرا بودند.
+- Full Product Build V3.1.82 [42503829586] هر سه job را گذراند؛ Android 226 pass، 1 skipped، 0 failed از 227 tests؛ Windows WPF publish/startup/installer نیز موفق. کد محصول بررسی‌شده در commitهای V3.1.83 تا V3.1.86 تغییر نکرد.
+- شواهد مستقل:
+- update/Step three/UPD-S1-008/evidence/review-T0136.md
+- update/Step three/UPD-S1-008/evidence/review-T0137.md
+- update/Step three/UPD-S1-008/evidence/review-T0138.md
+- update/Step three/UPD-S1-008/evidence/review-T0139.md
+- update/Step three/UPD-S1-008/evidence/review-T0141.md
+- update/Step three/UPD-S1-008/evidence/review-T0142.md
+- update/Step three/UPD-S1-008/evidence/review-T0143.md
+- update/Step three/UPD-S1-008/evidence/review-T0144.md
+- update/Step three/UPD-S1-008/evidence/review-T0145.md
+- reconciliation: **99/168 reviewed (58.93%)**، **69 pending (41.07%)**؛ UPD-S1-008 همچنان in_progress.

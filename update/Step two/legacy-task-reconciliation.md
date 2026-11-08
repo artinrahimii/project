@@ -49,7 +49,7 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**90/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0109 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 98 رکورد همچنان `pending` هستند.
+**99/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0109 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 98 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
 هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 48 رکورد؛ شناسه‌های دقیق در JSON مرجع و فیلد review_status=reviewed ثبت شده‌اند.، و `re_review_required/pending` برای 114 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
@@ -334,3 +334,21 @@
 - update/Step three/UPD-S1-008/evidence/review-T0133.md
 - update/Step three/UPD-S1-008/evidence/review-T0134.md
 - update/Step three/UPD-S1-008/evidence/review-T0135.md
+
+
+## بازبینی T0136 تا T0145 روی V 3.1.86
+
+- نه شناسهٔ متأثر T0136-T0139 و T0141-T0145 در برابر کد، تست و معیار legacy بررسی شدند؛ T0140 به علت نبود affected_task_ids خارج از این مجموعه است.
+- T0138 تصمیم unchanged دارد؛ افشای قابل‌خواندن بودن prompt/capsule برای میزبان در اسناد و UI موجود است.
+- T0145 همچنان UI/local message persistence است؛ درخواست به میزبان در همین صفحه ارسال نمی‌شود. پاسخ assistant به همان Room باید در UPD-S1-010 متصل شود.
+- Quality و Rendezvous V3.1.86 موفق؛ HostLifecycle موفق؛ Windows و Android product jobs در snapshot مبنا در حال اجرا بودند. Product Build V3.1.82 هر دو برنامه را کامل ساخت.
+- reconciliation: **99/168 reviewed (58.93%)**، **69 pending (41.07%)**.
+- update/Step three/UPD-S1-008/evidence/review-T0136.md
+- update/Step three/UPD-S1-008/evidence/review-T0137.md
+- update/Step three/UPD-S1-008/evidence/review-T0138.md
+- update/Step three/UPD-S1-008/evidence/review-T0139.md
+- update/Step three/UPD-S1-008/evidence/review-T0141.md
+- update/Step three/UPD-S1-008/evidence/review-T0142.md
+- update/Step three/UPD-S1-008/evidence/review-T0143.md
+- update/Step three/UPD-S1-008/evidence/review-T0144.md
+- update/Step three/UPD-S1-008/evidence/review-T0145.md
