@@ -49,7 +49,7 @@
 - گراف قدیمی چرخه ندارد؛ یک وابستگی متنی metadata در T0001 برای حفظ سابقه هشدار داده می‌شود.
 
 ## وضعیت بازبینی محتوایی
-**104/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0109 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 98 رکورد همچنان `pending` هستند.
+**109/168 بازبینی محتوایی ثبت شده‌اند.** تصمیم `unchanged` برای T0012، T0013، T0015، T0016، T0019 و T0020؛ و تصمیم `re_review_required/reviewed` برای شناسه‌های بازبینی‌شده در JSON مرجع، از T0027 تا T0109 (به‌جز شناسه‌های خارج از فهرست متأثر) ثبت شده است. 98 رکورد همچنان `pending` هستند.
 
 ## سیاست تغییر وضعیت
 هیچ وضعیت پایهٔ قدیمی تغییر نکرده است. تصمیم `unchanged` برای 6 رکورد، `re_review_required/reviewed` برای 48 رکورد؛ شناسه‌های دقیق در JSON مرجع و فیلد review_status=reviewed ثبت شده‌اند.، و `re_review_required/pending` برای 114 رکورد ثبت شده است. نشانگرهای ثابت `update_impact` در گراف اولیه مطابق قرارداد تا تکمیل کل reconciliation pending می‌مانند؛ وضعیت واقعی هر بررسی در JSON ثبت شده است.
@@ -366,3 +366,16 @@
 - update/Step three/UPD-S1-008/evidence/review-T0148.md
 - update/Step three/UPD-S1-008/evidence/review-T0149.md
 - update/Step three/UPD-S1-008/evidence/review-T0150.md
+
+
+
+## بازبینی محتوایی T0161 تا T0165 روی V 3.1.88
+
+- مبنای کد: `47c078dc39ea69e2b88db57f057e71353fc2ec8c` — `V 3.1.89` مستندات بر همان snapshot کد `V 3.1.88` را بازبینی می‌کنند.
+- T0161 تا T0165 جداگانه بررسی شدند؛ وضعیت پایهٔ هر پنج مورد `done` حفظ شد و هیچ status قدیمی تغییر نکرد.
+- تصمیم هر پنج مورد `re_review_required` و وضعیت بررسی در JSON reconciliation برابر `reviewed` ثبت شد؛ دلیل re-review این است که UPD-S1-015 و آزمون‌های runtime نهایی هنوز انجام نشده‌اند.
+- شواهد مستقل: `update/Step three/UPD-S1-008/evidence/review-T0161.md` تا `review-T0165.md`؛ commit شواهد: `47c078dc39ea69e2b88db57f057e71353fc2ec8c`.
+- Quality CI دقیق snapshot کد [42510357597](https://github.com/artinrahimii/project/actions/runs/42510357597) و Product CI دقیق همان snapshot [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) موفق شدند.
+- reconciliation جاری: **109/168 reviewed (64.88%)** و **59 pending (35.12%)**. `UPD-S1-008` همچنان `in_progress` است.
+- گراف اولیه و markerهای ثابت `update_impact` عمداً تغییر نکردند؛ تا تکمیل همهٔ 168 مورد و مطابق آزمون قراردادی pending می‌مانند.
+- آزمون فیزیکی Android-to-Windows، inference واقعی مدل محلی، same Room E2E، clean install روی دستگاه واقعی و in-place upgrade در این تلاش اجرا نشدند.

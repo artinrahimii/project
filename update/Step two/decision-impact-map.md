@@ -4,7 +4,7 @@
 - تعداد کل وظایف قدیمی: 230
 - تعداد شناسه‌های متأثر: 168
 - تعداد رکوردهای مستقل: 168
-- وضعیت هر 168 رکورد مطابق JSON اصلی است؛ 6 مورد محتوایی reviewed و 162 مورد همچنان pending هستند.
+- وضعیت جاری مطابق JSON اصلی است؛ 109 مورد محتوایی reviewed و 59 مورد همچنان pending هستند.
 
 | شناسهٔ قدیمی | وضعیت پایه | شناسه‌های UPD-S1 مرتبط | تصمیم اولیه | وضعیت بازبینی | فایل‌های کد/قرارداد | فایل‌های آزمون |
 |---|---|---|---|---:|---:|---:|
@@ -110,11 +110,11 @@
 | `T0148` | done | UPD-S1-009, UPD-S1-010 | re_review_required | pending | 3 | 2 |
 | `T0149` | done | UPD-S1-009, UPD-S1-010 | re_review_required | pending | 1 | 2 |
 | `T0150` | done | UPD-S1-009, UPD-S1-010, UPD-S1-019 | re_review_required | pending | 1 | 2 |
-| `T0161` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 2 | 2 |
-| `T0162` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 2 | 2 |
-| `T0163` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 15 | 10 |
-| `T0164` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 5 | 3 |
-| `T0165` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 11 | 9 |
+| `T0161` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 2 | 2 |
+| `T0162` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 2 | 2 |
+| `T0163` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 15 | 10 |
+| `T0164` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 5 | 3 |
+| `T0165` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 11 | 9 |
 | `T0166` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 4 | 2 |
 | `T0167` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 1 | 1 |
 | `T0168` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 3 | 2 |
@@ -226,3 +226,11 @@
 - Quality run [42482227315](https://github.com/artinrahimii/project/actions/runs/42482227315) نیز 479 تست Python، compileall و هر دو graph guard را با موفقیت گذراند.
 - این تصمیم‌ها فقط به انتخاب پشته و پروژهٔ اجرایی legacy مربوط‌اند؛ هویت بصری `UPD-S1-024`، Android-to-Windows فیزیکی و upgrade همچنان gates مستقل‌اند.
 - مجموع: 6 reviewed، 162 pending؛ UPD-S1-008 همچنان `in_progress`.
+
+
+## بازبینی T0161 تا T0165 روی V 3.1.88
+
+- پنج شناسهٔ T0161 تا T0165 در برابر کد Android، آزمون‌ها، قرارداد Protobuf و مصرف‌کنندگان Android/Windows بررسی شدند.
+- وضعیت پایهٔ هر پنج مورد `done` حفظ شد؛ تصمیم `re_review_required` و وضعیت بازبینی `reviewed` در JSON مرجع ثبت شده است. اجرای مجدد پس از UPD-S1-015 و آزمون‌های runtime نهایی ضروری است.
+- شواهد: `update/Step three/UPD-S1-008/evidence/review-T0161.md` تا `review-T0165.md`؛ commit: `47c078dc39ea69e2b88db57f057e71353fc2ec8c`.
+- نتیجهٔ جاری ماتریس: **109 reviewed / 59 pending از 168 شناسهٔ متأثر**. این عدد، درصد پیشرفت 24 وظیفهٔ Update نیست.
