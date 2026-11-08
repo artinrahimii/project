@@ -111,3 +111,15 @@
 - `tests/test_decision_traceability.py` و `tests/test_product_build_contract.py` در quality run [42482227315](https://github.com/artinrahimii/project/actions/runs/42482227315) موفق شدند؛ کل suite شامل 479 تست، compileall و graph guards موفق بود.
 - این نتیجه فقط scope دفتر تصمیم‌ها و traceability را می‌پوشاند؛ live model، نصب واقعی یا Android-to-Windows E2E از آن نتیجه‌گیری نشده است. `AC-LOCAL-01/02` و `AC-P2P-01` همچنان NOT RUN هستند.
 - reconciliation: **4/168 reviewed**, **164 pending**, پیشرفت **2.38%**. UPD-S1-008 همچنان `in_progress`.
+
+
+## تلاش هفتم — بازبینی محتوایی T0015 و T0016 روی V 3.1.61
+
+- Attempt: `UPD-S1-008-20261108130231`; زمان ثبت: `2026-11-08T13:02:31.000Z`.
+- HEAD بررسی‌شده: `a3fa1f54d99db809cc670ece1cfc244239f6a727` — `V 3.1.61`. فایل‌های محصولِ بررسی‌شده در همان snapshotی هستند که در CI روی `c31ac02d39993965bd693b53f626d5cb09be7b2c` build شدند؛ V3.1.61 تغییرات را به ledger، گراف و گزارش reconciliation محدود کرد.
+- `T0015`: انتخاب C#/.NET 10/WPF، پروژهٔ WPF، پنجره و تنظیمات build بررسی شد. تصمیم `unchanged`؛ وضعیت پایهٔ `done` حفظ شد. پیش‌نیازهای `T0014`، `T0013` و `T0010` تکمیل‌شده‌اند. Windows build/publish/startup smoke/installer و HostLifecycle در run [42482227320](https://github.com/artinrahimii/project/actions/runs/42482227320) موفق شدند.
+- `T0016`: پشتهٔ Kotlin/Jetpack Compose/Gradle، تنظیمات Gradle، manifest و MainActivity بررسی شد. تصمیم `unchanged`؛ وضعیت پایهٔ `done` حفظ شد. lint، debug/release build و JVM tests در run [42482227320](https://github.com/artinrahimii/project/actions/runs/42482227320) موفق بودند؛ Keystore instrumentation در آخرین مشاهده هنوز در حال اجرا بود و کل job Android موفق اعلام نمی‌شود.
+- Quality run [42482227315](https://github.com/artinrahimii/project/actions/runs/42482227315) نیز موفق بود: 479 تست Python، compileall و هر دو graph guard.
+- شواهد تفصیلی: `update/Step three/UPD-S1-008/evidence/review-T0015.md` و `update/Step three/UPD-S1-008/evidence/review-T0016.md`.
+- هیچ وضعیت پایه یا وابستگی قدیمی تغییر نکرد؛ نشانگرهای ثابت `update_impact` در گراف Step Three نیز دست‌نخورده ماندند. `UPD-S1-024` هنوز اجرای مستقل آیکون/پالت را لازم دارد.
+- reconciliation: **6/168 reviewed**، **162 pending**، پیشرفت **3.57%**. `UPD-S1-008` همچنان `in_progress`.

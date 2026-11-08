@@ -61,11 +61,25 @@
         "UPD-S1-001",
         "UPD-S1-024"
       ],
-      "decision": "re_review_required",
-      "review_status": "pending",
+      "decision": "unchanged",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0015.md",
+        "src/Host.Windows/WhiteP.Host.Windows.csproj",
+        "src/Host.Windows/App.xaml",
+        "src/Host.Windows/App.xaml.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "global.json",
+        "docs/decisions/ADR-0001-platform-build-baselines.md",
+        ".github/workflows/product-build.yml",
+        "tests/HostLifecycle.Tests/Program.cs",
+        "step three/T0015/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42482227320",
+        "https://github.com/artinrahimii/project/actions/runs/42482227315"
+      ],
+      "review_commit_sha": "a3fa1f54d99db809cc670ece1cfc244239f6a727"
     },
     {
       "legacy_task_id": "T0016",
@@ -75,11 +89,23 @@
         "UPD-S1-001",
         "UPD-S1-024"
       ],
-      "decision": "re_review_required",
-      "review_status": "pending",
+      "decision": "unchanged",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
-      "review_commit_sha": null
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0016.md",
+        "src/Client.Android/settings.gradle.kts",
+        "src/Client.Android/build.gradle.kts",
+        "src/Client.Android/app/build.gradle.kts",
+        "src/Client.Android/app/src/main/AndroidManifest.xml",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        ".github/workflows/product-build.yml",
+        "README.md",
+        "step three/T0016/execution-report.md",
+        "https://github.com/artinrahimii/project/actions/runs/42482227320",
+        "https://github.com/artinrahimii/project/actions/runs/42482227315"
+      ],
+      "review_commit_sha": "a3fa1f54d99db809cc670ece1cfc244239f6a727"
     },
     {
       "legacy_task_id": "T0019",

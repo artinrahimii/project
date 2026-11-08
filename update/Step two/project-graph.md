@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.56",
+  "commit_intent": "V 3.1.62",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -3105,7 +3105,9 @@
         "update/Step two/legacy-task-reconciliation.md",
         "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md",
         "update/Step three/UPD-S1-008/evidence/review-T0019.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0020.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0020.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0015.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0016.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
@@ -3113,13 +3115,15 @@
         "update/Step two/legacy-task-reconciliation.md",
         "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md",
         "update/Step three/UPD-S1-008/evidence/review-T0019.md",
-        "update/Step three/UPD-S1-008/evidence/review-T0020.md"
+        "update/Step three/UPD-S1-008/evidence/review-T0020.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0015.md",
+        "update/Step three/UPD-S1-008/evidence/review-T0016.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 6,
+        "attempt_count": 7,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261108162441",
+        "last_attempt_id": "UPD-S1-008-20261108130231",
         "last_attempt_result": "partial",
         "changed_files": [
           "update/Step three/UPD-S1-008/execution-report.md",
@@ -3131,7 +3135,9 @@
           "step three/project-graph.md",
           "update/Step three/UPD-S1-008/evidence/review-T0012-T0013.md",
           "update/Step three/UPD-S1-008/evidence/review-T0019.md",
-          "update/Step three/UPD-S1-008/evidence/review-T0020.md"
+          "update/Step three/UPD-S1-008/evidence/review-T0020.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0015.md",
+          "update/Step three/UPD-S1-008/evidence/review-T0016.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
@@ -3139,7 +3145,8 @@
           "38624cbc7537637086c8ef07aa7f4d15d8315e99",
           "f2abe47a43671753daaf233763b612592b3f694f",
           "32015598e6ff38f3984efb0bc8c5d1797b99cdef",
-          "c31ac02d39993965bd693b53f626d5cb09be7b2c"
+          "c31ac02d39993965bd693b53f626d5cb09be7b2c",
+          "a3fa1f54d99db809cc670ece1cfc244239f6a727"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -3156,7 +3163,10 @@
           "T0019 review confirmed the written decision explicitly does not claim physical Android-to-Windows routing; AC-P2P-01 remains NOT RUN.",
           "T0020 decision-traceability review: decision register and ADR links to actual build configuration, source and test paths verified on V3.1.60.",
           "tests/test_decision_traceability.py and tests/test_product_build_contract.py passed in exact V3.1.60 quality workflow 42482227315; full suite 479 tests, compileall and both graph guards succeeded.",
-          "T0020 scope remains decision traceability only; live-model and Android-to-Windows runtime gates remain NOT RUN."
+          "T0020 scope remains decision traceability only; live-model and Android-to-Windows runtime gates remain NOT RUN.",
+          "T0015 content review: current WPF/.NET 10 project files and dependency chain T0014/T0013/T0010 inspected; Windows clean build/publish, WPF startup, installer and HostLifecycle exact run 42482227320 succeeded.",
+          "T0016 content review: Kotlin/Compose/Gradle settings, app configuration, manifest and MainActivity inspected; Android lint, debug/release build and JVM unit tests succeeded in run 42482227320.",
+          "Exact quality run 42482227315 passed 479 Python tests, compileall and both graph guards."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -3517,6 +3527,60 @@
           "contract_changes": [],
           "follow_up": "Review remaining 164 affected legacy tasks individually; preserve old status/dependency data and keep runtime gates NOT RUN until their actual acceptance evidence exists.",
           "device_and_host_details_redacted": "Repository document/source review and GitHub-hosted quality CI only; no physical Android or target Windows host used.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261108130231",
+          "started_at": "2026-11-08T13:02:31.000Z",
+          "ended_at": "2026-11-08T13:02:31.000Z",
+          "result": "partial",
+          "summary": "Reviewed T0015 and T0016 at the current V3.1.61 source head. Their platform stack/project/build scopes remain satisfied, so reconciliation decisions are unchanged and baseline statuses remain done. Product-specific tests passed for Windows WPF and Android Gradle/JVM scope; Android Keystore instrumentation and physical product acceptance are not claimed. Six of 168 legacy reviews are now complete; 162 remain pending.",
+          "changed_files": [
+            "update/Step three/UPD-S1-008/evidence/review-T0015.md",
+            "update/Step three/UPD-S1-008/evidence/review-T0016.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/decision-impact-map.md",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "T0015 Windows WPF stack/build review",
+              "command": "Inspect WPF csproj/App/MainWindow, platform ADR and current task dependency chain at V3.1.61; verify product run 42482227320.",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42482227320",
+              "summary": "Windows WPF clean build, publish, output check, generated Protobuf check, startup smoke, agent policy/DPAPI checks and installer acceptance passed; HostLifecycle job also passed."
+            },
+            {
+              "name": "T0016 Android Kotlin/Compose/Gradle stack/build review",
+              "command": "Inspect settings.gradle.kts, root/app build.gradle.kts, AndroidManifest.xml and MainActivity at V3.1.61; verify relevant steps in product run 42482227320.",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42482227320",
+              "summary": "Kotlin formatting/lint, clean debug APK build, disposable-key release variant build and Android JVM tests/coverage passed. Android Keystore instrumentation was still running at last observation; full Android job is not claimed complete."
+            },
+            {
+              "name": "Exact V3.1.60 quality workflow",
+              "command": ".github/workflows/quality.yml / run 42482227315.",
+              "result": "passed",
+              "url": "https://github.com/artinrahimii/project/actions/runs/42482227315",
+              "summary": "479 Python tests, compileall, Update graph validation and Step Three graph/output-evidence guards passed."
+            },
+            {
+              "name": "Physical Android-to-Windows product acceptance",
+              "command": "Real physical Android UI to installed Windows host and loaded local model.",
+              "result": "not_run",
+              "summary": "Not part of T0015/T0016 stack-selection acceptance; no physical device E2E is claimed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue the remaining 162 legacy reviews individually. Keep UPD-S1-008 in_progress until every affected Txxxx record has current code/test/acceptance/dependency evidence. Continue independent UPD-S1 tasks without claiming physical product acceptance.",
+          "device_and_host_details_redacted": "Source review and GitHub-hosted Windows/Android CI only; no physical Android handset or customer Windows host used.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -6939,7 +7003,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T16:25:55+03:30",
+    "as_of": "2026-11-08T13:02:31.000Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -7060,7 +7124,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T16:25:55+03:30",
+  "updated_at": "2026-11-08T13:02:31.000Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "LEGACY_TASK_REVIEW_NOT_YET_PERFORMED",
@@ -7243,12 +7307,12 @@
     "matched_legacy_task_id_count": 168,
     "missing_legacy_task_ids": [],
     "review_status_summary": {
-      "pending": 164,
-      "reviewed": 4
+      "pending": 162,
+      "reviewed": 6
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "164 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until all remaining tasks have individual code/test/acceptance evidence and dependency review.",
+    "completion_blocker": "162 of 168 task-level legacy reviews remain pending; UPD-S1-008 stays in_progress until all remaining tasks have individual code/test/acceptance evidence and dependency review.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",

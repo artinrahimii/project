@@ -4,14 +4,14 @@
 - تعداد کل وظایف قدیمی: 230
 - تعداد شناسه‌های متأثر: 168
 - تعداد رکوردهای مستقل: 168
-- تصمیم و وضعیت فعلی مطابق فایل JSON اصلی است؛ هیچ رکوردی در این مرحله به reviewed تغییر نکرده است.
+- وضعیت هر 168 رکورد مطابق JSON اصلی است؛ 6 مورد محتوایی reviewed و 162 مورد همچنان pending هستند.
 
 | شناسهٔ قدیمی | وضعیت پایه | شناسه‌های UPD-S1 مرتبط | تصمیم اولیه | وضعیت بازبینی | فایل‌های کد/قرارداد | فایل‌های آزمون |
 |---|---|---|---|---:|---:|---:|
 | `T0012` | done | UPD-S1-006, UPD-S1-008 | unchanged | reviewed | 0 | 1 |
 | `T0013` | done | UPD-S1-006 | unchanged | reviewed | 0 | 1 |
-| `T0015` | done | UPD-S1-001, UPD-S1-024 | re_review_required | pending | 5 | 0 |
-| `T0016` | done | UPD-S1-001, UPD-S1-024 | re_review_required | pending | 6 | 0 |
+| `T0015` | done | UPD-S1-001, UPD-S1-024 | unchanged | reviewed | 5 | 0 |
+| `T0016` | done | UPD-S1-001, UPD-S1-024 | unchanged | reviewed | 6 | 0 |
 | `T0019` | done | UPD-S1-002 | unchanged | reviewed | 0 | 1 |
 | `T0020` | done | UPD-S1-006, UPD-S1-008 | re_review_required | pending | 0 | 1 |
 | `T0027` | done | UPD-S1-021 | re_review_required | pending | 0 | 1 |
@@ -217,3 +217,12 @@
 ## بازبینی T0019 در V 3.1.59
 
 تصمیم `unchanged`؛ وظیفهٔ legacy با وضعیت پایهٔ `done` حفظ شد. ماتریس مستقیم P2P/metadata-only در ADR-0002 با REQ-010/011، README، acceptance و آزمون قراردادی تطبیق داده شد. شواهد: `update/Step three/UPD-S1-008/evidence/review-T0019.md`. 165 رکورد legacy همچنان در انتظار بازبینی هستند.
+
+
+## بازبینی T0015 و T0016 روی V 3.1.61
+
+- `T0015`: تصمیم `unchanged`؛ وضعیت پایهٔ `done` حفظ شد. پروژهٔ WPF و پیکربندی .NET 10 بررسی شد؛ build، publish، startup smoke، installer و HostLifecycle در Product Build run [42482227320](https://github.com/artinrahimii/project/actions/runs/42482227320) موفق بودند.
+- `T0016`: تصمیم `unchanged`؛ وضعیت پایهٔ `done` حفظ شد. پیکربندی Gradle/Kotlin/Compose، manifest و MainActivity بررسی شد؛ lint، debug/release build و JVM tests در همان run موفق بودند. Android Keystore instrumentation هنگام آخرین مشاهده هنوز در حال اجرا بود و کل job Android کامل اعلام نمی‌شود.
+- Quality run [42482227315](https://github.com/artinrahimii/project/actions/runs/42482227315) نیز 479 تست Python، compileall و هر دو graph guard را با موفقیت گذراند.
+- این تصمیم‌ها فقط به انتخاب پشته و پروژهٔ اجرایی legacy مربوط‌اند؛ هویت بصری `UPD-S1-024`، Android-to-Windows فیزیکی و upgrade همچنان gates مستقل‌اند.
+- مجموع: 6 reviewed، 162 pending؛ UPD-S1-008 همچنان `in_progress`.
