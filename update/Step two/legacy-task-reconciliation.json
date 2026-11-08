@@ -3440,9 +3440,22 @@
         "UPD-S1-021"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0215.md",
+        "docs/windows-installer.md",
+        "docs/release-assets.md",
+        "docs/android-release-signing.md",
+        ".github/workflows/product-build.yml",
+        ".github/workflows/android-release.yml",
+        ".github/workflows/release-assets.yml",
+        "tests/test_release_assets_contract.py",
+        "tests/test_generate_model_license_notice.py",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320",
+        "https://github.com/artinrahimii/project/actions/runs/42519571350"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3455,9 +3468,17 @@
         "UPD-S1-024"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0216.md",
+        "docs/windows-installer.md",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "docs/deployment/rendezvous-service.md",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3470,9 +3491,18 @@
         "UPD-S1-024"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0217.md",
+        "README.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "docs/acceptance.md",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3483,9 +3513,21 @@
         "UPD-S1-021"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0218.md",
+        "docs/acceptance.md",
+        "docs/release-assets.md",
+        ".github/workflows/product-build.yml",
+        ".github/workflows/android-windows-lan-acceptance.yml",
+        ".github/workflows/real-inference.yml",
+        ".github/workflows/android-release.yml",
+        ".github/workflows/release-assets.yml",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320",
+        "https://github.com/artinrahimii/project/actions/runs/42519571350"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3496,9 +3538,19 @@
         "UPD-S1-024"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0219.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomClientRequestRepository.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "tests/test_android_conversation_detail_contract.py",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3509,9 +3561,22 @@
         "UPD-S1-023"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0221.md",
+        "src/Host.Windows/Models/ModelStreamingDownloader.cs",
+        "src/Host.Windows/Models/VerifiedModelInstaller.cs",
+        "src/Host.Windows/Models/Catalog/ModelCatalogParser.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/VerifiedModelInstallerAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/ModelStreamingDownloaderAcceptanceTests.cs",
+        "tests/test_model_catalog_ui.py",
+        "tests/test_model_catalog_parser.py",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3522,9 +3587,19 @@
         "UPD-S1-009"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0222.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/ClientDatabase.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationListViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationContextCapsuleViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/RoomConversationContextCapsuleRepository.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/data/ClientDatabaseMigrationTest.kt",
+        "tests/test_android_database_migration_contract.py",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3537,9 +3612,20 @@
         "UPD-S1-020"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0223.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        ".github/workflows/android-windows-lan-acceptance.yml",
+        ".github/workflows/real-inference.yml",
+        "docs/acceptance.md",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3552,9 +3638,18 @@
         "UPD-S1-020"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0224.md",
+        "docs/decisions/ADR-0022-single-host-sequential-retry.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "tests/test_android_inference_attempt_budget_acceptance.py",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3567,9 +3662,21 @@
         "UPD-S1-020"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0225.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundTimer.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "tests/test_android_inference_attempt_budget_acceptance.py",
+        "tests/test_android_inference_response_correlation_contract.py",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3584,9 +3691,23 @@
         "UPD-S1-022"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0226.md",
+        "src/Shared.Security/PeerSecurityPolicy.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "src/Host.Windows/Networking/PeerResponseCorrelationValidator.cs",
+        "tests/HostLifecycle.Tests/PeerSecurityPolicyAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerTrustStoreTest.kt",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3601,9 +3722,22 @@
         "UPD-S1-020"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0227.md",
+        "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "tests/test_central_inference_boundary.py",
+        "tests/test_relay_privacy_boundary.py",
+        "docs/deployment/rendezvous-service.md",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320",
+        "https://github.com/artinrahimii/project/actions/runs/42519571350"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3614,9 +3748,20 @@
         "UPD-S1-021"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0228.md",
+        "docs/acceptance.md",
+        "docs/release-assets.md",
+        "docs/android-release-signing.md",
+        "docs/windows-installer.md",
+        "README.md",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320",
+        "https://github.com/artinrahimii/project/actions/runs/42519571350",
+        "docs/release-limitations.md"
+      ],
       "review_commit_sha": null
     },
     {
@@ -3630,9 +3775,21 @@
         "UPD-S1-024"
       ],
       "decision": "re_review_required",
-      "review_status": "pending",
+      "review_status": "reviewed",
       "status_changed": false,
-      "evidence": [],
+      "evidence": [
+        "update/Step three/UPD-S1-008/evidence/review-T0229.md",
+        ".github/workflows/quality.yml",
+        ".github/workflows/product-build.yml",
+        ".github/workflows/rendezvous-container.yml",
+        ".github/workflows/android-windows-lan-acceptance.yml",
+        ".github/workflows/real-inference.yml",
+        "docs/acceptance.md",
+        "docs/release-assets.md",
+        "https://github.com/artinrahimii/project/actions/runs/42519571303",
+        "https://github.com/artinrahimii/project/actions/runs/42519571320",
+        "https://github.com/artinrahimii/project/actions/runs/42519571350"
+      ],
       "review_commit_sha": null
     }
   ]

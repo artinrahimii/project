@@ -929,3 +929,40 @@
 
 - commit ثبت شواهد پنج بازبینی: `4eba36c5fd9196fb616b5c0bd888c010cefeea58` — `V 3.1.107`، شاخهٔ `main`، تأییدشده در GitHub.
 - فیلد `review_commit_sha` رکوردهای T0209 تا T0213 با همین SHA واقعی پر شده است؛ این تغییر فقط metadata ردیابی است و وضعیت baseline یا تصمیم reconciliation را تغییر نمی‌دهد.
+
+
+## Current-main reconciliation review: T0215–T0229 — 2026-11-09
+
+Review baseline: `a9a12e8326d05e3b4aaeafb33eaeddb68e631c0e` (`V 3.1.108`). The fourteen remaining legacy IDs were reviewed individually against current source, direct consumers, tests, workflows and acceptance criteria. Each has a separate evidence file.
+
+| Legacy ID | Baseline status | Decision | Finding |
+|---|---|---|---|
+| T0215 | `in_progress` | `re_review_required` | Release licence inventory and sample-model notice are built into the Windows installer pipeline; current-head Product Build passed |
+| T0216 | `not_started` | `re_review_required` | The existing Windows installer document describes build/install/package details, not a complete first-run, backend/model setup, opt-in participation, peer trust, stop-participation and troubleshooting guide |
+| T0217 | `not_started` | `re_review_required` | There is no accurate Android user guide for the requested host-connected ordinary-chat flow |
+| T0218 | `not_started` | `re_review_required` | Current-head Quality, Product Build and Rendezvous container workflows passed, but acceptance still lacks physical Android-to-Windows inference, a real target-host local-model session, dual-platform in-place upgrade and same-tag release validation |
+| T0219 | `not_started` | `re_review_required` | The ordinary ConversationDetailScreen send path calls the local-only ConversationMessagesViewModel, which writes user messages to Room and does not invoke the host runtime |
+| T0221 | `not_started` | `re_review_required` | Catalog validation, bounded HTTPS download, SHA-256/GGUF verification and atomic update of an existing model are real |
+| T0222 | `not_started` | `re_review_required` | Room v5 and migration chain, conversation/message persistence, and context-capsule edit/save/delete are implemented; migration tests preserve records from a v1 DB |
+| T0223 | `not_started` | `re_review_required` | Android request runtime and Windows local inference components exist separately, but ordinary Android chat is still local-only |
+| T0224 | `not_started` | `re_review_required` | The approved V1 |
+| T0225 | `not_started` | `re_review_required` | The current runtime implements bounded sequential attempts, unique request/attempt/round correlation, shared round deadlines, timeout collection and cancellation handling |
+| T0226 | `not_started` | `re_review_required` | Peer identity validation, explicit trust, OS/Keystore-protected persistence, libp2p Noise/TLS secure channels and replay fencing are implemented and have automated tests |
+| T0227 | `not_started` | `re_review_required` | Rendezvous stores expiring peer IDs, direct addresses and capability metadata only; request/response transport is direct authenticated libp2p |
+| T0228 | `not_started` | `re_review_required` | A single consolidated current release-limitations register was absent |
+| T0229 | `not_started` | `re_review_required` | Current-head CI proves clean hosted-checkout validation, Android/Windows builds, Windows installer smoke, HostLifecycle tests and Rendezvous container smoke |
+
+### Outstanding product limitations
+
+- Ordinary Android conversation remains local-only and is not connected to the request runtime.
+- Physical Android-to-Windows inference on a real device and installed Windows host has not been run.
+- The current-head Product Build proves CI builds and runner smoke, not a target-device install or live target-host model session.
+- Model catalogue selection does not perform initial install/activation; removal leaves the model file on disk.
+- Room migrations and capsule CRUD are implemented, but physical reboot and in-place upgrade preservation are unverified.
+- The approved first-release policy is one host at a time with up to three sequential attempts; the prior three-host-per-round task is superseded.
+- Peer trust, libp2p secure channels and metadata-only rendezvous have source/tests; physical security acceptance and external provider-log audit remain unrun.
+- A consolidated `docs/release-limitations.md` was added, but it does not approve release.
+
+Exact-head CI before this change: Quality Gate [42519571303](https://github.com/artinrahimii/project/actions/runs/42519571303), Product Build [42519571320](https://github.com/artinrahimii/project/actions/runs/42519571320), Rendezvous container [42519571350](https://github.com/artinrahimii/project/actions/runs/42519571350); all passed. These runs precede this reconciliation commit, so the new commit must be validated separately.
+
+**Record-level reconciliation: 168/168 reviewed (100%); 0 record pending.** All legacy baseline statuses and original Step Three `update_impact` markers remain unchanged. This is not the completion percentage of the 24 update tasks. `UPD-S1-008` remains `in_progress` because 70/80 Update graph edges are still `unreviewed` and the dependency audit remains open.
