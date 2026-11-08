@@ -842,3 +842,18 @@
 - Product CI دقیق source [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) و Quality CI [42510357597](https://github.com/artinrahimii/project/actions/runs/42510357597) موفق شدند. اجرای محلی در این محیط به‌علت عدم دسترسی DNS ممکن نشد.
 - وضعیت پایهٔ هر پنج وظیفه `done` حفظ شد؛ تصمیم `re_review_required` و شواهد مستقل در `review-T0176.md` تا `review-T0180.md` ذخیره می‌شود.
 - reconciliation قبل از این batch: 119/168 reviewed و 49 pending؛ پس از آن: **124/168 reviewed (73.81%)** و **44 pending (26.19%)**. UPD-S1-008 همچنان `in_progress` می‌ماند.
+
+
+## بازبینی T0181 تا T0185 — 2026-11-08T19:16:57.662Z
+
+- مبنای main: `b69fbc20328af3f4273b4a137b649ca4cdf6e3bd` (`V 3.1.96`)، source محصول: `db2bfaa62c7816e9f06ed4e9e1a8d1d91cb822fd` (`V 3.1.88`).
+- T0181: رضایت جداگانهٔ مالک، default-off و DPAPI history بررسی شد.
+- T0182: startup cleanup محدود به فایل موقت با نام/شناسهٔ معتبر، سن حداقل ۳۰ ثانیه و عدم استفادهٔ هم‌زمان است.
+- T0183: AES-256-GCM و کلیدهای جداگانهٔ non-exportable Keystore برای هویت و trust، همراه fail-closed و revoke بررسی شد.
+- T0184: Room/SQLCipher، حفاظت کلید با Keystore و انتقال دیتابیس plaintext قدیمی با integrity check و atomic replacement بررسی شد.
+- T0185: فقط INTERNET در source manifest است؛ permission خصوصی signature-level AndroidX در APK به‌عنوان مورد dependency مجاز است و verifier در Product Build اجرا می‌شود.
+- Product CI run [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) و Quality CI run [42510357597](https://github.com/artinrahimii/project/actions/runs/42510357597) موفق بودند. اجرای محلی جداگانه در این محیط ممکن نشد.
+- وضعیت پایهٔ هر پنج وظیفه `done` حفظ شد؛ T0181-T0184 با تصمیم `re_review_required` و T0185 با تصمیم `unchanged` ثبت می‌شوند.
+- شواهد مستقل: `review-T0181.md` تا `review-T0185.md` در همین پوشهٔ evidence.
+- reconciliation پیش از این batch: 124/168 reviewed و 44 pending؛ پس از ثبت: 129/168 reviewed و 39 pending. UPD-S1-008 همچنان `in_progress` است.
+- در این batch هیچ کد محصول یا وضعیت گراف اولیه تغییر نکرد؛ آزمون نصب/ارتقای واقعی Windows و Android انجام نشد.
