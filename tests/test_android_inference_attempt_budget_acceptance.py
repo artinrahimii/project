@@ -45,7 +45,7 @@ class AndroidInferenceAttemptBudgetAcceptanceTests(unittest.TestCase):
         for marker in (
             "enforcesThreeDistinctHostsPerRoundAndNineAttemptsAcrossTheRequest",
             "honorsTheRemainingAttemptBudgetWhenAPreviouslyUsedHostIsRetried",
-            "assertEquals(FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS, progress.hostsAttempted)",
+            "assertEquals(MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS, progress.hostsAttempted)",
             "assertEquals(4, progress.hostsAttempted)",
             "assertEquals(9, transport.requests.size)",
             "assertEquals(4, transport.requests.size)",

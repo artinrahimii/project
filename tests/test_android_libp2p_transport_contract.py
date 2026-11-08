@@ -157,7 +157,7 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("val diagnosticOutput = ConcurrentLinkedQueue<String>()", transport_test)
         self.assertIn("phaseOutput.add(", transport_test)
         self.assertIn("diagnosticOutput.add(", transport_test)
-        error_capture = transport_test.split("val phases =", 1)[1].split("val processStates =", 1)[0]
+        error_capture = transport_test.split("val phases =", 1)[1].split("throw AssertionError", 1)[0]
         phase_capture = error_capture.split("val diagnostics =", 1)[0]
         diagnostic_capture = error_capture.split("val diagnostics =", 1)[1]
         self.assertIn("phaseOutput", phase_capture)
@@ -168,9 +168,11 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("diagnostics=$diagnostics", transport_test)
         self.assertNotIn("serverOutput", transport_test)
         self.assertIn('.joinToString(separator = " | ")', error_capture)
-        self.assertIn("dispatchesRoundToThreeNativeDotNetLibp2pHosts", transport_test)
+        self.assertIn("dispatchesToOneSelectedNativeDotNetPeerAmongMultipleCandidates", transport_test)
+        self.assertIn("selectsANewNativeDotNetPeerOnlyAfterThePreviousPeerTimesOut", transport_test)
         self.assertIn("internal val lastSubmissionFailure: String?", runtime)
-        self.assertIn("attemptStatusSummary", transport_test)
+        self.assertIn("selectedHosts = listOf(candidate(selectedPeerId))", transport_test)
+        self.assertIn("attempt.submissionStatus", transport_test)
 
     def test_three_host_noise_integration_exercises_the_application_runtime(self):
         source = TRANSPORT_TEST.read_text(encoding="utf-8")
@@ -178,9 +180,9 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("client.dispatchRound(", source)
         self.assertIn("client.dispatchProgress(requestId)", source)
         self.assertIn("import com.whitep.client.requests.DistributedRequestProgress", source)
-        self.assertIn("runtimeClient.dispatchProgress(requestId)", source)
+        self.assertIn("clientRuntime.dispatchProgress(requestId)", source)
         self.assertIn("client.awaitResponse(", source)
-        self.assertIn("dispatchesOneSharedRequestWithDistinctAttemptsOverAuthenticatedPeerStreams", source)
+        self.assertIn("dispatchesOnlyOneHostFromMultipleAuthenticatedPeerCandidates", source)
 
 
     def test_dotnet_ready_record_uses_matching_tab_delimiters(self):

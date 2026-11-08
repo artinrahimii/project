@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.34",
+  "commit_intent": "V 3.1.35",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -1001,13 +1001,14 @@
         "update/Step three/UPD-S1-003/evidence/ci-3.1.30.md",
         "update/Step three/UPD-S1-003/evidence/ci-3.1.31.md",
         "update/Step three/UPD-S1-003/evidence/ci-3.1.32.md",
-        "update/Step three/UPD-S1-003/evidence/ci-3.1.33.md"
+        "update/Step three/UPD-S1-003/evidence/ci-3.1.33.md",
+        "update/Step three/UPD-S1-003/evidence/ci-3.1.34.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. New decision ADR-0022 records the first-release one-host/sequential-retry policy. The generic three-host selector and dispatcher remain compatibility primitives and do not change the production runtime's one-host admission boundary. The implementation attempt is partial pending exact-commit CI. V 3.1.29 quality gate found five residual contract/documentation assertions; the exact tests and register row were corrected in the next partial attempt. Do not mark done until CI passes.",
       "execution_summary": {
-        "attempt_count": 7,
-        "failed_attempt_count": 4,
-        "last_attempt_id": "UPD-S1-003-20261108065423",
+        "attempt_count": 8,
+        "failed_attempt_count": 5,
+        "last_attempt_id": "UPD-S1-003-20261108065938",
         "last_attempt_result": "failed",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -1028,14 +1029,16 @@
           "update/Step two/project-graph.md",
           "update/Step three/UPD-S1-003/evidence/ci-3.1.30.md",
           "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt"
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+          "tests/test_android_libp2p_transport_contract.py"
         ],
         "related_commits": [
           "89042d5feba3c3859d63a7527aac0c7b2669cb88",
           "cb6050e9b6e9f8fd60d2266efbf57af2534a16c0",
           "719f2a4daf0b82c013c617a1a0a4778c625c474c",
           "10303ad6faddd7d4a50096d702d0e9f4a10e2b7d",
-          "b881d980419be1998e32eeb6a55d0d13d5a4cc3e"
+          "b881d980419be1998e32eeb6a55d0d13d5a4cc3e",
+          "40d9128be6d3bd0df3531d44b893946f24e82961"
         ],
         "tests_passed": [
           "Rendezvous container build and smoke",
@@ -1064,7 +1067,8 @@
           "Android JVM unit tests — 33 of 213 failed in run 42417548687",
           "Android ktlintTestSourceSetCheck — run 42455296829; JVM/instrumentation tests not run",
           "Android JVM :app:testDebugUnitTest — 5 of 214 failed in run 42455653927",
-          "Android ktlintTestSourceSetCheck — run 42456615891; APK/JVM/instrumentation not run"
+          "Android ktlintTestSourceSetCheck — run 42456615891; APK/JVM/instrumentation not run",
+          "Step Three Python quality gate — five stale contract-test failures in run 42456934121"
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -1087,7 +1091,8 @@
             "update/Step three/UPD-S1-003/evidence/ci-baseline.md",
             "update/Step three/UPD-S1-003/evidence/ci-3.1.31.md",
             "update/Step three/UPD-S1-003/evidence/ci-3.1.32.md",
-            "update/Step three/UPD-S1-003/evidence/ci-3.1.33.md"
+            "update/Step three/UPD-S1-003/evidence/ci-3.1.33.md",
+            "update/Step three/UPD-S1-003/evidence/ci-3.1.34.md"
           ]
         }
       },
@@ -1515,6 +1520,41 @@
           "device_and_host_details_redacted": "CI runners only. No physical Android device, external target Windows host, local model inference, or in-place upgrade was used.",
           "model_revision_and_sha256": "Not applicable; no local inference model loaded.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable; no installation/upgrade tested."
+        },
+        {
+          "attempt_id": "UPD-S1-003-20261108065938",
+          "started_at": "2026-11-08T06:59:38Z",
+          "ended_at": "2026-11-08T06:59:44Z",
+          "result": "failed",
+          "summary": "V 3.1.34 exact-commit Step Three quality gate ran 464 Python tests and reported five contract subtest failures. The failures were stale test expectations for the generic nine-attempt dispatcher marker, escaped tab source literals in Kotlin, removed multi-host test names and attemptStatusSummary, and an outdated runtimeClient variable name. Product build on the same commit was still running when this quality result was recorded; Windows/Android product results are tracked separately after that workflow completes.",
+          "changed_files": [
+            "tests/test_android_inference_attempt_budget_acceptance.py",
+            "tests/test_android_libp2p_transport_contract.py",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt"
+          ],
+          "commit_sha": "40d9128be6d3bd0df3531d44b893946f24e82961",
+          "tests": [
+            {
+              "name": "Step Three Python quality gate",
+              "command": ".github/workflows/quality.yml / Run automated tests",
+              "result": "failed",
+              "run_id": 42456934121,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42456934121",
+              "summary": "464 tests ran; five source-contract subtest failures were stale assertions. Graph validation, output validation and subsequent workflow steps were skipped after this failure."
+            }
+          ],
+          "failure_details": "Five failures from the Python quality suite: the generic dispatcher test expected FirstReleaseInferenceLimits.MAX_TOTAL_HOSTS instead of MultiHostCompatibilityLimits.MAX_TOTAL_HOSTS; diagnostic and ready-record checks expected escaped textual \\\\t sequences but V 3.1.34 had literal tab code points; native .NET interop assertions expected the removed three-peer function and attemptStatusSummary; the single-host integration test expected the removed multi-host test name and the previous runtimeClient variable. The product runtime remains one host per round.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Generic dispatcher tests explicitly use MultiHostCompatibilityLimits; production remains at three sequential attempts and one host per round.",
+            "Cross-runtime source-contract tests are aligned with renamed single-host dispatch and failover tests.",
+            "Kotlin source represents tab delimiters with escaped \\\\t literals."
+          ],
+          "follow_up": "Rerun exact-commit Python quality, graph validation, Android lint, debug/release builds, Android JVM and Keystore instrumentation, and Windows/HostLifecycle checks. Keep UPD-S1-003 in_progress until all required results pass.",
+          "device_and_host_details_redacted": "CI runners only. No physical Android device, target Windows host with real model, or installation/upgrade test was performed by this Python quality run.",
+          "model_revision_and_sha256": "Not applicable.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable."
         }
       ]
     },
@@ -4787,7 +4827,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T06:59:29.848Z",
+    "as_of": "2026-11-08T07:03:30.662Z",
     "total_tasks": 24,
     "not_started": 21,
     "in_progress": 1,

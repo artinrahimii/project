@@ -156,3 +156,13 @@
 - گزارش ktlint به‌صورت artifact بارگذاری نشده بود. بررسی source دقیق commit دو خط ۱۲۱ نویسه‌ای را در فایل‌های تست Kotlin مشخص کرد؛ هر دو در اصلاح بعدی line-wrap شدند.
 - پنج شکست JVM ثبت‌شده برای V 3.1.32 در V 3.1.33 دوباره اجرا نشدند، چون lint پیش از مرحلهٔ JVM متوقف شد.
 - UPD-S1-003 همچنان `in_progress` است تا lint و آزمون‌های کامل Android روی commit اصلاحی پاس شوند.
+
+
+## اعتبارسنجی دقیق V 3.1.34 — شکست قراردادهای Python
+
+- Commit آزموده‌شده: `40d9128be6d3bd0df3531d44b893946f24e82961` — `V 3.1.34`.
+- Step Three Python quality gate: **FAIL**، run [42456934121](https://github.com/artinrahimii/project/actions/runs/42456934121)، ۴۶۴ آزمون اجرا و ۵ شکست در assertionهای قراردادی.
+- علت‌ها: marker قدیمی برای سقف generic ۹تایی؛ انتظار escape متنی `\\t` در حالی که تغییر قبلی tab واقعی وارد source کرده بود؛ نام آزمون چندمیزبانهٔ حذف‌شده؛ marker قدیمی `attemptStatusSummary`؛ و نام متغیر runtime قدیمی.
+- این موارد نشان‌دهندهٔ شکست منطق محصول نیستند؛ آزمون‌های Python با بازطراحی آزمون‌های Kotlin همگام نشده بودند. محدودیت تولیدی یک میزبان در هر round تغییر نمی‌کند.
+- در همان commit، Kotlin lint موفق شد و build دیباگ Android آغاز شد؛ نتیجهٔ باقی مراحل Product Build پس از تکمیل workflow جداگانه ثبت می‌شود.
+- UPD-S1-003 تا پاس‌شدن مجدد Python quality، Android JVM و Keystore و سایر معیارها `in_progress` باقی می‌ماند.
