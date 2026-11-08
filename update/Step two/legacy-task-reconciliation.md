@@ -398,3 +398,13 @@
 - انتخاب مجدد میزبان پیشین به‌طور پیش‌فرض ممنوع، correlation و deadline پاسخ کنترل‌شده، پاسخ تکراری در حافظه deduplicate، لغو با CancelRequest هم‌بسته و retry فقط دستی و محدود است. idempotency پایدار پاسخ در Room و آزمون فیزیکی E2E هنوز اثبات نشده است.
 - Product CI دقیق source [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) و Quality CI [42510357597](https://github.com/artinrahimii/project/actions/runs/42510357597) موفق شدند.
 - reconciliation جاری: **119/168 reviewed (70.83%)** و **49 pending (29.17%)**؛ UPD-S1-008 همچنان `in_progress` است. گراف اولیه و markerهای pending آن عمداً تغییر نکردند.
+
+
+## بازبینی محتوایی T0176 تا T0180 روی V 3.1.94
+
+- پنج وظیفهٔ T0176 تا T0180 از روی کد محصول، آزمون‌ها و سیاست نگهداری/لاگ/پاک‌سازی بازبینی شدند؛ شواهد: `update/Step three/UPD-S1-008/evidence/review-T0176.md` تا `review-T0180.md`.
+- وضعیت پایهٔ هر پنج مورد `done` حفظ شد؛ تصمیم هر پنج `re_review_required` و review_status برابر `reviewed` ثبت شد.
+- در T0176 تست مستقل دقیقاً دو پاسخ معتبر پیدا نشد؛ zero/one/three، duplicate، late، timeout و cancel پوشش دارند. این مورد follow-up باز است.
+- T0178 retention میزبان به‌طور پیش‌فرض غیرپایدار است؛ ذخیرهٔ پایدار فقط با رضایت جداگانه و DPAPI ممکن می‌شود. T0179 log تشخیصی را به کدهای عددی/نتیجه/مدت محدود می‌کند. T0180 بافرها را در failure/ack/teardown پاک می‌کند، اما پاک‌سازی فوری همهٔ بافرهای Windows در لحظهٔ timeout اثبات نشده است.
+- Product CI دقیق source [42510357567](https://github.com/artinrahimii/project/actions/runs/42510357567) و Quality CI [42510357597](https://github.com/artinrahimii/project/actions/runs/42510357597) موفق شدند.
+- reconciliation جاری: **124/168 reviewed (73.81%)** و **44 pending (26.19%)**؛ UPD-S1-008 همچنان `in_progress` است. گراف اولیه و نشانگرهای pending آن دست‌نخورده‌اند.

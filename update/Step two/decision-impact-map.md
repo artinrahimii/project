@@ -125,11 +125,11 @@
 | `T0173` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 4 | 2 |
 | `T0174` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 10 | 7 |
 | `T0175` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 3 | 2 |
-| `T0176` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017, UPD-S1-019 | re_review_required | pending | 2 | 4 |
-| `T0177` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | pending | 1 | 2 |
-| `T0178` | done | UPD-S1-007, UPD-S1-018 | re_review_required | pending | 3 | 3 |
-| `T0179` | done | UPD-S1-007, UPD-S1-018 | re_review_required | pending | 5 | 6 |
-| `T0180` | done | UPD-S1-007, UPD-S1-018 | re_review_required | pending | 6 | 7 |
+| `T0176` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017, UPD-S1-019 | re_review_required | reviewed | 2 | 4 |
+| `T0177` | done | UPD-S1-003, UPD-S1-004, UPD-S1-015, UPD-S1-017 | re_review_required | reviewed | 1 | 2 |
+| `T0178` | done | UPD-S1-007, UPD-S1-018 | re_review_required | reviewed | 3 | 3 |
+| `T0179` | done | UPD-S1-007, UPD-S1-018 | re_review_required | reviewed | 5 | 6 |
+| `T0180` | done | UPD-S1-007, UPD-S1-018 | re_review_required | reviewed | 6 | 7 |
 | `T0181` | done | UPD-S1-007, UPD-S1-018 | re_review_required | pending | 7 | 5 |
 | `T0182` | done | UPD-S1-007, UPD-S1-018 | re_review_required | pending | 1 | 2 |
 | `T0183` | done | UPD-S1-007, UPD-S1-018 | re_review_required | pending | 7 | 6 |
@@ -248,3 +248,9 @@
 - پنج شناسه از روی کد و آزمون بررسی شدند؛ وضعیت پایهٔ `done` حفظ شد و تصمیم بازبینی هر پنج `re_review_required` است.
 - شواهد: `update/Step three/UPD-S1-008/evidence/review-T0171.md` تا `review-T0175.md`؛ commit شواهد: `2d36f1668352d1c47fa3efa6b604a8847b3f6b92`.
 - ماتریس جاری: **119 reviewed / 49 pending از 168 شناسهٔ متأثر**؛ این آمار از پیشرفت 24 وظیفهٔ Update مستقل است.
+
+
+## بازبینی T0176 تا T0180 روی V 3.1.94
+
+- وضعیت پایهٔ هر پنج شناسه `done` حفظ و تصمیم بازبینی `re_review_required` ثبت شد. شواهد: `review-T0176.md` تا `review-T0180.md`؛ commit `99cc89b08aa53da531483be132b5464b6f233eaa`.
+- ماتریس جاری: **124 reviewed / 44 pending از 168 شناسهٔ متأثر**؛ این شاخص از پیشرفت 24 وظیفهٔ Update مستقل است.
