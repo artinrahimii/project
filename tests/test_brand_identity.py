@@ -45,6 +45,9 @@ class BrandIdentityTests(unittest.TestCase):
         self.assertIn('capture(\n        output,\n        "android-conversation-messages.png",', capture)
         self.assertIn('wait_for_text("Peer discovery is configured from the New request screen.")', capture)
         self.assertIn('wait_for_text("Understand the processing-host trust boundary.")', capture)
+        self.assertIn('run_adb("shell", "input", "keyevent", "3")', capture)
+        self.assertIn('wait_for_text("White-P")', capture)
+        self.assertIn('"android-launcher.png"', capture)
         self.assertIn("Refusing to capture", capture)
 
     def test_shared_palette_contrast_and_semantic_roles_meet_thresholds(self):
@@ -168,6 +171,17 @@ class BrandIdentityTests(unittest.TestCase):
         self.assertIn('"whitep-design-tokens.json"', capture)
         self.assertIn('Copy-Item -LiteralPath "src/Host.Windows/Assets/WhiteP.ico"', workflow)
         self.assertIn('path: artifacts/brand-review/windows/', workflow)
+
+    def test_windows_review_capture_includes_native_window_and_taskbar(self):
+        script = (ROOT / "tools/capture_windows_brand_review.ps1").read_text(encoding="utf-8")
+        workflow = (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8")
+        self.assertIn('FindWindow("Shell_TrayWnd"', script)
+        self.assertIn("GetWindowRect", script)
+        self.assertIn("CopyFromScreen", script)
+        self.assertIn("windows-window-chrome.png", script)
+        self.assertIn("windows-taskbar.png", script)
+        self.assertIn("./tools/capture_windows_brand_review.ps1", workflow)
+        self.assertIn('Icon="Assets/WhiteP.ico"', (ROOT / "src/Host.Windows/MainWindow.xaml").read_text(encoding="utf-8"))
 
     def test_clean_build_workflows_generate_brand_assets(self):
         build=(ROOT/".github/workflows/product-build.yml").read_text(encoding="utf-8")

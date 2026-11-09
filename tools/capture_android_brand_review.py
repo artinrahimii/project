@@ -230,6 +230,13 @@ def main() -> int:
     tap_label("Privacy")
     wait_for_text("Understand the processing-host trust boundary.")
     capture(output, "android-privacy.png", "Understand the processing-host trust boundary.")
+
+    # Verify the installed launcher icon in the actual Android app drawer.
+    run_adb("shell", "input", "keyevent", "3")
+    time.sleep(1.0)
+    run_adb("shell", "input", "swipe", "540", "2200", "540", "850", "450")
+    wait_for_text("White-P")
+    capture(output, "android-launcher.png", "White-P")
     return 0
 
 

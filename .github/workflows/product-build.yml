@@ -93,7 +93,8 @@ jobs:
           New-Item -ItemType Directory -Path $reviewDirectory -Force | Out-Null
           Copy-Item -LiteralPath $env:WHITEP_BRAND_REVIEW_SCREENSHOT -Destination (Join-Path $reviewDirectory "wpf-main-window.png")
           Copy-Item -LiteralPath "src/Host.Windows/Assets/WhiteP.ico" -Destination (Join-Path $reviewDirectory "WhiteP.ico")
-          Write-Host "PASS: WPF entry point displayed MainWindow, validated required controls, captured the real window, and preserved the generated ICO for visual review."
+          & ./tools/capture_windows_brand_review.ps1 -HostExecutable $hostExecutable -OutputDirectory $reviewDirectory
+          Write-Host "PASS: WPF startup, window icon, and native taskbar icon were captured."
       - name: Upload Windows brand review screenshot
         if: success()
         uses: actions/upload-artifact@v4

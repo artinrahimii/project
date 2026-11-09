@@ -157,3 +157,15 @@ Do not mark done until all 11 visual identity acceptance criteria are satisfied 
 
 - The exact-head quality gate [42705535861](https://github.com/artinrahimii/project/actions/runs/42705535861) has passed 490 tests, compileall and both graph guards. The contrast regression is confirmed green.
 - Only the full product build, Android instrumentation and Android visual screenshot review remain pending in the A014 follow-up. The task remains `in_progress`.
+
+
+## A015 — capture the installed Android launcher and native Windows taskbar — 2026-11-09T22:23:42.847Z
+
+- Revalidated exact online `main` at `V 3.1.138`, SHA `dcc3b2108a3e8e6e9a06fd5f5249103f60fca1cb`. Its product-build, quality-gate and Rendezvous workflows all completed successfully; the existing Windows screenshot and Android five/six page screenshots were manually inspected.
+- The earlier artifact contained actual density-specific Android launcher exports and the generated Windows ICO, but no screenshot of the Android app drawer or the native Windows taskbar. I am not treating a generated ICO contact sheet as proof of its native taskbar rendering.
+- Extended `tools/capture_android_brand_review.py` to return to Android Home, open the app drawer, require the installed `White-P` launcher label and capture `android-launcher.png`.
+- Added `tools/capture_windows_brand_review.ps1` to launch the actual WPF executable, bring its visible top-level window to the foreground, and use the Windows shell taskbar bounds to capture both `windows-window-chrome.png` and `windows-taskbar.png`. The script fails closed if the process/window/taskbar is absent or the screenshots are invalid.
+- Wired the native captures into `.github/workflows/product-build.yml` and added source-contract tests in `tests/test_brand_identity.py`.
+- This attempt is **partial** until a new clean product-build run produces both new screenshots and those exact images are reviewed. The previous exact-head CI does not test these new capture changes.
+- Existing exact-head baseline checks before this capture change: Android debug/release-variant builds passed; 216 JVM unit tests passed; Keystore instrumentation had 11 tests, 0 failures/errors and 1 explicit LAN-only skip; Windows WPF build/publish/startup and installer acceptance passed; HostLifecycle and Rendezvous jobs passed; quality gate and both graph guards passed.
+- No physical Android phone, independent user Windows machine, production-signed Android release, live local-model inference, Android-to-Windows user flow or in-place upgrade was tested in this attempt.
