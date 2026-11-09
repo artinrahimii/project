@@ -98,3 +98,11 @@ Do not mark done until all 11 visual identity acceptance criteria are satisfied 
 - A010 scroll-aware Android visual-capture source, regression test and failure evidence: `V 3.1.128`, SHA `f98c4cc5bd04d92785154b6847d9e4c89449fd40`.
 - A011 WPF button-label rendering correction and regression test: `V 3.1.129`, SHA `3d3605279ef35c0a0dea8202ea6a5c9f6a367e6a`.
 - Both commits were verified as ancestors of online `main`. Neither attempt marks the task complete; exact-head rendered screenshots remain mandatory.
+
+
+## A012 — move WPF button text fix into the canonical asset generator — 2026-11-09T21:38:52.962Z
+
+- Follow-up screenshot review from Product Build run [42703998918](https://github.com/artinrahimii/project/actions/runs/42703998918), artifact `13712811892`, showed the WPF button labels were still missing after A011.
+- Diagnosis: `src/Host.Windows/Assets/BrandColors.xaml` is generated at clean-build time by `tools/generate_brand_assets.py`. A011 had changed only the generated output file; the clean product workflow regenerated it from the unchanged generator and removed the ContentTemplate correction. Therefore the A011 source-file edit could not survive the actual build.
+- Moved the Button `ContentTemplate` rule into `_make_wpf_dictionary` in the canonical generator, regenerated the tracked `BrandColors.xaml` to match it, and changed the regression test to run the generator into a temporary clean output directory and compare the generated WPF dictionary byte-for-byte with the tracked output.
+- Attempt result: partial. The next clean Windows build must produce visible button labels in the actual screenshot; the generator contract alone is not visual acceptance. Android screenshot capture and the remaining shared visual checks also remain open.
