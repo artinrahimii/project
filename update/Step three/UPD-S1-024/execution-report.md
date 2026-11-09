@@ -169,3 +169,11 @@ Do not mark done until all 11 visual identity acceptance criteria are satisfied 
 - This attempt is **partial** until a new clean product-build run produces both new screenshots and those exact images are reviewed. The previous exact-head CI does not test these new capture changes.
 - Existing exact-head baseline checks before this capture change: Android debug/release-variant builds passed; 216 JVM unit tests passed; Keystore instrumentation had 11 tests, 0 failures/errors and 1 explicit LAN-only skip; Windows WPF build/publish/startup and installer acceptance passed; HostLifecycle and Rendezvous jobs passed; quality gate and both graph guards passed.
 - No physical Android phone, independent user Windows machine, production-signed Android release, live local-model inference, Android-to-Windows user flow or in-place upgrade was tested in this attempt.
+
+
+## A016 — align the Windows smoke-test log marker with the updated capture step — 2026-11-09T22:26:58.740Z
+
+- A015 exact-head quality run `42711588607` executed 491 tests and reported one failure: `test_wpf_entrypoint.WpfEntryPointTests.test_windows_ci_runs_a_bounded_process_startup_smoke_test` still expected the previous log substring `PASS: WPF entry point displayed MainWindow`.
+- The capture step had been renamed to a new success message, so the test was stale. The Windows product build and screenshot stage had not yet been reached when this diagnosis was recorded.
+- Corrected the workflow's success line to preserve the established marker while also describing the additional native window/taskbar capture.
+- A016 remains partial pending rerun of the quality gate and the native Windows/Android screenshots. No product acceptance status is promoted by this textual correction.
