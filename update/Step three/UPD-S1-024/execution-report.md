@@ -1,24 +1,19 @@
 # UPD-S1-024 — execution report
 
-## Current attempt
+## Attempts
 
-- Attempt: `UPD-S1-024-A001`
-- Start/end recorded: `2026-11-09T19:18:53.734Z`
-- State: `in_progress`
-- Base: `artinrahimii/project`, branch `main`, source baseline `fcfad5aa1d2dd9f265b26b0a517073edce5984cf` (`V 3.1.117`)
-- Commit for this attempt: pending
+- A001 — implementation source and asset generator added in `V 3.1.118` (`324c18c722dce1793d3e8c1cc90440f3b7b73ab3`).
+- A001 quality run: `42682238794` failed because the new test expected literal HEX text in the generated Kotlin file; the generator correctly emits Compose ARGB literals such as `Color(0xFF142537)`. The Windows and Android generator steps both succeeded.
+- A002 — corrected the assertion to validate Kotlin ARGB literals separately from XML/XAML HEX values. Commit and CI result pending.
+- Current state: `in_progress`. All 11 acceptance criteria remain subject to CI/build and visual evidence.
 
-## Implemented in source
+## Implemented
 
-The single canonical vector is `assets/brand/whitep-coin.svg`: navy canvas, white coin, antique-gold rim and centered navy uppercase P. The five named tokens and semantic mappings are held in `assets/brand/whitep-design-tokens.json`.
+The canonical vector is `assets/brand/whitep-coin.svg`: navy canvas, white coin, antique-gold rim and a centered navy uppercase P. `assets/brand/whitep-design-tokens.json` is the sole five-color source. `tools/generate_brand_assets.py` renders Windows multi-size ICO and Android density/adaptive launcher assets using only Python's standard library, and regenerates the corresponding WPF, Android XML and Compose color resources.
 
-`tools/generate_brand_assets.py` renders the SVG using Python standard-library code and generates the multi-size Windows ICO, Android legacy density icons, adaptive foreground PNGs and platform color resources. It also regenerates the WPF resource dictionary and Android Compose color object from the token JSON. There is no second hand-drawn platform icon.
+Android now applies `WhitePTheme` at the activity root. Windows loads the shared WPF resource dictionary and the generated executable/window icon. The product-build jobs for both platforms and the signed Android release workflow run the generator before native build commands.
 
-Android now loads `WhitePTheme` at the activity root. Its scheme maps primary/secondary/background/surface roles to the five approved tokens. The manifest references the generated launcher resources. Windows loads the shared resource dictionary, sets the window and executable icon from the generated ICO, styles common controls from the same tokens and removes the two pre-existing off-palette surface/border literals from `MainWindow.xaml`.
-
-The product-build workflow invokes the generator in both platform jobs; the signed Android release workflow also generates assets before Gradle compilation. Regression tests verify the five-token input, ICO directory, PNG dimensions, adaptive-icon references, and that both applications consume the generated resources.
-
-## Files created or changed
+## Source and test files
 
 - `assets/brand/whitep-design-tokens.json`
 - `assets/brand/whitep-coin.svg`
@@ -36,22 +31,15 @@ The product-build workflow invokes the generator in both platform jobs; the sign
 - `.github/workflows/android-release.yml`
 - `tests/test_brand_identity.py`
 - `docs/brand-identity.md`
-- `update/Step three/UPD-S1-024/execution-report.md`
-- `update/Step three/UPD-S1-024/evidence/brand-implementation.md`
 
-## Validation state
+## Validation and remaining evidence
 
-- Canonical source and integration files added: yes.
-- Icon generator executed in this ChatGPT session: no.
-- Brand regression tests executed: no; queued for CI.
-- Android clean build: pending CI.
-- Windows clean build and WPF startup smoke: pending CI.
-- Production-signed Android build: pending workflow.
-- Rendered screenshots / launcher and taskbar size review: not yet performed.
-- Physical Android-to-Windows or host runtime: not part of this visual identity attempt.
+- Windows generator step: passed on A001 product workflow.
+- Android generator step: passed on A001 product workflow.
+- Quality suite: failed once due to the test representation mismatch described above; corrected in A002, rerun pending.
+- Windows and Android clean builds: pending.
+- WPF startup smoke and Android instrumentation: pending.
+- Rendered launcher/taskbar/window and Android screen review with screenshots: not yet performed.
+- Physical Android-to-Windows runtime is outside this visual identity attempt and remains unverified.
 
-No acceptance criterion is claimed passed until the generated outputs and both native builds are inspected. The task remains `in_progress`.
-
-## Follow-up
-
-Inspect the workflow results for the exact commit, correct any build/test failures, review the produced launcher/window icons and actual application surfaces, attach visual evidence, and only then decide whether all 11 acceptance criteria are satisfied.
+No acceptance criterion is declared passed solely because the icon source or color files exist. Keep this task `in_progress` until generated exports, platform builds, and actual visual review are confirmed.

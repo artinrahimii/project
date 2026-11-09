@@ -31,7 +31,11 @@ class BrandIdentityTests(unittest.TestCase):
                    root/"src/Host.Windows/Assets/BrandColors.xaml"]
             for path in paths:
                 content=path.read_text(encoding="utf-8")
-                for value in EXPECTED.values(): self.assertIn(value,content)
+                for value in EXPECTED.values():
+                    if path.suffix == ".kt":
+                        self.assertIn(f"Color(0xFF{value[1:]})",content)
+                    else:
+                        self.assertIn(value,content)
     def test_both_platforms_load_the_shared_theme_and_icon(self):
         main=(ROOT/"src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt").read_text(encoding="utf-8")
         theme=(ROOT/"src/Client.Android/app/src/main/java/com/whitep/client/ui/theme/Theme.kt").read_text(encoding="utf-8")
