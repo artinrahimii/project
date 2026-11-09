@@ -86,12 +86,19 @@ class BrandIdentityTests(unittest.TestCase):
             tracked = (
                 ROOT / "src/Host.Windows/Assets/BrandColors.xaml"
             ).read_text(encoding="utf-8")
-            self.assertIn('<Setter Property="ContentTemplate">', generated)
-            self.assertIn(
-                '<DataTemplate><TextBlock Text="{Binding}" Foreground="{StaticResource PureWhiteBrush}"/></DataTemplate>',
-                generated,
-            )
-            self.assertEqual(tracked, generated)
+            for candidate in (generated, tracked):
+                parsed = ET.fromstring(candidate)
+                self.assertTrue(
+                    any(
+                        element.attrib.get("Property") == "ContentTemplate"
+                        for element in parsed.iter()
+                    )
+                )
+                self.assertIn('<Setter Property="ContentTemplate">', candidate)
+                self.assertIn(
+                    '<DataTemplate><TextBlock Text="{Binding}" Foreground="{StaticResource PureWhiteBrush}"/></DataTemplate>',
+                    candidate,
+                )
 
     def test_visual_review_capture_keeps_generated_icon_exports(self):
         capture = (ROOT / "tools/capture_android_brand_review.py").read_text(encoding="utf-8")

@@ -112,3 +112,11 @@ Do not mark done until all 11 visual identity acceptance criteria are satisfied 
 
 - A012 moved the button-label ContentTemplate into the canonical WPF asset generator and added a clean generated-output regression: `V 3.1.131`, SHA `725a1f59f690b819d7d8ce19b2d4861227cb9527`.
 - The prior A011 screenshot artifact proves the generated output still lacked visible button labels after a clean build. The A012 commit is not visually accepted until the new clean WPF screenshot is inspected.
+
+
+## A013 — align the tracked WPF resource and make the generator test semantic — 2026-11-09T21:41:03.311Z
+
+- Step Three quality gate run [42704516200](https://github.com/artinrahimii/project/actions/runs/42704516200) failed one test out of 489: `test_wpf_button_string_content_renders_with_contrasting_foreground`. The failure was the test's byte-for-byte equality assertion between the generated WPF resource and the tracked resource; the tracked resource still lacked the ContentTemplate.
+- Added the same ContentTemplate to the tracked `src/Host.Windows/Assets/BrandColors.xaml`.
+- Changed the regression to parse both the freshly generated and tracked XAML and independently assert that each contains a Button ContentTemplate with a TextBlock using `PureWhiteBrush`. Formatting differences are no longer used as a proxy for the required rendered style; the clean Windows screenshot remains the visual acceptance evidence.
+- Attempt result: partial; the new test and product build are pending on the next exact-head CI run.
