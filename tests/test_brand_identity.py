@@ -1,9 +1,15 @@
 from __future__ import annotations
 import json, struct, tempfile, unittest
 from pathlib import Path
+from tools.capture_android_brand_review import parse_bounds
 from tools.generate_brand_assets import EXPECTED, generate_brand_assets
 ROOT=Path(__file__).resolve().parents[1]
 class BrandIdentityTests(unittest.TestCase):
+    def test_android_review_capture_parses_uiautomator_bounds(self):
+        self.assertEqual(parse_bounds("[0,10][100,50]"), (50, 30))
+        with self.assertRaises(ValueError):
+            parse_bounds("invalid")
+
     def test_canonical_tokens_are_exactly_the_approved_five_colors(self):
         doc=json.loads((ROOT/"assets/brand/whitep-design-tokens.json").read_text(encoding="utf-8"))
         self.assertEqual({x["token"]:x["hex"] for x in doc["colors"]},EXPECTED)

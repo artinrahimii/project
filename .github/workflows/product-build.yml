@@ -77,6 +77,7 @@ jobs:
             throw "WPF host executable was not produced: $hostExecutable"
           }
           $hostDirectory = Split-Path -Parent $hostExecutable
+          $env:WHITEP_BRAND_REVIEW_SCREENSHOT = Join-Path $PWD "artifacts/brand-review/windows-host.png"
           $process = Start-Process -FilePath $hostExecutable -ArgumentList "--smoke-test" -WorkingDirectory $hostDirectory -PassThru
           if (-not $process.WaitForExit(30000)) {
             $process.Kill()
@@ -86,7 +87,17 @@ jobs:
           if ($process.ExitCode -ne 0) {
             throw "WPF startup smoke test failed with exit code $($process.ExitCode)."
           }
-          Write-Host "PASS: WPF entry point displayed MainWindow, validated required controls, and shut down cleanly."
+          $screenshot = Get-Item -LiteralPath $env:WHITEP_BRAND_REVIEW_SCREENSHOT -ErrorAction Stop
+          if ($screenshot.Length -lt 1024) { throw "WPF brand review screenshot is unexpectedly small." }
+          Write-Host "PASS: WPF entry point displayed MainWindow, validated required controls, captured a visual review screenshot, and shut down cleanly."
+      - name: Upload Windows brand review screenshot
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: whitep-brand-review-windows
+          path: artifacts/brand-review/windows-host.png
+          if-no-files-found: error
+          retention-days: 14
       - name: Verify agent-tool process restrictions on Windows
         run: dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release -- --test-agent-tool-process-executor
       - name: Verify agent-tool policy rejection on Windows
@@ -266,6 +277,15 @@ jobs:
             i=0; app_pid=""; while [ "$i" -lt 30 ]; do app_pid="$(adb shell pidof com.whitep.client | tr -d '\r' || true)"; if [ -n "$app_pid" ]; then printf 'Android app PID: %s\n' "$app_pid"; break; fi; i=$((i+1)); sleep 1; done; if [ -z "$app_pid" ]; then echo "MainActivity process did not appear within 30 seconds; recent Android logcat follows."; adb logcat -d -t 300; exit 1; fi
             i=0; resumed_activity=""; while [ "$i" -lt 30 ]; do resumed_activity="$(adb shell dumpsys activity activities | grep -E 'mResumedActivity|topResumedActivity' | grep -F 'com.whitep.client' | grep -F 'MainActivity' || true)"; if [ -n "$resumed_activity" ]; then printf '%s\n' "$resumed_activity"; break; fi; i=$((i+1)); sleep 1; done; if [ -z "$resumed_activity" ]; then echo "MainActivity was not resumed within 30 seconds; recent Android logcat follows."; adb logcat -d -t 300; exit 1; fi
             echo "PASS: installed Android MainActivity launcher was resolved, launched, and verified with a live process and resumed activity."
+            python tools/capture_android_brand_review.py
+      - name: Upload Android brand review screenshots
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: whitep-brand-review-android
+          path: artifacts/brand-review/android/
+          if-no-files-found: error
+          retention-days: 14
       - name: Upload Android Keystore instrumentation reports
         if: always()
         uses: actions/upload-artifact@v4

@@ -1,6 +1,9 @@
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using WhiteP.Host.Windows.Tools;
 
@@ -24,6 +27,29 @@ public partial class App : System.Windows.Application
         };
         window.Closed += closedHandler;
         window.Close();
+    }
+
+    private static void CaptureBrandReviewScreenshot(Window window)
+    {
+        var screenshotPath = Environment.GetEnvironmentVariable("WHITEP_BRAND_REVIEW_SCREENSHOT");
+        if (string.IsNullOrWhiteSpace(screenshotPath))
+        {
+            return;
+        }
+
+        window.UpdateLayout();
+        var width = Math.Max(1, (int)Math.Ceiling(window.ActualWidth));
+        var height = Math.Max(1, (int)Math.Ceiling(window.ActualHeight));
+        var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+        bitmap.Render(window);
+
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(bitmap));
+
+        var fullPath = Path.GetFullPath(screenshotPath);
+        Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+        using var stream = File.Create(fullPath);
+        encoder.Save(stream);
     }
 
     protected override void OnStartup(StartupEventArgs e)
@@ -121,6 +147,7 @@ public partial class App : System.Windows.Application
                     return;
                 }
 
+                CaptureBrandReviewScreenshot(window);
                 ExitAfterWindowCleanup(window, 0);
             }
             catch
