@@ -120,3 +120,12 @@ Do not mark done until all 11 visual identity acceptance criteria are satisfied 
 - Added the same ContentTemplate to the tracked `src/Host.Windows/Assets/BrandColors.xaml`.
 - Changed the regression to parse both the freshly generated and tracked XAML and independently assert that each contains a Button ContentTemplate with a TextBlock using `PureWhiteBrush`. Formatting differences are no longer used as a proxy for the required rendered style; the clean Windows screenshot remains the visual acceptance evidence.
 - Attempt result: partial; the new test and product build are pending on the next exact-head CI run.
+
+
+## A013 — WPF visual acceptance and contrast audit — 2026-11-09T21:44:12.673Z
+
+- Quality gate on `V 3.1.133`: 489 tests passed; both graph guards returned zero errors. The legacy graph retains one pre-existing metadata warning for T0001.
+- WPF visual artifact from Product Build run [42704515813](https://github.com/artinrahimii/project/actions/runs/42704515813), artifact `13713870555`, was inspected at 900 × 850. Connect, Start local engine and Estimate compatibility are now visibly rendered in white on navy. The run’s overall Product Build remains in progress; this is a verified screenshot step, not an overall product-build success.
+- The generated Windows ICO contains 7 embedded size entries: 16, 24, 32, 48, 64, 128 and 256 pixels. A contact sheet of the actual embedded raster sizes was visually reviewed.
+- Contrast ratios and semantic pairing restrictions are recorded in `evidence/contrast-ratio-review-2026-11-10.md`. Muted teal on porcelain is reserved for non-text borders/controls (4.008:1); antique gold on light surfaces remains decorative only (2.358–2.680:1).
+- Android visual capture and review remain pending on Product Build run [42704845236](https://github.com/artinrahimii/project/actions/runs/42704845236). Keep the node `in_progress`; no acceptance status is inferred from WPF-only visual proof.
