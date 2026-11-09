@@ -81,3 +81,13 @@ Do not mark done until all 11 visual identity acceptance criteria are satisfied 
 - Added regression coverage for the Created prefix, scroll-aware Messages capture and the two required visible landmarks.
 - The same CI artifact shows the emulator Keystore tests themselves had 0 failures (one explicitly skipped LAN-only test). The previous product-build conclusion remains failed because the visual capture step returned non-zero.
 - Attempt result: partial; keep `UPD-S1-024` in progress until a new exact-head CI run produces and passes visual review of Android screenshots and platform icon exports. Physical Android handset, independent Windows host, live Android-to-Windows inference, signed production release and in-place upgrade remain unverified.
+
+
+## A011 — make WPF button labels visible on the shared dark action surface — 2026-11-10T21:35:33.964Z
+
+- Reviewed the Windows visual-review artifact from Product Build run [42703515290](https://github.com/artinrahimii/project/actions/runs/42703515290), artifact `13713470695`, generated from `V 3.1.128`. The actual WPF startup screenshot showed dark navy button surfaces for `Connect`, `Start local engine` and `Estimate compatibility` with no visible labels. The same defect was visible in the earlier run 42699901550.
+- The canonical palette and background were correct, but the default string Content rendering did not produce visible white button text in the actual screenshot. The implicit `TextBlock` style uses `midnight_ink`; the shared Button style previously set only the Button foreground and did not force the rendered string-content element to use the contrast-safe foreground.
+- Added a shared Button `ContentTemplate` that renders string content through a `TextBlock` with explicit `PureWhiteBrush`. This applies centrally to the existing WPF buttons and retains the navy background; it does not change app behavior or button commands.
+- Added a regression test that asserts the shared WPF Button style includes the explicit content template and white text foreground.
+- Attempt result: partial; keep `UPD-S1-024` in progress until a fresh Windows screenshot demonstrates visible labels, Android screenshot captures are valid, and all remaining visual acceptance checks (including target sizes and contrast) pass. No release or physical-device criteria are inferred from this change.
+- Source commit SHA is recorded in the graph after GitHub confirms it.

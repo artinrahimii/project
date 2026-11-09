@@ -76,6 +76,11 @@ class BrandIdentityTests(unittest.TestCase):
         self.assertIn('Source="Assets/BrandColors.xaml"',app)
         self.assertIn('Icon="Assets/WhiteP.ico"',window)
         self.assertIn(r"<ApplicationIcon>Assets\WhiteP.ico</ApplicationIcon>",project)
+    def test_wpf_button_string_content_renders_with_contrasting_foreground(self):
+        brand = (ROOT / "src/Host.Windows/Assets/BrandColors.xaml").read_text(encoding="utf-8")
+        self.assertIn('<Setter Property="ContentTemplate">', brand)
+        self.assertIn('<DataTemplate><TextBlock Text="{Binding}" Foreground="{StaticResource PureWhiteBrush}"/></DataTemplate>', brand)
+
     def test_visual_review_capture_keeps_generated_icon_exports(self):
         capture = (ROOT / "tools/capture_android_brand_review.py").read_text(encoding="utf-8")
         workflow = (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8")
