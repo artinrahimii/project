@@ -55,6 +55,16 @@ class BrandIdentityTests(unittest.TestCase):
         self.assertIn('Source="Assets/BrandColors.xaml"',app)
         self.assertIn('Icon="Assets/WhiteP.ico"',window)
         self.assertIn(r"<ApplicationIcon>Assets\WhiteP.ico</ApplicationIcon>",project)
+    def test_visual_review_capture_keeps_generated_icon_exports(self):
+        capture = (ROOT / "tools/capture_android_brand_review.py").read_text(encoding="utf-8")
+        workflow = (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8")
+        self.assertIn('output / "launcher-resources"', capture)
+        self.assertIn('"ic_launcher_foreground.png"', capture)
+        self.assertIn('"whitep-coin.svg"', capture)
+        self.assertIn('"whitep-design-tokens.json"', capture)
+        self.assertIn('Copy-Item -LiteralPath "src/Host.Windows/Assets/WhiteP.ico"', workflow)
+        self.assertIn('path: artifacts/brand-review/windows/', workflow)
+
     def test_clean_build_workflows_generate_brand_assets(self):
         build=(ROOT/".github/workflows/product-build.yml").read_text(encoding="utf-8")
         release=(ROOT/".github/workflows/android-release.yml").read_text(encoding="utf-8")

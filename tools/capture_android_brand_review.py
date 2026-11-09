@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import shutil
 import subprocess
 import time
 import xml.etree.ElementTree as ET
@@ -64,6 +65,27 @@ def capture(directory: Path, filename: str) -> None:
 def main() -> int:
     output = Path("artifacts/brand-review/android")
     output.mkdir(parents=True, exist_ok=True)
+
+    # Preserve the generated icon exports beside the real emulator screenshots.
+    resource_root = Path("src/Client.Android/app/src/main/res")
+    export_root = output / "launcher-resources"
+    export_root.mkdir(parents=True, exist_ok=True)
+    for density in ("mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"):
+        for name in ("ic_launcher.png", "ic_launcher_round.png", "ic_launcher_foreground.png"):
+            source = resource_root / f"mipmap-{density}" / name
+            if not source.is_file():
+                raise FileNotFoundError(f"Generated Android icon export is missing: {source}")
+            destination = export_root / density / name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, destination)
+
+    adaptive_dir = resource_root / "mipmap-anydpi-v26"
+    for name in ("ic_launcher.xml", "ic_launcher_round.xml"):
+        shutil.copy2(adaptive_dir / name, export_root / name)
+    shutil.copy2(resource_root / "values/brand_colors.xml", export_root / "brand_colors.xml")
+    shutil.copy2(Path("assets/brand/whitep-coin.svg"), export_root / "whitep-coin.svg")
+    shutil.copy2(Path("assets/brand/whitep-design-tokens.json"), export_root / "whitep-design-tokens.json")
+
     time.sleep(1.0)
     capture(output, "android-home.png")
 
