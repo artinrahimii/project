@@ -26,7 +26,7 @@ class BrandIdentityTests(unittest.TestCase):
     def test_platform_color_resources_share_the_token_file(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp); generate_brand_assets(ROOT,root)
-            paths=[root/"src/Client.Android/app/src/main/java/com/whitep/client/ui/theme/BrandColors.kt",
+            paths=[root/"src/Client.Android/app/src/main/java/com/whitep/client/ui/theme/WhitePBrandColors.kt",
                    root/"src/Client.Android/app/src/main/res/values/brand_colors.xml",
                    root/"src/Host.Windows/Assets/BrandColors.xaml"]
             for path in paths:
@@ -43,7 +43,7 @@ class BrandIdentityTests(unittest.TestCase):
         app=(ROOT/"src/Host.Windows/App.xaml").read_text(encoding="utf-8")
         window=(ROOT/"src/Host.Windows/MainWindow.xaml").read_text(encoding="utf-8")
         project=(ROOT/"src/Host.Windows/WhiteP.Host.Windows.csproj").read_text(encoding="utf-8")
-        self.assertIn("WhitePTheme {",main); self.assertIn("lightColorScheme",theme)
+        self.assertIn("whitePTheme {",main); self.assertIn("lightColorScheme",theme)
         self.assertIn('android:icon="@mipmap/ic_launcher"',manifest)
         self.assertIn('android:roundIcon="@mipmap/ic_launcher_round"',manifest)
         self.assertIn('Source="Assets/BrandColors.xaml"',app)

@@ -294,7 +294,7 @@ def generate_brand_assets(repo_root: Path, output_root: Path) -> list[str]:
 
     outputs = (
         (android_res / "values/brand_colors.xml", _make_android_colors_xml(colors)),
-        (output_root / "src/Client.Android/app/src/main/java/com/whitep/client/ui/theme/BrandColors.kt", _make_kotlin_colors(colors)),
+        (output_root / "src/Client.Android/app/src/main/java/com/whitep/client/ui/theme/WhitePBrandColors.kt", _make_kotlin_colors(colors)),
         (output_root / "src/Host.Windows/Assets/BrandColors.xaml", _make_wpf_dictionary(colors)),
     )
     for path, content in outputs:
