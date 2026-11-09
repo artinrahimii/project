@@ -3289,7 +3289,8 @@
         "update/Step three/UPD-S1-008/evidence/review-T0229.md",
         "docs/release-limitations.md",
         "update/Step two/project-graph.md",
-        "update/Step three/UPD-S1-008/evidence/dependency-edge-review.md"
+        "update/Step three/UPD-S1-008/evidence/dependency-edge-review.md",
+        "update/Step three/UPD-S1-008/evidence/write-limit-audit.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-008/evidence/reconciliation-baseline-audit.md",
@@ -3466,20 +3467,21 @@
         "https://github.com/artinrahimii/project/actions/runs/42516118989",
         "https://github.com/artinrahimii/project/actions/runs/42114568183",
         "https://github.com/artinrahimii/project/actions/runs/42253832983",
-        "https://github.com/artinrahimii/project/releases/436740935"
+        "https://github.com/artinrahimii/project/releases/436740935",
+        "update/Step three/UPD-S1-008/execution-report.md",
+        "update/Step three/UPD-S1-008/evidence/write-limit-audit.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 39,
+        "attempt_count": 40,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261109-dependency-edge-review",
+        "last_attempt_id": "UPD-S1-008-20261109-blob-transfer-limited",
         "last_attempt_result": "partial",
         "changed_files": [
-          "update/Step three/UPD-S1-008/evidence/dependency-edge-review.md",
+          "update/Step two/project-graph.md",
           "update/Step three/UPD-S1-008/execution-report.md",
-          "update/Step two/legacy-task-reconciliation.json",
           "update/Step two/legacy-task-reconciliation.md",
-          "update/Step two/project-graph.md"
+          "update/Step three/UPD-S1-008/evidence/write-limit-audit.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
@@ -3631,7 +3633,8 @@
           "T0211 current-HEAD Android Product Build: clean APK, JVM and Keystore instrumentation, emulator APK install, launcher resolution, live PID and resumed MainActivity passed; one non-loopback LAN integration test explicitly skipped.",
           "T0212 production Android signing: exact workflow Blob SHA is unchanged at current HEAD; run 42114568183 completed all 15 steps, verified the pinned certificate and uploaded signed APK artifact 13455966209.",
           "T0213 release bundle: artifact 13521278559 SHA-256 manifest entries independently verified; Draft Release 436740935 has four uploaded assets; a successful post-fix tag run remains required.",
-          "Exact current-HEAD Quality Gate 42516118975 passed 480 Python tests, compileall, Step Three graph guards (230 nodes/422 edges, 0 errors, 1 preserved warning) and Update graph guards (24 nodes/80 edges, 0 errors, 0 warnings)."
+          "Exact current-HEAD Quality Gate 42516118975 passed 480 Python tests, compileall, Step Three graph guards (230 nodes/422 edges, 0 errors, 1 preserved warning) and Update graph guards (24 nodes/80 edges, 0 errors, 0 warnings).",
+          "Exact V 3.1.110 source audit: 168/168 affected legacy IDs/nodes/ledger rows mapped, all file evidence paths present, all 30 unique review commit SHAs found in main history, and 80/80 Update graph edges validated."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -3649,7 +3652,7 @@
             "update/Step two/legacy-task-reconciliation.md"
           ]
         },
-        "follow_up": "All 168/168 reconciliation records have current review decisions and real evidence; the 70 formerly unreviewed edges have been classified and validated from V1.10 prerequisites plus producer/consumer source and test evidence (total 80/80 validated). The next step is to synchronize the reviewed markers in the legacy graph, update its contract tests, and pass both graph guards; keep UPD-S1-008 in_progress until that cross-graph commit passes CI. Product E2E and upgrade/release gates remain separate.",
+        "follow_up": "Resume cross-graph synchronization when a reliable full-file Git transport or local checkout is available. Keep the 168 legacy update_impact markers pending, reconciliation summary pending and UPD-S1-008 in_progress until the 168 markers are synchronized, the contract test is updated, and both graph guards plus exact-commit CI pass.",
         "failure_details": null
       },
       "execution_history": [
@@ -6191,6 +6194,60 @@
           "contract_changes": [],
           "follow_up": "Synchronize all 168 Step Three update_impact markers with reviewed reconciliation decisions; update the legacy graph contract tests and run the exact Update/Step Three graph guards. Keep UPD-S1-008 in_progress until that CI run passes.",
           "device_and_host_details_redacted": "This attempt used source/contract/test review and exact main Git tree. No physical device or host acceptance was performed.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261109-blob-transfer-limited",
+          "started_at": "2026-11-09T11:26:00.658Z",
+          "ended_at": "2026-11-09T11:26:00.658Z",
+          "result": "partial",
+          "summary": "Revalidated all 168 legacy reconciliation rows, exact update-task mappings, evidence paths, 30 real review commit SHAs and all 80 validated Update dependency edges at V 3.1.110. Cross-graph marker synchronization was prepared but not committed: the 4,016,404-byte Step Three graph could not be written through the GitHub connector after two H2 body-transfer errors; local clone/test execution also failed because github.com DNS is unavailable. No remote files were changed.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-008/execution-report.md",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step three/UPD-S1-008/evidence/write-limit-audit.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Exact-main reconciliation inventory and mapping",
+              "command": "Audit exact HEAD Git tree: V1.10 affected_task_ids ↔ reconciliation ledger ↔ Step Three node IDs",
+              "result": "passed",
+              "summary": "168 unique affected IDs map to 168 existing legacy nodes and 168 unique ledger records; every update_task_ids list matches the update graph's full reverse mapping; baseline statuses are unchanged."
+            },
+            {
+              "name": "Evidence and review commit references",
+              "command": "Check all per-record evidence paths against exact source Git tree and 30 unique review_commit_sha values against main history",
+              "result": "passed",
+              "summary": "No missing file evidence; all 30 distinct review commit SHAs were present in the first 100 commits of online main."
+            },
+            {
+              "name": "Update dependency edge review",
+              "command": "Review all 80 update graph edges against V1.10 prerequisites and producer/consumer evidence",
+              "result": "passed",
+              "summary": "80/80 validated: 19 hard_dependency, 34 contract_or_interface_dependency, 27 sequencing_only; no disputed/unreviewed edge; 13 waves and execution order preserved."
+            },
+            {
+              "name": "Cross-graph marker synchronization write",
+              "command": "Create and publish updated 4,016,404-byte step three/project-graph.md Blob",
+              "result": "not_run",
+              "summary": "GitHub connector returned H2 protocol error: error reading a body from connection. The same large-Blob operation was attempted twice. The remote main HEAD was rechecked and remained unchanged."
+            },
+            {
+              "name": "Local automated tests and graph guards",
+              "command": "python -m unittest discover -s tests -v; python -m compileall -q tools tests; both graph_guard commands",
+              "result": "not_run",
+              "summary": "Local repository clone failed because the container could not resolve github.com. Existing CI on source commit V 3.1.110 is historical baseline evidence only and does not validate proposed changes."
+            }
+          ],
+          "failure_details": "Two GitHub connector attempts to write the full 4,016,404-byte Step Three graph failed with an H2 body-transfer protocol error. Local git clone also failed with DNS resolution error for github.com. No commit or ref update was made.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Resume cross-graph synchronization when a reliable full-file Git transport or local checkout is available. Keep the 168 legacy update_impact markers pending, reconciliation summary pending and UPD-S1-008 in_progress until the 168 markers are synchronized, the contract test is updated, and both graph guards plus exact-commit CI pass.",
+          "device_and_host_details_redacted": "No physical Android device or user Windows host was available or used in this attempt. No real Android-to-Windows local model inference, clean install, or in-place upgrade was performed.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -9753,7 +9810,7 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-08T21:35:18.058Z",
+    "as_of": "2026-11-09T11:26:00.658Z",
     "total_tasks": 24,
     "not_started": 15,
     "in_progress": 1,
@@ -9874,7 +9931,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-08T20:19:46.275Z",
+  "updated_at": "2026-11-09T11:26:00.658Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "DEPENDENCY_EDGE_REVIEW_PENDING",
@@ -10062,7 +10119,7 @@
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 legacy nodes are tagged as re-review pending in the authoritative Step Three graph. Their existing statuses remain unchanged until per-task implementation and acceptance evidence is reviewed.",
-    "completion_blocker": "All 168 reconciliation records are reviewed with decisions, evidence and real review commit SHAs. All 80/80 Update graph edges are classified and validated with explicit V1.10 prerequisite, producer/consumer source and test evidence. UPD-S1-008 remains in_progress until the 168 Step Three update_impact markers and legacy graph summary are synchronized with the ledger, the legacy graph contract tests are updated, and both graph guards pass on the resulting commit. Physical Android-to-Windows, release and in-place-upgrade requirements remain separate product acceptance gates.",
+    "completion_blocker": "The ledger has 168/168 reviewed records and all 80 Update edges are validated, but the 168 Step Three update_impact markers still have review_status=pending and decision=re_review_required. The complete 4,016,404-byte Step Three graph must be synchronized with ledger decisions, the contract test updated, and both graph guards plus exact-commit CI must pass before UPD-S1-008 can be done. The current execution environment failed to transfer the full graph Blob; no remote commit was made. Physical Android-to-Windows, release and in-place-upgrade gates remain separate.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",

@@ -977,3 +977,16 @@ Exact-head CI before this change: Quality Gate [42519571303](https://github.com/
 - All 168 reconciliation rows now contain decisions/evidence and the actual review commit SHA `ae7725fd30f98a75968edb78082fe0d64ce409cd`; baseline Step Three task statuses remain unchanged.
 - This attempt is partial: the old graph's 168 `update_impact` markers and global summary have not yet been synchronized with the ledger, and the old-graph contract test must be updated. `UPD-S1-008` remains `in_progress` until both graph guards pass after that synchronization.
 - Product Build for exact commit `V 3.1.109` is still in progress as of the latest poll; Windows and HostLifecycle jobs have passed, while Android is still uploading coverage/finishing its final steps. This is not physical Android-to-Windows acceptance.
+
+
+## Exact-head audit and full-file write limitation — 2026-11-09
+
+- Source main: `67de3d4f3fa568173b859974c59ec9dd08c538bc` (`V 3.1.110`); no new commit was published.
+- Step Three Blob `2a9a4e0a82e8de78c8c381a0a2036e0750fd6ae6` is 4,016,404 bytes and parses to 230 nodes/422 edges. Update graph Blob `70b8c334ecb984f41a50dd02109db2a3920c1ed4` is 684,980 bytes and parses to 24 nodes/80 edges/13 waves. V1.10 JSON (93,346 bytes) and reconciliation ledger (170,926 bytes) parse successfully.
+- Audit reconfirmed 168/168 affected IDs, one record and node per ID, exact full `update_task_ids` mappings, unchanged legacy baseline states, all evidence paths present and all 30 unique review commit SHAs present in main history. Decisions are 156 `re_review_required` and 12 `unchanged`.
+- All 80 Update graph edges are validated (19 hard, 34 contract/interface, 27 sequencing-only); execution order and 13 waves remain unchanged.
+- **No cross-graph marker synchronization was committed.** The 168 legacy markers remain pending and the old graph summary remains pending; marker/ledger parity remains an open requirement. The central ledger records all 168 individual review entries as reviewed, but `review_state` remains pending until graph synchronization is committed and validated.
+- Two writes of the entire 4,016,404-byte Step Three graph failed through the GitHub connector with an H2 body-transfer protocol error. Local git clone also failed due DNS resolution for `github.com`. The online main HEAD was rechecked and stayed on V3.1.110. No commit, partial tree or remote ref update is claimed.
+- Local automated tests and graph guards were not run. The V3.1.110 Quality Gate, Product Build and Rendezvous CI were successful before this attempted change and are only source-baseline evidence.
+- Product CI installed Android on an emulator and passed 226/227 tests with one skip; Windows published, smoke-launched, and compiled/installed/uninstalled its installer in an isolated GitHub-hosted environment. The HostLifecycle suite had 67 critical passes and 85.88% coverage, but real-model integration was skipped. Physical Android-to-Windows inference and in-place upgrades were not performed.
+- `UPD-S1-008` remains `in_progress`. No status was promoted based only on the ledger.

@@ -487,3 +487,14 @@
 - گزارش خط‌به‌خط با دلیل و شواهد: `update/Step three/UPD-S1-008/evidence/dependency-edge-review.md`.
 - هر ۱۶۸ رکورد reconciliation دارای تصمیم، شواهد و SHA واقعی commit بازبینی است؛ وضعیت پایهٔ گراف قدیمی تغییر نکرده است.
 - `UPD-S1-008` هنوز `in_progress` است؛ همگام‌سازی ۱۶۸ نشانگر `update_impact` گراف اولیه و به‌روزرسانی آزمون قراردادی آن باقی مانده و باید هر دو graph guard پس از تغییر موفق شوند.
+
+
+## وضعیت ممیزی خط مبنای V 3.1.110 — 2026-11-09
+
+- 168 شناسهٔ متأثر در گراف و ledger موجودند؛ 168 رکورد یکتا و نگاشت کامل `update_task_ids` بدون اختلاف است.
+- 168 رکورد ledger از نظر محتوایی `reviewed` هستند: 156 `re_review_required` و 12 `unchanged`. تمام وضعیت‌های legacy حفظ شده‌اند.
+- تمام شواهد فایل‌محور در Git tree مبنا موجودند و هر 30 SHA یکتای commit بازبینی در تاریخچهٔ main وجود دارد.
+- هر 80 یال گراف Update بررسی و validated است؛ 19 hard، 34 contract/interface و 27 sequencing-only؛ 13 موج و ترتیب اجرا حفظ شده‌اند.
+- **همگام‌سازی گراف اولیه انجام نشده است:** هر 168 marker هنوز `pending/re_review_required` و خلاصهٔ گراف قدیمی pending=168/reviewed=0 است. در 12 مورد، تصمیم marker با تصمیم `unchanged` در ledger ناسازگار است. `review_state` مرکزی نیز تا همگام‌سازی گراف pending می‌ماند.
+- دلیل عدم تغییر: دو بار ارسال Blob کامل 4,016,404 بایتی از GitHub connector با خطای H2 body-transfer شکست خورد و clone محلی نیز به‌علت DNS برای github.com ممکن نشد. remote main پس از خطا دوباره بررسی شد و تغییری نکرد.
+- `UPD-S1-008` همچنان `in_progress` است؛ باید ابتدا Blob کامل Step Three، markerها و آزمون قراردادی همگام شوند و سپس هر دو graph guard و CI دقیق موفق شوند.
