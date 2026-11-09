@@ -68,6 +68,14 @@ def find_text_center(root: ET.Element, label: str) -> tuple[int, int]:
     raise RuntimeError(f"Android UI did not expose a visible node labelled {label!r}")
 
 
+def ui_tree_has_text_prefix(root: ET.Element, prefix: str) -> bool:
+    return any(
+        node.attrib.get("text", "").strip().startswith(prefix)
+        or node.attrib.get("content-desc", "").strip().startswith(prefix)
+        for node in root.iter("node")
+    )
+
+
 def wait_for_text(label: str, timeout_seconds: float = 20.0) -> ET.Element:
     deadline = time.monotonic() + timeout_seconds
     while True:
@@ -76,10 +84,54 @@ def wait_for_text(label: str, timeout_seconds: float = 20.0) -> ET.Element:
             return root
         if time.monotonic() >= deadline:
             raise RuntimeError(
-                f"Android did not reach the expected screen content {label!r} "
-                f"within {timeout_seconds:.1f} seconds"
+                f"Android did not reach expected UI text {label!r} within "
+                f"{timeout_seconds:.1f} seconds; visible node count="
+                f"{sum(1 for _ in root.iter('node'))}"
             )
         time.sleep(0.5)
+
+
+def wait_for_text_prefix(prefix: str, timeout_seconds: float = 20.0) -> ET.Element:
+    deadline = time.monotonic() + timeout_seconds
+    while True:
+        root = current_ui_tree()
+        if ui_tree_has_text_prefix(root, prefix):
+            return root
+        if time.monotonic() >= deadline:
+            raise RuntimeError(
+                f"Android did not reach expected UI text prefix {prefix!r} within "
+                f"{timeout_seconds:.1f} seconds; visible node count="
+                f"{sum(1 for _ in root.iter('node'))}"
+            )
+        time.sleep(0.5)
+
+
+def scroll_to_text(
+    label: str,
+    *,
+    direction: str = "up",
+    max_swipes: int = 6,
+) -> ET.Element:
+    if direction not in {"up", "down"}:
+        raise ValueError("Scroll direction must be 'up' or 'down'.")
+    for attempt in range(max_swipes + 1):
+        root = current_ui_tree()
+        if ui_tree_has_text(root, label):
+            print(f"Located {label!r} after {attempt} scroll gesture(s).")
+            return root
+        if attempt == max_swipes:
+            break
+        if direction == "up":
+            run_adb("shell", "input", "swipe", "540", "2100", "540", "650", "450")
+        else:
+            run_adb("shell", "input", "swipe", "540", "650", "540", "2100", "450")
+        time.sleep(0.35)
+    root = current_ui_tree()
+    raise RuntimeError(
+        f"Android could not bring expected UI text {label!r} into view after "
+        f"{max_swipes} {direction} scroll gesture(s); visible node count="
+        f"{sum(1 for _ in root.iter('node'))}"
+    )
 
 
 def tap_label(label: str) -> None:
@@ -88,17 +140,29 @@ def tap_label(label: str) -> None:
     time.sleep(0.25)
 
 
-def capture(directory: Path, filename: str, required_label: str) -> None:
-    if not ui_tree_has_text(current_ui_tree(), required_label):
+def capture(
+    directory: Path,
+    filename: str,
+    required_label: str,
+    *,
+    required_prefix: str | None = None,
+) -> None:
+    root = current_ui_tree()
+    if not ui_tree_has_text(root, required_label):
         raise RuntimeError(
-            f"Refusing to capture {filename}: the visible Android UI does not contain "
-            f"the required screen landmark {required_label!r}"
+            f"Refusing to capture {filename}: required visible landmark "
+            f"{required_label!r} is absent"
+        )
+    if required_prefix is not None and not ui_tree_has_text_prefix(root, required_prefix):
+        raise RuntimeError(
+            f"Refusing to capture {filename}: required visible text prefix "
+            f"{required_prefix!r} is absent"
         )
     data = run_adb("exec-out", "screencap", "-p", capture=True)
     if not data.startswith(b"\x89PNG\r\n\x1a\n") or len(data) < 1024:
         raise RuntimeError(f"Screenshot {filename} is not a valid PNG")
     (directory / filename).write_bytes(data)
-    print(f"Captured {filename} after verifying {required_label!r} ({len(data)} bytes)")
+    print(f"Captured {filename} after verifying visible landmark {required_label!r} ({len(data)} bytes)")
 
 
 def main() -> int:
@@ -137,9 +201,22 @@ def main() -> int:
         "Conversation history saved on this device.",
     )
     tap_label("New conversation")
-    wait_for_text("Messages")
-    wait_for_text("No messages yet. Write a message below to save it in this conversation.")
-    capture(output, "android-conversation-detail.png", "Messages")
+    wait_for_text("Back to conversations")
+    wait_for_text_prefix("Created ")
+    capture(
+        output,
+        "android-conversation-detail.png",
+        "Back to conversations",
+        required_prefix="Created ",
+    )
+    scroll_to_text("No messages yet. Write a message below to save it in this conversation.")
+    capture(
+        output,
+        "android-conversation-messages.png",
+        "Messages",
+        required_prefix="No messages yet.",
+    )
+    scroll_to_text("Back to conversations", direction="down")
     tap_label("Back to conversations")
     wait_for_text("Conversation history saved on this device.")
 

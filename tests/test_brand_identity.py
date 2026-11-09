@@ -2,7 +2,7 @@ from __future__ import annotations
 import json, struct, tempfile, unittest
 from pathlib import Path
 from xml.etree import ElementTree as ET
-from tools.capture_android_brand_review import parse_bounds, ui_tree_has_text
+from tools.capture_android_brand_review import parse_bounds, ui_tree_has_text, ui_tree_has_text_prefix
 from tools.generate_brand_assets import EXPECTED, generate_brand_assets
 ROOT=Path(__file__).resolve().parents[1]
 class BrandIdentityTests(unittest.TestCase):
@@ -14,15 +14,19 @@ class BrandIdentityTests(unittest.TestCase):
     def test_review_capture_checks_exact_visible_screen_landmarks(self):
         root = ET.fromstring(
             '<hierarchy><node text="Conversations" />'
-            '<node content-desc="Privacy" /></hierarchy>'
+            '<node content-desc="Privacy" />'
+            '<node text="Created Nov 9, 2026" /></hierarchy>'
         )
         self.assertTrue(ui_tree_has_text(root, "Conversations"))
         self.assertTrue(ui_tree_has_text(root, "Privacy"))
         self.assertFalse(ui_tree_has_text(root, "Conversation detail"))
+        self.assertTrue(ui_tree_has_text_prefix(root, "Created "))
 
         capture = (ROOT / "tools/capture_android_brand_review.py").read_text(encoding="utf-8")
         self.assertIn('wait_for_text("Conversation history saved on this device.")', capture)
-        self.assertIn('wait_for_text("No messages yet. Write a message below to save it in this conversation.")', capture)
+        self.assertIn('wait_for_text_prefix("Created ")', capture)
+        self.assertIn('scroll_to_text("No messages yet. Write a message below to save it in this conversation.")', capture)
+        self.assertIn('capture(\n        output,\n        "android-conversation-messages.png",', capture)
         self.assertIn('wait_for_text("Peer discovery is configured from the New request screen.")', capture)
         self.assertIn('wait_for_text("Understand the processing-host trust boundary.")', capture)
         self.assertIn("Refusing to capture", capture)
