@@ -46,11 +46,14 @@ class ReproducibleBuildContractTests(unittest.TestCase):
         self.assertIn("minSdk = 26", gradle)
 
     def test_product_builds_publish_real_artifacts_and_fail_if_missing(self):
-        self.assertEqual(PRODUCT.count("uses: actions/upload-artifact@v4"), 8)
+        self.assertEqual(PRODUCT.count("uses: actions/upload-artifact@v4"), 10)
         self.assertIn("whitep-android-keystore-instrumentation-reports", PRODUCT)
+        self.assertIn("whitep-brand-review-windows", PRODUCT)
+        self.assertIn("whitep-brand-review-android", PRODUCT)
+        self.assertIn("python tools/capture_android_brand_review.py", PRODUCT)
         self.assertIn("path: src/Host.Windows/bin/Release/net10.0-windows/", PRODUCT)
         self.assertIn("path: src/Client.Android/app/build/outputs/apk/debug/app-debug.apk", PRODUCT)
-        self.assertEqual(PRODUCT.count("if-no-files-found: error"), 6)
+        self.assertEqual(PRODUCT.count("if-no-files-found: error"), 8)
         self.assertEqual(PRODUCT.count("retention-days: 7"), 6)
         self.assertIn("whitep-windows-installer", PRODUCT)
         self.assertIn("whitep-windows-publish", PRODUCT)

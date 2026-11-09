@@ -1,50 +1,27 @@
 # UPD-S1-024 — execution report
 
-## Attempts
+## Attempts and CI findings
 
-- A001 — canonical vector/tokens, generator and platform wiring committed in `V 3.1.118`. Generator completed on both Windows and Android runners; a new Python assertion initially confused Kotlin ARGB literals with XML HEX strings.
-- A002 — corrected the ARGB assertion in `V 3.1.120`. Android ktlint identified a generated object filename mismatch, composable naming and formatting issues.
-- A003 — renamed the generated source to `WhitePBrandColors.kt`, corrected the function casing and formatting. ktlint then reported expression placement.
-- A004 — moved the `lightColorScheme` call to a new line. ktlint required 12-space argument indentation and 8-space closing-parenthesis indentation.
-- A005 — corrected that indentation in `V 3.1.123`. Clean CI rerun and native compilation remain pending.
-- A006 — added real WPF RenderTargetBitmap capture and Android UIAutomator navigation/capture to the product build. These outputs are intended to be downloaded and inspected before acceptance. Screenshot artifacts and CI results are pending.
+- A001 — canonical vector/tokens, generator and platform wiring committed in V 3.1.118. The generator ran successfully on Android and Windows runners; the initial Python assertion confused Kotlin ARGB literals with XML HEX strings.
+- A002 — corrected the Kotlin ARGB test expectation in V 3.1.120. Android ktlint then identified the generated-object filename mismatch, composable naming and formatting issues.
+- A003–A005 — corrected the Kotlin filename, function name, multiline expression placement and indentation. In V 3.1.123, Android lint passed; the Python quality suite passed all 485 tests and both graph guards.
+- A006 — added actual WPF and Android emulator screenshot capture with two named artifact uploads in V 3.1.124. The Android UIAutomator bounds parser test passed. The existing test_reproducible_build_contract still expected only 8 upload-artifact steps and 6 strict file checks; workflow now has 10 and 8 due to the two new screenshots.
+- A007 — updated the artifact-count contract to 10 uploads and 8 required-file checks, and asserted both screenshot artifact names and the Android capture script. CI rerun pending.
+- Current state: in_progress.
 
-## Implemented sources
+## Implemented
 
-The one canonical SVG is `assets/brand/whitep-coin.svg`; the only five-color token source is `assets/brand/whitep-design-tokens.json`. `tools/generate_brand_assets.py` emits the multi-resolution ICO, Android density/adaptive launcher outputs and platform color resources. Android consumes `whitePTheme`; WPF loads the generated color dictionary and icon. Both product build platform jobs and the signed Android release job run the generator.
+The only vector master is assets/brand/whitep-coin.svg; the only palette source is assets/brand/whitep-design-tokens.json. The standard-library generator emits the Windows multi-size ICO, Android density/adaptive launcher assets and platform color resources. Android uses whitePTheme; WPF consumes the shared brush dictionary and generated icon. Both product build jobs and the production-signed Android release job generate their platform assets from the canonical sources.
 
-Visual evidence capture is now part of the product workflow:
-- WPF smoke mode captures the rendered real `MainWindow` via `RenderTargetBitmap` to `artifacts/brand-review/windows-host.png`.
-- Android emulator capture uses UIAutomator text bounds to navigate Home, Conversations, a newly created conversation detail, Connections and Privacy, then captures PNGs under `artifacts/brand-review/android/`.
+The product workflow now captures the real WPF window and Android emulator screens (Home, Conversations, new conversation detail, Connections and Privacy), then uploads two visual-review artifacts.
 
-## Source paths
+## Validation
 
-- `assets/brand/whitep-design-tokens.json`
-- `assets/brand/whitep-coin.svg`
-- `tools/generate_brand_assets.py`
-- `tools/capture_android_brand_review.py`
-- `src/Client.Android/app/src/main/java/com/whitep/client/ui/theme/WhitePBrandColors.kt`
-- `src/Client.Android/app/src/main/java/com/whitep/client/ui/theme/Theme.kt`
-- `src/Client.Android/app/src/main/res/values/brand_colors.xml`
-- `src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt`
-- `src/Client.Android/app/src/main/AndroidManifest.xml`
-- `src/Host.Windows/Assets/BrandColors.xaml`
-- `src/Host.Windows/App.xaml`
-- `src/Host.Windows/App.xaml.cs`
-- `src/Host.Windows/MainWindow.xaml`
-- `src/Host.Windows/WhiteP.Host.Windows.csproj`
-- `.github/workflows/product-build.yml`
-- `.github/workflows/android-release.yml`
-- `tests/test_brand_identity.py`
-- `docs/brand-identity.md`
+- A003: Android ktlint passed; 485 Python tests, Python compilation and both graph guards passed.
+- A006: Android UIAutomator bounds parser test passed; the existing artifact-count contract failed and is updated in A007.
+- A005 clean Android debug/release build, emulator instrumentation and Windows installer: pending product workflow confirmation.
+- A006 screenshot artifacts: pending a green capture run and subsequent inspection.
+- Production-signed Android release: not run.
+- Physical Android handset or dedicated Windows host: not accessed.
 
-## Validation state
-
-- A003 quality gate: passed all 485 Python tests, Python syntax, both graph guards.
-- Generator on Windows and Android runners: successful in earlier product runs.
-- A005 lint correction and native Android/Windows builds: pending CI.
-- WPF and Android visual screenshot capture: source and workflow wiring added in A006; screenshots are not yet available or inspected.
-- Signed Android production release: not run.
-- Physical Android handset or independent Windows host: not accessed; no physical cross-platform run is claimed.
-
-Keep task `in_progress` until all 11 acceptance criteria, actual screenshot review and both clean native builds are verified.
+Do not mark done until every visual-identity criterion is backed by both native builds, generated assets, inspected screenshots and contrast checks on actual rendered states.
