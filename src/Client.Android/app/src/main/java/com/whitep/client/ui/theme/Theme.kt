@@ -13,7 +13,8 @@ internal fun whitePTheme(content: @Composable () -> Unit) {
     val gold = WhitePBrandColors.antiqueGold
     val teal = WhitePBrandColors.mutedTeal
 
-    val colors = lightColorScheme(
+    val colors =
+        lightColorScheme(
         primary = ink,
         onPrimary = white,
         primaryContainer = paper,

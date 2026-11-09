@@ -1,19 +1,16 @@
 # UPD-S1-024 — execution report
 
-## Attempts
+## Attempts and CI findings
 
-- A001 — source implementation committed in `V 3.1.118` (`324c18c722dce1793d3e8c1cc90440f3b7b73ab3`). The generator executed successfully on the Windows and Android build runners. The first quality run found one false-negative Python assertion that expected raw HEX text inside Kotlin ARGB literals.
-- A002 — corrected the Kotlin ARGB assertion in `V 3.1.120` (`eb478d2ce90cc9a97585de1e20f55a01bbe945ba`). The next Android run reached ktlint and found that the Kotlin object file did not match its top-level declaration name, the composable function name was not lower camel case, and Theme.kt formatting was not compliant.
-- A003 — aligns generated filename to `WhitePBrandColors.kt`, composable to `whitePTheme`, updates MainActivity/test references, and reformats Theme.kt. New commit and CI results pending.
-- Current state: `in_progress`. No visual/build acceptance criterion is yet claimed complete.
+- A001 — implemented the shared vector/token source, generator, platform theme wiring and build workflow calls in `V 3.1.118`. Generator steps passed on both Windows and Android runners. Initial Python assertion incorrectly expected raw HEX text inside generated Kotlin ARGB values.
+- A002 — corrected the Kotlin ARGB test expectation in `V 3.1.120`. Android lint then identified Kotlin file-name, composable naming and formatting issues.
+- A003 — renamed the generated object source to `WhitePBrandColors.kt`, changed the composable to `whitePTheme`, and reformatted its arguments. Android lint reported one remaining expression wrapping rule at `Theme.kt:16:18`.
+- A004 — moved the `lightColorScheme` invocation to a separate line after the assignment. The clean CI rerun is pending.
+- Current state: `in_progress`. No acceptance criterion is declared complete solely based on the source change.
 
 ## Implemented
 
-The sole vector master is `assets/brand/whitep-coin.svg`, with a navy canvas, white coin, antique-gold rim and centered navy uppercase P. The only palette source is `assets/brand/whitep-design-tokens.json`, containing exactly the five approved tokens and shared roles.
-
-`tools/generate_brand_assets.py` creates the Windows multi-size ICO, Android density/adaptive launcher assets, Android XML/Compose resources and WPF resource dictionary using Python standard-library rendering. The product workflow calls it in both Windows and Android jobs; the signed Android release workflow also calls it before compilation.
-
-Android loads `whitePTheme` from the activity root; Windows loads `Assets/BrandColors.xaml`, uses the generated icon for the window and executable, and consumes semantic brushes in its main view.
+The only vector master is `assets/brand/whitep-coin.svg`; the only palette source is `assets/brand/whitep-design-tokens.json`. The standard-library generator creates Windows ICO, Android density/adaptive launcher assets and platform color resources. Android uses the shared `whitePTheme`; Windows loads the shared WPF resource dictionary and generated ICO. Both product build jobs and the signed Android release job invoke the generator.
 
 ## Current source paths
 
@@ -34,14 +31,15 @@ Android loads `whitePTheme` from the activity root; Windows loads `Assets/BrandC
 - `tests/test_brand_identity.py`
 - `docs/brand-identity.md`
 
-## Validation and outstanding evidence
+## Verified and pending
 
-- Generator step on clean Android and Windows runners: passed before each Android lint failure.
-- Python quality: A001 failed one representation assertion; corrected in A002; A002 full quality result was failure because the product job's separate ktlint failed before the source naming fix. A003 CI is pending.
-- Android clean build/APK: not yet reached, because ktlint failed first.
-- Windows clean build, installer and WPF startup smoke: prior A001/A002 product runs completed successfully for the Windows job.
-- Signed production Android APK: not run here.
-- Rendered launcher/taskbar/window and Android screen review with screenshots: pending.
-- Physical Android or Windows host E2E is not claimed in this visual-identity attempt.
+- A003 quality gate: all 485 Python tests passed, Python compilation passed, and both legacy/update graph guards passed.
+- Windows and Android generator step: passed in the product build workflow.
+- Android ktlint: A003 failed only the single expression wrapping rule above; A004 rerun pending.
+- Android debug/release build and instrumentation: not yet reached.
+- Windows native build/startup smoke: clean Windows runner restore is in progress in A003; completion result pending.
+- Production-signed Android release: not run.
+- Launcher/taskbar/window and Android screen screenshots/review: pending.
+- Physical Android/Windows interoperation is not claimed by this task.
 
-No acceptance criterion is declared passed solely because source or generated-file definitions exist. Keep task `in_progress` until CI and actual visual review confirm all 11 criteria.
+Do not mark this task done until all 11 acceptance criteria, including both platform builds and actual rendered visual inspection, are satisfied.
