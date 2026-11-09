@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   reconcile:
-    if: github.event.head_commit.message == 'V 3.1.114'
+    if: github.event.head_commit.message == 'V 3.1.115'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -92,7 +92,8 @@ jobs:
               return int(match.group(1)) + 1
 
           source_head = git(["rev-parse", "HEAD"]).stdout.strip()
-          if git(["log", "-1", "--format=%s"]).stdout.strip() != "V 3.1.114":
+          source_message = git(["log", "-1", "--format=%s"]).stdout.strip()
+          if source_message != "V 3.1.115":
               raise AssertionError("One-time workflow invoked from unexpected commit")
           remote_head = git(["ls-remote", "origin", "refs/heads/main"]).stdout.split()[0]
           if remote_head != source_head:
@@ -296,7 +297,7 @@ jobs:
                   "## Exact source baseline",
                   "",
                   "Repository/branch: artinrahimii/project / main.",
-                  f"Source commit: {source_head} (V 3.1.113).",
+                  f"Source commit: {source_head} ({source_message}).",
                   "Step Three source Blob: 2a9a4e0a82e8de78c8c381a0a2036e0750fd6ae6; 4,016,404 bytes.",
                   "Update graph source Blob: 0e550562c15981418e09f99e4685ad66915a1f89; 694,422 bytes.",
                   "V1.10 source Blob: 5cea3ec095d0c00e32ed3e067796ff698aedd982; 93,346 bytes.",
@@ -331,21 +332,45 @@ jobs:
               "update/Step two/legacy-task-reconciliation.json", evidence_path,
               "tests/test_update_graph_contract.py"
           ]))
+          # Record the failed first automation attempt accurately; it did not publish repository changes.
+          failed_attempt = {
+              "attempt_id": "UPD-S1-008-20261109-reconciliation-run-42612426029",
+              "started_at": "2026-11-09T11:52:24Z",
+              "ended_at": "2026-11-09T11:52:37Z",
+              "result": "failed",
+              "summary": "The GitHub runner verified all 168 content-review records, 480 Python tests, compileall and both Step Three graph guards, then the Update graph guard correctly rejected a prematurely incremented attempt_count and done status without an appended successful history record. No repository changes were pushed.",
+              "changed_files": [],
+              "commit_sha": None,
+              "tests": [
+                  {"name": "Full Python suite", "command": "python -m unittest discover -s tests -v", "result": "passed", "summary": "480 tests passed."},
+                  {"name": "compileall", "command": "python -m compileall -q tools tests", "result": "passed", "summary": "Python syntax compilation succeeded."},
+                  {"name": "Step Three graph guards", "command": "python tools/graph_guard.py step three/project-graph.md and --repo-root .", "result": "passed", "summary": "230 tasks, 422 edges; zero errors and one preserved metadata warning."},
+                  {"name": "Update graph structural guard", "command": "python tools/graph_guard.py update/Step two/project-graph.md", "result": "failed", "summary": "ATTEMPT_COUNT_MISMATCH: summary=42, history=41; DONE_WITHOUT_SUCCESSFUL_ATTEMPT."},
+                  {"name": "Update output/evidence guard", "command": "python tools/graph_guard.py update/Step two/project-graph.md --repo-root .", "result": "not_run", "summary": "The structural Update graph guard failed first; the workflow stopped."}
+              ],
+              "failure_details": "The workflow increased execution_summary.attempt_count and marked UPD-S1-008 done before appending the matching successful execution_history record. The graph guard correctly rejected the mismatch. The corrected flow keeps the task in_progress until the first full quality gate passes, appends history, then marks it done and re-runs all checks.",
+              "blocked_reason": None,
+              "reopened_reason": None,
+              "contract_changes": [],
+              "follow_up": "Retry with a corrected sequence: validate while UPD-S1-008 remains in_progress, then append the successful history record and promote the task to done, followed by a full second validation.",
+              "device_and_host_details_redacted": "GitHub-hosted runner only; no physical Android device, user Windows host, local model E2E or in-place upgrade was used.",
+              "model_revision_and_sha256": None,
+              "pre_upgrade_post_upgrade_snapshot": None
+          }
+          node8["execution_history"].append(failed_attempt)
           node8["execution_summary"]["attempt_count"] += 1
-          node8["execution_summary"]["last_attempt_id"] = attempt_id
-          node8["execution_summary"]["last_attempt_result"] = "succeeded"
-          node8["execution_summary"]["changed_files"] = changed_files
-          node8["execution_summary"]["follow_up"] = (
+          node8["execution_summary"]["failed_attempt_count"] += 1
+          node8["execution_summary"]["last_attempt_id"] = failed_attempt["attempt_id"]
+          node8["execution_summary"]["last_attempt_result"] = "failed"
+          node8["execution_summary"]["tests_failed"] = list(node8["execution_summary"].get("tests_failed", [])) + [
+              "V 3.1.114 reconciliation bridge run 42612426029: 480 Python tests, compileall and Step Three graph guards passed; Update graph guard rejected attempt_count/history mismatch and done-without-successful-attempt. No changes were pushed."
+          ]
+          follow_up_text = (
               "UPD-S1-008 is complete. Continue with UPD-S1-024, then follow the validated dependency order. "
               "Re-review the 156 re_review_required decisions after their mapped implementation tasks reach acceptance. "
               "Physical Android-to-Windows and in-place-upgrade acceptance remain separate product gates."
           )
-          node8["execution_summary"]["tests_passed"] = list(node8["execution_summary"].get("tests_passed", [])) + [
-              "168 task-specific legacy content reviews, evidence paths, real review commits and exact Update mappings validated.",
-              "All 168 legacy markers synchronized with their reconciliation decisions; 0 pending; legacy statuses preserved."
-          ]
-          node8["status"] = "done"
-          node8["status_fa"] = "تکمیل‌شده"
+          # Keep the task in_progress until the synchronized graphs and evidence pass the first complete quality gate.
 
           counts = {}
           for node in update["nodes"]:
@@ -378,6 +403,31 @@ jobs:
           ]
           for command in guards:
               quality(command)
+
+          node8["execution_summary"]["attempt_count"] += 1
+          node8["execution_summary"]["last_attempt_id"] = attempt_id
+          node8["execution_summary"]["last_attempt_result"] = "succeeded"
+          node8["execution_summary"]["changed_files"] = changed_files
+          node8["execution_summary"]["follow_up"] = follow_up_text
+          node8["execution_summary"]["tests_passed"] = list(node8["execution_summary"].get("tests_passed", [])) + [
+              "168 task-specific legacy content reviews, evidence paths, real review commits and exact Update mappings validated.",
+              "All 168 legacy markers synchronized with their reconciliation decisions; 0 pending; legacy statuses preserved."
+          ]
+          node8["status"] = "done"
+          node8["status_fa"] = "تکمیل‌شده"
+          counts = {}
+          for node in update["nodes"]:
+              counts[node["status"]] = counts.get(node["status"], 0) + 1
+          update["progress_snapshot"].update({
+              "as_of": utc_now(), "total_tasks": 24,
+              "not_started": counts.get("not_started", 0),
+              "in_progress": counts.get("in_progress", 0),
+              "done": counts.get("done", 0),
+              "blocked": counts.get("blocked", 0),
+              "verified_completion_percentage": round(counts.get("done", 0) / 24 * 100, 2),
+              "calculation": f"{counts.get('done', 0)} verified done update tasks / 24 total update tasks = {round(counts.get('done', 0) / 24 * 100, 2):.2f}%. Reconciliation is separate."
+          })
+          update["updated_at"] = utc_now()
 
           attempt = {
               "attempt_id": attempt_id, "started_at": started, "ended_at": utc_now(),
@@ -424,7 +474,7 @@ jobs:
           REPORT.write_text(
               report_text
               + "\n\n## تکمیل reconciliation گراف قدیمی — ۹ نوامبر ۲۰۲۶\n\n"
-              + f"- خط مبنای دقیق: {source_head}، نسخهٔ V 3.1.113.\n"
+              + f"- خط مبنای دقیق: {source_head}، نسخهٔ {source_message}.\n"
               + f"- گراف Step Three: 230 گره و 422 یال؛ Blob نهایی {legacy_blob}.\n"
               + f"- گراف Update: 24 گره، 80 یال و 13 موج؛ Blob نهایی {update_blob}.\n"
               + "- هر 168 شناسهٔ متأثر، سند بازبینی محتوایی مختص خود، رکورد ledger و نشانگر update_impact معتبر دارد.\n"
@@ -460,8 +510,8 @@ jobs:
           git(["config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"])
 
           first_version = next_version()
-          if first_version != 115:
-              raise AssertionError(f"Expected V 3.1.115, got V 3.1.{first_version}")
+          if first_version != 116:
+              raise AssertionError(f"Expected V 3.1.116, got V 3.1.{first_version}")
           git(["add", str(LEGACY), str(UPDATE), str(LEDGER), str(TEST), str(REPORT), str(LEDGER_REPORT), str(EVIDENCE), str(TEMP_WORKFLOW)])
           git(["commit", "-m", f"V 3.1.{first_version}"])
           first_sha = git(["rev-parse", "HEAD"]).stdout.strip()
@@ -483,8 +533,8 @@ jobs:
               quality(command)
 
           second_version = next_version()
-          if second_version != 116:
-              raise AssertionError(f"Expected V 3.1.116, got V 3.1.{second_version}")
+          if second_version != 117:
+              raise AssertionError(f"Expected V 3.1.117, got V 3.1.{second_version}")
           git(["add", str(UPDATE)])
           git(["commit", "-m", f"V 3.1.{second_version}"])
           final_sha = git(["rev-parse", "HEAD"]).stdout.strip()
