@@ -19,6 +19,11 @@ jobs:
       name: android-release
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Generate shared brand assets from the canonical SVG and palette
+        run: python tools/generate_brand_assets.py
       - uses: actions/setup-java@v4
         with:
           distribution: temurin

@@ -18,6 +18,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+      - name: Generate shared brand assets from the canonical SVG and palette
+        run: python tools/generate_brand_assets.py
       - name: Install Inno Setup 6 compiler
         shell: pwsh
         run: |
@@ -125,6 +127,11 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Generate shared brand assets from the canonical SVG and palette
+        run: python tools/generate_brand_assets.py
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x

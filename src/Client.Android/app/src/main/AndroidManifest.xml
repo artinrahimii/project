@@ -3,7 +3,7 @@
     <!-- HTTPS rendezvous discovery and direct libp2p TCP sockets require outbound network access.
          INTERNET is a normal install-time permission; the client requests no runtime permissions. -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <application android:allowBackup="false" android:label="White-P" android:supportsRtl="true" android:theme="@android:style/Theme.Material.Light.NoActionBar">
+    <application android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="false" android:label="White-P" android:supportsRtl="true" android:theme="@android:style/Theme.Material.Light.NoActionBar">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
         </activity>

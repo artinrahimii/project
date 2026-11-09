@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>WhiteP.Host.Windows</RootNamespace>
+    <ApplicationIcon>Assets\WhiteP.ico</ApplicationIcon>
     <AssemblyName>WhiteP.Host.Windows</AssemblyName>
     <Version>0.1.0</Version>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -28,5 +29,8 @@
     <Content Include="Models\Catalog\model-catalog-v1.schema.json"
              CopyToOutputDirectory="PreserveNewest"
              CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\WhiteP.ico" />
   </ItemGroup>
 </Project>

@@ -53,12 +53,13 @@ import com.whitep.client.ui.request.RequestViewModel
 import com.whitep.client.ui.request.RequestViewModelFactory
 import com.whitep.client.ui.request.hostResponseCards
 import com.whitep.client.ui.request.toNetworkInferenceStatusPresentation
+import com.whitep.client.ui.theme.WhitePTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            WhitePTheme {
                 whitePClientApp()
             }
         }

@@ -1,0 +1,13 @@
+{
+ "schema_version":"1.0",
+ "icon":{"canvas":"#142537","coin_face":"#FFFFFF","coin_edge":"#B89A62","letter":"P","letter_color":"#142537","view_box":"0 0 128 128"},
+ "colors":[
+  {"token":"midnight_ink","hex":"#142537","role":"Primary dark color, icon canvas and primary text."},
+  {"token":"porcelain","hex":"#F4F0E8","role":"Shared light application background and main page surfaces."},
+  {"token":"pure_white","hex":"#FFFFFF","role":"Elevated surfaces, cards and coin face."},
+  {"token":"antique_gold","hex":"#B89A62","role":"Decorative accent, selected-state details and coin rim; never small text on light surfaces."},
+  {"token":"muted_teal","hex":"#587C80","role":"Secondary interactive accent and non-text emphasis; text only on verified compliant pairings."}
+ ],
+ "semantic_roles":{"app_background":"porcelain","elevated_surface":"pure_white","primary_text":"midnight_ink","secondary_text":"midnight_ink","primary_action":"midnight_ink","secondary_action":"muted_teal","decorative_accent":"antique_gold"},
+ "contrast":{"normal_text_minimum":"4.5:1","large_text_minimum":"3:1","essential_component_minimum":"3:1","prohibited_normal_text_pairing":"muted_teal on porcelain"}
+}
