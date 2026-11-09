@@ -91,3 +91,10 @@ Do not mark done until all 11 visual identity acceptance criteria are satisfied 
 - Added a regression test that asserts the shared WPF Button style includes the explicit content template and white text foreground.
 - Attempt result: partial; keep `UPD-S1-024` in progress until a fresh Windows screenshot demonstrates visible labels, Android screenshot captures are valid, and all remaining visual acceptance checks (including target sizes and contrast) pass. No release or physical-device criteria are inferred from this change.
 - Source commit SHA is recorded in the graph after GitHub confirms it.
+
+
+## Commit confirmation — A010 and A011
+
+- A010 scroll-aware Android visual-capture source, regression test and failure evidence: `V 3.1.128`, SHA `f98c4cc5bd04d92785154b6847d9e4c89449fd40`.
+- A011 WPF button-label rendering correction and regression test: `V 3.1.129`, SHA `3d3605279ef35c0a0dea8202ea6a5c9f6a367e6a`.
+- Both commits were verified as ancestors of online `main`. Neither attempt marks the task complete; exact-head rendered screenshots remain mandatory.
