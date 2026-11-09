@@ -129,3 +129,11 @@ Do not mark done until all 11 visual identity acceptance criteria are satisfied 
 - The generated Windows ICO contains 7 embedded size entries: 16, 24, 32, 48, 64, 128 and 256 pixels. A contact sheet of the actual embedded raster sizes was visually reviewed.
 - Contrast ratios and semantic pairing restrictions are recorded in `evidence/contrast-ratio-review-2026-11-10.md`. Muted teal on porcelain is reserved for non-text borders/controls (4.008:1); antique gold on light surfaces remains decorative only (2.358–2.680:1).
 - Android visual capture and review remain pending on Product Build run [42704845236](https://github.com/artinrahimii/project/actions/runs/42704845236). Keep the node `in_progress`; no acceptance status is inferred from WPF-only visual proof.
+
+
+## A014 — automate contrast thresholds and semantic-role regression — 2026-11-09T21:45:24.243Z
+
+- Added a numeric WCAG relative-luminance contrast regression test using the exact five canonical palette tokens.
+- The test requires ink-on-light and white-on-ink/teal text pairs to meet 4.5:1; teal-on-porcelain is checked against the 3:1 non-text component threshold and explicitly remains below the normal-text threshold; antique gold on light surfaces is required to remain below 3:1 and is semantically restricted to decorative accent; ink on gold is checked for the theme's gold-on-dark use.
+- Added source-level checks for Android Compose role mappings and WPF TextBlock, Button ContentTemplate and teal control borders.
+- Attempt result: partial; quality gate and exact-head product workflow are pending. This test supplements, but does not replace, review of real Android/Windows rendered screens.

@@ -5,6 +5,22 @@ from xml.etree import ElementTree as ET
 from tools.capture_android_brand_review import parse_bounds, ui_tree_has_text, ui_tree_has_text_prefix
 from tools.generate_brand_assets import EXPECTED, generate_brand_assets
 ROOT=Path(__file__).resolve().parents[1]
+
+def _relative_luminance(hex_color: str) -> float:
+    channels = [int(hex_color[index:index + 2], 16) / 255 for index in (1, 3, 5)]
+    linear = [
+        channel / 12.92 if channel <= 0.04045 else ((channel + 0.055) / 1.055) ** 2.4
+        for channel in channels
+    ]
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+
+def _contrast_ratio(foreground: str, background: str) -> float:
+    lighter, darker = sorted(
+        (_relative_luminance(foreground), _relative_luminance(background)),
+        reverse=True,
+    )
+    return (lighter + 0.05) / (darker + 0.05)
 class BrandIdentityTests(unittest.TestCase):
     def test_android_review_capture_parses_uiautomator_bounds(self):
         self.assertEqual(parse_bounds("[0,10][100,50]"), (50, 30))
@@ -30,6 +46,49 @@ class BrandIdentityTests(unittest.TestCase):
         self.assertIn('wait_for_text("Peer discovery is configured from the New request screen.")', capture)
         self.assertIn('wait_for_text("Understand the processing-host trust boundary.")', capture)
         self.assertIn("Refusing to capture", capture)
+
+    def test_shared_palette_contrast_and_semantic_roles_meet_thresholds(self):
+        tokens = json.loads(
+            (ROOT / "assets/brand/whitep-design-tokens.json").read_text(encoding="utf-8")
+        )
+        palette = {item["token"]: item["hex"] for item in tokens["colors"]}
+        ink = palette["midnight_ink"]
+        paper = palette["porcelain"]
+        white = palette["pure_white"]
+        gold = palette["antique_gold"]
+        teal = palette["muted_teal"]
+
+        self.assertGreaterEqual(_contrast_ratio(ink, paper), 4.5)
+        self.assertGreaterEqual(_contrast_ratio(ink, white), 4.5)
+        self.assertGreaterEqual(_contrast_ratio(white, ink), 4.5)
+        self.assertGreaterEqual(_contrast_ratio(white, teal), 4.5)
+        self.assertGreaterEqual(_contrast_ratio(teal, paper), 3.0)
+        self.assertLess(_contrast_ratio(teal, paper), 4.5)
+        self.assertLess(_contrast_ratio(gold, paper), 3.0)
+        self.assertLess(_contrast_ratio(gold, white), 3.0)
+        self.assertGreaterEqual(_contrast_ratio(ink, gold), 4.5)
+
+        roles = tokens["semantic_roles"]
+        self.assertEqual(roles["primary_text"], "midnight_ink")
+        self.assertEqual(roles["secondary_text"], "midnight_ink")
+        self.assertEqual(roles["decorative_accent"], "antique_gold")
+
+        android_theme = (
+            ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/ui/theme/Theme.kt"
+        ).read_text(encoding="utf-8")
+        self.assertIn("primary = ink", android_theme)
+        self.assertIn("onPrimary = white", android_theme)
+        self.assertIn("secondary = teal", android_theme)
+        self.assertIn("onSecondary = white", android_theme)
+        self.assertIn("onSecondaryContainer = ink", android_theme)
+        self.assertIn("onBackground = ink", android_theme)
+        self.assertIn("onSurface = ink", android_theme)
+
+        wpf_theme = (ROOT / "src/Host.Windows/Assets/BrandColors.xaml").read_text(encoding="utf-8")
+        self.assertIn('TargetType="{x:Type TextBlock}"><Setter Property="Foreground" Value="{StaticResource MidnightInkBrush}"', wpf_theme)
+        self.assertIn('TargetType="{x:Type Button}"><Setter Property="Background" Value="{StaticResource MidnightInkBrush}"', wpf_theme)
+        self.assertIn('<DataTemplate><TextBlock Text="{Binding}" Foreground="{StaticResource PureWhiteBrush}"/></DataTemplate>', wpf_theme)
+        self.assertIn('<Setter Property="BorderBrush" Value="{StaticResource MutedTealBrush}"/>', wpf_theme)
 
     def test_canonical_tokens_are_exactly_the_approved_five_colors(self):
         doc=json.loads((ROOT/"assets/brand/whitep-design-tokens.json").read_text(encoding="utf-8"))
