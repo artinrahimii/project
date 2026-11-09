@@ -106,3 +106,9 @@ Do not mark done until all 11 visual identity acceptance criteria are satisfied 
 - Diagnosis: `src/Host.Windows/Assets/BrandColors.xaml` is generated at clean-build time by `tools/generate_brand_assets.py`. A011 had changed only the generated output file; the clean product workflow regenerated it from the unchanged generator and removed the ContentTemplate correction. Therefore the A011 source-file edit could not survive the actual build.
 - Moved the Button `ContentTemplate` rule into `_make_wpf_dictionary` in the canonical generator, regenerated the tracked `BrandColors.xaml` to match it, and changed the regression test to run the generator into a temporary clean output directory and compare the generated WPF dictionary byte-for-byte with the tracked output.
 - Attempt result: partial. The next clean Windows build must produce visible button labels in the actual screenshot; the generator contract alone is not visual acceptance. Android screenshot capture and the remaining shared visual checks also remain open.
+
+
+## Commit confirmation — A012
+
+- A012 moved the button-label ContentTemplate into the canonical WPF asset generator and added a clean generated-output regression: `V 3.1.131`, SHA `725a1f59f690b819d7d8ce19b2d4861227cb9527`.
+- The prior A011 screenshot artifact proves the generated output still lacked visible button labels after a clean build. The A012 commit is not visually accepted until the new clean WPF screenshot is inspected.
