@@ -97,6 +97,15 @@ class UpdateGraphContractTests(unittest.TestCase):
             self.assertIn(record["decision"], {"re_review_required", "unchanged"})
             self.assertRegex(record.get("review_commit_sha", ""), r"^[0-9a-f]{40}$")
             self.assertEqual("reviewed", record["review_status"])
+            review_docs = [
+                evidence for evidence in record["evidence"]
+                if evidence.startswith("update/Step three/UPD-S1-008/evidence/review-") and evidence.endswith(".md")
+            ]
+            self.assertTrue(review_docs, task_id)
+            self.assertTrue(
+                any(task_id in (ROOT / evidence).read_text(encoding="utf-8") for evidence in review_docs),
+                f"no content-review document mentions {task_id}",
+            )
             for evidence in record["evidence"]:
                 if "://" in evidence:
                     self.assertTrue(evidence.startswith("https://"), evidence)

@@ -498,3 +498,11 @@
 - **همگام‌سازی گراف اولیه انجام نشده است:** هر 168 marker هنوز `pending/re_review_required` و خلاصهٔ گراف قدیمی pending=168/reviewed=0 است. در 12 مورد، تصمیم marker با تصمیم `unchanged` در ledger ناسازگار است. `review_state` مرکزی نیز تا همگام‌سازی گراف pending می‌ماند.
 - دلیل عدم تغییر: دو بار ارسال Blob کامل 4,016,404 بایتی از GitHub connector با خطای H2 body-transfer شکست خورد و clone محلی نیز به‌علت DNS برای github.com ممکن نشد. remote main پس از خطا دوباره بررسی شد و تغییری نکرد.
 - `UPD-S1-008` همچنان `in_progress` است؛ باید ابتدا Blob کامل Step Three، markerها و آزمون قراردادی همگام شوند و سپس هر دو graph guard و CI دقیق موفق شوند.
+
+## وضعیت نهایی reconciliation — ۹ نوامبر ۲۰۲۶
+
+- 168/168 بازبینی محتوایی و سند مختص وظیفه؛ 0 pending.
+- تصمیم‌ها: 156 re_review_required، 12 unchanged.
+- 168 نشانگر update_impact با ledger همگام شد؛ صفر تغییر در وضعیت پایه یا تاریخچهٔ Txxxx.
+- 80/80 یال Update اعتبارسنجی شده؛ 13 موج و ترتیب قبلی حفظ شدند.
+- تصمیم re_review_required بازبینی بعدی را پس از پذیرش وظیفهٔ اجرایی مرتبط الزام می‌کند؛ رکورد جاری reconciliation reviewed است.

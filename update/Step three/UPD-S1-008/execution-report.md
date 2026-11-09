@@ -990,3 +990,16 @@ Exact-head CI before this change: Quality Gate [42519571303](https://github.com/
 - Local automated tests and graph guards were not run. The V3.1.110 Quality Gate, Product Build and Rendezvous CI were successful before this attempted change and are only source-baseline evidence.
 - Product CI installed Android on an emulator and passed 226/227 tests with one skip; Windows published, smoke-launched, and compiled/installed/uninstalled its installer in an isolated GitHub-hosted environment. The HostLifecycle suite had 67 critical passes and 85.88% coverage, but real-model integration was skipped. Physical Android-to-Windows inference and in-place upgrades were not performed.
 - `UPD-S1-008` remains `in_progress`. No status was promoted based only on the ledger.
+
+## تکمیل reconciliation گراف قدیمی — ۹ نوامبر ۲۰۲۶
+
+- خط مبنای دقیق: 11014a571a4a5acce7ae9846487e40333fd9b36c، نسخهٔ V 3.1.115.
+- گراف Step Three: 230 گره و 422 یال؛ Blob نهایی af686f7163322710e6c7dca87678ce5b2c345052.
+- گراف Update: 24 گره، 80 یال و 13 موج؛ Blob نهایی d90f7b8a95919d97c0e9fe0774405c9faeb0c1e2.
+- هر 168 شناسهٔ متأثر، سند بازبینی محتوایی مختص خود، رکورد ledger و نشانگر update_impact معتبر دارد.
+- همهٔ شواهد فایل‌محور موجودند؛ 30 SHA یکتای بازبینی commitهای ancestor واقعی main هستند.
+- تصمیم‌ها: 156 re_review_required و 12 unchanged؛ وضعیت پایه و تاریخچهٔ تمام وظایف Txxxx حفظ شد.
+- آزمون‌ها: 480 آزمون Python موفق؛ compileall موفق؛ هر چهار graph_guard موفق.
+- 168 نشانگر قدیمی، خلاصهٔ گراف اولیه، ledger و legacy_task_sync به reviewed=168 / pending=0 همگام شدند.
+- UPD-S1-008 پس از موفقیت آزمون‌ها done شد؛ وظیفهٔ بعدی آماده در ترتیب وابستگی UPD-S1-024 است.
+- آزمون فیزیکی Android-to-Windows، مدل واقعی روی دستگاه کاربر و ارتقای درجا معیارهای مستقل باقی هستند.

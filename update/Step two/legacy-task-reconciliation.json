@@ -10,8 +10,8 @@
   "affected_legacy_task_count": 168,
   "mapped_legacy_task_count": 168,
   "missing_legacy_task_ids": [],
-  "review_state": "pending",
-  "status_transition_policy": "Existing task status is preserved until each affected implementation and its acceptance evidence are reviewed. Traceability alone is not a status transition.",
+  "review_state": "reviewed",
+  "status_transition_policy": "All 168 affected legacy records have individual reviewed decisions and evidence. Preserve every baseline status; only independent evidence against the legacy task's original acceptance criteria can justify a transition.",
   "records": [
     {
       "legacy_task_id": "T0012",
