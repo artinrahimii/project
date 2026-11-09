@@ -59,3 +59,13 @@ Visual review automation:
 - No physical Android handset or separate user Windows host has been used; this task does not prove physical cross-device operation.
 
 Do not mark done until all 11 visual identity acceptance criteria are satisfied with actual native builds, exported assets, inspected screenshots and contrast review.
+
+
+## A009 — harden Android visual-review navigation — 2026-11-09T21:09:51.640Z
+
+- Exact source commit reviewed: `bf9ba88cb05a839e167395ce894976f71281a600` (`V 3.1.126`). Its Quality Gate, White-P product build and Rendezvous container workflows all completed successfully. The Product Build generated real Windows WPF, Android emulator and icon-export artifacts.
+- Manual inspection of Product Build run [42685200855](https://github.com/artinrahimii/project/actions/runs/42685200855) found that `android-conversations.png` was byte-identical to `android-home.png` (local MD5 comparison: `6a0d6b514dcba4083ce7c90d537b9d1c`), and `android-conversation-detail.png` displayed `Loading conversation…` rather than a loaded conversation. Therefore the previous capture script did not prove the named routes were rendered; no visual acceptance criterion is promoted on that evidence.
+- Updated `tools/capture_android_brand_review.py` to target clickable ancestors, wait for unique page landmarks with a bounded timeout, and refuse to save each page image unless its expected content is present immediately before capture. The list page, loaded detail, Connections and Privacy pages now each have route-specific landmarks.
+- Added a regression test for exact visible text probes and required capture landmarks in `tests/test_brand_identity.py`. The Android emulator product-build job executes the capture script, so a route that stays on Home or remains Loading now fails the build instead of publishing misleading screenshots.
+- Attempt result: partial; status remains `in_progress`. The new source-level tests and the full product workflow must run on the resulting commit, and the new screenshots/icons still require visual inspection. No physical Android handset, separate user Windows host, live Android-to-Windows inference or in-place upgrade was used for this attempt.
+- The new commit SHA and exact-head CI results are recorded in the next append-only graph/report update after GitHub confirms the commit.

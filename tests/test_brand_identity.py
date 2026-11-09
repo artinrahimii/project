@@ -1,7 +1,8 @@
 from __future__ import annotations
 import json, struct, tempfile, unittest
 from pathlib import Path
-from tools.capture_android_brand_review import parse_bounds
+from xml.etree import ElementTree as ET
+from tools.capture_android_brand_review import parse_bounds, ui_tree_has_text
 from tools.generate_brand_assets import EXPECTED, generate_brand_assets
 ROOT=Path(__file__).resolve().parents[1]
 class BrandIdentityTests(unittest.TestCase):
@@ -9,6 +10,22 @@ class BrandIdentityTests(unittest.TestCase):
         self.assertEqual(parse_bounds("[0,10][100,50]"), (50, 30))
         with self.assertRaises(ValueError):
             parse_bounds("invalid")
+
+    def test_review_capture_checks_exact_visible_screen_landmarks(self):
+        root = ET.fromstring(
+            '<hierarchy><node text="Conversations" />'
+            '<node content-desc="Privacy" /></hierarchy>'
+        )
+        self.assertTrue(ui_tree_has_text(root, "Conversations"))
+        self.assertTrue(ui_tree_has_text(root, "Privacy"))
+        self.assertFalse(ui_tree_has_text(root, "Conversation detail"))
+
+        capture = (ROOT / "tools/capture_android_brand_review.py").read_text(encoding="utf-8")
+        self.assertIn('wait_for_text("Conversation history saved on this device.")', capture)
+        self.assertIn('wait_for_text("No messages yet. Write a message below to save it in this conversation.")', capture)
+        self.assertIn('wait_for_text("Peer discovery is configured from the New request screen.")', capture)
+        self.assertIn('wait_for_text("Understand the processing-host trust boundary.")', capture)
+        self.assertIn("Refusing to capture", capture)
 
     def test_canonical_tokens_are_exactly_the_approved_five_colors(self):
         doc=json.loads((ROOT/"assets/brand/whitep-design-tokens.json").read_text(encoding="utf-8"))

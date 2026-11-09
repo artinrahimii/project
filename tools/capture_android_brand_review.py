@@ -34,13 +34,33 @@ def current_ui_tree() -> ET.Element:
     return ET.fromstring(data)
 
 
+def ui_tree_has_text(root: ET.Element, label: str) -> bool:
+    return any(
+        node.attrib.get("text", "").strip() == label
+        or node.attrib.get("content-desc", "").strip() == label
+        for node in root.iter("node")
+    )
+
+
 def find_text_center(root: ET.Element, label: str) -> tuple[int, int]:
+    parents = {
+        child: parent
+        for parent in root.iter()
+        for child in parent
+    }
     nodes = [
         node for node in root.iter("node")
         if node.attrib.get("text", "").strip() == label
         or node.attrib.get("content-desc", "").strip() == label
     ]
-    nodes.sort(key=lambda node: node.attrib.get("clickable") != "true")
+    for node in nodes:
+        target = node
+        while target is not None:
+            if target.attrib.get("clickable") == "true":
+                bounds = target.attrib.get("bounds")
+                if bounds:
+                    return parse_bounds(bounds)
+            target = parents.get(target)
     for node in nodes:
         bounds = node.attrib.get("bounds")
         if bounds:
@@ -48,18 +68,37 @@ def find_text_center(root: ET.Element, label: str) -> tuple[int, int]:
     raise RuntimeError(f"Android UI did not expose a visible node labelled {label!r}")
 
 
+def wait_for_text(label: str, timeout_seconds: float = 20.0) -> ET.Element:
+    deadline = time.monotonic() + timeout_seconds
+    while True:
+        root = current_ui_tree()
+        if ui_tree_has_text(root, label):
+            return root
+        if time.monotonic() >= deadline:
+            raise RuntimeError(
+                f"Android did not reach the expected screen content {label!r} "
+                f"within {timeout_seconds:.1f} seconds"
+            )
+        time.sleep(0.5)
+
+
 def tap_label(label: str) -> None:
     x, y = find_text_center(current_ui_tree(), label)
     run_adb("shell", "input", "tap", str(x), str(y))
-    time.sleep(1.0)
+    time.sleep(0.25)
 
 
-def capture(directory: Path, filename: str) -> None:
+def capture(directory: Path, filename: str, required_label: str) -> None:
+    if not ui_tree_has_text(current_ui_tree(), required_label):
+        raise RuntimeError(
+            f"Refusing to capture {filename}: the visible Android UI does not contain "
+            f"the required screen landmark {required_label!r}"
+        )
     data = run_adb("exec-out", "screencap", "-p", capture=True)
     if not data.startswith(b"\x89PNG\r\n\x1a\n") or len(data) < 1024:
         raise RuntimeError(f"Screenshot {filename} is not a valid PNG")
     (directory / filename).write_bytes(data)
-    print(f"Captured {filename} ({len(data)} bytes)")
+    print(f"Captured {filename} after verifying {required_label!r} ({len(data)} bytes)")
 
 
 def main() -> int:
@@ -87,18 +126,33 @@ def main() -> int:
     shutil.copy2(Path("assets/brand/whitep-design-tokens.json"), export_root / "whitep-design-tokens.json")
 
     time.sleep(1.0)
-    capture(output, "android-home.png")
+    wait_for_text("Start with a request")
+    capture(output, "android-home.png", "Start with a request")
 
     tap_label("Conversations")
-    capture(output, "android-conversations.png")
+    wait_for_text("Conversation history saved on this device.")
+    capture(
+        output,
+        "android-conversations.png",
+        "Conversation history saved on this device.",
+    )
     tap_label("New conversation")
-    capture(output, "android-conversation-detail.png")
+    wait_for_text("Messages")
+    wait_for_text("No messages yet. Write a message below to save it in this conversation.")
+    capture(output, "android-conversation-detail.png", "Messages")
     tap_label("Back to conversations")
+    wait_for_text("Conversation history saved on this device.")
 
     tap_label("Connections")
-    capture(output, "android-connections.png")
+    wait_for_text("Peer discovery is configured from the New request screen.")
+    capture(
+        output,
+        "android-connections.png",
+        "Peer discovery is configured from the New request screen.",
+    )
     tap_label("Privacy")
-    capture(output, "android-privacy.png")
+    wait_for_text("Understand the processing-host trust boundary.")
+    capture(output, "android-privacy.png", "Understand the processing-host trust boundary.")
     return 0
 
 
