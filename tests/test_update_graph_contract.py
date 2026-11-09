@@ -55,18 +55,18 @@ class UpdateGraphContractTests(unittest.TestCase):
 
     def test_all_legacy_impact_ids_are_mapped_and_review_ledger_is_consistent(self) -> None:
         sync = self.graph["legacy_task_sync"]
-        self.assertEqual("review_pending", sync["state"])
+        self.assertIn(sync["state"], {"review_pending", "reviewed"})
         self.assertEqual("valid_parseable_graph", sync["source_graph_state_at_checkpoint"])
         self.assertEqual(168, sync["affected_task_id_count"])
         self.assertEqual(168, sync["matched_legacy_task_id_count"])
         self.assertEqual([], sync["missing_legacy_task_ids"])
 
-        impacted = {
-            task_id
-            for task in self.graph["nodes"]
-            for task_id in task.get("affected_task_ids", [])
-        }
-        self.assertEqual(set(impacted), set(sync["affected_legacy_task_ids"]))
+        expected_update_ids: dict[str, list[str]] = {}
+        for update_task in self.graph["nodes"]:
+            for task_id in update_task.get("affected_task_ids", []):
+                expected_update_ids.setdefault(task_id, []).append(update_task["id"])
+        impacted = set(expected_update_ids)
+        self.assertEqual(impacted, set(sync["affected_legacy_task_ids"]))
         self.assertEqual(168, len(impacted))
 
         records = self.reconciliation["records"]
@@ -74,36 +74,50 @@ class UpdateGraphContractTests(unittest.TestCase):
         self.assertEqual(168, len(records))
         self.assertEqual(168, len(records_by_id))
         self.assertEqual(impacted, set(records_by_id))
-
         reviewed = sum(record["review_status"] == "reviewed" for record in records)
         pending = sum(record["review_status"] == "pending" for record in records)
         self.assertEqual(168, reviewed + pending)
         self.assertEqual({"reviewed": reviewed, "pending": pending}, sync["review_status_summary"])
+        self.assertEqual("pending" if sync["state"] == "review_pending" else "reviewed", self.reconciliation["review_state"])
 
-        for task_id in impacted:
+        legacy_reconciliation = self.legacy["update_reconciliation"]
+        legacy_state = legacy_reconciliation["state"]
+        self.assertIn(legacy_state, {"pending_review", "reviewed"})
+        for task_id in sorted(impacted):
             node = self.legacy_nodes[task_id]
             marker = node["update_impact"]
             record = records_by_id[task_id]
             self.assertEqual(node["status"], marker["legacy_status_at_review_start"])
             self.assertFalse(marker["legacy_status_changed"])
+            self.assertEqual(node["status"], record["baseline_status"])
             self.assertEqual(record["baseline_status"], marker["legacy_status_at_review_start"])
+            self.assertEqual(expected_update_ids[task_id], record["update_task_ids"])
             self.assertEqual(record["update_task_ids"], marker["update_task_ids"])
-            # Legacy graph markers intentionally remain pending until full reconciliation closes.
-            self.assertEqual("pending", marker["review_status"])
-            self.assertEqual("re_review_required", marker["decision"])
+            self.assertTrue(record["evidence"], task_id)
+            self.assertIn(record["decision"], {"re_review_required", "unchanged"})
+            self.assertRegex(record.get("review_commit_sha", ""), r"^[0-9a-f]{40}$")
+            self.assertEqual("reviewed", record["review_status"])
+            for evidence in record["evidence"]:
+                if "://" in evidence:
+                    self.assertTrue(evidence.startswith("https://"), evidence)
+                else:
+                    self.assertTrue((ROOT / evidence).is_file(), f"{task_id}: missing evidence {evidence}")
 
-            if record["review_status"] == "reviewed":
-                self.assertTrue(record["evidence"], task_id)
-                self.assertIn(record["decision"], {"re_review_required", "unchanged"})
-                self.assertTrue(record.get("review_commit_sha") is None or len(record["review_commit_sha"]) == 40)
+            if legacy_state == "reviewed":
+                self.assertEqual(record["review_status"], marker["review_status"])
+                self.assertEqual(record["decision"], marker["decision"])
             else:
-                self.assertEqual("pending", record["review_status"])
+                self.assertEqual("pending", marker["review_status"])
+                self.assertEqual("re_review_required", marker["decision"])
 
-        legacy_summary = self.legacy["update_reconciliation"]["review_status_summary"]
-        self.assertEqual({"pending": 168, "reviewed": 0}, legacy_summary)
+        if legacy_state == "reviewed":
+            self.assertEqual({"pending": 0, "reviewed": 168}, legacy_reconciliation["review_status_summary"])
+        else:
+            self.assertEqual({"pending": 168, "reviewed": 0}, legacy_reconciliation["review_status_summary"])
+        if sync["state"] == "reviewed":
+            self.assertEqual("reviewed", legacy_state)
         update_markdown = UPDATE_GRAPH_PATH.read_text(encoding="utf-8")
         self.assertNotIn("خالی بوده، همگام‌سازی وضعیت‌ها", update_markdown)
-
 
     def test_real_product_e2e_rejects_transport_and_model_fixtures(self) -> None:
         contract = self.nodes["UPD-S1-020"]["verification_contract"]

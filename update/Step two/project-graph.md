@@ -3473,15 +3473,13 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0012, T0020, T0199, T0214. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. در V 3.1.14 همهٔ شناسه‌های متأثر در گراف واقعی Step Three پیدا و علامت pending re-review گرفتند؛ وضعیت‌های قدیمی فعلاً حفظ شده‌اند و بازبینی شواهد هنوز انجام نشده است.",
       "execution_summary": {
-        "attempt_count": 40,
+        "attempt_count": 41,
         "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-008-20261109-blob-transfer-limited",
+        "last_attempt_id": "UPD-S1-008-20261109-transitional-contract",
         "last_attempt_result": "partial",
         "changed_files": [
-          "update/Step two/project-graph.md",
-          "update/Step three/UPD-S1-008/execution-report.md",
-          "update/Step two/legacy-task-reconciliation.md",
-          "update/Step three/UPD-S1-008/evidence/write-limit-audit.md"
+          "tests/test_update_graph_contract.py",
+          "update/Step two/project-graph.md"
         ],
         "related_commits": [
           "3bc8863cf62044dc23383c675cd18233aed9b581",
@@ -3524,7 +3522,8 @@
           "4e976f8b8c478498708d578d363d8529edb850c6",
           "dba2cb984f0d4990417922f8a5f56b81c82191a8",
           "4eba36c5fd9196fb616b5c0bd888c010cefeea58",
-          "adb7110b38616854a90283bc464c6ebf9caa222a"
+          "adb7110b38616854a90283bc464c6ebf9caa222a",
+          "2a5194c061baf3bf121f4c590f5fb75fb86f7a9d"
         ],
         "tests_passed": [
           "Git Blob integrity for five mandatory sources: All five computed Blob SHA values matched GitHub blob metadata; exact byte sizes recorded in evidence.",
@@ -3635,7 +3634,8 @@
           "T0212 production Android signing: exact workflow Blob SHA is unchanged at current HEAD; run 42114568183 completed all 15 steps, verified the pinned certificate and uploaded signed APK artifact 13455966209.",
           "T0213 release bundle: artifact 13521278559 SHA-256 manifest entries independently verified; Draft Release 436740935 has four uploaded assets; a successful post-fix tag run remains required.",
           "Exact current-HEAD Quality Gate 42516118975 passed 480 Python tests, compileall, Step Three graph guards (230 nodes/422 edges, 0 errors, 1 preserved warning) and Update graph guards (24 nodes/80 edges, 0 errors, 0 warnings).",
-          "Exact V 3.1.110 source audit: 168/168 affected legacy IDs/nodes/ledger rows mapped, all file evidence paths present, all 30 unique review commit SHAs found in main history, and 80/80 Update graph edges validated."
+          "Exact V 3.1.110 source audit: 168/168 affected legacy IDs/nodes/ledger rows mapped, all file evidence paths present, all 30 unique review commit SHAs found in main history, and 80/80 Update graph edges validated.",
+          "Contract test strengthened to validate all 168 reviewed reconciliation records, evidence paths and review SHAs, exact Update-task mappings, baseline preservation and conditional marker/ledger parity."
         ],
         "tests_failed": [
           "V 3.1.57 Step Three quality run 42481482201 failed 1/479 tests: test_update_graph_contract.UpdateGraphContractTests.test_all_legacy_impact_ids_are_mapped_for_re_review expected all 168 legacy update_impact markers to remain pending/re_review_required; T0012 marker was reviewed. Corrective action: restore old graph marker schema while keeping individual review decisions only in reconciliation JSON.",
@@ -3653,7 +3653,7 @@
             "update/Step two/legacy-task-reconciliation.md"
           ]
         },
-        "follow_up": "Cross-graph Step Three marker synchronization and contract-test change remain outstanding because the 4,016,404-byte old graph write failed through the connector. Resume with a reliable full-file Git transport; then run both graph guards and exact-main CI. Product Build for V3.1.111 was still in progress at the last poll; physical Android-to-Windows and upgrade remain separate acceptance gates.",
+        "follow_up": "Run Quality Gate for this commit. If it passes, synchronize the complete Step Three graph through the GitHub Contents API in the next sequential main commit; then update the central ledger and Update graph sync state, run both graph guards, and keep UPD-S1-008 in_progress until CI confirms the final parity.",
         "failure_details": null
       },
       "execution_history": [
@@ -6273,6 +6273,44 @@
           "contract_changes": [],
           "follow_up": "Resume cross-graph synchronization when a reliable full-file Git transport or local checkout is available. Keep the 168 legacy update_impact markers pending, reconciliation summary pending and UPD-S1-008 in_progress until the 168 markers are synchronized, the contract test is updated, and both graph guards plus exact-commit CI pass.",
           "device_and_host_details_redacted": "No physical Android device or user Windows host was available or used in this attempt. No real Android-to-Windows local model inference, clean install, or in-place upgrade was performed.",
+          "model_revision_and_sha256": null,
+          "pre_upgrade_post_upgrade_snapshot": null
+        },
+        {
+          "attempt_id": "UPD-S1-008-20261109-transitional-contract",
+          "started_at": "2026-11-09T11:33:32.340Z",
+          "ended_at": "2026-11-09T11:33:32.340Z",
+          "result": "partial",
+          "summary": "Strengthened the legacy reconciliation contract test to validate exact affected-task mappings, every review record's evidence and real commit SHA, preserved baseline status, and marker/ledger parity whenever the Step Three graph is synchronized. The contract accepts the current pending state as an explicit intermediate state while the full 4,016,404-byte Step Three graph remains unchanged; it will enforce complete parity once that graph's reconciliation state is reviewed.",
+          "changed_files": [
+            "tests/test_update_graph_contract.py",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Test source and stage-transition precheck",
+              "command": "Review current contract setup and exact reconciliation schema",
+              "result": "passed",
+              "summary": "Confirmed the class loads both graphs, JSON ledger and repo root; the new test covers 168 IDs, ordered UPD-S1 mapping, evidence path existence, valid review commit SHAs, baseline preservation and state-dependent marker parity."
+            },
+            {
+              "name": "Local Python test execution",
+              "command": "python -m unittest tests.test_update_graph_contract -v",
+              "result": "not_run",
+              "summary": "Local clone remains unavailable because github.com DNS resolution fails. Exact-commit GitHub Actions Quality Gate is required."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "The reconciliation contract test now validates complete per-record evidence and exact `update_task_ids` rather than only the aggregate count.",
+            "The test supports the explicit transitional state: pending legacy markers until the old graph is synchronized; exact marker/ledger decision and review_status parity is mandatory once the old graph state becomes reviewed.",
+            "The test prevents any legacy status transition based solely on reconciliation mapping."
+          ],
+          "follow_up": "Run Quality Gate for this commit. If it passes, synchronize the complete Step Three graph through the GitHub Contents API in the next sequential main commit; then update the central ledger and Update graph sync state, run both graph guards, and keep UPD-S1-008 in_progress until CI confirms the final parity.",
+          "device_and_host_details_redacted": "Contract-test and graph metadata only; no physical Android device/Windows host or real model inference; no clean install or in-place upgrade.",
           "model_revision_and_sha256": null,
           "pre_upgrade_post_upgrade_snapshot": null
         }
@@ -9956,7 +9994,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-09T11:30:10.944Z",
+  "updated_at": "2026-11-09T11:33:32.340Z",
   "legacy_task_sync": {
     "state": "review_pending",
     "reason_code": "DEPENDENCY_EDGE_REVIEW_PENDING",
