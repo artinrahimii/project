@@ -1,0 +1,503 @@
+name: One-time Step Three reconciliation bridge
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/step-three-reconciliation-bridge.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    if: github.event.head_commit.message == 'V 3.1.114'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout complete main history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Reconcile, validate and publish sequential commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, re, subprocess
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          ROOT = Path(".")
+          UPDATE = ROOT / "update/Step two/project-graph.md"
+          LEGACY = ROOT / "step three/project-graph.md"
+          REQUIREMENTS = ROOT / "update/Step one/Output/V1.10.json"
+          LEDGER = ROOT / "update/Step two/legacy-task-reconciliation.json"
+          TEST = ROOT / "tests/test_update_graph_contract.py"
+          REPORT = ROOT / "update/Step three/UPD-S1-008/execution-report.md"
+          LEDGER_REPORT = ROOT / "update/Step two/legacy-task-reconciliation.md"
+          EVIDENCE = ROOT / "update/Step three/UPD-S1-008/evidence/cross-graph-sync.md"
+          TEMP_WORKFLOW = ROOT / ".github/workflows/step-three-reconciliation-bridge.yml"
+          ATTEMPT_ID = "UPD-S1-008-20261109-cross-graph-sync"
+
+          def utc_now():
+              return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+          def git(args, check=True):
+              result = subprocess.run(["git", *args], text=True, capture_output=True)
+              if check and result.returncode:
+                  raise RuntimeError("git " + " ".join(args) + " failed: " + result.stderr[-4000:])
+              return result
+
+          def read_graph(path):
+              text = path.read_text(encoding="utf-8")
+              fence = chr(96) * 3
+              opening = fence + "json"
+              start = text.find(opening)
+              if start < 0:
+                  raise AssertionError("Missing fenced JSON graph: " + str(path))
+              start += len(opening)
+              end = text.find(fence, start)
+              if end < 0:
+                  raise AssertionError("Unclosed JSON graph: " + str(path))
+              graph = json.loads(text[start:end].strip())
+              if not isinstance(graph, dict) or not isinstance(graph.get("nodes"), list) or not isinstance(graph.get("edges"), list):
+                  raise AssertionError("Invalid graph object: " + str(path))
+              return text, graph
+
+          def write_graph(path, original, graph):
+              fence = chr(96) * 3
+              opening = fence + "json"
+              start = original.find(opening) + len(opening)
+              end = original.find(fence, start)
+              payload = json.dumps(graph, ensure_ascii=False, separators=(",", ":"))
+              path.write_text(original[:start] + "\n" + payload + "\n" + original[end:], encoding="utf-8")
+
+          def quality(command):
+              result = subprocess.run(command, text=True, capture_output=True)
+              output = result.stdout + result.stderr
+              print("$ " + " ".join(command))
+              print(output[-5000:])
+              if result.returncode:
+                  raise RuntimeError("Quality command failed: " + " ".join(command))
+              return output
+
+          def next_version():
+              message = git(["log", "-1", "--format=%s"]).stdout.strip()
+              match = re.fullmatch(r"V 3\.1\.(\d+)", message)
+              if not match:
+                  raise AssertionError("Unexpected latest commit message: " + message)
+              return int(match.group(1)) + 1
+
+          source_head = git(["rev-parse", "HEAD"]).stdout.strip()
+          if git(["log", "-1", "--format=%s"]).stdout.strip() != "V 3.1.114":
+              raise AssertionError("One-time workflow invoked from unexpected commit")
+          remote_head = git(["ls-remote", "origin", "refs/heads/main"]).stdout.split()[0]
+          if remote_head != source_head:
+              raise AssertionError("main moved before reconciliation")
+
+          started = utc_now()
+          update_text, update = read_graph(UPDATE)
+          legacy_text, legacy = read_graph(LEGACY)
+          v110 = json.loads(REQUIREMENTS.read_text(encoding="utf-8"))
+          ledger = json.loads(LEDGER.read_text(encoding="utf-8"))
+          test_text = TEST.read_text(encoding="utf-8")
+          report_text = REPORT.read_text(encoding="utf-8")
+          ledger_report_text = LEDGER_REPORT.read_text(encoding="utf-8")
+
+          if (len(update["nodes"]), len(update["edges"]), len(update.get("execution_waves", []))) != (24, 80, 13):
+              raise AssertionError("Update graph inventory mismatch")
+          if (len(legacy["nodes"]), len(legacy["edges"])) != (230, 422):
+              raise AssertionError("Legacy graph inventory mismatch")
+          if len(v110.get("tasks", [])) != 24 or len(ledger.get("records", [])) != 168:
+              raise AssertionError("V1.10 or reconciliation inventory mismatch")
+
+          update_nodes = {node["id"]: node for node in update["nodes"]}
+          legacy_nodes = {node["id"]: node for node in legacy["nodes"]}
+          approved = {task["task_id"]: task for task in v110["tasks"]}
+          if len(update_nodes) != 24 or len(legacy_nodes) != 230 or set(approved) != set(update_nodes):
+              raise AssertionError("Duplicate IDs or V1.10/Update ID mismatch")
+
+          expected_update_ids = {}
+          for node in update["nodes"]:
+              if node.get("affected_task_ids", []) != approved[node["id"]].get("affected_task_ids", []):
+                  raise AssertionError("V1.10 affected_task_ids mismatch for " + node["id"])
+              for legacy_id in node.get("affected_task_ids", []):
+                  expected_update_ids.setdefault(legacy_id, []).append(node["id"])
+
+          affected_ids = set(expected_update_ids)
+          records = ledger["records"]
+          records_by_id = {record["legacy_task_id"]: record for record in records}
+          if len(records_by_id) != 168 or set(records_by_id) != affected_ids:
+              raise AssertionError("168 unique legacy IDs do not map to 168 unique records")
+          if set(update["legacy_task_sync"]["affected_legacy_task_ids"]) != affected_ids:
+              raise AssertionError("Update legacy_task_sync ID inventory mismatch")
+          if any(edge.get("validation_status") != "validated" for edge in update["edges"]):
+              raise AssertionError("An Update dependency edge is not validated")
+
+          decision_counts = {"re_review_required": 0, "unchanged": 0}
+          review_commits = set()
+          review_docs = set()
+          evidence_references = 0
+          for record in records:
+              task_id = record["legacy_task_id"]
+              if record.get("review_status") != "reviewed":
+                  raise AssertionError("Pending record: " + task_id)
+              decision = record.get("decision")
+              if decision not in decision_counts:
+                  raise AssertionError("Invalid decision for " + task_id + ": " + str(decision))
+              decision_counts[decision] += 1
+              if record.get("status_changed") is not False:
+                  raise AssertionError("Status transition not independently justified: " + task_id)
+              if record.get("update_task_ids") != expected_update_ids[task_id]:
+                  raise AssertionError("Incomplete UPD-S1 mapping: " + task_id)
+              sha = record.get("review_commit_sha", "")
+              if not re.fullmatch(r"[0-9a-f]{40}", sha):
+                  raise AssertionError("Invalid review SHA: " + task_id)
+              review_commits.add(sha)
+              if git(["merge-base", "--is-ancestor", sha, source_head], check=False).returncode != 0:
+                  raise AssertionError("Review SHA is not an ancestor of source main: " + sha)
+
+              evidence = record.get("evidence", [])
+              if not evidence:
+                  raise AssertionError("No evidence for " + task_id)
+              per_task_review_docs = [
+                  item for item in evidence
+                  if item.startswith("update/Step three/UPD-S1-008/evidence/review-") and item.endswith(".md")
+              ]
+              if not per_task_review_docs:
+                  raise AssertionError("No individual review document for " + task_id)
+              review_content = []
+              for item in evidence:
+                  evidence_references += 1
+                  if "://" in item:
+                      if not item.startswith("https://"):
+                          raise AssertionError("Evidence URL is not HTTPS: " + item)
+                      continue
+                  path = ROOT / item
+                  if not path.is_file():
+                      raise AssertionError("Missing evidence file: " + item)
+                  if item in per_task_review_docs:
+                      review_docs.add(item)
+                      review_content.append(path.read_text(encoding="utf-8"))
+              if not any(task_id in text for text in review_content):
+                  raise AssertionError("Task-specific review document does not name " + task_id)
+
+              node = legacy_nodes.get(task_id)
+              if node is None or node.get("status") != record.get("baseline_status"):
+                  raise AssertionError("Missing legacy node or baseline mismatch: " + task_id)
+              marker = node.get("update_impact")
+              if not isinstance(marker, dict):
+                  raise AssertionError("Missing update_impact marker: " + task_id)
+              if marker.get("update_task_ids") != record["update_task_ids"]:
+                  raise AssertionError("Legacy marker mapping mismatch: " + task_id)
+              if marker.get("legacy_status_at_review_start") != record["baseline_status"]:
+                  raise AssertionError("Legacy marker baseline mismatch: " + task_id)
+              if marker.get("legacy_status_changed") is not False:
+                  raise AssertionError("Legacy marker status_changed mismatch: " + task_id)
+              if marker.get("review_status") != "pending" or marker.get("decision") != "re_review_required":
+                  raise AssertionError("Unexpected source marker state: " + task_id)
+
+          if decision_counts != {"re_review_required": 156, "unchanged": 12}:
+              raise AssertionError("Unexpected decision distribution: " + str(decision_counts))
+          if len(review_commits) != 30:
+              raise AssertionError("Expected 30 unique review commits")
+          if len(review_docs) < 160:
+              raise AssertionError("Too few individual review documents: " + str(len(review_docs)))
+
+          for record in records:
+              marker = legacy_nodes[record["legacy_task_id"]]["update_impact"]
+              marker["review_status"] = record["review_status"]
+              marker["decision"] = record["decision"]
+              marker["legacy_status_at_review_start"] = record["baseline_status"]
+              marker["legacy_status_changed"] = record["status_changed"]
+              marker["reason"] = (
+                  "Reviewed against approved V1.10 scope, current source/tests and recorded acceptance evidence. "
+                  "No legacy status transition is inferred from traceability alone. Per-task evidence and real review "
+                  "commit are recorded in update/Step two/legacy-task-reconciliation.json."
+              )
+
+          legacy_summary = legacy["update_reconciliation"]
+          legacy_summary["state"] = "reviewed"
+          legacy_summary["review_status_summary"] = {"pending": 0, "reviewed": 168}
+          legacy_summary["record_policy"] = (
+              "Every affected node mirrors its unique reconciliation record's UPD-S1 mapping, reviewed decision and "
+              "review status. Preserve baseline status unless independent evidence proves the original task's own "
+              "acceptance criteria were met; affected_task_ids alone never changes task status."
+          )
+          legacy["updated_at"] = utc_now()
+          ledger["review_state"] = "reviewed"
+          ledger["status_transition_policy"] = (
+              "All 168 affected legacy records have individual reviewed decisions and evidence. Preserve every baseline "
+              "status; only independent evidence against the legacy task's original acceptance criteria can justify a transition."
+          )
+
+          sync = update["legacy_task_sync"]
+          sync["state"] = "reviewed"
+          sync["reason_code"] = "RECONCILIATION_REVIEWED"
+          sync["review_status_summary"] = {"reviewed": 168, "pending": 0}
+          sync["status_change_policy"] = (
+              "All 168 affected legacy nodes now carry synchronized, individually reviewed decisions from the ledger. "
+              "Preserve each baseline status; any transition requires independent evidence against the legacy task's "
+              "original acceptance criteria."
+          )
+          sync["completion_blocker"] = (
+              "The 168/168 reconciliation reviews and cross-graph markers are complete with 0 pending records. "
+              "The 156 re_review_required decisions are reviewed outcomes that trigger follow-up review after mapped "
+              "implementation tasks reach acceptance; they are not pending reconciliation records. No legacy status changed."
+          )
+          if "Each reviewed ledger row is mirrored by the Step Three update_impact marker; future re-review is triggered by mapped implementation acceptance." not in sync["rules"]:
+              sync["rules"].append(
+                  "Each reviewed ledger row is mirrored by the Step Three update_impact marker; future re-review is triggered by mapped implementation acceptance."
+              )
+
+          node8 = update_nodes["UPD-S1-008"]
+          if node8["status"] != "in_progress":
+              raise AssertionError("UPD-S1-008 was not in_progress at source")
+          node8["legacy_task_reconciliation"]["allowed_decisions"] = ["re_review_required", "unchanged"]
+          node8["legacy_task_reconciliation"]["completion_requires_zero_pending_reviews"] = True
+
+          insertion_point = '            for evidence in record["evidence"]:\n'
+          insertion = (
+              '            review_docs = [\n'
+              '                evidence for evidence in record["evidence"]\n'
+              '                if evidence.startswith("update/Step three/UPD-S1-008/evidence/review-") and evidence.endswith(".md")\n'
+              '            ]\n'
+              '            self.assertTrue(review_docs, task_id)\n'
+              '            self.assertTrue(\n'
+              '                any(task_id in (ROOT / evidence).read_text(encoding="utf-8") for evidence in review_docs),\n'
+              '                f"no content-review document mentions {task_id}",\n'
+              '            )\n'
+          )
+          if insertion_point not in test_text:
+              raise AssertionError("Contract test insertion point was not found")
+          TEST.write_text(test_text.replace(insertion_point, insertion + insertion_point, 1), encoding="utf-8")
+
+          attempt_id = ATTEMPT_ID
+          if any(item["attempt_id"] == attempt_id for item in node8["execution_history"]):
+              raise AssertionError("Duplicate attempt ID")
+          evidence_path = "update/Step three/UPD-S1-008/evidence/cross-graph-sync.md"
+          changed_files = [
+              "step three/project-graph.md",
+              "update/Step two/project-graph.md",
+              "update/Step two/legacy-task-reconciliation.json",
+              "update/Step two/legacy-task-reconciliation.md",
+              "tests/test_update_graph_contract.py",
+              "update/Step three/UPD-S1-008/execution-report.md",
+              evidence_path,
+              ".github/workflows/step-three-reconciliation-bridge.yml"
+          ]
+          EVIDENCE.write_text(
+              "\n".join([
+                  "# UPD-S1-008 — cross-graph reconciliation evidence",
+                  "",
+                  "## Exact source baseline",
+                  "",
+                  "Repository/branch: artinrahimii/project / main.",
+                  f"Source commit: {source_head} (V 3.1.113).",
+                  "Step Three source Blob: 2a9a4e0a82e8de78c8c381a0a2036e0750fd6ae6; 4,016,404 bytes.",
+                  "Update graph source Blob: 0e550562c15981418e09f99e4685ad66915a1f89; 694,422 bytes.",
+                  "V1.10 source Blob: 5cea3ec095d0c00e32ed3e067796ff698aedd982; 93,346 bytes.",
+                  "Reconciliation ledger source Blob: 405dfa9390c5a358407fd0868ce9897c85cc38e6; 170,926 bytes.",
+                  "",
+                  "## Verified inventory and individual reviews",
+                  "",
+                  "230 legacy nodes / 422 legacy edges; 24 Update nodes / 80 Update edges / 13 execution waves.",
+                  "168/168 unique affected Txxxx IDs map to exactly one legacy node and one reconciliation record.",
+                  "Every record has a content-review document naming its task ID; all local evidence files exist; external URLs are HTTPS.",
+                  "Every update_task_ids list matches the complete reverse mapping from the Update graph.",
+                  "All 30 distinct review_commit_sha values are real ancestors of the exact source main HEAD.",
+                  "Decision distribution: 156 re_review_required and 12 unchanged; all 168 records reviewed.",
+                  "Baseline status and historical execution records of all 168 legacy nodes are preserved.",
+                  "",
+                  "## Synchronized state",
+                  "",
+                  "All 168 Step Three update_impact markers mirror the matching ledger decision and review_status.",
+                  "Legacy graph summary: reviewed=168, pending=0.",
+                  "Central reconciliation ledger: review_state=reviewed.",
+                  "Update graph legacy_task_sync: reviewed=168, pending=0.",
+                  "The 156 re_review_required decisions are reviewed outcomes; follow-up re-review is triggered after mapped implementation tasks reach acceptance.",
+                  "No legacy task status was changed.",
+                  ""
+              ]) + "\n",
+              encoding="utf-8"
+          )
+
+          node8["evidence"] = list(dict.fromkeys(node8.get("evidence", []) + [evidence_path, "tests/test_update_graph_contract.py"]))
+          node8["actual_output_paths"] = list(dict.fromkeys(node8.get("actual_output_paths", []) + [
+              "step three/project-graph.md", "update/Step two/project-graph.md",
+              "update/Step two/legacy-task-reconciliation.json", evidence_path,
+              "tests/test_update_graph_contract.py"
+          ]))
+          node8["execution_summary"]["attempt_count"] += 1
+          node8["execution_summary"]["last_attempt_id"] = attempt_id
+          node8["execution_summary"]["last_attempt_result"] = "succeeded"
+          node8["execution_summary"]["changed_files"] = changed_files
+          node8["execution_summary"]["follow_up"] = (
+              "UPD-S1-008 is complete. Continue with UPD-S1-024, then follow the validated dependency order. "
+              "Re-review the 156 re_review_required decisions after their mapped implementation tasks reach acceptance. "
+              "Physical Android-to-Windows and in-place-upgrade acceptance remain separate product gates."
+          )
+          node8["execution_summary"]["tests_passed"] = list(node8["execution_summary"].get("tests_passed", [])) + [
+              "168 task-specific legacy content reviews, evidence paths, real review commits and exact Update mappings validated.",
+              "All 168 legacy markers synchronized with their reconciliation decisions; 0 pending; legacy statuses preserved."
+          ]
+          node8["status"] = "done"
+          node8["status_fa"] = "تکمیل‌شده"
+
+          counts = {}
+          for node in update["nodes"]:
+              counts[node["status"]] = counts.get(node["status"], 0) + 1
+          update["progress_snapshot"].update({
+              "as_of": utc_now(), "total_tasks": 24,
+              "not_started": counts.get("not_started", 0),
+              "in_progress": counts.get("in_progress", 0),
+              "done": counts.get("done", 0),
+              "blocked": counts.get("blocked", 0),
+              "verified_completion_percentage": round(counts.get("done", 0) / 24 * 100, 2),
+              "calculation": f"{counts.get('done', 0)} verified done update tasks / 24 total update tasks = {round(counts.get('done', 0) / 24 * 100, 2):.2f}%. Reconciliation is separate."
+          })
+          update["updated_at"] = utc_now()
+          write_graph(LEGACY, legacy_text, legacy)
+          LEDGER.write_text(json.dumps(ledger, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          write_graph(UPDATE, update_text, update)
+
+          unit_output = quality(["python", "-m", "unittest", "discover", "-s", "tests", "-v"])
+          match = re.search(r"Ran (\d+) tests?", unit_output)
+          if not match:
+              raise AssertionError("Cannot determine Python test count")
+          test_count = int(match.group(1))
+          quality(["python", "-m", "compileall", "-q", "tools", "tests"])
+          guards = [
+              ["python", "tools/graph_guard.py", "step three/project-graph.md"],
+              ["python", "tools/graph_guard.py", "step three/project-graph.md", "--repo-root", "."],
+              ["python", "tools/graph_guard.py", "update/Step two/project-graph.md"],
+              ["python", "tools/graph_guard.py", "update/Step two/project-graph.md", "--repo-root", "."]
+          ]
+          for command in guards:
+              quality(command)
+
+          attempt = {
+              "attempt_id": attempt_id, "started_at": started, "ended_at": utc_now(),
+              "result": "succeeded",
+              "summary": f"Reviewed and reconciled all 168 affected legacy tasks, verified task-specific review documents, evidence paths and real review commits, synchronized all legacy update_impact markers with the central ledger, preserved all prior legacy statuses/history, and passed {test_count} Python tests, compileall and both graph guards.",
+              "changed_files": changed_files, "commit_sha": None,
+              "tests": [
+                  {"name": "Complete Python test suite", "command": "python -m unittest discover -s tests -v", "result": "passed", "summary": f"{test_count} tests passed."},
+                  {"name": "Python syntax compilation", "command": "python -m compileall -q tools tests", "result": "passed", "summary": "All tools and tests compile."},
+                  {"name": "Step Three graph structural guard", "command": "python tools/graph_guard.py step three/project-graph.md", "result": "passed", "summary": "230 tasks, 422 edges; zero errors."},
+                  {"name": "Step Three graph output/evidence guard", "command": "python tools/graph_guard.py step three/project-graph.md --repo-root .", "result": "passed", "summary": "All repository output/evidence paths validated."},
+                  {"name": "Update graph structural guard", "command": "python tools/graph_guard.py update/Step two/project-graph.md", "result": "passed", "summary": "24 tasks, 80 edges; zero errors."},
+                  {"name": "Update graph output/evidence guard", "command": "python tools/graph_guard.py update/Step two/project-graph.md --repo-root .", "result": "passed", "summary": "All repository output/evidence paths validated."},
+                  {"name": "168-task content-review and Git ancestry audit", "command": "Cross-graph mapping, review-document, evidence and review-commit validation", "result": "passed", "summary": f"168 IDs, {len(review_docs)} review paths, {evidence_references} evidence references, 30 review commits; decisions={decision_counts}."}
+              ],
+              "failure_details": None, "blocked_reason": None, "reopened_reason": None,
+              "contract_changes": [
+                  "All Step Three update_impact markers now exactly mirror the matching ledger decision and review_status.",
+                  "The central ledger and both graph summaries now report reviewed=168 and pending=0.",
+                  "The contract test now verifies that every affected task has a content-review document that actually names that task.",
+                  "All legacy status values and historical execution records were preserved."
+              ],
+              "follow_up": "UPD-S1-008 is complete. Continue with UPD-S1-024 and the validated execution order; revisit the 156 re_review_required decisions after their mapped implementation tasks reach acceptance. Physical Android-to-Windows and in-place-upgrade acceptance remain separate.",
+              "device_and_host_details_redacted": "Full reconciliation and automated checks ran on a GitHub-hosted checkout. No physical Android device, user Windows host, physical Android-to-Windows inference or in-place upgrade was used in this attempt.",
+              "model_revision_and_sha256": None, "pre_upgrade_post_upgrade_snapshot": None
+          }
+          node8["execution_history"].append(attempt)
+          write_graph(UPDATE, UPDATE.read_text(encoding="utf-8"), update)
+
+          # Add exact test results to the evidence/report only after the relevant commands passed.
+          legacy_blob = git(["hash-object", str(LEGACY)]).stdout.strip()
+          update_blob = git(["hash-object", str(UPDATE)]).stdout.strip()
+          EVIDENCE.write_text(
+              EVIDENCE.read_text(encoding="utf-8")
+              + "\nExecuted quality results:\n"
+              + f"- Full Python suite: {test_count} tests passed.\n"
+              + "- compileall: passed.\n"
+              + "- Step Three graph_guard in both modes: passed.\n"
+              + "- Update graph_guard in both modes: passed.\n"
+              + f"- Final Step Three graph Git blob: {legacy_blob}.\n"
+              + f"- Final Update graph Git blob: {update_blob}.\n",
+              encoding="utf-8"
+          )
+          REPORT.write_text(
+              report_text
+              + "\n\n## تکمیل reconciliation گراف قدیمی — ۹ نوامبر ۲۰۲۶\n\n"
+              + f"- خط مبنای دقیق: {source_head}، نسخهٔ V 3.1.113.\n"
+              + f"- گراف Step Three: 230 گره و 422 یال؛ Blob نهایی {legacy_blob}.\n"
+              + f"- گراف Update: 24 گره، 80 یال و 13 موج؛ Blob نهایی {update_blob}.\n"
+              + "- هر 168 شناسهٔ متأثر، سند بازبینی محتوایی مختص خود، رکورد ledger و نشانگر update_impact معتبر دارد.\n"
+              + "- همهٔ شواهد فایل‌محور موجودند؛ 30 SHA یکتای بازبینی commitهای ancestor واقعی main هستند.\n"
+              + "- تصمیم‌ها: 156 re_review_required و 12 unchanged؛ وضعیت پایه و تاریخچهٔ تمام وظایف Txxxx حفظ شد.\n"
+              + f"- آزمون‌ها: {test_count} آزمون Python موفق؛ compileall موفق؛ هر چهار graph_guard موفق.\n"
+              + "- 168 نشانگر قدیمی، خلاصهٔ گراف اولیه، ledger و legacy_task_sync به reviewed=168 / pending=0 همگام شدند.\n"
+              + "- UPD-S1-008 پس از موفقیت آزمون‌ها done شد؛ وظیفهٔ بعدی آماده در ترتیب وابستگی UPD-S1-024 است.\n"
+              + "- آزمون فیزیکی Android-to-Windows، مدل واقعی روی دستگاه کاربر و ارتقای درجا معیارهای مستقل باقی هستند.\n",
+              encoding="utf-8"
+          )
+          LEDGER_REPORT.write_text(
+              ledger_report_text
+              + "\n\n## وضعیت نهایی reconciliation — ۹ نوامبر ۲۰۲۶\n\n"
+              + "- 168/168 بازبینی محتوایی و سند مختص وظیفه؛ 0 pending.\n"
+              + "- تصمیم‌ها: 156 re_review_required، 12 unchanged.\n"
+              + "- 168 نشانگر update_impact با ledger همگام شد؛ صفر تغییر در وضعیت پایه یا تاریخچهٔ Txxxx.\n"
+              + "- 80/80 یال Update اعتبارسنجی شده؛ 13 موج و ترتیب قبلی حفظ شدند.\n"
+              + "- تصمیم re_review_required بازبینی بعدی را پس از پذیرش وظیفهٔ اجرایی مرتبط الزام می‌کند؛ رکورد جاری reconciliation reviewed است.\n",
+              encoding="utf-8"
+          )
+
+          final_unit = quality(["python", "-m", "unittest", "discover", "-s", "tests", "-v"])
+          final_match = re.search(r"Ran (\d+) tests?", final_unit)
+          if not final_match or int(final_match.group(1)) != test_count:
+              raise AssertionError("Final Python test count differs from the completed run")
+          quality(["python", "-m", "compileall", "-q", "tools", "tests"])
+          for command in guards:
+              quality(command)
+
+          TEMP_WORKFLOW.unlink(missing_ok=True)
+          git(["config", "user.name", "github-actions[bot]"])
+          git(["config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"])
+
+          first_version = next_version()
+          if first_version != 115:
+              raise AssertionError(f"Expected V 3.1.115, got V 3.1.{first_version}")
+          git(["add", str(LEGACY), str(UPDATE), str(LEDGER), str(TEST), str(REPORT), str(LEDGER_REPORT), str(EVIDENCE), str(TEMP_WORKFLOW)])
+          git(["commit", "-m", f"V 3.1.{first_version}"])
+          first_sha = git(["rev-parse", "HEAD"]).stdout.strip()
+          print(f"RECONCILIATION_COMMIT={first_sha} V 3.1.{first_version}")
+
+          update_text_after, update_after = read_graph(UPDATE)
+          node_after = {item["id"]: item for item in update_after["nodes"]}["UPD-S1-008"]
+          history_after = next(item for item in node_after["execution_history"] if item["attempt_id"] == ATTEMPT_ID)
+          history_after["commit_sha"] = first_sha
+          node_after["execution_summary"]["related_commits"] = list(dict.fromkeys(
+              node_after["execution_summary"].get("related_commits", []) + [first_sha]
+          ))
+          update_after["updated_at"] = utc_now()
+          write_graph(UPDATE, update_text_after, update_after)
+
+          quality(["python", "-m", "unittest", "discover", "-s", "tests", "-v"])
+          quality(["python", "-m", "compileall", "-q", "tools", "tests"])
+          for command in guards:
+              quality(command)
+
+          second_version = next_version()
+          if second_version != 116:
+              raise AssertionError(f"Expected V 3.1.116, got V 3.1.{second_version}")
+          git(["add", str(UPDATE)])
+          git(["commit", "-m", f"V 3.1.{second_version}"])
+          final_sha = git(["rev-parse", "HEAD"]).stdout.strip()
+          print(f"RECONCILIATION_METADATA_COMMIT={final_sha} V 3.1.{second_version}")
+
+          if git(["ls-remote", "origin", "refs/heads/main"]).stdout.split()[0] != source_head:
+              raise AssertionError("Remote main moved while reconciliation was running")
+          git(["push", "origin", "HEAD:refs/heads/main"])
+          verified = git(["ls-remote", "origin", "refs/heads/main"]).stdout.split()[0]
+          if verified != final_sha:
+              raise AssertionError(f"Published main SHA mismatch: {verified} != {final_sha}")
+          print("CROSS_GRAPH_RECONCILIATION=SUCCESS")
+          print(f"FINAL_MAIN={verified} V 3.1.{second_version}")
+          print(f"RECONCILED_IDS=168 REVIEW_DOCUMENTS={len(review_docs)} EVIDENCE_REFERENCES={evidence_references}")
+          print(f"UPDATE_PROGRESS={counts.get('done', 0)}/24 ({update['progress_snapshot']['verified_completion_percentage']}%)")
+          PY
