@@ -40,7 +40,7 @@ class AndroidHostCandidateSelectorContractTests(unittest.TestCase):
             source,
         )
         self.assertIn(".groupBy { candidate -> candidate.announcement.ephemeralHostId }", source)
-        self.assertIn(".sortedWith { first, second ->", source)
+        self.assertIn("eligibleCandidates.sortWith { first, second ->", source)
         self.assertIn("first.status.activeRequests.toLong()", source)
         self.assertIn("second.announcement.capabilities.maxConcurrentRequests.toLong()", source)
         self.assertIn("first.announcement.ephemeralHostId.compareTo(second.announcement.ephemeralHostId)", source)

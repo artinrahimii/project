@@ -8194,7 +8194,8 @@
         "tests/test_android_host_candidate_selector_contract.py",
         "update/Step three/UPD-S1-014/execution-report.md",
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md",
-        "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md"
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md",
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md",
@@ -8217,13 +8218,14 @@
         "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
         "docs/decisions/ADR-0022-single-host-sequential-retry.md",
         "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
-        "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md"
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md",
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0116, T0117, T0118, T0119, T0120, T0121, T0122, T0123, T0124, T0125, T0126, T0127, T0128. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-014-20261111-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "UPD-S1-014-20261111-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -8232,19 +8234,24 @@
           "update/Step three/UPD-S1-014/execution-report.md",
           "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md",
           "update/Step two/project-graph.md",
-          "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md"
+          "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md",
+          "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md"
         ],
         "related_commits": [
           "0392fb1a57a1e105f54fda19c6e2a03fe33e531d",
-          "66fe4dc744e045b528bf9bade78e7613da6eb831"
+          "66fe4dc744e045b528bf9bade78e7613da6eb831",
+          "911ef42bdfaf8b32a46169360a710ff21a3b9146"
         ],
         "tests_passed": [
-          "Exact V 3.1.183 Quality gate passed: 496 Python tests, compileall, old graph guard 0 errors/1 preserved warning and update graph guard 0 errors/0 warnings (run 42907340773).",
-          "Exact V 3.1.183 HostLifecycle acceptance job passed (run 42907340561).",
-          "Exact V 3.1.183 Rendezvous container build/smoke passed (run 42907340870)."
+          "Exact V 3.1.183 Quality gate passed 496 Python tests, compileall and graph guards (run 42907340773).",
+          "Exact V 3.1.183 HostLifecycle job passed (run 42907340561).",
+          "Exact V 3.1.183 Rendezvous container build/smoke passed (run 42907340870).",
+          "Exact V 3.1.184 HostLifecycle acceptance job passed (run 42907998263).",
+          "Exact V 3.1.184 Rendezvous container build/smoke passed (run 42907998204)."
         ],
         "tests_failed": [
-          "Exact V 3.1.183 Android ktlintMainSourceSetCheck failed with three chain-method-continuation style violations; Android JVM and Keystore instrumentation were not run."
+          "V 3.1.183 Android ktlint: three chain-method-continuation formatting violations; JVM did not run.",
+          "V 3.1.184 quality: 496 Python tests, one stale source-contract assertion expected the pre-refactor sortedWith chain instead of eligibleCandidates.sortWith. The implementation and JVM test were not changed by A003."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -8254,7 +8261,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Run exact-head quality, Android lint/JVM/Keystore/debug+release APK, Windows build/installer/HostLifecycle and Rendezvous CI. Keep UPD-S1-014 in_progress until all acceptance criteria pass."
+        "follow_up": "Run exact-head quality and full Product Build on A003; retain in_progress until all applicable gates pass."
       },
       "execution_history": [
         {
@@ -8320,8 +8327,8 @@
         {
           "attempt_id": "UPD-S1-014-20261111-A002",
           "started_at": "2026-11-10T21:44:28.971Z",
-          "ended_at": "2026-11-10T21:44:28.971Z",
-          "result": "partial",
+          "ended_at": "2026-11-10T21:46:17Z",
+          "result": "failed",
           "summary": "Applied a formatting-only correction for the three ktlint chain-method-continuation violations found in A001. The same measured-utilization cross-product comparator and PeerId tie-break are unchanged; no API, protobuf, trust or host-cardinality contract changed.",
           "changed_files": [
             "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -8330,14 +8337,62 @@
             "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md",
             "update/Step two/project-graph.md"
           ],
+          "commit_sha": "911ef42bdfaf8b32a46169360a710ff21a3b9146",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact V 3.1.184",
+              "result": "failed",
+              "run_id": 42907998248,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42907998248",
+              "summary": "496 Python tests ran with one failure: test_selector_keeps_three_host_batching_as_compatibility_only asserted for the former '.sortedWith { first, second ->' chained form, while the formatting refactor correctly uses 'eligibleCandidates.sortWith { first, second ->'. compileall and graph-guard steps did not run after the unit-test step failed."
+            },
+            {
+              "name": "HostLifecycle acceptance",
+              "command": "product-build.yml HostLifecycle job on exact V 3.1.184",
+              "result": "passed",
+              "run_id": 42907998263,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42907998263",
+              "summary": "The HostLifecycle unit/integration/coverage job completed successfully."
+            },
+            {
+              "name": "Rendezvous container smoke",
+              "command": "rendezvous-container.yml on exact V 3.1.184",
+              "result": "passed",
+              "run_id": 42907998204,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42907998204",
+              "summary": "Container build and smoke test completed successfully."
+            }
+          ],
+          "failure_details": "Exact V 3.1.184 quality workflow ran 496 Python tests and failed one stale source-contract assertion in tests/test_android_host_candidate_selector_contract.py:43. The test expected the comparator to be chained as '.sortedWith { first, second ->', but A002 had correctly separated filtering and comparator sorting into 'eligibleCandidates.sortWith { first, second ->' to satisfy ktlint. The Android/Windows Product Build jobs were still running when this finding was recorded. The failed assertion is not a runtime or ranking failure.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A003 updates the Python source-contract assertion to match eligibleCandidates.sortWith without altering selector logic or JVM ranking coverage. Re-run exact-head quality and product build; keep task in_progress until Android lint/JVM/Keystore, Windows, HostLifecycle and Rendezvous gates pass.",
+          "device_and_host_details_redacted": "GitHub-hosted CI only. No physical Android handset or user-owned Windows host used.",
+          "model_revision_and_sha256": "No local inference was executed in this attempt.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable."
+        },
+        {
+          "attempt_id": "UPD-S1-014-20261111-A003",
+          "started_at": "2026-11-10T21:47:21.939Z",
+          "ended_at": "2026-11-10T21:47:21.939Z",
+          "result": "partial",
+          "summary": "Updated the Python source-contract assertion to match the current formatting-compliant selector structure, eligibleCandidates.sortWith. The assertion change does not alter the selector algorithm, production behavior, JVM ranking test, protobuf or network contract.",
+          "changed_files": [
+            "tests/test_android_host_candidate_selector_contract.py",
+            "update/Step three/UPD-S1-014/execution-report.md",
+            "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md",
+            "update/Step two/project-graph.md"
+          ],
           "commit_sha": null,
           "tests": [],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head quality, Android lint/JVM/Keystore/debug+release APK, Windows build/installer/HostLifecycle and Rendezvous CI. Keep UPD-S1-014 in_progress until all acceptance criteria pass.",
-          "device_and_host_details_redacted": "Source formatting correction only. No physical Android handset or user-owned Windows host used.",
+          "follow_up": "Run exact-head quality and full Product Build on A003; retain in_progress until all applicable gates pass.",
+          "device_and_host_details_redacted": "Source-contract synchronization only; no physical device or user-owned Windows host used.",
           "model_revision_and_sha256": "No local inference was executed in this attempt.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable."
         }
@@ -13032,14 +13087,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T21:44:28.971Z",
+    "as_of": "2026-11-10T21:47:21.939Z",
     "total_tasks": 24,
     "not_started": 6,
     "in_progress": 1,
     "done": 17,
     "blocked": 0,
     "verified_completion_percentage": 70.83333333333334,
-    "calculation": "17 verified done update tasks / 24 total update tasks = 70.83%. UPD-S1-016 is done after exact V 3.1.182 CI. UPD-S1-014 remains in_progress: A001 added measured-utilization ranking but exact Android lint failed on formatting; A002 corrects only formatting and awaits exact-head CI."
+    "calculation": "17 verified done update tasks / 24 total update tasks = 70.83%. UPD-S1-016 is done. UPD-S1-014 remains in_progress: A001 exact Android ktlint failed; A002 exact Quality failed one stale Python source-contract assertion; A003 updates only that assertion and awaits exact-head CI."
   },
   "visual_identity": {
     "scope": [
@@ -13153,7 +13208,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T21:44:28.971Z",
+  "updated_at": "2026-11-10T21:47:21.939Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

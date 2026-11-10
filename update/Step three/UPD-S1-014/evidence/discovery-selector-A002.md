@@ -8,3 +8,11 @@
 - هیچ wire/protobuf/API یا production cardinality تغییر نکرده است.
 - A002 exact-head CI هنوز اجرا نشده؛ نتیجهٔ PASS ادعا نمی‌شود.
 - Product Build ویندوز A001 هنوز در حال اجرا بود؛ نتیجهٔ نهایی آن در update بعدی گزارش/ثبت می‌شود.
+
+
+## نتیجهٔ CI A002 — V 3.1.184
+
+- Quality: یک assertion منسوخ از ۴۹۶ تست شکست خورد؛ source test هنوز عبارت chained `.sortedWith` را انتظار داشت، درحالی‌که پیاده‌سازی A002 از `eligibleCandidates.sortWith` استفاده می‌کند.
+- این شکست ناشی از mismatch در source-contract test است، نه شکست runtime یا آزمون ranking JVM. compileall و graph guard پس از شکست واحدهای Python اجرا نشدند.
+- HostLifecycle و Rendezvous در این نسخه موفق شدند.
+- A003 فقط assertion source-contract را اصلاح می‌کند.

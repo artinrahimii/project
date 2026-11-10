@@ -79,3 +79,20 @@
 - هیچ قرارداد پیام، protobuf، trust، cardinality یا سیاست میزبان تغییر نکرد.
 - آزمون ranking و source-contract جدید همان آزمون‌های A001 هستند و حذف نشده‌اند.
 - CI دقیق A002 هنوز اجرا نشده است؛ task همچنان `in_progress` می‌ماند.
+
+
+## نتیجهٔ CI تلاش A002 — V 3.1.184
+
+- Commit: `911ef42bdfaf8b32a46169360a710ff21a3b9146`.
+- Quality run [42907998248](https://github.com/artinrahimii/project/actions/runs/42907998248): **FAIL**؛ ۴۹۶ آزمون اجرا و یک failure. آزمون `test_selector_keeps_three_host_batching_as_compatibility_only` هنوز عبارت قدیمی `.sortedWith { first, second ->` را انتظار داشت؛ پیاده‌سازی A002 برای رعایت ktlint از `eligibleCandidates.sortWith { first, second ->` استفاده می‌کند.
+- به دلیل شکست همین آزمون، مراحل compileall و graph guard در آن workflow **اجرا نشدند**.
+- HostLifecycle job [42907998263](https://github.com/artinrahimii/project/actions/runs/42907998263): **PASS**.
+- Rendezvous [42907998204](https://github.com/artinrahimii/project/actions/runs/42907998204): **PASS**.
+- در زمان ثبت این گزارش، Android و Windows Product Build هنوز در حال اجرا بودند؛ نتیجهٔ نهایی آن‌ها جداگانه ثبت می‌شود.
+
+## تلاش A003 — همگام‌سازی source-contract
+
+- شروع: `2026-11-10T21:47:21.939Z`.
+- assertion Python از شکل زنجیره‌ای قدیمی به شکل واقعی و قالب‌بندی‌شدهٔ `eligibleCandidates.sortWith` به‌روزرسانی شد.
+- کد selector، comparator، ترتیب utilization، tie-break و آزمون JVM ranking دست‌نخورده ماندند.
+- A003 هنوز روی exact-head CI اجرا نشده است؛ task `in_progress` باقی می‌ماند.
