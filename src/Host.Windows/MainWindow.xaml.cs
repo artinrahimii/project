@@ -48,6 +48,7 @@ public partial class MainWindow : Window
     private Task? _peerParticipationTask;
     private CancellationTokenSource? _peerParticipationCancellation;
     private volatile bool _capacityReady;
+    private bool _activeCatalogModelVerified;
     private bool _clearSessionRequested;
     private bool _suppressParticipationToggleChanged;
     private bool _windowCloseCleanupStarted;
@@ -180,7 +181,13 @@ public partial class MainWindow : Window
             var status = await _session.DisconnectAsync();
             _localInferenceProcessLauncher.Stop();
             ModelId.Text = string.Empty;
-            _settings = _settingsStore.Save(_settings with { ModelId = "unconfigured", ActiveCatalogModelId = null });
+            _settings = _settingsStore.Save(_settings with
+            {
+                ModelId = "unconfigured",
+                ActiveCatalogModelId = null,
+                ActiveCatalogModelSha256 = null
+            });
+            _activeCatalogModelVerified = false;
             CatalogItems.SelectedItem = null;
             RenderStatus(status);
             LocalProcessStatus.Text = "Local engine process stopped if it was started by this app.";
@@ -320,8 +327,10 @@ public partial class MainWindow : Window
                 {
                     ModelId = model.Id,
                     ModelFilePath = result.InstalledPath,
-                    ActiveCatalogModelId = model.Id
+                    ActiveCatalogModelId = model.Id,
+                    ActiveCatalogModelSha256 = result.Sha256
                 });
+                _activeCatalogModelVerified = false;
                 CatalogStatus.Text =
                     $"Model update succeeded: SHA-256 verified and the installed file was atomically replaced. " +
                     $"Size: {result.SizeBytes:N0} bytes; SHA-256: {result.Sha256}. " +
@@ -399,7 +408,13 @@ public partial class MainWindow : Window
 
         try
         {
-            _settings = _settingsStore.Save(_settings with { ActiveCatalogModelId = model.Id });
+            var sameSelectedModel = string.Equals(_settings.ActiveCatalogModelId, model.Id, StringComparison.Ordinal);
+            _settings = _settingsStore.Save(_settings with
+            {
+                ActiveCatalogModelId = model.Id,
+                ActiveCatalogModelSha256 = sameSelectedModel ? _settings.ActiveCatalogModelSha256 : null
+            });
+            _activeCatalogModelVerified = false;
             CatalogStatus.Text = $"Saved model selection: {model.Id}. Selection is a persistent preference; it does not download, install, or activate the model in the inference backend.";
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
@@ -467,6 +482,18 @@ public partial class MainWindow : Window
             {
                 LifecycleState.Text = $"Error — {HostErrorPresentation.ToUserMessage(exception)}";
                 return;
+            }
+
+            _activeCatalogModelVerified = await InstalledCatalogModelVerifier.VerifyAsync(
+                _settings.ActiveCatalogModelId,
+                _settings.ModelId,
+                _settings.ModelFilePath,
+                _settings.ActiveCatalogModelSha256,
+                CancellationToken.None).ConfigureAwait(true);
+            if (!_activeCatalogModelVerified)
+            {
+                BackendCapabilityStatus.Text =
+                    "Local inference may be available, but peer hosting is not READY: select a model from a validated catalog, install/update it, and verify its SHA-256 before sharing.";
             }
 
             _operationCancellation?.Dispose();
@@ -1280,7 +1307,10 @@ public partial class MainWindow : Window
         var state = current.State switch
         {
             HostState.Starting => (WhiteP.Shared.Contracts.V1.HostRuntimeState)1,
-            HostState.Ready when _capacityReady && snapshot.ModelCapability is not null =>
+            HostState.Ready when _capacityReady &&
+                snapshot.ModelCapability is not null &&
+                _activeCatalogModelVerified &&
+                string.Equals(_settings.ActiveCatalogModelId, snapshot.ModelCapability.ModelId, StringComparison.Ordinal) =>
                 (WhiteP.Shared.Contracts.V1.HostRuntimeState)2,
             HostState.Busy => (WhiteP.Shared.Contracts.V1.HostRuntimeState)3,
             _ => (WhiteP.Shared.Contracts.V1.HostRuntimeState)5
@@ -1316,6 +1346,12 @@ public partial class MainWindow : Window
             throw new InvalidDataException("The peer sent a malformed or invalid inference request.");
 
         var request = parsed.Message;
+        if (!_activeCatalogModelVerified ||
+            !string.Equals(_settings.ActiveCatalogModelId, request.ModelId, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException("The requested model is not the catalog-verified installed model currently selected by the host owner.");
+        }
+
         if (string.IsNullOrWhiteSpace(request.RoundId))
             throw new InvalidDataException("The peer request is missing its dispatch round identifier.");
 

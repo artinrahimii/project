@@ -130,6 +130,7 @@ ModelDownloadCancellationAcceptanceTests.Run();
 UpdateModelSafetyAcceptanceTests.Run();
 LocalInferenceProcessLauncherTests.Run();
 LocalHostSettingsPersistenceTests.Run();
+await InstalledCatalogModelVerifierAcceptanceTests.RunAsync();
 await HostRequestCoordinatorTests.RunAsync();
 await HostRequestResponseDeliveryTests.RunAsync();
 await LlamaCppInferenceEngineCancellationTests.RunAsync();

@@ -7,9 +7,9 @@ namespace WhiteP.Host.Infrastructure;
 /// Validated settings for the local llama.cpp-compatible inference endpoint.
 /// The persisted document is explicitly schema-versioned so future changes fail closed.
 /// </summary>
-public sealed record LocalHostSettings(string ServerUrl, string ModelId, int RequestTimeoutSeconds, string? EngineExecutablePath = null, string? ModelFilePath = null, string? ActiveCatalogModelId = null, bool PersistHostConversation = false, double RequiredModelMemoryGiB = 4d, double MinimumFreeDiskGiB = 1d)
+public sealed record LocalHostSettings(string ServerUrl, string ModelId, int RequestTimeoutSeconds, string? EngineExecutablePath = null, string? ModelFilePath = null, string? ActiveCatalogModelId = null, bool PersistHostConversation = false, double RequiredModelMemoryGiB = 4d, double MinimumFreeDiskGiB = 1d, string? ActiveCatalogModelSha256 = null)
 {
-    public const int CurrentSchemaVersion = 2;
+    public const int CurrentSchemaVersion = 3;
     public static LocalHostSettings Defaults { get; } =
         new("http://127.0.0.1:8080/", "local-model", 300, RequiredModelMemoryGiB: 4d, MinimumFreeDiskGiB: 1d);
 
@@ -47,10 +47,13 @@ public sealed record LocalHostSettings(string ServerUrl, string ModelId, int Req
         }
 
         var activeCatalogModelId = NormalizeOptionalModelId(settings.ActiveCatalogModelId);
+        var activeCatalogModelSha256 = NormalizeOptionalSha256(settings.ActiveCatalogModelSha256);
+        if (activeCatalogModelSha256 is not null && activeCatalogModelId is null)
+            throw new ArgumentException("A verified model checksum requires an active catalog model ID.", nameof(settings));
         return new LocalHostSettings(endpoint.ToString(), model, settings.RequestTimeoutSeconds,
             NormalizeOptionalPath(settings.EngineExecutablePath, nameof(settings.EngineExecutablePath)),
             NormalizeOptionalPath(settings.ModelFilePath, nameof(settings.ModelFilePath)), activeCatalogModelId, settings.PersistHostConversation,
-            settings.RequiredModelMemoryGiB, settings.MinimumFreeDiskGiB);
+            settings.RequiredModelMemoryGiB, settings.MinimumFreeDiskGiB, activeCatalogModelSha256);
     }
 
     private static bool IsValidCapacityRequirement(double requiredGiB) =>
@@ -62,6 +65,15 @@ public sealed record LocalHostSettings(string ServerUrl, string ModelId, int Req
         var normalized = modelId.Trim();
         if (normalized.Length > 128 || normalized.Any(char.IsControl))
             throw new ArgumentException("Active catalog model ID must contain at most 128 non-control characters.", nameof(modelId));
+        return normalized;
+    }
+
+    private static string? NormalizeOptionalSha256(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+        var normalized = value.Trim().ToLowerInvariant();
+        if (normalized.Length != 64 || normalized.Any(character => !Uri.IsHexDigit(character)))
+            throw new ArgumentException("Active catalog model SHA-256 must contain exactly 64 hexadecimal characters.", nameof(value));
         return normalized;
     }
 
@@ -112,14 +124,15 @@ public sealed class LocalHostSettingsStore
             using var stream = File.OpenRead(_filePath);
             var document = JsonSerializer.Deserialize<SettingsDocument>(stream, JsonOptions)
                 ?? throw new InvalidDataException("Local settings document is empty.");
-            if (document.SchemaVersion != 1 && document.SchemaVersion != LocalHostSettings.CurrentSchemaVersion)
+            if (document.SchemaVersion is < 1 or > LocalHostSettings.CurrentSchemaVersion)
             {
                 throw new InvalidDataException($"Unsupported local settings schema version: {document.SchemaVersion}.");
             }
 
-            // Schema v1 predates owner-configured resource limits; migrate with existing UI defaults.
+            // Schema v1 predates resource limits. Schemas v1/v2 predate the installed-model checksum pin.
             var requiredModelMemoryGiB = document.SchemaVersion == 1 ? LocalHostSettings.Defaults.RequiredModelMemoryGiB : document.RequiredModelMemoryGiB;
-            var minimumFreeDiskGiB = document.SchemaVersion == 1 ? LocalHostSettings.Defaults.MinimumFreeDiskGiB : document.MinimumFreeDiskGiB;
+            var minimumFreeDiskGiB = document.SchemaVersion == 1 ? LocalHostSettings.Defaults.MinimumFreeDiskGiB : document.RequiredModelMemoryGiB;
+            var activeCatalogModelSha256 = document.SchemaVersion >= 3 ? document.ActiveCatalogModelSha256 : null;
 
             return LocalHostSettings.Validate(new LocalHostSettings(
                 document.ServerUrl ?? string.Empty,
@@ -130,7 +143,8 @@ public sealed class LocalHostSettingsStore
                 document.ActiveCatalogModelId,
                 document.PersistHostConversation,
                 requiredModelMemoryGiB,
-                minimumFreeDiskGiB));
+                minimumFreeDiskGiB,
+                activeCatalogModelSha256));
         }
         catch (JsonException exception)
         {
@@ -154,6 +168,7 @@ public sealed class LocalHostSettingsStore
             EngineExecutablePath = validated.EngineExecutablePath,
             ModelFilePath = validated.ModelFilePath,
             ActiveCatalogModelId = validated.ActiveCatalogModelId,
+            ActiveCatalogModelSha256 = validated.ActiveCatalogModelSha256,
             PersistHostConversation = validated.PersistHostConversation,
             RequiredModelMemoryGiB = validated.RequiredModelMemoryGiB,
             MinimumFreeDiskGiB = validated.MinimumFreeDiskGiB
@@ -201,6 +216,9 @@ public sealed class LocalHostSettingsStore
 
         [JsonPropertyName("activeCatalogModelId")]
         public string? ActiveCatalogModelId { get; init; }
+
+        [JsonPropertyName("activeCatalogModelSha256")]
+        public string? ActiveCatalogModelSha256 { get; init; }
 
         [JsonPropertyName("persistHostConversation")]
         public bool PersistHostConversation { get; init; }
