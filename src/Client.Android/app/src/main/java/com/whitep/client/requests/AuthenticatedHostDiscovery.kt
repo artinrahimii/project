@@ -40,6 +40,42 @@ internal class AuthenticatedHostDiscovery(
             }.sortedBy { endpoint -> endpoint.peerId }
     }
 
+    /**
+     * Probes live directory routes for fresh authenticated READY snapshots without preselecting
+     * a model ID. Only PeerId/status metadata is probed; prompts and responses are never sent
+     * to Rendezvous.
+     */
+    suspend fun discoverReadyCandidates(request: InferenceRequest): List<HostCandidate> {
+        val endpoints = discoverEndpoints()
+        val peerIds = endpoints.map { endpoint -> endpoint.peerId }
+        require(peerIds.none(String::isBlank) && peerIds.distinct().size == peerIds.size) {
+            "The Rendezvous directory returned an empty or duplicate peer identity."
+        }
+
+        val candidates = ArrayList<HostCandidate>()
+        for (endpoint in endpoints.sortedBy { peer -> peer.peerId }) {
+            if (endpoint.tcpMultiaddresses.isEmpty() || !endpoint.expiresAtUtc.isAfter(clock.instant())) {
+                continue
+            }
+
+            val status =
+                try {
+                    probeHostStatus(endpoint.peerId)
+                } catch (cancellation: CancellationException) {
+                    throw cancellation
+                } catch (_: Exception) {
+                    continue
+                }
+
+            if (!endpoint.expiresAtUtc.isAfter(clock.instant())) continue
+            val candidate = createCandidate(endpoint, status) ?: continue
+            if (HostCandidateSelector.isReadyForRequestIgnoringModel(request, candidate)) {
+                candidates.add(candidate)
+            }
+        }
+        return candidates.sortedBy { candidate -> candidate.announcement.ephemeralHostId }
+    }
+
     suspend fun selectReachableHosts(
         request: InferenceRequest,
         excludedEphemeralHostIds: Set<String> = emptySet(),

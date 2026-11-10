@@ -210,6 +210,16 @@ class AndroidInferenceRequestRuntime private constructor(
         return discovery.selectReachableHosts(request, excludedEphemeralHostIds, maxHosts)
     }
 
+    override suspend fun resolveAutomaticModel(request: InferenceRequest): AutomaticModelSelectionResult {
+        val discovery =
+            authenticatedHostDiscovery
+                ?: throw IllegalStateException(
+                    "Automatic model selection requires the application-scoped Android runtime.",
+                )
+        val candidates = discovery.discoverReadyCandidates(request)
+        return AutomaticModelSelectionPolicy.resolve(request, candidates)
+    }
+
     override fun trustPeerAfterExplicitConfirmation(
         peerId: String,
         explicitlyConfirmed: Boolean,

@@ -237,8 +237,6 @@ private fun requestScreen(onBack: () -> Unit) {
     val requestState by requestViewModel.uiState.collectAsState()
     val statusPresentation = requestState.toNetworkInferenceStatusPresentation()
     var rendezvousUrl by rememberSaveable { mutableStateOf("") }
-    var modelId by rememberSaveable { mutableStateOf("") }
-    var maxOutputTokens by rememberSaveable { mutableStateOf("256") }
     var pendingTrustPeerId by rememberSaveable { mutableStateOf<String?>(null) }
 
     appPage(
@@ -308,33 +306,18 @@ private fun requestScreen(onBack: () -> Unit) {
             minLines = 4,
             maxLines = 8,
         )
-        OutlinedTextField(
-            value = modelId,
-            onValueChange = { modelId = it },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Exact model ID") },
-            supportingText = { Text("Enter a model ID advertised by the host; model names are not guessed.") },
-            singleLine = true,
-        )
-        OutlinedTextField(
-            value = maxOutputTokens,
-            onValueChange = { maxOutputTokens = it.filter(Char::isDigit).take(6) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Maximum output tokens") },
-            singleLine = true,
-        )
         Button(
-            onClick = {
-                requestViewModel.sendRequest(
-                    prompt = requestState.prompt,
-                    modelId = modelId,
-                    maxOutputTokens = maxOutputTokens.toIntOrNull() ?: 0,
-                )
-            },
-            enabled = !requestState.isSendingRequest,
+            onClick = { requestViewModel.sendRequest(prompt = requestState.prompt) },
+            enabled = !requestState.isSendingRequest && !requestState.isSelectingModel,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(if (requestState.isSendingRequest) "Sending and waiting for hosts…" else "Send to a trusted host")
+            Text(
+                when {
+                    requestState.isSelectingModel -> "Checking verified models…"
+                    requestState.isSendingRequest -> "Sending and waiting for host…"
+                    else -> "Send to a trusted host"
+                },
+            )
         }
         if (requestState.canCancelRequest || requestState.isCancellingRequest) {
             OutlinedButton(

@@ -115,6 +115,29 @@ class AuthenticatedHostDiscoveryTest {
         }
 
     @Test
+    fun discoversMultipleFreshReadyCandidatesWithoutAssumingAModelId() =
+        runBlocking {
+            val endpoints = peerIds.take(2).map(::endpoint)
+            val discovery =
+                AuthenticatedHostDiscovery(
+                    discoverEndpoints = { endpoints },
+                    probeHostStatus = { peerId ->
+                        readyStatus(peerId, modelId = "catalog/$peerId")
+                    },
+                    clock = clock,
+                )
+            val probeRequest = validRequest().toBuilder()
+                .setModelId("whitep-internal-model-selection-probe")
+                .setMaxOutputTokens(1)
+                .build()
+
+            val candidates = discovery.discoverReadyCandidates(probeRequest)
+
+            assertEquals(peerIds.take(2), candidates.map { candidate -> candidate.status.ephemeralHostId })
+            assertTrue(candidates.all { candidate -> candidate.status.modelsList.size == 1 })
+        }
+
+    @Test
     fun rejectsDuplicatePeerIdentitiesReturnedByTheDirectory() {
         val duplicate = endpoint(peerIds.first())
         val discovery =

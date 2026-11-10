@@ -17,6 +17,7 @@ import com.whitep.client.errors.toRequestErrorCode
 import com.whitep.client.protocol.InferenceRequestPayloadBuildResult
 import com.whitep.client.protocol.InferenceRequestPayloadBuilder
 import com.whitep.client.requests.AndroidRequestExecutionGatewayFactory
+import com.whitep.client.requests.AutomaticModelSelectionResult
 import com.whitep.client.requests.DistributedRequest
 import com.whitep.client.requests.DistributedRequestProgress
 import com.whitep.client.requests.FirstReleaseInferenceLimits
@@ -91,6 +92,7 @@ data class RequestUiState(
     val hostAvailabilityMessage: String? = null,
     val discoveredPeers: List<RequestPeerUiState> = emptyList(),
     val isDiscoveringPeers: Boolean = false,
+    val isSelectingModel: Boolean = false,
     val isSendingRequest: Boolean = false,
     val canCancelRequest: Boolean = false,
     val isCancellingRequest: Boolean = false,
@@ -112,6 +114,7 @@ data class RequestUiState(
 private data class RequestNetworkState(
     val discoveredPeers: List<RequestPeerUiState> = emptyList(),
     val isDiscoveringPeers: Boolean = false,
+    val isSelectingModel: Boolean = false,
     val isSendingRequest: Boolean = false,
     val canCancelRequest: Boolean = false,
     val isCancellingRequest: Boolean = false,
@@ -228,6 +231,7 @@ class RequestViewModel(
                 hostAvailabilityMessage = hostAvailabilityMessage,
                 discoveredPeers = network.discoveredPeers,
                 isDiscoveringPeers = network.isDiscoveringPeers,
+                isSelectingModel = network.isSelectingModel,
                 isSendingRequest = network.isSendingRequest,
                 canCancelRequest = network.canCancelRequest,
                 isCancellingRequest = network.isCancellingRequest,
@@ -397,6 +401,113 @@ class RequestViewModel(
     }
 
     /**
+     * Resolves a catalog-verified, live READY model automatically before creating the logical
+     * request. The normal request UI never asks for a model ID or output-token value.
+     */
+    fun sendRequest(prompt: String) {
+        val cleanPrompt = prompt.trim()
+        if (cleanPrompt.isEmpty()) {
+            mutableNetworkState.value =
+                mutableNetworkState.value.copy(message = "Enter a prompt before sending a request.")
+            return
+        }
+        if (mutableNetworkState.value.isSendingRequest || mutableNetworkState.value.isSelectingModel) return
+
+        retryableRequest = null
+        mutableHostResponses.value = emptyList()
+        mutableHostAvailabilityMessage.value = null
+        activeRequestCancellation = null
+        mutableNetworkState.value =
+            mutableNetworkState.value.copy(
+                isSelectingModel = true,
+                canRetryRequest = false,
+                runStatus = RequestRunStatus.RUNNING,
+                message = "Checking trusted hosts and verified installed model capabilities…",
+            )
+
+        commandsScope.launch {
+            try {
+                if (!lifecycleRecovery.await()) {
+                    mutableNetworkState.value =
+                        mutableNetworkState.value.copy(
+                            runStatus = RequestRunStatus.FAILED,
+                            message = "The local request state could not be recovered. No request was sent.",
+                        )
+                    return@launch
+                }
+
+                val capsule =
+                    ConversationContextCapsule(
+                        goal = "Single-turn request without additional conversation context.",
+                    )
+                val probe =
+                    when (
+                        val built =
+                            InferenceRequestPayloadBuilder.build(
+                                requestId = UUID.randomUUID().toString(),
+                                attemptId = UUID.randomUUID().toString(),
+                                roundId = UUID.randomUUID().toString(),
+                                modelId = MODEL_SELECTION_PROBE_ID,
+                                currentMessage = cleanPrompt,
+                                capsule = capsule,
+                                deadlineUnixMs = Math.addExact(clockMillis(), REQUEST_DEADLINE_MILLIS),
+                                maxOutputTokens = 1,
+                                protocolVersion = CURRENT_PROTOCOL_VERSION,
+                            )
+                    ) {
+                        is InferenceRequestPayloadBuildResult.Built -> built.request
+                        is InferenceRequestPayloadBuildResult.Rejected -> {
+                            mutableNetworkState.value =
+                                mutableNetworkState.value.copy(
+                                    runStatus = RequestRunStatus.FAILED,
+                                    message = "Request validation failed: ${built.reason.name.lowercase().replace('_', ' ')}.",
+                                )
+                            return@launch
+                        }
+                    }
+
+                when (val resolution = requireRuntime().resolveAutomaticModel(probe)) {
+                    is AutomaticModelSelectionResult.Selected -> {
+                        mutableNetworkState.value =
+                            mutableNetworkState.value.copy(
+                                isSelectingModel = false,
+                                message = "A verified installed model and compatible trusted host were selected.",
+                            )
+                        sendRequest(
+                            prompt = cleanPrompt,
+                            modelId = resolution.modelId,
+                            maxOutputTokens = resolution.maxOutputTokens,
+                        )
+                    }
+                    is AutomaticModelSelectionResult.Rejected -> {
+                        mutableNetworkState.value =
+                            mutableNetworkState.value.copy(
+                                isSelectingModel = false,
+                                runStatus = RequestRunStatus.FAILED,
+                                canRetryRequest = false,
+                                message = resolution.failure.userMessage,
+                            )
+                    }
+                }
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (exception: Exception) {
+                mutableNetworkState.value =
+                    mutableNetworkState.value.copy(
+                        isSelectingModel = false,
+                        runStatus = RequestRunStatus.FAILED,
+                        canRetryRequest = false,
+                        message = "Automatic model selection failed: ${safeMessage(exception)}",
+                    )
+            } finally {
+                if (mutableNetworkState.value.isSelectingModel) {
+                    mutableNetworkState.value = mutableNetworkState.value.copy(isSelectingModel = false)
+                }
+            }
+        }
+    }
+
+    /**
      * Starts one logical inference request. Manual retries keep the same request ID and bounded budget.
      * No retry is dispatched automatically.
      */
@@ -444,7 +555,7 @@ class RequestViewModel(
     fun retryFailedAttempts() {
         val context = retryableRequest ?: return
         val network = mutableNetworkState.value
-        if (!network.canRetryRequest || network.isSendingRequest || network.isCancellingRequest) return
+        if (!network.canRetryRequest || network.isSendingRequest || network.isSelectingModel || network.isCancellingRequest) return
         if (clockMillis() >= context.request.deadlineUnixMs) {
             commandsScope.launch {
                 updateAggregatedRequestStatus(
@@ -1083,6 +1194,7 @@ class RequestViewModel(
 
         const val CURRENT_PROTOCOL_VERSION = "1.0.0"
         const val REQUEST_DEADLINE_MILLIS = 180_000L
+        private const val MODEL_SELECTION_PROBE_ID = "whitep-internal-model-selection-probe"
     }
 }
 

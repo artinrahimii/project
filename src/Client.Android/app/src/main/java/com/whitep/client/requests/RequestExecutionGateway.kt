@@ -26,6 +26,9 @@ interface RequestExecutionGateway : Closeable {
         maxHosts: Int = HostCandidateSelector.MAX_HOSTS_PER_ROUND,
     ): HostSelectionResult
 
+    suspend fun resolveAutomaticModel(request: InferenceRequest): AutomaticModelSelectionResult =
+        AutomaticModelSelectionResult.Rejected(AutomaticModelSelectionFailure.NO_READY_HOST)
+
     suspend fun dispatchRound(
         distributedRequest: DistributedRequest,
         selectedHosts: List<HostCandidate>,

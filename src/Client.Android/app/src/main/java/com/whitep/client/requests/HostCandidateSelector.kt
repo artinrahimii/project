@@ -205,6 +205,30 @@ object HostCandidateSelector {
         )
     }
 
+    /**
+     * Validates transport, authenticated identity, readiness and capacity without requiring
+     * a model ID yet. It is used only before the model resolver has selected a model.
+     */
+    fun isReadyForRequestIgnoringModel(
+        request: InferenceRequest,
+        candidate: HostCandidate,
+    ): Boolean {
+        val status = candidate.status
+        val hostId = candidate.announcement.ephemeralHostId
+        val capabilities = candidate.announcement.capabilities
+        return isLocallyValidRequest(request) &&
+            isAnnouncementCompatible(
+                request = request,
+                announcement = candidate.announcement,
+                requireModelCompatibility = false,
+            ) &&
+            status.ephemeralHostId == hostId &&
+            status.observedAtUnixMs > 0L &&
+            status.state == HostRuntimeState.HOST_RUNTIME_STATE_READY &&
+            status.activeRequests >= 0 &&
+            status.activeRequests < capabilities.maxConcurrentRequests
+    }
+
     private fun isLocallyValidRequest(request: InferenceRequest): Boolean {
         val prompt = request.prompt
         val promptBytesArray = prompt.toByteArray(Charsets.UTF_8)
@@ -229,6 +253,7 @@ object HostCandidateSelector {
     private fun isAnnouncementCompatible(
         request: InferenceRequest,
         announcement: HostAnnouncement,
+        requireModelCompatibility: Boolean = true,
     ): Boolean {
         val capabilities = announcement.capabilities
         val hostId = announcement.ephemeralHostId
@@ -262,7 +287,7 @@ object HostCandidateSelector {
             return false
         }
 
-        return supportsModel(capabilities.modelsList, request)
+        return !requireModelCompatibility || supportsModel(capabilities.modelsList, request)
     }
 
     private fun isCompatibleAndReady(
