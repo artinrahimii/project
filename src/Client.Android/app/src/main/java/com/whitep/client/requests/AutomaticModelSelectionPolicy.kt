@@ -4,10 +4,18 @@ import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.ModelCapability
 
 enum class AutomaticModelSelectionFailure(val userMessage: String) {
-    NO_READY_HOST("No explicitly trusted, reachable host is ready for this request."),
-    NO_VERIFIED_MODEL("No ready host reports a catalog-verified installed model."),
-    INVALID_MODEL_METADATA("Ready hosts returned invalid or ambiguous model capability metadata."),
-    NO_COMPATIBLE_MODEL("No catalog-verified model can accept this request within the product limits."),
+    NO_READY_HOST(
+        "No explicitly trusted, reachable host is ready for this request.",
+    ),
+    NO_VERIFIED_MODEL(
+        "No ready host reports a catalog-verified installed model.",
+    ),
+    INVALID_MODEL_METADATA(
+        "Ready hosts returned invalid or ambiguous model capability metadata.",
+    ),
+    NO_COMPATIBLE_MODEL(
+        "No catalog-verified model can accept this request within the product limits.",
+    ),
 }
 
 sealed interface AutomaticModelSelectionResult {
@@ -47,9 +55,10 @@ object AutomaticModelSelectionPolicy {
         request: InferenceRequest,
         candidates: Collection<HostCandidate>,
     ): AutomaticModelSelectionResult {
-        val ready = candidates.filter { candidate ->
-            HostCandidateSelector.isReadyForRequestIgnoringModel(request, candidate)
-        }
+        val ready =
+            candidates.filter { candidate ->
+                HostCandidateSelector.isReadyForRequestIgnoringModel(request, candidate)
+            }
         if (ready.isEmpty()) {
             return AutomaticModelSelectionResult.Rejected(AutomaticModelSelectionFailure.NO_READY_HOST)
         }
@@ -75,24 +84,26 @@ object AutomaticModelSelectionPolicy {
                     continue
                 }
 
-                val effectiveCeiling = minOf(
-                    model.maxOutputTokens,
-                    MAX_PRODUCT_OUTPUT_TOKENS.toLong(),
-                    MAX_PROTOCOL_OUTPUT_TOKENS.toLong(),
-                )
+                val effectiveCeiling =
+                    minOf(
+                        model.maxOutputTokens,
+                        MAX_PRODUCT_OUTPUT_TOKENS.toLong(),
+                        MAX_PROTOCOL_OUTPUT_TOKENS.toLong(),
+                    )
                 val selectedTokens = minOf(PREFERRED_OUTPUT_TOKENS.toLong(), effectiveCeiling).toInt()
                 if (selectedTokens <= 0) {
                     sawInvalidMetadata = true
                     continue
                 }
 
-                options += Option(
-                    hostId = candidate.announcement.ephemeralHostId,
-                    modelId = model.modelId,
-                    maxContextTokens = model.maxContextTokens,
-                    maxOutputTokens = effectiveCeiling,
-                    selectedOutputTokens = selectedTokens,
-                )
+                options +=
+                    Option(
+                        hostId = candidate.announcement.ephemeralHostId,
+                        modelId = model.modelId,
+                        maxContextTokens = model.maxContextTokens,
+                        maxOutputTokens = effectiveCeiling,
+                        selectedOutputTokens = selectedTokens,
+                    )
             }
         }
 
@@ -107,12 +118,15 @@ object AutomaticModelSelectionPolicy {
 
         // Preference: largest usable context, then output headroom. Model ID and PeerId ordinal
         // order are stable tie-breakers; no display-name parsing or random/default model is used.
-        val selected = options.sortedWith(
-            compareByDescending<Option> { it.maxContextTokens }
-                .thenByDescending { it.maxOutputTokens }
-                .thenBy { it.modelId }
-                .thenBy { it.hostId },
-        ).first()
+        val selected =
+            options
+                .sortedWith(
+                    compareByDescending<Option> { it.maxContextTokens }
+                        .thenByDescending { it.maxOutputTokens }
+                        .thenBy { it.modelId }
+                        .thenBy { it.hostId },
+                )
+                .first()
 
         return AutomaticModelSelectionResult.Selected(
             hostId = selected.hostId,

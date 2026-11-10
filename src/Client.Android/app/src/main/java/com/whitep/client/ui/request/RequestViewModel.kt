@@ -460,7 +460,9 @@ class RequestViewModel(
                             mutableNetworkState.value =
                                 mutableNetworkState.value.copy(
                                     runStatus = RequestRunStatus.FAILED,
-                                    message = "Request validation failed: ${built.reason.name.lowercase().replace('_', ' ')}.",
+                                    message =
+                                        "Request validation failed: " +
+                                            "${built.reason.name.lowercase().replace('_', ' ')}.",
                                 )
                             return@launch
                         }
@@ -555,7 +557,14 @@ class RequestViewModel(
     fun retryFailedAttempts() {
         val context = retryableRequest ?: return
         val network = mutableNetworkState.value
-        if (!network.canRetryRequest || network.isSendingRequest || network.isSelectingModel || network.isCancellingRequest) return
+        if (
+            !network.canRetryRequest ||
+            network.isSendingRequest ||
+            network.isSelectingModel ||
+            network.isCancellingRequest
+        ) {
+            return
+        }
         if (clockMillis() >= context.request.deadlineUnixMs) {
             commandsScope.launch {
                 updateAggregatedRequestStatus(
