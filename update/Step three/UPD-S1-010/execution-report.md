@@ -124,3 +124,12 @@
 - رفتار runtime، schema و قرارداد transport تغییر نکرده است.
 - شواهد: `update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md`.
 - نتیجهٔ A008 در زمان ثبت این تلاش هنوز نهایی نشده بود؛ lint، APK و Android JVM tests برای exact commit A009 pending هستند.
+
+
+## تلاش A010 — افزودن import مفقود Entity در آزمون Room
+
+- مبنا: `V 3.1.173`، commit `047fae2293a886fb06447384db6a91d31a5510e5`.
+- در بازبینی source test مشخص شد `ConversationEntity` از بستهٔ `com.whitep.client.data` فراخوانی شده اما import آن وجود ندارد؛ آزمون جدید در این حالت پس از عبور از lint در مرحلهٔ compile شکست می‌خورد.
+- import دقیق و مرتب اضافه شد. هیچ کد runtime یا رفتار محصول تغییر نکرد.
+- شواهد: `update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A010.md`.
+- CI دقیق A010 باید lint، کامپایل test source، اجرای Robolectric، APK و سایر gateها را تأیید کند؛ تا آن زمان وظیفه در وضعیت `in_progress` است.

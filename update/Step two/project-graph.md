@@ -6996,7 +6996,8 @@
         "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
         "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md",
-        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md"
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md",
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A010.md"
       ],
       "evidence": [
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7033,13 +7034,14 @@
         "https://github.com/artinrahimii/project/actions/runs/42861823132",
         "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
         "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md",
-        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md"
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md",
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A010.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0088, T0090, T0092, T0139, T0145, T0146, T0147, T0148, T0149, T0150, T0190, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 9,
+        "attempt_count": 10,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-010-20261110-A009",
+        "last_attempt_id": "UPD-S1-010-20261110-A010",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7062,7 +7064,8 @@
           "update/Step two/project-graph.md",
           "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
           "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md",
-          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md"
+          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md",
+          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A010.md"
         ],
         "related_commits": [
           "0ec848f0573de18449bf01f1b80e0352ab692620",
@@ -7072,7 +7075,8 @@
           "4bcf7ce1d043f6894227ee5adf8b07dd2d5e7be1",
           "68cae864c567238fe831cbda12abb4182a9c3e23",
           "8c540bdf774692ece0ba6f24e1f826fe738e011c",
-          "2d3842e0e3d2b7cc92e07580491dc6cff54e9a1d"
+          "2d3842e0e3d2b7cc92e07580491dc6cff54e9a1d",
+          "047fae2293a886fb06447384db6a91d31a5510e5"
         ],
         "tests_passed": [
           "A001: Windows host compile and WPF startup smoke passed in run 42859232180.",
@@ -7106,7 +7110,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Verify exact-head A009 product workflow and separately collect the final A008 run outcome. UPD-S1-010 remains in_progress until all chat/runtime acceptance criteria and tests are verified."
+        "follow_up": "Run exact-head A010 quality and product CI, validate Kotlin test compilation, Robolectric execution, Android debug/release build and Windows jobs. UPD-S1-010 stays in_progress until its full UI/runtime acceptance is supported by evidence."
       },
       "execution_history": [
         {
@@ -7473,14 +7477,14 @@
           "started_at": "2026-11-10T17:35:09.207Z",
           "ended_at": "2026-11-10T17:35:09.207Z",
           "result": "partial",
-          "summary": "Corrected an import-block replacement error found during exact source review: removed duplicated ClientDatabase, restored InferenceRequestLifecycleState in sorted order, and reformatted two Room Flow query chains in standard multiline style. No runtime behavior changed; exact-head A009 CI is pending.",
+          "summary": "Corrected an import-block replacement error found during exact source review: removed duplicated ClientDatabase, restored InferenceRequestLifecycleState in sorted order, and reformatted two Room Flow query chains in standard multiline style. No runtime behavior changed; exact-head A009 CI is pending. Source review of the A009 test fixture then identified the missing ConversationEntity import (the referenced entity is in com.whitep.client.data); this is added in A010 before treating compilation as verified.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
             "update/Step three/UPD-S1-010/execution-report.md",
             "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "047fae2293a886fb06447384db6a91d31a5510e5",
           "tests": [
             {
               "name": "A007 exact-head Python quality gate",
@@ -7504,13 +7508,53 @@
               "result": "pending"
             }
           ],
-          "failure_details": "A008 source editing introduced a duplicated ClientDatabase import and omitted InferenceRequestLifecycleState. This was caught in source review and corrected before claiming build success.",
+          "failure_details": "After sorting the test imports, exact source review found ConversationEntity was referenced in two test paths without importing com.whitep.client.data.ConversationEntity. A010 adds the missing import. The A009 CI result is tracked independently and must not be assumed successful.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head A009 product workflow. Verify lint, Android debug/release APK builds, JVM tests and coverage. Record A008 workflow outcome separately when available.",
+          "follow_up": "Collect the exact A009 product result and run exact-head A010 product CI. Confirm lint, Kotlin test compilation, Robolectric tests, APK builds and coverage. If the CI fails on another missing symbol, correct only from exact diagnostics.",
           "device_and_host_details_redacted": "GitHub-hosted CI only; no physical Android device or personal Windows host.",
           "model_revision_and_sha256": "No inference executed.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-010-20261110-A010",
+          "started_at": "2026-11-10T17:37:46.976Z",
+          "ended_at": "2026-11-10T17:37:46.976Z",
+          "result": "partial",
+          "summary": "Added the missing com.whitep.client.data.ConversationEntity import discovered by reviewing the new Room integration test's fully-qualified declaration. This prevents a known Kotlin compile failure after lint; no runtime behavior changed.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+            "update/Step three/UPD-S1-010/execution-report.md",
+            "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A010.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "A009 source precheck",
+              "command": "Inspect exact test source and ConversationEntity package declaration",
+              "result": "passed",
+              "summary": "Confirmed ConversationEntity is declared in com.whitep.client.data and was referenced from a different package without an import; added the explicit import."
+            },
+            {
+              "name": "A010 exact-head product CI",
+              "command": "product-build.yml exact-head after A010",
+              "result": "pending"
+            },
+            {
+              "name": "A010 quality gate",
+              "command": "quality.yml exact-head after A010",
+              "result": "pending"
+            }
+          ],
+          "failure_details": "A009's test source referenced ConversationEntity without importing its package. This was caught by static source review before compilation result and corrected in A010.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head A010 quality and product workflows. Confirm KtLint, test compilation, the new Robolectric lifecycle isolation test, Android APK build and JVM suite all pass. Continue the full UPD-S1-010 acceptance before advancing.",
+          "device_and_host_details_redacted": "GitHub-hosted CI only; no physical Android device or personal Windows host.",
+          "model_revision_and_sha256": "No model inference executed.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
@@ -12247,14 +12291,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T17:35:09.207Z",
+    "as_of": "2026-11-10T17:37:46.976Z",
     "total_tasks": 24,
     "not_started": 9,
     "in_progress": 1,
     "done": 14,
     "blocked": 0,
     "verified_completion_percentage": 58.333333333333336,
-    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress after A009; A007 Python quality passed, A008 source review caught a duplicate import before assuming success, and exact-head A009 product validation is pending. 9 tasks remain not_started."
+    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress after A010; A007 Python suite passed (493 tests), but the successive Android fixes are awaiting exact-head product lint/compile/build/JVM validation. 9 tasks remain not_started."
   },
   "visual_identity": {
     "scope": [
@@ -12368,7 +12412,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T17:35:09.207Z",
+  "updated_at": "2026-11-10T17:37:46.976Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

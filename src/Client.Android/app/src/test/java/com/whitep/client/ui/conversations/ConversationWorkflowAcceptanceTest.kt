@@ -2,6 +2,7 @@ package com.whitep.client.ui.conversations
 
 import androidx.room.Room
 import com.whitep.client.data.ClientDatabase
+import com.whitep.client.data.ConversationEntity
 import com.whitep.client.data.InferenceRequestLifecycleState
 import com.whitep.client.data.PersistedRequestStatus
 import com.whitep.client.data.RequestStateEntity
