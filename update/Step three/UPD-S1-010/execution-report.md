@@ -85,3 +85,15 @@
 - آزمون Robolectric جدید با دو گفت‌وگوی مستقل اثبات می‌کند recover/expire کردن Conversation A، وضعیت Conversation B را تغییر نمی‌دهد.
 - در همین تلاش دو خطای chain-method-continuation آخرین گزارش KtLint نیز اصلاح شدند.
 - نتیجهٔ CI دقیق A006 هنوز pending است؛ وظیفه `in_progress` باقی می‌ماند.
+
+
+## تلاش A007 — اصلاح آزمون حساس به قالب‌بندی و خطای KtLint
+
+- مبنا: `V 3.1.170`، commit `68cae864c567238fe831cbda12abb4182a9c3e23`.
+- CI همین مبنا در run `42862592160` تعداد ۴۹۲ آزمون Python اجرا کرد و فقط یک آزمون شکست خورد: assertion آزمون چت به‌صورت literal انتظار `UUID.nameUUIDFromBytes(` داشت، درحالی‌که KtLint کد معتبر را چندخطی کرده بود.
+- در run `42862592314`، KtLint فقط یک خط خالی غیرضروری در `InferenceRequestLifecycleRepository.kt:91` گزارش کرد؛ به همین دلیل APK build و آزمون‌های Android بعدی اجرا نشدند.
+- jobهای Windows WPF و HostLifecycle در همان product run موفق بودند؛ smoke سرویس rendezvous نیز در run `42862592458` موفق شد.
+- assertion UUID به regex مستقل از فاصله و شکست خط تبدیل شد؛ آزمون lifecycle که قبلاً خارج از کلاس و پس از `unittest.main()` قرار داشت، داخل کلاس قرار گرفت و خواندن فایل‌ها به `Path.read_text(encoding="utf-8")` تغییر کرد تا آزمون واقعاً کشف شود.
+- خط خالی اضافی گزارش‌شده توسط KtLint حذف شد؛ هیچ قاعدهٔ lint غیرفعال و هیچ قرارداد runtime/protocol تغییر نکرد.
+- شواهد تشخیصی: `update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md`.
+- نتیجهٔ CI دقیق A007 تا زمان ثبت این commit pending است؛ UPD-S1-010 همچنان `in_progress` است و آزمون فیزیکی Android-to-Windows انجام نشده است.

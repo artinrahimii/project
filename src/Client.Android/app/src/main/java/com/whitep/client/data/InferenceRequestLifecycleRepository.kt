@@ -88,7 +88,6 @@ class InMemoryInferenceRequestLifecycleRepository(
     }
 }
 
-
 /**
  * Conversation-owned request lifecycle history. Unlike [RoomInferenceRequestLifecycleRepository],
  * this adapter keeps each request attached to its Room conversation and cannot restore another

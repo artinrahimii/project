@@ -6991,7 +6991,9 @@
         "tests/test_update_baseline_audit.py",
         "tests/test_update_transport_trust_boundary.py",
         "docs/decisions/ADR-0002-direct-p2p-data-path.md",
-        ".github/workflows/product-build.yml"
+        ".github/workflows/product-build.yml",
+        "src/Client.Android/app/src/main/java/com/whitep/client/data/InferenceRequestLifecycleRepository.kt",
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md"
       ],
       "evidence": [
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7025,13 +7027,14 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
         "update/Step two/project-graph.md",
         "https://github.com/artinrahimii/project/actions/runs/42861823197",
-        "https://github.com/artinrahimii/project/actions/runs/42861823132"
+        "https://github.com/artinrahimii/project/actions/runs/42861823132",
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0088, T0090, T0092, T0139, T0145, T0146, T0147, T0148, T0149, T0150, T0190, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 6,
+        "attempt_count": 7,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-010-20261110-A006",
+        "last_attempt_id": "UPD-S1-010-20261110-A007",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7051,14 +7054,16 @@
           "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/data/InferenceRequestLifecycleRepository.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
-          "update/Step two/project-graph.md"
+          "update/Step two/project-graph.md",
+          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md"
         ],
         "related_commits": [
           "0ec848f0573de18449bf01f1b80e0352ab692620",
           "f87926d9906cf0c0e6b9718fa81a40d8faad9464",
           "66149a232d17363f08ac1269f07b22ced14fb5a6",
           "084cdf7013a42a2f15c1acec4510590843285267",
-          "4bcf7ce1d043f6894227ee5adf8b07dd2d5e7be1"
+          "4bcf7ce1d043f6894227ee5adf8b07dd2d5e7be1",
+          "68cae864c567238fe831cbda12abb4182a9c3e23"
         ],
         "tests_passed": [
           "A001: Windows host compile and WPF startup smoke passed in run 42859232180.",
@@ -7076,7 +7081,9 @@
           "A001: Android build run 42859232180 — ktlintMainSourceSetCheck failed before APK build.",
           "A001 quality run 42859232340: 7 outdated source-contract failures; A002 quality run 42860167854: 1 remaining outdated heading assertion.",
           "A004 exact-head Android lint run 42860929785 reported five ktlint violations: import-ordering, argument-list-wrapping (2), max-line-length, and chain-method-continuation.",
-          "A005 exact-head Android lint run 42861823132 failed with two chain-method-continuation violations in ConversationMessagesViewModel.kt; corrected in A006."
+          "A005 exact-head Android lint run 42861823132 failed with two chain-method-continuation violations in ConversationMessagesViewModel.kt; corrected in A006.",
+          "A006 exact-head quality run 42862592160 on V 3.1.170: 492 Python tests ran; one source-contract assertion failed because it expected a contiguous UUID.nameUUIDFromBytes expression while valid Kotlin formatting split the call across lines.",
+          "A006 exact-head Android product run 42862592314: KtLint reported needless blank line(s) at InferenceRequestLifecycleRepository.kt:91:1; Android APK compilation and JVM tests were skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -7085,7 +7092,8 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": []
-        }
+        },
+        "follow_up": "Run exact-head A007 quality and product CI. Confirm Python test discovery includes the conversation-scoped lifecycle test, Android KtLint passes, and APK/JVM tests proceed. Continue chat UI status/cancel/retry acceptance; do not conflate hosted CI with physical Android-to-Windows E2E."
       },
       "execution_history": [
         {
@@ -7335,6 +7343,72 @@
           "follow_up": "Run KtLint, Android clean APK/release build and Android unit tests; verify Room schema/foreign-key behavior and run the new two-conversation isolation test. If tests pass, continue UI status/retry/cancel validation. Physical Android-to-Windows test remains a separate gate.",
           "device_and_host_details_redacted": "Hosted GitHub CI only; no physical handset or user-owned Windows host.",
           "model_revision_and_sha256": "No inference executed during this repository-layer change.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-010-20261110-A007",
+          "started_at": "2026-11-10T17:27:07.426Z",
+          "ended_at": "2026-11-10T17:27:07.426Z",
+          "result": "partial",
+          "summary": "Fixed the exact-head CI regressions discovered after A006: made the UUID source-contract assertion tolerant of Kotlin formatting, moved the conversation-scoped lifecycle contract test into the discovered unittest class and replaced undefined file reads with explicit Path.read_text calls, and removed the KtLint-reported extra blank line. Product behavior and wire contracts were not changed; exact-head CI is pending.",
+          "changed_files": [
+            "tests/test_android_conversation_detail_contract.py",
+            "src/Client.Android/app/src/main/java/com/whitep/client/data/InferenceRequestLifecycleRepository.kt",
+            "update/Step three/UPD-S1-010/execution-report.md",
+            "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Previous exact-head Python quality gate (A006 baseline)",
+              "command": "python -m unittest discover -s tests -v",
+              "result": "failed",
+              "summary": "Run 42862592160 on V 3.1.170 executed 492 tests; one source-contract assertion failed because it required UUID.nameUUIDFromBytes to be contiguous despite valid multiline Kotlin formatting."
+            },
+            {
+              "name": "Previous exact-head Android KtLint (A006 baseline)",
+              "command": "gradle --no-daemon ktlintCheck",
+              "result": "failed",
+              "summary": "Run 42862592314 reported one needless blank line at InferenceRequestLifecycleRepository.kt:91:1; APK build and Android JVM tests were skipped."
+            },
+            {
+              "name": "Previous exact-head Windows WPF build and startup smoke",
+              "command": "product-build.yml Windows job",
+              "result": "passed",
+              "summary": "Run 42862592314 passed clean restore, build, publish, WPF startup smoke and installer acceptance."
+            },
+            {
+              "name": "Previous exact-head HostLifecycle acceptance",
+              "command": "HostLifecycle acceptance suite",
+              "result": "passed",
+              "summary": "Run 42862592314 passed HostLifecycle tests and coverage gate."
+            },
+            {
+              "name": "Previous exact-head rendezvous container smoke",
+              "command": "rendezvous-container.yml",
+              "result": "passed",
+              "run_id": 42862592458,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42862592458"
+            },
+            {
+              "name": "A007 Python quality gate",
+              "command": "quality.yml exact-head after A007",
+              "result": "pending"
+            },
+            {
+              "name": "A007 Android KtLint/build/JVM tests",
+              "command": "product-build.yml exact-head after A007",
+              "result": "pending"
+            }
+          ],
+          "failure_details": "A006 exact-head CI exposed one whitespace-sensitive Python source assertion and one KtLint needless-blank-line violation. Both are corrected in A007; the new lifecycle source-contract test is now placed where unittest discovery executes it.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Verify the exact A007 quality and product-build workflow results. If both pass, confirm APK build and Android JVM tests actually ran; continue the remaining UPD-S1-010 UI/status/cancel/retry acceptance and keep physical Android-to-Windows validation separate.",
+          "device_and_host_details_redacted": "GitHub-hosted CI only; no physical Android device or user-owned Windows host was available or used.",
+          "model_revision_and_sha256": "No inference executed during this test/lint correction.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]

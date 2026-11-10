@@ -26,7 +26,7 @@ class AndroidConversationDetailContractTests(unittest.TestCase):
         self.assertIn('authorRole = "user"', source)
         self.assertIn('saveCorrelatedMessage("assistant"', source)
         self.assertIn('saveCorrelatedMessage("system"', source)
-        self.assertIn("UUID.nameUUIDFromBytes(", source)
+        self.assertRegex(source, r"UUID\s*\.\s*nameUUIDFromBytes\(")
         self.assertIn("ConversationMessageValidator.validate(content)", source)
         self.assertIn("validation.normalizedText ?: return false", source)
         self.assertNotIn("Socket(", source)
@@ -88,25 +88,16 @@ class AndroidConversationDetailContractTests(unittest.TestCase):
         self.assertIn("createdAtEpochMillis", test_source)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
     def test_conversation_uses_conversation_scoped_request_lifecycle_store(self):
-        lifecycle = read(
-            "src/Client.Android/app/src/main/java/com/whitep/client/data/"
-            "InferenceRequestLifecycleRepository.kt"
-        )
-        state_dao = read(
-            "src/Client.Android/app/src/main/java/com/whitep/client/data/"
-            "RequestStateEntity.kt"
-        )
-        screen = read(
-            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/"
-            "ConversationDetailScreen.kt"
-        )
+        lifecycle = (ANDROID / "data/InferenceRequestLifecycleRepository.kt").read_text(encoding="utf-8")
+        state_dao = (ANDROID / "data/RequestStateEntity.kt").read_text(encoding="utf-8")
+        screen = (ANDROID / "ui/conversations/ConversationDetailScreen.kt").read_text(encoding="utf-8")
         self.assertIn("RoomConversationInferenceRequestLifecycleRepository", lifecycle)
         self.assertIn("recoverLatestForConversation", lifecycle)
         self.assertIn("expireInFlightForConversation", state_dao)
         self.assertIn("conversationId = conversationId", lifecycle)
         self.assertIn("RoomConversationInferenceRequestLifecycleRepository(", screen)
+
+
+if __name__ == "__main__":
+    unittest.main()
