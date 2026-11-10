@@ -113,3 +113,20 @@
 - فرمول مقایسهٔ utilization با cross-product صحیح و tie-break بر اساس PeerId بدون تغییر ماند.
 - هیچ قرارداد، protobuf، transport، trust یا cardinality محصول تغییر نکرد.
 - exact-head CI برای A004 هنوز اجرا نشده است؛ task همچنان `in_progress` است.
+
+
+## نتیجهٔ CI تلاش A004 — V 3.1.186
+
+- Commit: `f5268f24296dee058ab26bbeddaeee3cc68b9660`.
+- Android ktlint: **PASS**؛ دقیقاً از gate قالب‌بندی عبور کرد و وارد clean Debug APK شد.
+- HostLifecycle: **PASS**.
+- Rendezvous: **PASS**.
+- Step Three Quality gate: **FAIL**؛ ۴۹۶ آزمون اجرا شد و فقط یک source-contract assertion منسوخ شکست خورد. آزمون هنوز `first.status.activeRequests.toLong()`، `second.announcement.capabilities.maxConcurrentRequests.toLong()` و `.take(maxHosts)` را انتظار داشت؛ کد فعلی به‌درستی از متغیرهای `firstStatus`/`firstCapabilities`/`secondStatus`/`secondCapabilities` و `eligibleCandidates.take(maxHosts)` استفاده می‌کند. بنابراین compileall و graph guard پس از شکست آزمون‌ها اجرا نشدند.
+- نتیجهٔ ranking JVM test در A004 هنوز در دسترس نیست؛ Android lint pass شد و build Debug ادامه داشت.
+
+## تلاش A005 — همگام‌سازی منبع آزمون قراردادی
+
+- شروع: `2026-11-10T21:54:53Z`.
+- assertionهای Python با نام متغیرهای فعلی comparator، cross-product صحیح، PeerId tie-break و `eligibleCandidates.take(maxHosts)` همگام شدند.
+- هیچ کد Kotlin، آزمون JVM ranking، سیاست میزبان یا قرارداد wire تغییر نکرد.
+- A005 هنوز روی exact-head CI اجرا نشده است؛ task همچنان `in_progress` است.

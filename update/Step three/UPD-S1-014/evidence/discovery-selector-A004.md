@@ -8,3 +8,12 @@
 - HostLifecycle و Rendezvous V 3.1.185: PASS.
 - Android JVM/Keystore در A003 اجرا نشدند، چون lint شکست خورد.
 - CI دقیق A004 هنوز اجرا نشده است؛ هیچ قبولی ادعا نمی‌شود.
+
+
+## نتیجهٔ CI A004 — V 3.1.186
+
+- Android ktlint: PASS؛ سپس clean Debug APK build آغاز شد.
+- HostLifecycle: PASS.
+- Rendezvous container build/smoke: PASS.
+- Quality: یک source-contract assertion از ۴۹۶ آزمون شکست خورد؛ این آزمون هنوز property accessهای pre-refactor و `.take(maxHosts)` را انتظار داشت. Android JVM test ranking در A004 هنوز اجرا/اثبات نشده بود.
+- A005 فقط assertionهای Python را با کد واقعی comparator همگام می‌کند.
