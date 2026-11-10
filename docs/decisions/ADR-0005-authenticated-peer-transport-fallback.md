@@ -3,7 +3,7 @@
 - **Status:** Accepted for the host-side transport connection boundary.
 - **Date:** 2026-10-27
 - **Related task:** T0007 (decision-to-source/test traceability).
-- **Scope:** Ordered fallback across direct TCP and QUIC candidate addresses for one pinned peer identity. This decision does not claim Android-to-Windows application-level routing is delivered.
+- **Scope:** Ordered fallback across direct TCP and QUIC candidate addresses for one pinned Windows-host peer identity. Android's separate production TCP/Noise path is now wired and its application protocol is exercised against the Windows .NET peer fixture in Android CI. Physical handset-to-installed-host acceptance and arbitrary-network reachability are still separate gates.
 
 ## Context
 
@@ -27,4 +27,4 @@ A peer may advertise more than one direct address. A TCP path can be unreachable
 
 ## Evidence boundary and non-goals
 
-The host-side transport tests do not prove Android interoperability, NAT traversal in arbitrary networks, app-level inference request routing from Android to Windows, or the full product acceptance gate. `AC-P2P-01` remains **NOT RUN** until its end-to-end criteria are exercised. This ADR records the implemented host connector contract; it does not mark the overall P2P product task complete.
+The Windows connector's host-side tests alone do not prove physical Android interoperability or NAT traversal in arbitrary networks. The Android application-level protocol has separate CI tests that spawn `AndroidInteropPeerServer.cs` and exercise the production Android runtime against the Windows .NET libp2p transport fixture (correlated inference response, selection, sequential retry and cancellation). These CI fixture tests do not replace the physical handset-to-installed-host acceptance gate. `AC-P2P-01` remains **NOT RUN** until the physical end-to-end criteria are exercised. This ADR records the host connector contract and its relationship to the separate Android adapter; it does not mark the overall P2P product task complete.

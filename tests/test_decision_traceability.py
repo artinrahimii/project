@@ -949,6 +949,32 @@ class DecisionTraceabilityTests(unittest.TestCase):
         self.assertIn("trustPeerAfterExplicitConfirmation", (ROOT / paths[4]).read_text(encoding="utf-8"))
         self.assertIn("/white-p/peer-message/1.0.0", (ROOT / paths[5]).read_text(encoding="utf-8"))
 
+    def test_android_windows_transport_decisions_match_current_direct_interop_and_failure_contract(self):
+        dispatcher = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt").read_text(encoding="utf-8")
+        android_transport = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt").read_text(encoding="utf-8")
+        collector = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt").read_text(encoding="utf-8")
+        android_tests = (ROOT / "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt").read_text(encoding="utf-8")
+        android_workflow = (ROOT / ".github/workflows/product-build.yml").read_text(encoding="utf-8")
+        interop_fixture = (ROOT / "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs").read_text(encoding="utf-8")
+        self.assertIn("CI-verified application-protocol interoperability", ADR21_ANDROID_LIBP2P)
+        self.assertNotIn("no Android screen currently displays it", ADR21_ANDROID_LIBP2P.lower())
+        self.assertIn("Before you trust this host", ADR18_EXPLICIT_PEER_TRUST)
+        self.assertIn("AndroidInteropPeerServer.cs", ADR21_ANDROID_LIBP2P)
+        self.assertIn("Build Windows .NET peer interoperability fixture", android_workflow)
+        self.assertIn("PeerResponseCorrelationValidator.Validate", interop_fixture)
+        self.assertIn("sendsCancellationToOneNativeDotNetLibp2pHostAndReceivesCancelledResponse", android_tests)
+        self.assertIn("dispatchesToOneSelectedNativeDotNetPeerAmongMultipleCandidates", android_tests)
+        self.assertIn("selectsANewNativeDotNetPeerOnlyAfterThePreviousPeerTimesOut", android_tests)
+        self.assertIn("InferenceTransportSubmission.FAILED", dispatcher)
+        self.assertIn("InferenceTransportSubmission.FAILED -> InferenceAttemptSubmissionStatus.FAILED", dispatcher)
+        self.assertIn("fail(failureReason)", android_transport)
+        self.assertIn("InferenceRoundResponseFailureReason.SUBMISSION_FAILED -> RequestErrorCode.NETWORK_UNAVAILABLE", collector)
+        self.assertIn("reportsDirectConnectionRefusalAsNetworkFailureWithoutLeakingRequestData", android_tests)
+        self.assertIn("unsigned-varint", ADR24_TCP)
+        self.assertIn("Android application-level protocol has separate CI tests", ADR5_TRANSPORT)
+        self.assertIn("no custom cryptographic algorithms", ADR16_CRYPTO_TRANSPORT)
+        self.assertNotIn(".WithRelay(", android_transport)
+        self.assertIn("Physical handset", ADR21_ANDROID_LIBP2P)
     def test_explicit_peer_trust_decision_maps_to_persistent_store_transport_gate_and_acceptance(self):
         paths = (
             "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",

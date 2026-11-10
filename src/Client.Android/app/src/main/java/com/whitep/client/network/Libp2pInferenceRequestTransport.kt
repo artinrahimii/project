@@ -182,6 +182,16 @@ class Libp2pInferenceRequestTransport(
             return InferenceTransportSubmission.REJECTED
         }
 
+        fun fail(reason: String): InferenceTransportSubmission {
+            lastSubmissionFailure = reason
+            SafeDiagnosticLog.write(
+                SafeDiagnosticEventCode.INFERENCE_SUBMISSION,
+                SafeDiagnosticOutcomeCode.FAILED,
+                (clock.millis() - diagnosticStartedAtMs).coerceAtLeast(0L),
+            )
+            return InferenceTransportSubmission.FAILED
+        }
+
         lastSubmissionFailure = null
         if (closed.get() ||
             ephemeralHostId.isBlank() ||
@@ -207,10 +217,13 @@ class Libp2pInferenceRequestTransport(
 
         val endpoint = resolveEndpoint(ephemeralHostId)
         if (endpoint == null) {
-            return reject("directory_peer_not_found")
+            return fail("directory_peer_not_found")
         }
-        if (endpoint.peerId != ephemeralHostId || !endpoint.expiresAtUtc.isAfter(clock.instant())) {
-            return reject("directory_peer_identity_or_expiry_mismatch")
+        if (endpoint.peerId != ephemeralHostId) {
+            return reject("directory_peer_identity_mismatch")
+        }
+        if (!endpoint.expiresAtUtc.isAfter(clock.instant())) {
+            return fail("directory_peer_lease_expired")
         }
 
         val remotePeerId =
@@ -238,7 +251,7 @@ class Libp2pInferenceRequestTransport(
                 return reject("directory_address_rejected:${exception.javaClass.simpleName}")
             }
         if (addresses.isEmpty()) {
-            return reject("directory_has_no_direct_tcp_address")
+            return fail("directory_has_no_direct_tcp_address")
         }
 
         val requestWire = request.toByteArray()
@@ -311,13 +324,17 @@ class Libp2pInferenceRequestTransport(
                 pending.controller?.closeStream()
                 throw cancellation
             } catch (exception: Exception) {
-                val failureReason = "$failureStage:${exception.javaClass.simpleName}"
+                val failureReason = "$failureStage:" + exception.javaClass.simpleName
                 pending.response.completeExceptionally(
                     IOException("The authenticated peer request could not be submitted."),
                 )
                 pendingAttempts.remove(key, pending)
                 pending.controller?.closeStream()
-                return reject(failureReason)
+                return if (exception is SecurityException || exception is IllegalArgumentException) {
+                    reject(failureReason)
+                } else {
+                    fail(failureReason)
+                }
             }
         } finally {
             Arrays.fill(requestWire, 0)

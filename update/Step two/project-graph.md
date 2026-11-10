@@ -8363,8 +8363,8 @@
         "اگر Relay تصویب نشد، Relay در نسخهٔ هدف فعال نشود و شکست اتصال مستقیم خطای صریح باقی بماند.",
         "هیچ الگوریتم رمزنگاری اختصاصی اضافه نشود."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
         "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
@@ -8374,15 +8374,65 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/network/",
         "update/Step three/UPD-S1-016/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "tests/test_android_libp2p_transport_contract.py",
+        "tests/test_decision_traceability.py",
+        "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "docs/decisions/ADR-0021-android-libp2p-peer-transport.md",
+        "docs/decisions/ADR-0024-tcp-request-framing.md",
+        "docs/decisions/README.md",
+        "update/Step three/UPD-S1-016/execution-report.md",
+        "update/Step three/UPD-S1-016/evidence/transport-audit-A001.md"
+      ],
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Host.Windows/Networking/IPeerTransport.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "src/Host.Windows/Networking/PeerTransportFallbackConnector.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/AndroidInteropPeerServer.cs",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "docs/decisions/ADR-0004-encrypted-relay-boundary.md",
+        "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md",
+        "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+        "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+        "docs/decisions/ADR-0021-android-libp2p-peer-transport.md",
+        "docs/decisions/ADR-0024-tcp-request-framing.md",
+        "tests/test_android_libp2p_transport_contract.py",
+        "tests/test_relay_privacy_boundary.py",
+        "tests/test_decision_traceability.py"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0116, T0117, T0118, T0119, T0120, T0129, T0130, T0131, T0132, T0133, T0134, T0135, T0136, T0137, T0138, T0206, T0226, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-016-20261110-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+          "tests/test_android_libp2p_transport_contract.py",
+          "tests/test_decision_traceability.py",
+          "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md",
+          "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+          "docs/decisions/ADR-0021-android-libp2p-peer-transport.md",
+          "docs/decisions/ADR-0024-tcp-request-framing.md",
+          "docs/decisions/README.md",
+          "update/Step three/UPD-S1-016/execution-report.md",
+          "update/Step three/UPD-S1-016/evidence/transport-audit-A001.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -8393,9 +8443,49 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": []
-        }
+        },
+        "follow_up": "Commit A001 to main, then run exact-head Python quality/graph guards, Android JVM unit tests, Android Keystore instrumentation, Android debug/release build, Windows build and HostLifecycle transport acceptance. Mark done only after the new direct-refusal regression passes and all five UPD-S1-016 criteria are verified."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-016-20261110-A001",
+          "started_at": "2026-11-10T20:23:30Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Audited Android and Windows authenticated libp2p paths, trust stores, rendezvous metadata boundary, fallback connector, relay decision and protocol framing. Corrected Android direct-connection failure classification: FAILED now maps through dispatcher and response collector to NETWORK_UNAVAILABLE, while invalid identity/trust remains REJECTED. Added a closed TCP-port regression and dispatcher/collector/source-contract assertions. Updated ADR-0005/0016/0021/0024 and decision register to distinguish CI fixture interoperability from physical device E2E. Exact-head tests are pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+            "tests/test_android_libp2p_transport_contract.py",
+            "tests/test_decision_traceability.py",
+            "docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md",
+            "docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md",
+            "docs/decisions/ADR-0021-android-libp2p-peer-transport.md",
+            "docs/decisions/ADR-0024-tcp-request-framing.md",
+            "docs/decisions/README.md",
+            "update/Step three/UPD-S1-016/execution-report.md",
+            "update/Step three/UPD-S1-016/evidence/transport-audit-A001.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Android InferenceTransportSubmission now distinguishes transport unavailability (FAILED) from invalid request/trust/peer identity (REJECTED); FAILED maps to InferenceAttemptSubmissionStatus.FAILED and RequestErrorCode.NETWORK_UNAVAILABLE.",
+            "Absent/expired directory endpoint or missing direct addresses now return a safe failed/unavailable result; invalid canonical PeerId, trust rejection, malformed direct address and authenticated identity mismatch remain rejected.",
+            "ADR-0021/ADR-0016 now record CI-verified Android-runtime to Windows .NET peer-fixture interoperability while retaining physical-device acceptance as outstanding.",
+            "ADR-0024 clarifies that its 4-byte frame is the legacy loopback listener; ADR-0021 owns the current authenticated libp2p unsigned-varint peer framing."
+          ],
+          "follow_up": "Create V 3.1.178 on current main, then run exact-head CI. Do not change relay policy or claim physical-device acceptance.",
+          "device_and_host_details_redacted": "Repository source and GitHub Actions evidence reviewed. No physical user device or user-owned Windows host used in this attempt.",
+          "model_revision_and_sha256": "No model inference executed as part of UPD-S1-016.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; UPD-S1-021 owns clean install/in-place upgrade."
+        }
+      ]
     },
     {
       "id": "UPD-S1-017",
@@ -12516,14 +12606,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T20:02:06Z",
+    "as_of": "2026-11-10T20:23:30Z",
     "total_tasks": 24,
-    "not_started": 8,
-    "in_progress": 0,
+    "not_started": 7,
+    "in_progress": 1,
     "done": 16,
     "blocked": 0,
     "verified_completion_percentage": 66.66666666666666,
-    "calculation": "16 verified done update tasks / 24 total update tasks = 66.67%. UPD-S1-013 passed all task acceptance criteria with exact-head CI; Android physical-device E2E and in-place upgrade remain separate tasks."
+    "calculation": "16 verified done update tasks / 24 total update tasks = 66.67%. UPD-S1-016 A001 is in_progress; tests for its new implementation have not yet run."
   },
   "visual_identity": {
     "scope": [
@@ -12637,7 +12727,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T20:02:06Z",
+  "updated_at": "2026-11-10T20:23:30Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

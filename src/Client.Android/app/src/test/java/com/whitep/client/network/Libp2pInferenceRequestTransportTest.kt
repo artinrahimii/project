@@ -355,6 +355,42 @@ class Libp2pInferenceRequestTransportTest {
         }
 
     @Test
+    fun reportsDirectConnectionRefusalAsNetworkFailureWithoutLeakingRequestData() =
+        runBlocking {
+            val serverPeerId = PeerId.fromPubKey(generateKeyPair(KeyType.ED25519).first.publicKey()).toBase58()
+            val closedPort = java.net.ServerSocket(0).use { socket -> socket.localPort }
+            val endpoint =
+                RendezvousPeerEndpoint(
+                    peerId = serverPeerId,
+                    tcpMultiaddresses = listOf("/ip4/127.0.0.1/tcp/$closedPort/p2p/$serverPeerId"),
+                    expiresAtUtc = Instant.now().plusSeconds(120),
+                )
+            val client =
+                Libp2pInferenceRequestTransport(
+                    localIdentity = generateKeyPair(KeyType.ED25519).first,
+                    resolveEndpoint = { requestedPeerId -> endpoint.takeIf { it.peerId == requestedPeerId } },
+                    trustVerifier = PeerTrustVerifier { trustedPeerId -> trustedPeerId == serverPeerId },
+                    connectionTimeout = Duration.ofSeconds(3),
+                )
+            try {
+                val request = createRequest().toBuilder().setPrompt("PRIVATE_PROMPT_SENTINEL").build()
+                assertEquals(
+                    com.whitep.client.requests.InferenceTransportSubmission.FAILED,
+                    client.submit(serverPeerId, request),
+                )
+                val failure = requireNotNull(client.lastSubmissionFailure)
+                assertTrue(
+                    failure.startsWith("await_peer_stream:") ||
+                        failure.startsWith("open_authenticated_peer_stream:"),
+                )
+                assertTrue("Safe diagnostic must not retain prompt text.", !failure.contains("PRIVATE_PROMPT_SENTINEL"))
+                assertTrue("Safe diagnostic must not retain the direct address.", !failure.contains("127.0.0.1"))
+            } finally {
+                client.close()
+            }
+        }
+
+    @Test
     fun dispatchesOnlyOneHostFromMultipleAuthenticatedPeerCandidates() =
         runBlocking<Unit> {
             val servers = mutableListOf<Host>()

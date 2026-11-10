@@ -1,0 +1,74 @@
+# گزارش اجرای UPD-S1-016 — انتقال امن P2P و خطای صریح اتصال مستقیم
+
+- مخزن: `artinrahimii/project`
+- شاخه: `main`
+- مبنای کد: `4c09319b29d0b1fcc57a78851d552e01f8ac9d74` — `V 3.1.177`
+- وضعیت تلاش A001: **partial / in_progress**
+- شروع تلاش: `2026-11-10T20:23:30Z`
+- نسخهٔ هدف این اصلاح: `V 3.1.178` (تا زمان commit، نسخهٔ بعدی از تاریخچه استخراج شده بود)
+
+## ممیزی پیاده‌سازی موجود
+
+قابلیت سالم بازنویسی نشد. موارد زیر در commit مبنا بررسی شدند:
+
+- Android: `Libp2pInferenceRequestTransport`، `AndroidPeerIdentityStore`، `AndroidPeerTrustStore`، `RendezvousPeerDirectoryClient` و `AndroidInferenceRequestRuntime`.
+- Windows: `IPeerTransport`، `Libp2pPeerTransport`، `PeerTransportFallbackConnector` و `PeerAnnouncementHostLifecycle`.
+- Trust: اعتماد صریح PeerId در Android و DPAPI-backed trust store و تأیید owner در Windows.
+- قرارداد: `/white-p/peer-message/1.0.0`، Protobuf مشترک، unsigned-varint frame در stream libp2p و validation هم‌بستگی request/attempt/model/host.
+- relay: ADR-0004 صریحاً relay data path را برای first release غیرفعال می‌کند؛ Windows در transport از `.WithRelay()` استفاده نمی‌کند و Android آدرس `/p2p-circuit` را رد می‌کند.
+
+## شکاف احرازشده و اصلاح
+
+مسیر Android هنگام شکست اتصال مستقیم، خطا را با مقدار `InferenceTransportSubmission.REJECTED` برمی‌گرداند. dispatcher آن را به `SUBMISSION_REJECTED` و collector آن را به `VALIDATION_FAILED` تبدیل می‌کرد. بنابراین socket refusal/timeout یا نبود peer در directory به‌جای خطای قابل‌فهم شبکه، به‌صورت خطای اعتبارسنجی دیده می‌شد.
+
+اصلاحات این تلاش:
+
+1. `InferenceTransportSubmission.FAILED` از `REJECTED` جدا شد.
+2. dispatcher مقدار FAILED را به `InferenceAttemptSubmissionStatus.FAILED` نگاشت می‌کند.
+3. transport در نبود endpoint، انقضای lease، نبود direct TCP address و شکست اتصال مستقیم، outcome امن FAILED می‌دهد.
+4. mismatch هویت endpoint، PeerId غیرcanonical، آدرس نامعتبر، trust ردشده و خطاهای authentication/validation همچنان REJECTED می‌مانند.
+5. collector، `SUBMISSION_FAILED` را به `RequestErrorCode.NETWORK_UNAVAILABLE` تبدیل می‌کند؛ متن کاربرمحور موجود می‌گوید اتصال به میزبان یا directory برقرار نشده و پیشنهاد می‌کند اتصال بررسی و دوباره تلاش شود.
+6. diagnostic فقط stage و نوع exception را ثبت می‌کند؛ متن prompt، response، IP/آدرس یا کلید ذخیره نمی‌شود.
+7. آزمون واقعی loopback به یک TCP پورت بسته اضافه شد تا failure طبقه‌بندی‌شده و عدم افشای prompt/نشانی بررسی شود.
+8. آزمون dispatcher و collector نیز تفاوت REJECTED و FAILED را تثبیت می‌کنند.
+
+## تصمیم معماری و محدوده
+
+- Android: direct TCP + Noise از کتابخانهٔ libp2p نگهداری‌شده؛ relay multiaddress رد می‌شود.
+- Windows: direct authenticated libp2p TCP/QUIC برای یک PeerId موردانتظار؛ fallback فقط بین آدرس‌های مستقیم همان هویت و با بررسی identity انجام می‌شود.
+- Rendezvous: فقط metadata discovery/control plane؛ prompt/response/history به آن ارسال نمی‌شود.
+- Relay first release: تصویب نشده و فعال نمی‌شود؛ آزمون سه‌peer relay در این وظیفه applicable نیست و ادعای اجرای آن وجود ندارد.
+- رمزنگاری اختصاصی اضافه نشده است؛ Noise/secure channel و PeerId handling به کتابخانه‌های نگهداری‌شده واگذار شده‌اند.
+- ADR-0024 همچنان قرارداد listener قدیمی loopback با prefix چهار‌بایتی را توصیف می‌کند؛ مسیر P2P Android/.NET نسخهٔ جداگانهٔ ADR-0021 با unsigned-varint framing دارد.
+- ADR-0021، ADR-0016، ADR-0005، ADR-0024 و جدول تصمیم‌ها به‌روزرسانی شدند تا وضعیت واقعی UI اعتماد و CI fixture-to-Windows .NET interop را منعکس کنند؛ محدودیت آزمون فیزیکی همچنان برقرار است.
+
+## فایل‌های تغییر‌یافته
+
+- `src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt`
+- `src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt`
+- `src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt`
+- `src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt`
+- `src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt`
+- `tests/test_android_libp2p_transport_contract.py`
+- `tests/test_decision_traceability.py`
+- `docs/decisions/ADR-0005-authenticated-peer-transport-fallback.md`
+- `docs/decisions/ADR-0016-maintained-libp2p-cryptographic-transport.md`
+- `docs/decisions/ADR-0021-android-libp2p-peer-transport.md`
+- `docs/decisions/ADR-0024-tcp-request-framing.md`
+- `docs/decisions/README.md`
+
+## آزمون‌ها
+
+این تلاش هنوز روی commit جدید ساخته/اجرا نشده است؛ بنابراین هیچ تست جدیدی PASS اعلام نمی‌شود. در محیط محلی نیز checkout شبکه‌ای موجود نیست و build محلی Android/.NET انجام نشده است. تست‌های exact-head از GitHub Actions پس از ثبت commit بررسی خواهند شد.
+
+شواهد CI قبلی Android در V 3.1.176 شامل 234 تست موفق، صفر failure و یک تست LAN non-loopback skip شده بود؛ این فقط baseline interop است و جایگزین CI اصلاح جدید نیست.
+
+## موارد خارج از معیار این وظیفه
+
+- Android گوشی فیزیکی به Windows نصب‌شدهٔ واقعی کاربر: در این تلاش انجام نشده.
+- شبکهٔ عمومی/NAT traversal: اثبات نشده.
+- relay byte path: تصویب نشده و اجرا نشده.
+- نصب پاک/in-place upgrade: متعلق به UPD-S1-021 است.
+- آزمون Android-to-Windows روی دستگاه هدف و persistence در همان Room: متعلق به UPD-S1-020 است.
+
+تا CI دقیق commit اصلاحی، UPD-S1-016 در وضعیت `in_progress` می‌ماند.

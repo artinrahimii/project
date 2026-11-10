@@ -371,7 +371,7 @@ class InferenceAttemptDispatcherTest {
         }
 
     @Test
-    fun keepsSubmittingOtherHostsAfterTransportRejectsOrThrows() =
+    fun keepsSubmittingOtherHostsAfterTransportRejectsOrFails() =
         runBlocking {
             val transport =
                 RecordingTransport(
@@ -379,16 +379,17 @@ class InferenceAttemptDispatcherTest {
                         when (hostId) {
                             "host-a" -> InferenceTransportSubmission.REJECTED
                             "host-b" -> error("simulated transport fault")
+                            "host-c" -> InferenceTransportSubmission.FAILED
                             else -> InferenceTransportSubmission.QUEUED
                         }
                     },
                 )
-            val attemptIds = listOf("attempt-a", "attempt-b", "attempt-c").iterator()
+            val attemptIds = listOf("attempt-a", "attempt-b", "attempt-c", "attempt-d").iterator()
             val attemptDispatcher = dispatcher(transport, attemptIds::next)
             val result =
                 attemptDispatcher.dispatchRound(
                     distributedRequest(),
-                    listOf(candidate("host-a"), candidate("host-b"), candidate("host-c")),
+                    listOf(candidate("host-a"), candidate("host-b"), candidate("host-c"), candidate("host-d")),
                     MODEL_ID,
                     "message",
                     capsule(),
@@ -402,11 +403,12 @@ class InferenceAttemptDispatcherTest {
                 listOf(
                     InferenceAttemptSubmissionStatus.REJECTED,
                     InferenceAttemptSubmissionStatus.FAILED,
+                    InferenceAttemptSubmissionStatus.FAILED,
                     InferenceAttemptSubmissionStatus.QUEUED,
                 ),
                 (result as InferenceRoundDispatchResult.Dispatched).attempts.map { it.submissionStatus },
             )
-            assertEquals(3, transport.requests.size)
+            assertEquals(4, transport.requests.size)
         }
 
     @Test

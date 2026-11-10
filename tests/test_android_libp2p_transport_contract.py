@@ -177,6 +177,19 @@ class AndroidLibp2pTransportContractTests(unittest.TestCase):
         self.assertIn("selectedHosts = listOf(candidate(selectedPeerId))", transport_test)
         self.assertIn("attempt.submissionStatus", transport_test)
 
+    def test_direct_transport_failures_are_reported_as_network_unavailable(self):
+        dispatcher = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt").read_text(encoding="utf-8")
+        transport = TRANSPORT.read_text(encoding="utf-8")
+        collector = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceRoundResponseCollector.kt").read_text(encoding="utf-8")
+        test = TRANSPORT_TEST.read_text(encoding="utf-8")
+        self.assertIn("InferenceTransportSubmission.FAILED", dispatcher)
+        self.assertIn("InferenceTransportSubmission.FAILED -> InferenceAttemptSubmissionStatus.FAILED", dispatcher)
+        self.assertIn("SafeDiagnosticOutcomeCode.FAILED", transport)
+        self.assertIn('return fail("directory_peer_not_found")', transport)
+        self.assertIn("fail(failureReason)", transport)
+        self.assertIn("exception is SecurityException || exception is IllegalArgumentException", transport)
+        self.assertIn("InferenceRoundResponseFailureReason.SUBMISSION_FAILED -> RequestErrorCode.NETWORK_UNAVAILABLE", collector)
+        self.assertIn("reportsDirectConnectionRefusalAsNetworkFailureWithoutLeakingRequestData", test)
     def test_three_host_noise_integration_exercises_the_application_runtime(self):
         source = TRANSPORT_TEST.read_text(encoding="utf-8")
         self.assertIn("AndroidInferenceRequestRuntime(", source)

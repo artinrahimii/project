@@ -157,6 +157,17 @@ class InferenceRoundResponseCollectorTest {
                     InferenceRoundResponseFailureReason.SUBMISSION_TIMED_OUT,
                 ),
                 result.failures.map { it.reason },
+            )            assertEquals(
+                RequestErrorCode.VALIDATION_FAILED,
+                result.failures.single { it.attemptId == "attempt-b" }.errorCode,
+            )
+            assertEquals(
+                RequestErrorCode.NETWORK_UNAVAILABLE,
+                result.failures.single { it.attemptId == "attempt-c" }.errorCode,
+            )
+            assertEquals(
+                RequestErrorCode.REQUEST_EXPIRED,
+                result.failures.single { it.attemptId == "attempt-d" }.errorCode,
             )
         }
 
