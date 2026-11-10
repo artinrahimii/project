@@ -98,3 +98,16 @@
 - نام آزمون در دو Python contract به نام واقعی تغییر یافتهٔ `keepsSubmittingOtherHostsAfterTransportRejectsOrFails` همگام شد.
 - README تصمیم‌ها به‌روزرسانی شد تا تمام basenameهای مورد انتظار ردیابی شامل `AndroidKeyStorePersistenceTest.kt`، `AndroidPeerIdentityStoreTest.kt`، `AndroidPeerTrustStoreTest.kt` و `WhiteP.Shared.Security.csproj` را ذکر کند.
 - وضعیت A003 فعلاً partial است؛ CI روی commit این اصلاح هنوز اجرا نشده است.
+
+
+## نتیجهٔ CI تلاش A003 — V 3.1.180
+
+- Python quality: ۴۹۶ تست اجرا شد و فقط یک assertion باقی‌مانده شکست خورد: `test_one_round_dispatch_times_out_instead_of_replaying_a_host_submission` هنوز `assertEquals(3, transport.requests.size)` را انتظار داشت، در حالی که آزمون dispatcher پس از اضافه‌شدن حالت FAILED اکنون چهار candidate را بررسی می‌کند.
+- Android lint و ساخت fixture ویندوز .NET در job Android موفق شدند؛ JVM/Keystore/APK در لحظهٔ ثبت این گزارش هنوز ادامه داشت.
+- HostLifecycle و Rendezvous موفق شدند.
+- Windows product job در لحظهٔ ثبت هنوز در حال اجرا بود.
+
+## تلاش A004 — اصلاح آخرین assertion کیفیت
+
+- تعداد درخواست موردانتظار در `tests/test_request_retry_budget_boundary.py` از ۳ به ۴ اصلاح شد تا با آزمون dispatcher به‌روز همسان شود.
+- این تلاش فقط اصلاح assertion قراردادی است؛ نتیجهٔ آزمون exact-head هنوز pending است.
