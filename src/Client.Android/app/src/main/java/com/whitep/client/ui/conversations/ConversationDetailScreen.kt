@@ -35,7 +35,7 @@ import com.whitep.client.data.ConversationEntity
 import com.whitep.client.data.MessageEntity
 import com.whitep.client.data.RequestStateEntity
 import com.whitep.client.data.RoomConversationContextCapsuleRepository
-import com.whitep.client.data.RoomInferenceRequestLifecycleRepository
+import com.whitep.client.data.RoomConversationInferenceRequestLifecycleRepository
 import com.whitep.client.data.SharedPreferencesConversationContextCapsuleSizeLimitStore
 import com.whitep.client.domain.ConversationMessageValidationError
 import com.whitep.client.domain.ConversationMessageValidator
@@ -76,8 +76,11 @@ internal fun conversationDetailScreen(
     val messageDao = database.messageDao()
     val requestStateDao = database.requestStateDao()
     val requestLifecycleRepository =
-        remember(database) {
-            RoomInferenceRequestLifecycleRepository(database.inferenceRequestStateDao())
+        remember(database, requestStateDao, conversationId) {
+            RoomConversationInferenceRequestLifecycleRepository(
+                dao = requestStateDao,
+                conversationId = conversationId,
+            )
         }
     val requestViewModelFactory =
         remember(requestLifecycleRepository) {

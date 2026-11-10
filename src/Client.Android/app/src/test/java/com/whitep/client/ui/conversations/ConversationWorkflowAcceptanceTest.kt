@@ -3,6 +3,8 @@ package com.whitep.client.ui.conversations
 import androidx.room.Room
 import com.whitep.client.data.ClientDatabase
 import com.whitep.client.data.PersistedRequestStatus
+import com.whitep.client.data.InferenceRequestLifecycleState
+import com.whitep.client.data.RoomConversationInferenceRequestLifecycleRepository
 import com.whitep.client.data.RequestStateEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -18,6 +20,97 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
 class ConversationWorkflowAcceptanceTest {
+    @Test
+    fun requestLifecycleRecoveryIsScopedToItsOwnConversation() =
+        runBlocking {
+            val application = RuntimeEnvironment.getApplication()
+            val databaseName = "conversation-request-lifecycle-isolation.db"
+            application.deleteDatabase(databaseName)
+
+            try {
+                val database =
+                    Room
+                        .databaseBuilder(
+                            application,
+                            ClientDatabase::class.java,
+                            databaseName,
+                        ).allowMainThreadQueries()
+                        .build()
+                try {
+                    database.conversationDao().upsert(
+                        ConversationEntity(
+                            conversationId = "conversation-a",
+                            title = "Conversation A",
+                            createdAtEpochMillis = 1L,
+                            updatedAtEpochMillis = 1L,
+                        ),
+                    )
+                    database.conversationDao().upsert(
+                        ConversationEntity(
+                            conversationId = "conversation-b",
+                            title = "Conversation B",
+                            createdAtEpochMillis = 2L,
+                            updatedAtEpochMillis = 2L,
+                        ),
+                    )
+                    val first =
+                        RoomConversationInferenceRequestLifecycleRepository(
+                            database.requestStateDao(),
+                            "conversation-a",
+                        )
+                    val second =
+                        RoomConversationInferenceRequestLifecycleRepository(
+                            database.requestStateDao(),
+                            "conversation-b",
+                        )
+                    first.save(
+                        InferenceRequestLifecycleState(
+                            requestId = "request-a",
+                            status = PersistedRequestStatus.WAITING,
+                            createdAtEpochMillis = 10L,
+                            updatedAtEpochMillis = 11L,
+                            attemptNumber = 1,
+                        ),
+                    )
+                    second.save(
+                        InferenceRequestLifecycleState(
+                            requestId = "request-b",
+                            status = PersistedRequestStatus.COMPLETED,
+                            createdAtEpochMillis = 20L,
+                            updatedAtEpochMillis = 21L,
+                            attemptNumber = 2,
+                        ),
+                    )
+
+                    val recoveredFirst = first.recoverLatest(30L)
+                    val recoveredSecond = second.recoverLatest(31L)
+
+                    assertEquals("request-a", recoveredFirst?.requestId)
+                    assertEquals(PersistedRequestStatus.EXPIRED, recoveredFirst?.status)
+                    assertEquals("request-b", recoveredSecond?.requestId)
+                    assertEquals(PersistedRequestStatus.COMPLETED, recoveredSecond?.status)
+                    assertEquals(
+                        listOf("request-a"),
+                        database.requestStateDao()
+                            .observeForConversation("conversation-a")
+                            .first()
+                            .map { it.requestId },
+                    )
+                    assertEquals(
+                        listOf("request-b"),
+                        database.requestStateDao()
+                            .observeForConversation("conversation-b")
+                            .first()
+                            .map { it.requestId },
+                    )
+                } finally {
+                    database.close()
+                }
+            } finally {
+                application.deleteDatabase(databaseName)
+            }
+        }
+
     @Test
     fun createsConversationSendsMessagesAndRestoresHistoryAcrossDatabaseReopen() =
         runBlocking {

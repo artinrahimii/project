@@ -76,10 +76,10 @@ class ConversationMessagesViewModel(
         if (requestId.isBlank() || attemptId.isBlank() || content.isBlank()) return false
 
         val messageId =
-            UUID.nameUUIDFromBytes(
-                "$conversationId|$requestId|$attemptId|$authorRole".toByteArray(StandardCharsets.UTF_8),
-            )
-                .toString()
+            UUID
+                .nameUUIDFromBytes(
+                    "$conversationId|$requestId|$attemptId|$authorRole".toByteArray(StandardCharsets.UTF_8),
+                ).toString()
         if (messageDao.findById(messageId) != null) return false
 
         val previousTimestamp = messages.first().lastOrNull()?.createdAtEpochMillis

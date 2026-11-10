@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
@@ -58,6 +59,31 @@ interface RequestStateDao {
 
     @Upsert
     suspend fun upsert(state: RequestStateEntity)
+
+    @Query(
+        "SELECT * FROM request_states WHERE conversationId = :conversationId " +
+            "ORDER BY updatedAtEpochMillis DESC, createdAtEpochMillis DESC, requestId DESC LIMIT 1",
+    )
+    suspend fun findLatestForConversation(conversationId: String): RequestStateEntity?
+
+    @Query(
+        "UPDATE request_states SET status = 'EXPIRED', updatedAtEpochMillis = :nowEpochMillis, " +
+            "errorCode = 'APP_CLOSED_BEFORE_RESULT' " +
+            "WHERE conversationId = :conversationId AND status IN ('QUEUED', 'CONTACTING', 'WAITING')",
+    )
+    suspend fun expireInFlightForConversation(
+        conversationId: String,
+        nowEpochMillis: Long,
+    ): Int
+
+    @Transaction
+    suspend fun recoverLatestForConversation(
+        conversationId: String,
+        nowEpochMillis: Long,
+    ): RequestStateEntity? {
+        expireInFlightForConversation(conversationId, nowEpochMillis)
+        return findLatestForConversation(conversationId)
+    }
 
     @Query("SELECT COUNT(*) FROM request_states WHERE conversationId = :conversationId")
     suspend fun countForConversation(conversationId: String): Int

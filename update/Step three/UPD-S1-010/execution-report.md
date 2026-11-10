@@ -73,3 +73,15 @@
 - log دقیق KtLint پنج مورد را گزارش کرد: import-ordering، دو argument-list-wrapping، max-line-length و chain-method-continuation.
 - این پنج مورد در `ConversationDetailScreen.kt` و `ConversationMessagesViewModel.kt` اصلاح شدند؛ هیچ قاعدهٔ lint غیرفعال نشد و workflow همچنان روی `ktlintCheck` شکست می‌خورد تا تمام قواعد پاس شوند.
 - نتیجهٔ lint، کامپایل و unit testهای این تلاش پس از اجرای CI دقیق ثبت خواهد شد؛ UPD-S1-010 هنوز `in_progress` است.
+
+
+## تلاش A006 — ذخیرهٔ چرخهٔ درخواست با مالکیت همان گفت‌وگو
+
+- مبنا: `V 3.1.169`، commit `4bcf7ce1d043f6894227ee5adf8b07dd2d5e7be1`.
+- نقص جدید تأیید شد: repository موجود `RoomInferenceRequestLifecycleRepository` برای صفحهٔ مستقل New request از جدول app-level و فاقد `conversationId` استفاده می‌کرد؛ بنابراین نمی‌توانست وضعیت هر درخواست چت را به همان گفت‌وگو نسبت دهد و بازیابی یک مکالمه ممکن بود وضعیت مکالمهٔ دیگری را نشان دهد.
+- کلاس `RoomConversationInferenceRequestLifecycleRepository` اضافه شد که همان قرارداد lifecycle را روی DAO موجود `request_states` و `conversationId` جاری اجرا می‌کند.
+- DAO اکنون آخرین وضعیت را فقط در همان conversation بازیابی و فقط درخواست‌های درحال‌اجرای همان conversation را هنگام شروع مجدد به EXPIRED تبدیل می‌کند.
+- صفحهٔ گفت‌وگو از repository جدید استفاده می‌کند؛ صفحهٔ مستقل New request همچنان repository قدیمی و global خودش را حفظ می‌کند.
+- آزمون Robolectric جدید با دو گفت‌وگوی مستقل اثبات می‌کند recover/expire کردن Conversation A، وضعیت Conversation B را تغییر نمی‌دهد.
+- در همین تلاش دو خطای chain-method-continuation آخرین گزارش KtLint نیز اصلاح شدند.
+- نتیجهٔ CI دقیق A006 هنوز pending است؛ وظیفه `in_progress` باقی می‌ماند.

@@ -87,3 +87,41 @@ class InMemoryInferenceRequestLifecycleRepository(
         const val APP_CLOSED_BEFORE_RESULT = "APP_CLOSED_BEFORE_RESULT"
     }
 }
+
+
+/**
+ * Conversation-owned request lifecycle history. Unlike [RoomInferenceRequestLifecycleRepository],
+ * this adapter keeps each request attached to its Room conversation and cannot restore another
+ * conversation's latest status.
+ */
+class RoomConversationInferenceRequestLifecycleRepository(
+    private val dao: RequestStateDao,
+    private val conversationId: String,
+) : InferenceRequestLifecycleRepository {
+    override suspend fun recoverLatest(nowEpochMillis: Long): InferenceRequestLifecycleState? =
+        dao.recoverLatestForConversation(conversationId, nowEpochMillis)?.toLifecycleState()
+
+    override suspend fun save(state: InferenceRequestLifecycleState) {
+        dao.upsert(
+            RequestStateEntity(
+                requestId = state.requestId,
+                conversationId = conversationId,
+                status = state.status,
+                createdAtEpochMillis = state.createdAtEpochMillis,
+                updatedAtEpochMillis = state.updatedAtEpochMillis,
+                attemptNumber = state.attemptNumber,
+                errorCode = state.errorCode,
+            ),
+        )
+    }
+
+    private fun RequestStateEntity.toLifecycleState() =
+        InferenceRequestLifecycleState(
+            requestId = requestId,
+            status = status,
+            createdAtEpochMillis = createdAtEpochMillis,
+            updatedAtEpochMillis = updatedAtEpochMillis,
+            attemptNumber = attemptNumber,
+            errorCode = errorCode,
+        )
+}
