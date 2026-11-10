@@ -8711,8 +8711,8 @@
         "قواعد در Android و Windows سازگار و دارای آزمون برای enrollment، reconnect، mismatch و revoke باشند.",
         "هیچ اطلاعات هویتی غیرضروری در پیام عادی چت نمایش داده نشود."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال انجام",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerIdentityStore.kt",
@@ -8722,17 +8722,73 @@
         "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
         "update/Step three/UPD-S1-022/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerIdentityStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/MainWindow.xaml",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerIdentityStoreTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerTrustStoreTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/test_network_listener_exposure.py",
+        "tests/test_update_transport_trust_boundary.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "update/Step three/UPD-S1-022/execution-report.md",
+        "update/Step three/UPD-S1-022/evidence/trust-and-revocation-review.md"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-022/execution-report.md",
+        "update/Step three/UPD-S1-022/evidence/trust-and-revocation-review.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerIdentityStoreTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerTrustStoreTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/test_network_listener_exposure.py",
+        "tests/test_update_transport_trust_boundary.py",
+        "src/Host.Windows/Security/WindowsHostIdentityProvider.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
+        "https://github.com/artinrahimii/project/actions/runs/42790619781",
+        "https://github.com/artinrahimii/project/actions/runs/42790619479",
+        "https://github.com/artinrahimii/project/actions/runs/42790619433",
+        "https://github.com/artinrahimii/project/actions/runs/42790619836"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0130, T0131, T0132, T0133, T0134, T0135, T0136, T0137, T0143, T0145, T0186, T0226. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
-        "tests_passed": [],
+        "last_attempt_id": "UPD-S1-022-20261110100410",
+        "last_attempt_result": "succeeded",
+        "changed_files": [
+          "update/Step three/UPD-S1-022/execution-report.md",
+          "update/Step three/UPD-S1-022/evidence/trust-and-revocation-review.md",
+          "update/Step two/project-graph.md"
+        ],
+        "related_commits": [
+          "0eeb9a4ba0ebabb4e689c8a07442558f80b8c675"
+        ],
+        "tests_passed": [
+          "Quality gate run 42790619781: unit suite, compileall and both graph guards passed on exact V 3.1.147.",
+          "Product build run 42790619479: Android lint/build/JVM/Keystore instrumentation, Windows WPF/DPAPI/installer and HostLifecycle acceptance passed.",
+          "Rendezvous build/smoke run 42790619836 passed."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -8743,7 +8799,76 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-022-20261110100410",
+          "started_at": "2026-11-10T10:04:06.793Z",
+          "ended_at": "2026-11-10T10:04:10.291Z",
+          "result": "succeeded",
+          "summary": "Audited the existing Android and Windows persistent peer identity/trust paths, first-use consent, reconnect, mismatch and revoke controls. Existing source and tests on the exact V 3.1.147 main commit satisfy the task's functional criteria; no duplicate product implementation was added. Task remains in_progress until the exact-head quality gate validates the new report/evidence graph commit.",
+          "changed_files": [
+            "update/Step three/UPD-S1-022/execution-report.md",
+            "update/Step three/UPD-S1-022/evidence/trust-and-revocation-review.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate on exact base commit",
+              "command": "python -m unittest discover -s tests -v; python -m compileall -q tools tests; graph_guard both graphs in structure and --repo-root modes",
+              "result": "passed",
+              "run_id": 42790619781,
+              "job_id": 129742786427,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42790619781",
+              "summary": "All workflow steps succeeded, including automated tests, Python syntax validation, and structure/output evidence checks for both graphs."
+            },
+            {
+              "name": "Android build, JVM and Keystore instrumentation",
+              "command": "product-build.yml — Build Android client APK",
+              "result": "passed",
+              "run_id": 42790619479,
+              "job_id": 129742785640,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42790619479",
+              "summary": "Kotlin lint, clean debug and release builds, Android JVM tests, Keystore instrumentation, permission validation, generated Protobuf and coverage validation all succeeded."
+            },
+            {
+              "name": "Windows WPF, DPAPI and installer",
+              "command": "product-build.yml — Build Windows WPF host",
+              "result": "passed",
+              "run_id": 42790619479,
+              "job_id": 129742785759,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42790619479",
+              "summary": "Clean WPF build/publish, startup smoke, current-user DPAPI host identity and peer trust acceptance, and Windows installer acceptance all succeeded."
+            },
+            {
+              "name": "HostLifecycle clean build and acceptance",
+              "command": "dotnet build and run HostLifecycle.Tests from clean outputs in product-build.yml",
+              "result": "passed",
+              "run_id": 42790619479,
+              "job_id": 129742785341,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42790619479",
+              "summary": "Clean harness build, documented acceptance executable, code-coverage validation and artifact upload succeeded."
+            },
+            {
+              "name": "Rendezvous container",
+              "command": "Build production container and exercise HTTP contract",
+              "result": "passed",
+              "run_id": 42790619836,
+              "job_id": 129742790241,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42790619836",
+              "summary": "Production container build and HTTP smoke completed successfully."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head quality CI for this report/graph commit. If all graph, evidence and contract checks pass, set this node to done and record the real report commit SHA. Then continue with UPD-S1-023 in the approved execution order; physical Android-to-Windows acceptance remains UPD-S1-020.",
+          "device_and_host_details_redacted": "Android GitHub-hosted emulator/CI only and Windows GitHub-hosted Windows runner; no physical Android handset or user-installed Windows host was used.",
+          "model_revision_and_sha256": "Not applicable to peer identity/trust. Separate real-inference CI run 42790619433 passed with a pinned llama.cpp binary and pinned GGUF model; it is not claimed as Android-to-Windows acceptance.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable to UPD-S1-022. In-place upgrade snapshots and preservation are acceptance requirements of UPD-S1-021."
+        }
+      ]
     },
     {
       "id": "UPD-S1-023",
@@ -11255,14 +11380,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T09:17:02.042Z",
+    "as_of": "2026-11-10T10:04:10.291Z",
     "total_tasks": 24,
-    "not_started": 12,
-    "in_progress": 0,
+    "not_started": 11,
+    "in_progress": 1,
     "done": 12,
     "blocked": 0,
     "verified_completion_percentage": 50,
-    "calculation": "12 verified done update tasks / 24 total update tasks = 50.00%. UPD-S1-012 is complete with source and exact-head CI evidence; remaining tasks retain their prior states."
+    "calculation": "12 verified done update tasks / 24 total update tasks = 50.00%. UPD-S1-022 source and test review passed on the exact base commit; the post-commit graph validation is pending."
   },
   "visual_identity": {
     "scope": [
@@ -11376,7 +11501,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T09:17:02.042Z",
+  "updated_at": "2026-11-10T10:04:10.291Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
