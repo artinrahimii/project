@@ -7,20 +7,26 @@ UNIT_TESTS = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client"
 
 
 class AndroidConversationDetailContractTests(unittest.TestCase):
-    def test_detail_screen_observes_messages_and_sends_only_to_local_room(self):
+    def test_detail_screen_connects_existing_chat_to_runtime_and_same_room_history(self):
         screen = (ANDROID / "ui/conversations/ConversationDetailScreen.kt").read_text(encoding="utf-8")
         self.assertIn("conversationMessagesViewModel.messages.collectAsState", screen)
         self.assertIn("messages.forEach { message ->", screen)
         self.assertIn("conversationMessagesViewModel.sendMessage(messageText)", screen)
-        self.assertIn('Text("Send")', screen)
-        self.assertIn("Messages are saved only on this device", screen)
-        self.assertIn("Sending to a processing host is not available yet", screen)
+        self.assertIn("requestViewModel.sendRequest(messageText)", screen)
+        self.assertIn("else -> \"Send\"", screen)
+        self.assertIn("messageValidation.isValid &&", screen)
+        self.assertIn("saveAssistantResponse(", screen)
+        self.assertIn("saveRequestNotice(", screen)
+        self.assertNotIn("Sending to a processing host is not available yet", screen)
 
-    def test_message_view_model_persists_ordered_user_messages_without_network_calls(self):
+    def test_message_view_model_persists_user_and_correlated_host_messages_without_owning_transport(self):
         source = (ANDROID / "ui/conversations/ConversationMessagesViewModel.kt").read_text(encoding="utf-8")
         self.assertIn("messageDao.observeForConversation(conversationId)", source)
         self.assertIn("messageDao.upsert(", source)
         self.assertIn('authorRole = "user"', source)
+        self.assertIn('saveCorrelatedMessage("assistant"', source)
+        self.assertIn('saveCorrelatedMessage("system"', source)
+        self.assertIn("UUID.nameUUIDFromBytes(", source)
         self.assertIn("ConversationMessageValidator.validate(content)", source)
         self.assertIn("validation.normalizedText ?: return false", source)
         self.assertNotIn("Socket(", source)
@@ -53,7 +59,7 @@ class AndroidConversationDetailContractTests(unittest.TestCase):
         self.assertIn('application.deleteDatabase(databaseName)', test_source)
 
 
-    def test_end_to_end_local_conversation_workflow_has_repository_and_ui_coverage(self):
+    def test_local_conversation_workflow_and_network_request_entrypoint_have_coverage(self):
         workflow = (UNIT_TESTS / "ui/conversations/ConversationWorkflowAcceptanceTest.kt").read_text(encoding="utf-8")
         list_screen = (ANDROID / "ui/conversations/ConversationListScreen.kt").read_text(encoding="utf-8")
         detail_screen = (ANDROID / "ui/conversations/ConversationDetailScreen.kt").read_text(encoding="utf-8")
@@ -70,8 +76,10 @@ class AndroidConversationDetailContractTests(unittest.TestCase):
         self.assertIn("onOpenConversation(conversation.conversationId)", list_screen)
         self.assertIn("conversationMessagesViewModel.messages.collectAsState", detail_screen)
         self.assertIn("conversationMessagesViewModel.sendMessage(messageText)", detail_screen)
-        self.assertIn("Messages are saved only on this device", detail_screen)
-        self.assertIn("Sending to a processing host is not available yet", detail_screen)
+        self.assertIn("requestViewModel.sendRequest(messageText)", detail_screen)
+        self.assertIn("saveAssistantResponse(", detail_screen)
+        self.assertIn("saveRequestNotice(", detail_screen)
+        self.assertNotIn("Sending to a processing host is not available yet", detail_screen)
 
     def test_room_tests_cover_ordered_persistence_and_blank_rejection(self):
         test_source = (UNIT_TESTS / "ui/conversations/ConversationMessagesViewModelTest.kt").read_text(encoding="utf-8")

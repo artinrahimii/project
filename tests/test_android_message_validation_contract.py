@@ -29,7 +29,8 @@ class AndroidMessageValidationContractTests(unittest.TestCase):
 
     def test_ui_disables_invalid_send_and_explains_over_limit_content(self):
         self.assertIn("ConversationMessageValidator.validate(draft)", SCREEN)
-        self.assertIn("enabled = messageValidation.isValid", SCREEN)
+        self.assertIn("messageValidation.isValid &&", SCREEN)
+        self.assertIn("liveRequestState.discoveredPeers.any { it.isTrusted }", SCREEN)
         self.assertIn("Message exceeds the 8,192 UTF-8 byte limit.", SCREEN)
 
     def test_unit_tests_cover_blank_exact_limit_over_limit_and_normalization(self):

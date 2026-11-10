@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.165",
+  "commit_intent": "V 3.1.166",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -6996,13 +6996,14 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
-        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt"
+        "https://github.com/artinrahimii/project/actions/runs/42859232340",
+        "https://github.com/artinrahimii/project/actions/runs/42859232180"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0088, T0090, T0092, T0139, T0145, T0146, T0147, T0148, T0149, T0150, T0190, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-010-20261110-A001",
+        "last_attempt_id": "UPD-S1-010-20261110-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7012,9 +7013,17 @@
           "update/Step three/UPD-S1-010/execution-report.md",
           "update/Step three/UPD-S1-010/evidence/chat-runtime-gap-audit.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "0ec848f0573de18449bf01f1b80e0352ab692620"
+        ],
+        "tests_passed": [
+          "A001: Windows host compile and WPF startup smoke passed in run 42859232180.",
+          "A001: HostLifecycle acceptance suite passed in run 42859232180."
+        ],
+        "tests_failed": [
+          "A001: quality gate run 42859232340 — 7 obsolete Python assertions failed because they prohibited the newly-required chat/runtime connection.",
+          "A001: Android build run 42859232180 — ktlintMainSourceSetCheck failed before APK build."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -7039,28 +7048,45 @@
             "update/Step three/UPD-S1-010/execution-report.md",
             "update/Step three/UPD-S1-010/evidence/chat-runtime-gap-audit.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "0ec848f0573de18449bf01f1b80e0352ab692620",
           "tests": [
             {
-              "name": "Room response persistence regression test",
-              "command": "Android Gradle testDebugUnitTest — ConversationMessagesViewModelTest",
-              "result": "pending",
-              "summary": "New Robolectric test covers chronological user/assistant/system messages and duplicate response/error delivery."
+              "name": "Step Three quality gate",
+              "command": "quality.yml exact-head on V 3.1.165",
+              "result": "failed",
+              "run_id": 42859232340,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42859232340",
+              "summary": "492 Python tests executed; 7 legacy source-contract assertions failed because they required normal chat to remain local-only and prohibited the new runtime integration."
             },
             {
-              "name": "Android product build and unit tests",
-              "command": "product-build.yml exact-head Android client job",
-              "result": "pending",
-              "summary": "Must compile and run all Android JVM/instrumentation tests on this attempt."
+              "name": "Android build and style checks",
+              "command": "product-build.yml — Android job exact V 3.1.165",
+              "result": "failed",
+              "run_id": 42859232180,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42859232180",
+              "summary": "ktlintMainSourceSetCheck failed; APK compilation and Android unit tests were skipped."
             },
             {
-              "name": "Quality and graph contract gate",
-              "command": "quality.yml exact-head",
-              "result": "pending",
-              "summary": "Must revalidate both graph guards and repository quality suite."
+              "name": "Windows host build and startup smoke",
+              "command": "product-build.yml — Windows job exact V 3.1.165",
+              "result": "passed",
+              "run_id": 42859232180,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42859232180",
+              "summary": "Clean restore, C# format, Windows host compile and WPF startup smoke passed before installer packaging continued."
+            },
+            {
+              "name": "Host lifecycle acceptance",
+              "command": "product-build.yml — HostLifecycle job exact V 3.1.165",
+              "result": "passed",
+              "run_id": 42859232180,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42859232180",
+              "summary": "HostLifecycle acceptance suite and critical coverage gate passed."
             }
           ],
-          "failure_details": null,
+          "failure_details": [
+            "Exact-head Step Three quality gate run 42859232340 failed: 7 Python source-contract assertions still described the old Room-only/no-network chat behavior. These assertions were obsolete under the newly accepted UPD-S1-010 implementation; implementation was not reverted.",
+            "Exact-head Android product build run 42859232180: Windows host compile and startup succeeded; Android job stopped at ktlintMainSourceSetCheck before APK compile/tests. The report was used to identify formatting work required."
+          ],
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
@@ -7068,6 +7094,47 @@
           "device_and_host_details_redacted": "No physical Android handset or user-owned Windows host was accessed in this attempt.",
           "model_revision_and_sha256": "No model inference was invoked in this UI wiring attempt.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed; upgrade acceptance remains under UPD-S1-021."
+        },
+        {
+          "attempt_id": "UPD-S1-010-20261110-A002",
+          "started_at": "2026-11-10T16:58:50.132Z",
+          "ended_at": "2026-11-10T16:58:50.132Z",
+          "result": "partial",
+          "summary": "Corrected the seven obsolete Python source-contract assertions to verify the new normal-chat runtime integration while retaining local context-capsule isolation, message validation, Room persistence, lifecycle status and direct-P2P/rendezvous boundaries. Updated ADR-0002 to describe the source-backed normal-chat integration without claiming physical E2E completion. Wrapped newly added long UI text to address the observed ktlint failure; exact-head CI is pending.",
+          "changed_files": [
+            "tests/test_android_context_capsule_history_update_contract.py",
+            "tests/test_android_conversation_detail_contract.py",
+            "tests/test_android_message_validation_contract.py",
+            "tests/test_android_request_status_contract.py",
+            "tests/test_update_baseline_audit.py",
+            "tests/test_update_transport_trust_boundary.py",
+            "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "update/Step three/UPD-S1-010/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Python quality and graph contracts",
+              "command": "quality.yml exact-head after A002",
+              "result": "pending"
+            },
+            {
+              "name": "Android ktlint, APK build and JVM tests",
+              "command": "product-build.yml exact-head after A002",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "The old test expectation that ConversationDetailScreen must be Room-only was superseded by UPD-S1-010. ADR-0002 is updated to distinguish source integration from physical E2E acceptance."
+          ],
+          "follow_up": "Re-run exact-head quality and product build. If ktlint reports remaining violations, fix only those lines and commit a new sequential version. Keep UPD-S1-010 in_progress until all relevant Android tests and acceptance checks pass.",
+          "device_and_host_details_redacted": "No physical handset or user-owned Windows host was used. CI is hosted.",
+          "model_revision_and_sha256": "No model inference executed in A002.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
     },
@@ -11803,14 +11870,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T16:53:33.743Z",
+    "as_of": "2026-11-10T16:58:50.132Z",
     "total_tasks": 24,
     "not_started": 9,
     "in_progress": 1,
     "done": 14,
     "blocked": 0,
     "verified_completion_percentage": 58.333333333333336,
-    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 is in_progress pending exact-head CI and acceptance evidence; 9 tasks remain not_started."
+    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress after A001/A002 pending exact-head CI and acceptance evidence; 9 tasks remain not_started."
   },
   "visual_identity": {
     "scope": [
@@ -11924,7 +11991,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T16:53:33.743Z",
+  "updated_at": "2026-11-10T16:58:50.132Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

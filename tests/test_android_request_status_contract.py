@@ -24,8 +24,10 @@ class AndroidRequestStatusContractTests(unittest.TestCase):
         self.assertIn("requestStateDao.observeForConversation(conversationId)", SCREEN)
         self.assertIn("requestStates.forEach { requestState ->", SCREEN)
         self.assertIn("requestStatusCard(requestState)", SCREEN)
-        self.assertIn("No request status has been recorded", SCREEN)
-        self.assertIn("Requests are not sent to a host in this preview.", SCREEN)
+        self.assertIn("RequestRunStatus.FAILED", SCREEN)
+        self.assertIn("liveRequestState.runStatus", SCREEN)
+        self.assertIn("hostResponses", SCREEN)
+        self.assertIn("Request status", SCREEN)
 
     def test_all_eight_persisted_states_have_explicit_display_labels(self):
         for status in (

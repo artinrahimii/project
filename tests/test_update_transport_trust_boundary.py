@@ -69,16 +69,21 @@ class UpdateTransportTrustBoundaryTests(unittest.TestCase):
         self.assertNotIn(".WithRelay(", windows)
         self.assertIn("first release does not enable a relay data path", relay_adr.lower())
 
-    def test_normal_room_chat_is_not_misrepresented_as_the_network_request_path(self) -> None:
+    def test_normal_chat_uses_direct_runtime_without_moving_inference_to_rendezvous(self) -> None:
         chat = read(
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/"
             "ConversationMessagesViewModel.kt"
         )
-        self.assertIn("does not send content to a processing host", chat)
+        screen = read(
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/"
+            "ConversationDetailScreen.kt"
+        )
         self.assertIn("messageDao.upsert(", chat)
-        decision = read("docs/decisions/ADR-0002-direct-p2p-data-path.md")
-        self.assertIn("ordinary Room conversation ViewModel remains local-message-only", decision)
-        self.assertIn("remains **NOT RUN**", decision)
+        self.assertIn('saveCorrelatedMessage("assistant"', chat)
+        self.assertIn('saveCorrelatedMessage("system"', chat)
+        self.assertIn("requestViewModel.sendRequest(messageText)", screen)
+        self.assertIn("requestViewModel.discoverPeers(", screen)
+        self.assertIn("remains **NOT RUN**", read("docs/decisions/ADR-0002-direct-p2p-data-path.md"))
 
     def test_data_boundary_decision_discloses_infrastructure_retention_uncertainty(self) -> None:
         decision = read("docs/decisions/ADR-0002-direct-p2p-data-path.md")

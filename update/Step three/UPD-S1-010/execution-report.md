@@ -38,3 +38,13 @@
 - باید CI دقیق اجرا شود، خطاهای کامپایل/آزمون اصلاح شوند و مصرف‌کنندگان مستقیم و غیرمستقیم request/runtime و navigation دوباره بررسی شوند.
 - بعد از آزمون‌های UI و integration مناسب، معیارهای پذیرش تک‌به‌تک ارزیابی خواهند شد.
 - آزمون P2P فیزیکی و مسیر real inference Android-to-installed-Windows در UPD-S1-020 همچنان معیار مستقل است.
+
+
+## تلاش A002 — اصلاح قراردادهای آزمون پس از تغییر مسیر چت
+
+- مبنای A002: `0ec848f0573de18449bf01f1b80e0352ab692620` (V 3.1.165)
+- نتیجهٔ A001: quality gate به‌دلیل ۷ assertion قدیمی که اتصال normal chat به runtime را ممنوع می‌کردند شکست خورد؛ Android job نیز در `ktlintMainSourceSetCheck` متوقف شد، بنابراین APK و آزمون‌های Android اجرا نشدند.
+- آزمون‌های قرارداد منبع اصلاح شدند تا رفتار مصوب جدید را بسنجند: اتصال ConversationDetailScreen به RequestViewModel، ذخیرهٔ Room، پاسخ/خطای هم‌بسته، consent/trust، حفظ اعتبارسنجی پیام و مسیر مستقیم P2P. تست‌های context capsule همچنان تضمین می‌کنند که پیشنهاد خلاصه فقط پیش‌نویس محلی است و خود capsule ViewModel شبکه ایجاد نمی‌کند.
+- ADR-0002 به‌روزرسانی شد تا اتصال منبعی چت به runtime موجود را ثبت کند، اما وضعیت physical Android-to-Windows را همچنان NOT RUN نگه دارد.
+- خطوط تازه‌افزوده‌شدهٔ متن UI برای رفع شکست قالب‌بندی Kotlin بازآرایی شدند.
+- A002 تا اجرای مجدد quality gate، ktlint، build اندروید و unit testها `partial` است. وضعیت وظیفه `in_progress` باقی می‌ماند.

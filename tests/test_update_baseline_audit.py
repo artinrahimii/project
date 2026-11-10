@@ -45,7 +45,7 @@ class UpdateBaselineAuditTests(unittest.TestCase):
         self.assertIn("نتیجهٔ نهایی", report)
         self.assertNotIn("6f70586b4b7ff69c463f7e5b02293090c63e78ec", evidence + report)
 
-    def test_android_chat_send_is_local_and_network_request_is_separate(self) -> None:
+    def test_android_chat_uses_existing_runtime_and_persists_correlated_responses(self) -> None:
         message_vm = read(
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/"
             "ConversationMessagesViewModel.kt"
@@ -55,9 +55,14 @@ class UpdateBaselineAuditTests(unittest.TestCase):
             "ConversationDetailScreen.kt"
         )
         activity = read("src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt")
-        self.assertIn("does not send content to a processing host", message_vm)
         self.assertIn("messageDao.upsert(", message_vm)
-        self.assertIn("Sending to a processing host is not available yet", conversation_ui)
+        self.assertIn('saveCorrelatedMessage("assistant"', message_vm)
+        self.assertIn('saveCorrelatedMessage("system"', message_vm)
+        self.assertIn("requestViewModel.sendRequest(messageText)", conversation_ui)
+        self.assertIn("requestViewModel.discoverPeers(", conversation_ui)
+        self.assertIn("privacyConsentAccepted", conversation_ui)
+        self.assertIn("trustPeerAfterExplicitConfirmation(peerId)", conversation_ui)
+        self.assertNotIn("Sending to a processing host is not available yet", conversation_ui)
         self.assertNotIn('label = { Text("Exact model ID") }', activity)
         self.assertNotIn('label = { Text("Maximum output tokens") }', activity)
         self.assertIn(

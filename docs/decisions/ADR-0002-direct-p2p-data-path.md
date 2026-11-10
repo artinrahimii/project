@@ -1,9 +1,9 @@
 # ADR-0002: Direct P2P is the inference data path
 
-- **Status:** Accepted for the first-release architecture and the currently implemented metadata-only rendezvous/direct-peer boundaries. Physical Android-to-Windows product acceptance and normal-chat integration remain unverified.
+- **Status:** Accepted for the first-release architecture and the metadata-only rendezvous/direct-peer boundaries. Normal-chat integration is wired to the existing Android request runtime; physical Android-to-Windows product acceptance remains unverified.
 - **Original decision date:** 2026-10-22
-- **Implementation review:** 2026-11-07
-- **Related tasks:** T0019; update task UPD-S1-002
+- **Implementation review:** 2026-11-10
+- **Related tasks:** T0019; update tasks UPD-S1-002 and UPD-S1-010
 - **Requirements:** REQ-010, REQ-011, REQ-019 in `docs/requirements.md`
 - **Scope:** Select the first-release request/response data path, define what intermediaries may observe and retain, and distinguish implemented source/loopback behavior from unverified release acceptance.
 
@@ -25,7 +25,7 @@ Direct peer-to-peer transfer is the default data path. The rendezvous/coordinati
 5. **Relay policy.** No relay inference-data path is enabled in the first release. Any future relay requires a separate explicit product/privacy decision and a working three-peer runtime test proving opaque bidirectional byte forwarding under endpoint-to-endpoint authentication and encryption. The relay must not terminate the endpoint security layer, parse or transform application frames, or log/persist payloads. The metadata that such a relay can observe is documented in ADR-0004.
 6. **Request identity.** Temporary request and attempt identifiers are used for correlation. Rendezvous is not a permanent user identity service and must not persist request identifiers or conversation history.
 
-## Implemented boundary at the 2026-11-07 code baseline
+## Implemented boundary at the 2026-11-10 code baseline
 
 The following statements are source-backed descriptions of the current tree, not a claim that the complete release acceptance gate has passed:
 
@@ -64,7 +64,7 @@ The application-level directory has no persistent store in the reviewed service 
 - The same HostLifecycle acceptance suite exercises an authenticated encrypted peer connection and request/response/cancellation over loopback peer processes. These are executable loopback integration checks, not a physical Android handset talking to a separate Windows host with a loaded release model.
 - `tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs` covers the Windows-side same-PeerId direct TCP-to-QUIC fallback and rejects mixed peer identities.
 - `tests/test_relay_privacy_boundary.py`, `tests/test_p2p_data_path_decision.py` and the new `tests/test_update_transport_trust_boundary.py` preserve the decision/source boundaries. Source-contract tests do not prove packet-level privacy by themselves. This architecture decision does not prove runtime routing; it records the approved boundary and current evidence only.
-- Android has a separate request runtime using the rendezvous directory and direct P2P transport. The ordinary Room conversation ViewModel remains local-message-only and does not yet submit the normal chat UI message to this request runtime. That integration remains a product gap.
+- Android retains a separate request runtime using the rendezvous directory and direct P2P transport. As of the 2026-11-10 code baseline, the normal conversation screen is wired to that existing runtime: it discovers the configured directory, requires explicit peer trust and first-request privacy consent, invokes automatic model resolution through `RequestViewModel.sendRequest(prompt)`, and persists correlated assistant responses and typed request notices into the active conversation's Room message table. The conversation message ViewModel owns Room persistence only; it does not create sockets or perform network transport itself. This source-level integration does not prove successful physical-device routing or release acceptance.
 - `AC-P2P-01` remains **NOT RUN** until the required real Android-to-Windows product path, local model response and same-conversation persistence are exercised on the target devices. Public reachability, deployment-level metadata logging and production rendezvous configuration also remain separate acceptance checks.
 
 ## Legacy task alignment
@@ -91,4 +91,4 @@ The application-level directory has no persistent store in the reviewed service 
 - `src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt`
 - `src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt`
 
-The original decision remains direct P2P. The 2026-11-07 implementation review refines the documented metadata/retention boundary; it does not enable relay, weaken privacy, or mark any physical end-to-end gate complete.
+The original decision remains direct P2P. The 2026-11-10 implementation review records the normal-chat UI integration with the existing runtime; it does not enable relay, weaken privacy, or mark any physical end-to-end gate complete.

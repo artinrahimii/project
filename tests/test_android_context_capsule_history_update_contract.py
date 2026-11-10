@@ -29,7 +29,9 @@ class AndroidContextCapsuleHistoryUpdateContractTests(unittest.TestCase):
         self.assertIn("Uses only this conversation’s local messages.", screen)
         self.assertNotIn("HttpClient", source)
         self.assertNotIn("Socket(", source)
-        self.assertNotIn("sendRequest(", source + screen)
+        # Capsule history remains a local draft; normal chat submission is a separate screen action.
+        self.assertNotIn("sendRequest(", source)
+        self.assertIn("requestViewModel.sendRequest(messageText)", screen)
         self.assertIn("requestViewModel.sendRequest(", main)
     def test_robolectric_test_covers_conversation_scope_and_manual_save(self):
         source = KOTLIN_TEST.read_text(encoding="utf-8")

@@ -428,8 +428,8 @@ internal fun conversationDetailScreen(
             title = { Text("Before you trust this processing host") },
             text = {
                 Text(
-                    "Processing host ${hostNumber.coerceAtLeast(1)} will be able to read the prompts and context you send after transport decryption. " +
-                        "Encryption protects the data in transit; it does not hide it from the receiving host or its operator. " +
+                    "Processing host ${hostNumber.coerceAtLeast(1)} can read prompts and context after transport decryption. " +
+                        "Encryption protects data in transit, but not from the receiving host or its operator. " +
                         "Trust is saved only after your confirmation. You can revoke it later from host settings.",
                 )
             },
@@ -457,8 +457,8 @@ internal fun conversationDetailScreen(
             title = { Text("Privacy before your first request") },
             text = {
                 Text(
-                    "A selected processing host can read your message and any context sent with it after transport decryption. " +
-                        "The host operator may inspect or retain what the host receives outside this app's control. " +
+                    "The selected processing host can read your message and sent context after transport decryption. " +
+                        "Its operator may inspect or retain received content outside this app's control. " +
                         "Only continue with content you are willing to disclose to a host you explicitly trust.",
                 )
             },
