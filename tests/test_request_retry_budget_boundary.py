@@ -62,7 +62,10 @@ class RetryPolicyBoundaryTests(unittest.TestCase):
     def test_request_retries_are_explicit_and_share_the_original_distributed_budget(self):
         self.assertIn("fun retryFailedAttempts()", REQUEST_VIEW_MODEL)
         self.assertIn(
-            "if (!network.canRetryRequest || network.isSendingRequest || network.isCancellingRequest) return",
+            "if (\n            !network.canRetryRequest ||\n"
+            "            network.isSendingRequest ||\n"
+            "            network.isSelectingModel ||\n"
+            "            network.isCancellingRequest\n        )",
             REQUEST_VIEW_MODEL,
         )
         self.assertIn("executeRequestRound(context, manualRetry = false)", REQUEST_VIEW_MODEL)

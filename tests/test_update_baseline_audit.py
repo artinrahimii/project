@@ -58,9 +58,13 @@ class UpdateBaselineAuditTests(unittest.TestCase):
         self.assertIn("does not send content to a processing host", message_vm)
         self.assertIn("messageDao.upsert(", message_vm)
         self.assertIn("Sending to a processing host is not available yet", conversation_ui)
-        self.assertIn('label = { Text("Exact model ID") }', activity)
-        self.assertIn('label = { Text("Maximum output tokens") }', activity)
-        self.assertIn("requestViewModel.sendRequest(", activity)
+        self.assertNotIn('label = { Text("Exact model ID") }', activity)
+        self.assertNotIn('label = { Text("Maximum output tokens") }', activity)
+        self.assertIn(
+            "onClick = { requestViewModel.sendRequest(prompt = requestState.prompt) }",
+            activity,
+        )
+        self.assertIn("requestState.isSelectingModel", activity)
 
     def test_windows_admission_and_single_inference_are_real_code_paths(self) -> None:
         coordinator = read("src/Host.Windows/Requests/HostRequestCoordinator.cs")

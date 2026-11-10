@@ -16,26 +16,47 @@ class AutomaticModelSelectionPolicyTest {
     @Test
     fun rejectsNoReadyHostAndNoCatalogVerifiedModel() {
         val request = probeRequest()
-        assertEquals(
-            AutomaticModelSelectionFailure.NO_READY_HOST,
-            (AutomaticModelSelectionPolicy.resolve(request, emptyList()) as AutomaticModelSelectionResult.Rejected).failure,
-        )
-        assertEquals(
-            AutomaticModelSelectionFailure.NO_VERIFIED_MODEL,
-            (AutomaticModelSelectionPolicy.resolve(request, listOf(candidate("peer-a", emptyList()))) as AutomaticModelSelectionResult.Rejected).failure,
-        )
+        val noReadyHost =
+            AutomaticModelSelectionPolicy.resolve(
+                request,
+                emptyList(),
+            ) as AutomaticModelSelectionResult.Rejected
+        assertEquals(AutomaticModelSelectionFailure.NO_READY_HOST, noReadyHost.failure)
+
+        val noModel =
+            AutomaticModelSelectionPolicy.resolve(
+                request,
+                listOf(candidate("peer-a", emptyList())),
+            ) as AutomaticModelSelectionResult.Rejected
+        assertEquals(AutomaticModelSelectionFailure.NO_VERIFIED_MODEL, noModel.failure)
     }
 
     @Test
     fun selectionAndOrdinalTieBreakAreDeterministicAcrossCandidateOrder() {
         val request = probeRequest()
-        val candidates = listOf(
-            candidate("peer-z", listOf(model("model-b", 16_384, 2_048))),
-            candidate("peer-c", listOf(model("model-z", 32_768, 2_048), model("model-a", 32_768, 2_048))),
-            candidate("peer-a", listOf(model("model-a", 32_768, 2_048))),
-        )
-        val first = AutomaticModelSelectionPolicy.resolve(request, candidates)
-        val second = AutomaticModelSelectionPolicy.resolve(request, candidates.reversed())
+        val candidates =
+            listOf(
+                candidate("peer-z", listOf(model("model-b", 16_384, 2_048))),
+                candidate(
+                    "peer-c",
+                    listOf(
+                        model("model-z", 32_768, 2_048),
+                        model("model-a", 32_768, 2_048),
+                    ),
+                ),
+                candidate("peer-a", listOf(model("model-a", 32_768, 2_048))),
+            )
+        val first =
+            AutomaticModelSelectionPolicy.resolve(
+                request,
+                candidates,
+            )
+        val second =
+            AutomaticModelSelectionPolicy.resolve(
+                request,
+                candidates.reversed(),
+            )
+
         assertTrue(first is AutomaticModelSelectionResult.Selected)
         assertEquals(first, second)
         val result = first as AutomaticModelSelectionResult.Selected
@@ -47,38 +68,59 @@ class AutomaticModelSelectionPolicyTest {
     @Test
     fun clampsOutputToThePositiveModelProductAndProtocolCeiling() {
         val request = probeRequest()
-        val low = AutomaticModelSelectionPolicy.resolve(
-            request, listOf(candidate("peer-low", listOf(model("model-low", 8_192, 128)))),
-        ) as AutomaticModelSelectionResult.Selected
+        val low =
+            AutomaticModelSelectionPolicy.resolve(
+                request,
+                listOf(candidate("peer-low", listOf(model("model-low", 8_192, 128)))),
+            ) as AutomaticModelSelectionResult.Selected
         assertEquals(128, low.maxOutputTokens)
 
-        val high = AutomaticModelSelectionPolicy.resolve(
-            request, listOf(candidate("peer-high", listOf(model("model-high", 8_192, 200_000)))),
-        ) as AutomaticModelSelectionResult.Selected
+        val high =
+            AutomaticModelSelectionPolicy.resolve(
+                request,
+                listOf(candidate("peer-high", listOf(model("model-high", 8_192, 200_000)))),
+            ) as AutomaticModelSelectionResult.Selected
         assertEquals(AutomaticModelSelectionPolicy.PREFERRED_OUTPUT_TOKENS, high.maxOutputTokens)
     }
 
     @Test
     fun rejectsBusyHostsAndInvalidOrDuplicateModelMetadata() {
         val request = probeRequest()
-        val busy = candidate("peer-busy", listOf(model("model-a", 8_192, 512)), HostRuntimeState.HOST_RUNTIME_STATE_BUSY)
-        assertEquals(
-            AutomaticModelSelectionFailure.NO_READY_HOST,
-            (AutomaticModelSelectionPolicy.resolve(request, listOf(busy)) as AutomaticModelSelectionResult.Rejected).failure,
-        )
+        val busy =
+            candidate(
+                peerId = "peer-busy",
+                models = listOf(model("model-a", 8_192, 512)),
+                state = HostRuntimeState.HOST_RUNTIME_STATE_BUSY,
+            )
+        val busyResult =
+            AutomaticModelSelectionPolicy.resolve(
+                request,
+                listOf(busy),
+            ) as AutomaticModelSelectionResult.Rejected
+        assertEquals(AutomaticModelSelectionFailure.NO_READY_HOST, busyResult.failure)
+
         val invalid = candidate("peer-invalid", listOf(model(" ", 8_192, 512)))
-        assertEquals(
-            AutomaticModelSelectionFailure.INVALID_MODEL_METADATA,
-            (AutomaticModelSelectionPolicy.resolve(request, listOf(invalid)) as AutomaticModelSelectionResult.Rejected).failure,
-        )
-        val duplicate = candidate(
-            "peer-duplicate",
-            listOf(model("model-a", 8_192, 512), model("model-a", 16_384, 1_024)),
-        )
-        assertEquals(
-            AutomaticModelSelectionFailure.INVALID_MODEL_METADATA,
-            (AutomaticModelSelectionPolicy.resolve(request, listOf(duplicate)) as AutomaticModelSelectionResult.Rejected).failure,
-        )
+        val invalidResult =
+            AutomaticModelSelectionPolicy.resolve(
+                request,
+                listOf(invalid),
+            ) as AutomaticModelSelectionResult.Rejected
+        assertEquals(AutomaticModelSelectionFailure.INVALID_MODEL_METADATA, invalidResult.failure)
+
+        val duplicate =
+            candidate(
+                "peer-duplicate",
+                listOf(
+                    model("model-a", 8_192, 512),
+                    model("model-a", 16_384, 1_024),
+                ),
+            )
+        val duplicateResult =
+            AutomaticModelSelectionPolicy.resolve(
+                request,
+                listOf(duplicate),
+            ) as AutomaticModelSelectionResult.Rejected
+        assertEquals(AutomaticModelSelectionFailure.INVALID_MODEL_METADATA, duplicateResult.failure)
     }
 
     private fun probeRequest(): InferenceRequest =
@@ -107,28 +149,31 @@ class AutomaticModelSelectionPolicyTest {
         models: List<ModelCapability>,
         state: HostRuntimeState = HostRuntimeState.HOST_RUNTIME_STATE_READY,
     ): HostCandidate {
-        val capabilities = HostCapabilities.newBuilder()
-            .setEphemeralHostId(peerId)
-            .setProtocolVersion("1.0.0")
-            .addAllModels(models)
-            .setMaxConcurrentRequests(1)
-            .setMaxPromptBytes(8_192)
-            .setMaxContextCapsuleBytes(4_096)
-            .build()
-        val announcement = HostAnnouncement.newBuilder()
-            .setEphemeralHostId(peerId)
-            .setProtocolVersion("1.0.0")
-            .setCapabilities(capabilities)
-            .setAnnouncedAtUnixMs(1_800_000_000_000L)
-            .build()
-        val status = hostStatus {
-            ephemeralHostId = peerId
-            this.state = state
-            activeRequests = if (state == HostRuntimeState.HOST_RUNTIME_STATE_READY) 0 else 1
-            observedAtUnixMs = 1_800_000_000_000L
-            protocolVersion = "1.0.0"
-            this.models += models
-        }
+        val capabilities =
+            HostCapabilities.newBuilder()
+                .setEphemeralHostId(peerId)
+                .setProtocolVersion("1.0.0")
+                .addAllModels(models)
+                .setMaxConcurrentRequests(1)
+                .setMaxPromptBytes(8_192)
+                .setMaxContextCapsuleBytes(4_096)
+                .build()
+        val announcement =
+            HostAnnouncement.newBuilder()
+                .setEphemeralHostId(peerId)
+                .setProtocolVersion("1.0.0")
+                .setCapabilities(capabilities)
+                .setAnnouncedAtUnixMs(1_800_000_000_000L)
+                .build()
+        val status =
+            hostStatus {
+                ephemeralHostId = peerId
+                this.state = state
+                activeRequests = if (state == HostRuntimeState.HOST_RUNTIME_STATE_READY) 0 else 1
+                observedAtUnixMs = 1_800_000_000_000L
+                protocolVersion = "1.0.0"
+                this.models += models
+            }
         return HostCandidate(announcement, status)
     }
 }

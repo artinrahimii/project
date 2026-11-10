@@ -126,10 +126,12 @@ class AuthenticatedHostDiscoveryTest {
                     },
                     clock = clock,
                 )
-            val probeRequest = validRequest().toBuilder()
-                .setModelId("whitep-internal-model-selection-probe")
-                .setMaxOutputTokens(1)
-                .build()
+            val probeRequest =
+                validRequest()
+                    .toBuilder()
+                    .setModelId("whitep-internal-model-selection-probe")
+                    .setMaxOutputTokens(1)
+                    .build()
 
             val candidates = discovery.discoverReadyCandidates(probeRequest)
 
