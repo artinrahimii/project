@@ -133,3 +133,28 @@
 - import دقیق و مرتب اضافه شد. هیچ کد runtime یا رفتار محصول تغییر نکرد.
 - شواهد: `update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A010.md`.
 - CI دقیق A010 باید lint، کامپایل test source، اجرای Robolectric، APK و سایر gateها را تأیید کند؛ تا آن زمان وظیفه در وضعیت `in_progress` است.
+
+
+## تلاش A011 — تأیید نهایی و بستن UPD-S1-010
+
+- مبنای دقیق: شاخهٔ `main`، commit `8e784ad4596412fd811bfb261f62d12ff0644589`، پیام `V 3.1.174`.
+- CI دقیق همین commit کامل شد؛ هر سه job محصول موفق شدند: Windows WPF، Android client و HostLifecycle. آزمون کیفیت مستقل نیز موفق شد.
+- مسیر گفت‌وگوی موجود بررسی شد: `ConversationDetailScreen` پیام را ابتدا از طریق `ConversationMessagesViewModel` در Room همان conversation ثبت می‌کند و سپس `RequestViewModel.sendRequest(prompt)` را فراخوانی می‌کند. این مسیر انتخاب خودکار مدل را انجام می‌دهد و Model ID و سقف خروجی را از کاربر عادی نمی‌خواهد.
+- `AndroidInferenceRequestRuntime` از هویت و trust store اندروید، کشف metadata-only، probe احرازشدهٔ HostStatus، سیاست انتخاب مدل و `Libp2pInferenceRequestTransport` استفاده می‌کند. runtime تولیدی در مسیر محصول قرار دارد.
+- پیش از نخستین ارسال، هشدار حریم خصوصی و رضایت صریح دریافت می‌شود؛ همتای جدید نیز نیازمند تأیید صریح trust است. رابط عادی شناسه‌های IP، Port یا PeerId را نمایش نمی‌دهد.
+- پاسخ موفق با correlation درخواست/تلاش و نقش `assistant` و خطای قابل‌نمایش با نقش `system` در همان conversation ذخیره می‌شوند. شناسهٔ پیام deterministic و idempotent است. request lifecycle نیز با `conversationId` در Room جدا شده و بازیابی یک مکالمه وضعیت مکالمهٔ دیگر را تغییر نمی‌دهد.
+- وضعیت کشف، بررسی مدل، ارسال، لغو، retry، شکست و بازیابی history در همان صفحهٔ گفت‌وگو متصل است.
+- Quality Gate run [42866959118](https://github.com/artinrahimii/project/actions/runs/42866959118): **موفق**؛ 493 آزمون Python، `compileall` و graph_guard هر دو گراف در دو حالت ساختار و مسیرهای خروجی/شواهد.
+- Product Build run [42866959220](https://github.com/artinrahimii/project/actions/runs/42866959220): **موفق**؛ Windows clean build/publish/startup smoke/installer، Android lint/debug+release/JVM/Keystore instrumentation، و HostLifecycle integration همگی موفق.
+- Rendezvous smoke run [42866959693](https://github.com/artinrahimii/project/actions/runs/42866959693): **موفق**.
+- شواهد دقیق در `evidence/ci-verification-A010.md` ثبت شده است.
+- کد محصول جدیدی در این تلاش تغییر نکرد؛ این تلاش، تکمیل ممیزی و اعتبارسنجی کد موجود و بستن شکاف CI تلاش A010 است.
+
+### محدودیت‌هایی که موفق اعلام نشده‌اند
+
+- Android-to-Windows با گوشی فیزیکی و میزبان فیزیکی نصب‌شده: **اجرا نشده**؛ دروازهٔ مستقل UPD-S1-020.
+- inference با مدل واقعی روی میزبان متعلق به کاربر و پاسخ برگشتی به همان چت: **اجرا نشده**؛ دروازهٔ مستقل UPD-S1-020.
+- clean install و in-place upgrade روی دستگاه‌های واقعی: **اجرا نشده**؛ دروازهٔ UPD-S1-021.
+- Emulator و CI اثبات ارتباط فیزیکی Android-to-Windows یا بارگذاری مدل واقعی نیستند.
+
+**نتیجه:** معیارهای خود UPD-S1-010 بر مبنای اتصال کد تولیدی، ذخیره‌سازی Room، کنترل رضایت/trust، وضعیت‌ها و آزمون‌های exact-head CI احراز شد؛ وضعیت وظیفه `done` است. این نتیجه هیچ‌یک از دروازه‌های فیزیکی UPD-S1-020/021 را تأیید نمی‌کند.

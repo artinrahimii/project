@@ -6967,8 +6967,8 @@
         "هیچ IP، Port یا PeerId یا شناسهٔ شناسایی غیرضروری میزبان در متن و کنترل‌های مسیر عادی چت افشا نشود؛ جزئیات عیب‌یابی فقط در بخش پیشرفتهٔ جداگانه مجاز باشد.",
         "UI موجود بدون بازسازی غیرضروری حفظ شود و تست مسیر واقعی/mock boundary به‌صراحت محدودیت mock را اعلام کند."
       ],
-      "status": "in_progress",
-      "status_fa": "انجام‌نشده",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
@@ -6997,7 +6997,8 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
         "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md",
         "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md",
-        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A010.md"
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A010.md",
+        "update/Step three/UPD-S1-010/evidence/ci-verification-A010.md"
       ],
       "evidence": [
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7035,37 +7036,19 @@
         "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
         "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md",
         "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md",
-        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A010.md"
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A010.md",
+        "update/Step three/UPD-S1-010/evidence/ci-verification-A010.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0088, T0090, T0092, T0139, T0145, T0146, T0147, T0148, T0149, T0150, T0190, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 10,
+        "attempt_count": 11,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-010-20261110-A010",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "UPD-S1-010-20261110-A011",
+        "last_attempt_result": "succeeded",
         "changed_files": [
-          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
-          "update/Step three/UPD-S1-010/execution-report.md",
-          "update/Step three/UPD-S1-010/evidence/chat-runtime-gap-audit.md",
-          "tests/test_android_context_capsule_history_update_contract.py",
-          "tests/test_android_conversation_detail_contract.py",
-          "tests/test_android_message_validation_contract.py",
-          "tests/test_android_request_status_contract.py",
-          "tests/test_update_baseline_audit.py",
-          "tests/test_update_transport_trust_boundary.py",
-          "docs/decisions/ADR-0002-direct-p2p-data-path.md",
-          ".github/workflows/product-build.yml",
-          "src/Client.Android/app/src/main/java/com/whitep/client/data/RequestStateEntity.kt",
-          "src/Client.Android/app/src/main/java/com/whitep/client/data/InferenceRequestLifecycleRepository.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
           "update/Step two/project-graph.md",
-          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
-          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md",
-          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md",
-          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A010.md"
+          "update/Step three/UPD-S1-010/execution-report.md",
+          "update/Step three/UPD-S1-010/evidence/ci-verification-A010.md"
         ],
         "related_commits": [
           "0ec848f0573de18449bf01f1b80e0352ab692620",
@@ -7076,7 +7059,8 @@
           "68cae864c567238fe831cbda12abb4182a9c3e23",
           "8c540bdf774692ece0ba6f24e1f826fe738e011c",
           "2d3842e0e3d2b7cc92e07580491dc6cff54e9a1d",
-          "047fae2293a886fb06447384db6a91d31a5510e5"
+          "047fae2293a886fb06447384db6a91d31a5510e5",
+          "8e784ad4596412fd811bfb261f62d12ff0644589"
         ],
         "tests_passed": [
           "A001: Windows host compile and WPF startup smoke passed in run 42859232180.",
@@ -7090,7 +7074,13 @@
           "A005 exact-head Windows WPF smoke/installer completed successfully in product run 42861823132.",
           "A007 exact-head quality gate run 42865138755 passed (492 Python tests).",
           "A007 exact-head HostLifecycle tests and coverage passed in product run 42865142546.",
-          "A007 exact-head rendezvous container build and smoke run 42865139281 passed."
+          "A007 exact-head rendezvous container build and smoke run 42865139281 passed.",
+          "Step Three quality gate: passed — run 42866959118; 493 Python tests passed; compileall and all four graph_guard validations passed on exact commit V 3.1.174.",
+          "Windows WPF build and installer acceptance: passed — run 42866959220; Windows job succeeded on a clean hosted runner; WPF startup, publish output and installer acceptance passed.",
+          "HostLifecycle unit and integration acceptance: passed — run 42866959220; Exact-head lifecycle suite passed. Logs include single-inference admission (1 of 64, 63 Busy), fail-closed capacity, cancellation/deadline, trust/transport and safe diagnostics.",
+          "Android lint, debug/release build and JVM tests: passed — run 42866959220; Android lint, debug APK, disposable-key release verification, JVM unit tests and coverage completed successfully.",
+          "Android Keystore instrumentation and launcher smoke: passed — run 42866959220; Instrumentation passed and installed MainActivity launched on the hosted emulator. This is emulator CI evidence, not a physical handset test.",
+          "Rendezvous container build and smoke: passed — run 42866959693; Exact-head rendezvous container build and smoke succeeded."
         ],
         "tests_failed": [
           "A001: quality gate run 42859232340 — 7 obsolete Python assertions failed because they prohibited the newly-required chat/runtime connection.",
@@ -7110,7 +7100,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Run exact-head A010 quality and product CI, validate Kotlin test compilation, Robolectric execution, Android debug/release build and Windows jobs. UPD-S1-010 stays in_progress until its full UI/runtime acceptance is supported by evidence."
+        "follow_up": "Proceed to UPD-S1-013. Preserve physical Android-to-installed-Windows, real-model inference, clean-install and in-place-upgrade gates for UPD-S1-020/021."
       },
       "execution_history": [
         {
@@ -7556,6 +7546,77 @@
           "device_and_host_details_redacted": "GitHub-hosted CI only; no physical Android device or personal Windows host.",
           "model_revision_and_sha256": "No model inference executed.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-010-20261110-A011",
+          "started_at": "2026-11-10T17:47:27.000Z",
+          "ended_at": "2026-11-10T18:01:47.971Z",
+          "result": "succeeded",
+          "summary": "Exact-head CI on V 3.1.174 closed the remaining A010 validation gap. The existing Android conversation screen stores the user message in Room, applies first-request privacy consent and explicit peer trust, calls the production automatic-model RequestViewModel path, and persists correlated responses/notices in the same conversation. The production runtime creates AndroidInferenceRequestRuntime and uses the real libp2p transport; technical peer fields are not exposed in ordinary chat controls. Existing UI/Room workflow tests and exact-head Android, Windows, HostLifecycle and graph-quality CI passed. Physical Android-to-Windows inference remains a separate UPD-S1-020 gate.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-010/execution-report.md",
+            "update/Step three/UPD-S1-010/evidence/ci-verification-A010.md"
+          ],
+          "commit_sha": "8e784ad4596412fd811bfb261f62d12ff0644589",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "python -m unittest discover -s tests -v; python -m compileall -q tools tests; graph_guard structure and repo-root evidence modes for both graphs",
+              "result": "passed",
+              "run_id": 42866959118,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42866959118",
+              "summary": "493 Python tests passed; compileall and all four graph_guard validations passed on exact commit V 3.1.174."
+            },
+            {
+              "name": "Windows WPF build and installer acceptance",
+              "command": "product-build.yml — clean restore, dotnet format, Release build, win-x64 publish, WPF --smoke-test, Protobuf generation and installer acceptance",
+              "result": "passed",
+              "run_id": 42866959220,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42866959220",
+              "summary": "Windows job succeeded on a clean hosted runner; WPF startup, publish output and installer acceptance passed."
+            },
+            {
+              "name": "HostLifecycle unit and integration acceptance",
+              "command": "dotnet build tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release --no-incremental; dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "passed",
+              "run_id": 42866959220,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42866959220",
+              "summary": "Exact-head lifecycle suite passed. Logs include single-inference admission (1 of 64, 63 Busy), fail-closed capacity, cancellation/deadline, trust/transport and safe diagnostics."
+            },
+            {
+              "name": "Android lint, debug/release build and JVM tests",
+              "command": "gradle --no-daemon ktlintCheck; assembleDebug; assembleRelease with disposable CI key; Android JVM unit tests and coverage",
+              "result": "passed",
+              "run_id": 42866959220,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42866959220",
+              "summary": "Android lint, debug APK, disposable-key release verification, JVM unit tests and coverage completed successfully."
+            },
+            {
+              "name": "Android Keystore instrumentation and launcher smoke",
+              "command": "Android Keystore instrumentation tests; hosted-emulator MainActivity install/launch/resume verification",
+              "result": "passed",
+              "run_id": 42866959220,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42866959220",
+              "summary": "Instrumentation passed and installed MainActivity launched on the hosted emulator. This is emulator CI evidence, not a physical handset test."
+            },
+            {
+              "name": "Rendezvous container build and smoke",
+              "command": "Rendezvous container build and smoke workflow",
+              "result": "passed",
+              "run_id": 42866959693,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42866959693",
+              "summary": "Exact-head rendezvous container build and smoke succeeded."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to UPD-S1-013. Preserve physical Android-to-installed-Windows, real-model inference, clean-install and in-place-upgrade gates for UPD-S1-020/021.",
+          "device_and_host_details_redacted": "GitHub-hosted Ubuntu runner, Windows runner and Android emulator only. No physical Android handset, user-owned Windows host or public-network peer session was used.",
+          "model_revision_and_sha256": "No real model inference was executed for this task; no model revision or SHA-256 is claimed.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed; in-place upgrade remains an independent UPD-S1-021 gate."
         }
       ]
     },
@@ -12291,14 +12352,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T17:37:46.976Z",
+    "as_of": "2026-11-10T18:01:47.971Z",
     "total_tasks": 24,
     "not_started": 9,
-    "in_progress": 1,
-    "done": 14,
+    "in_progress": 0,
+    "done": 15,
     "blocked": 0,
-    "verified_completion_percentage": 58.333333333333336,
-    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress after A010; A007 Python suite passed (493 tests), but the successive Android fixes are awaiting exact-head product lint/compile/build/JVM validation. 9 tasks remain not_started."
+    "verified_completion_percentage": 62.5,
+    "calculation": "15 verified done update tasks / 24 total update tasks = 62.5%. UPD-S1-010 passed the exact-head Android, Windows, HostLifecycle and graph/quality CI gates on V 3.1.174; 9 tasks remain not_started."
   },
   "visual_identity": {
     "scope": [
@@ -12412,7 +12473,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T17:37:46.976Z",
+  "updated_at": "2026-11-10T18:01:47.971Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
