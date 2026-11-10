@@ -1,7 +1,7 @@
 # گزارش اجرای UPD-S1-023 — سیاست انتخاب خودکار مدل و سقف خروجی
 
 ## وضعیت
-**در حال اجرا (in_progress)**. تلاش A001 در V 3.1.160 به‌علت هفت خطای کامپایل C# شکست خورد. تلاش A002 تمام محل‌های فراخوانی قدیمی و ابهام HostStatus را اصلاح کرده است؛ CI دقیق نسخهٔ اصلاحی هنوز در انتظار اجراست.
+**در حال اجرا (in_progress)**. A001 به‌علت هفت خطای کامپایل شکست خورد. A002 آن‌ها را رفع کرد اما HostLifecycle در runtime به‌درستی backend آزمایشی فاقد capability را رد کرد؛ A003 fixture را به capability provider مجهز می‌کند. CI دقیق A003 در انتظار است.
 
 ## مبنای ممیزی
 - مخزن: `artinrahimii/project`
@@ -46,8 +46,13 @@
 - **CI دقیق A002: در انتظار.**
 
 ## تلاش‌های ثبت‌شده
-- A001: commit `a38ac25a08820c8d0095413eec44ea0c230d5f69`؛ نتیجهٔ failed؛ هفت خطای کامپایل در HostLifecycle.
-- A002: اصلاح شش سازنده و رفع ابهام نام؛ نتیجهٔ partial تا تأیید CI.
+- A001: commit `a38ac25a08820c8d0095413eec44ea0c230d5f69`؛ نتیجهٔ failed؛ هفت خطای کامپایل C#.
+- A002: commit `41bbccf74e49f4a87b5004761592e02aa78df14c`؛ کامپایل موفق شد، اما HostLifecycle در اجرای آزمون SessionTestBackend فاقد capability رد شد؛ نتیجهٔ failed.
+- A003: backend fixture مشترک اکنون `IInferenceModelCapabilityProvider` را پیاده می‌کند و مدل fixture را با context/output معتبر گزارش می‌دهد؛ نتیجهٔ partial تا تأیید CI.
+- run inference A002 پیش از اجرای مدل واقعی در آزمون QUIC/UDP alternative شکست خورد؛ نتیجهٔ inference واقعی هنوز اثبات نشده است.
+
+## فایل اضافه‌شده در A003
+- `tests/HostLifecycle.Tests/Program.cs`
 
 ## محدودیت‌های این تلاش
 - آزمون فیزیکی Android به Windows و inference واقعی از مسیر P2P در این تلاش انجام نشده است.

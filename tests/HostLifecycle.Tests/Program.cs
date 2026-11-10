@@ -1397,7 +1397,7 @@ sealed class DisposableReplacementTestBackend : IInferenceBackend, IDisposable
     public void Dispose() => DisposeCalls++;
 }
 
-sealed class SessionTestBackend : IInferenceBackend
+sealed class SessionTestBackend : IInferenceBackend, WhiteP.Host.Application.IInferenceModelCapabilityProvider
 {
  public bool IsAvailable=>true;
  public string UnavailableReason=>string.Empty;
@@ -1408,5 +1408,11 @@ sealed class SessionTestBackend : IInferenceBackend
  {
   GenerationCalls++;
   return Task.FromResult(GeneratedText);
+ }
+ public Task<WhiteP.Host.Application.InferenceModelCapabilitySnapshot?> GetModelCapabilityAsync(CancellationToken cancellationToken=default)
+ {
+  cancellationToken.ThrowIfCancellationRequested();
+  return Task.FromResult<WhiteP.Host.Application.InferenceModelCapabilitySnapshot?>(
+   new("fixture-model","Fixture model",8192,4096,false));
  }
 }

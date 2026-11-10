@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.161",
+  "commit_intent": "V 3.1.162",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -8990,7 +8990,8 @@
         "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
-        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs"
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs"
       ],
       "evidence": [
         "update/Step three/UPD-S1-023/execution-report.md",
@@ -9007,36 +9008,35 @@
         "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
-        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs"
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/Program.cs"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=add; affected_task_ids=T0057, T0058, T0059, T0060, T0061, T0062, T0063, T0064, T0065, T0066, T0067, T0068, T0069, T0070, T0071, T0072, T0073, T0074, T0075, T0098, T0099, T0100, T0101, T0102, T0103, T0104, T0105, T0106, T0107, T0124, T0196, T0221. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 1,
-        "last_attempt_id": "UPD-S1-023-20261110-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 2,
+        "last_attempt_id": "UPD-S1-023-20261110-A003",
         "last_attempt_result": "partial",
         "changed_files": [
-          "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
-          "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
-          "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
-          "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
-          "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
-          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+          "tests/HostLifecycle.Tests/Program.cs",
           "update/Step two/project-graph.md",
           "update/Step three/UPD-S1-023/execution-report.md"
         ],
         "related_commits": [
-          "a38ac25a08820c8d0095413eec44ea0c230d5f69"
+          "a38ac25a08820c8d0095413eec44ea0c230d5f69",
+          "41bbccf74e49f4a87b5004761592e02aa78df14c"
         ],
         "tests_passed": [
-          "Exact-head quality gate V 3.1.160 passed (run 42848534130).",
-          "Exact-head rendezvous container build/smoke passed (run 42848534328)."
+          "V 3.1.160 exact-head quality gate passed.",
+          "V 3.1.160 rendezvous container build/smoke passed.",
+          "V 3.1.161 exact-head quality gate passed.",
+          "V 3.1.161 rendezvous container build/smoke passed.",
+          "V 3.1.161 Windows WPF host build passed."
         ],
         "tests_failed": [
-          "HostLifecycle clean build failed with 7 C# errors in product run 42848534275.",
-          "Android peer interoperability fixture build failed on the same HostLifecycle compilation errors in product run 42848534275.",
-          "Windows product workflow failed at its HostLifecycle-dependent process restriction step in product run 42848534275.",
-          "Real local-inference test was not reached because its HostLifecycle project build failed (run 42848534114)."
+          "V 3.1.160 HostLifecycle compile failed with seven C# errors; see A001.",
+          "V 3.1.161 HostLifecycle harness failed because Program.cs SessionTestBackend lacked live model capability; see A002.",
+          "V 3.1.161 real-inference workflow stopped at the QUIC/UDP-alternative assertion before real model inference; see A002."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -9136,9 +9136,9 @@
         {
           "attempt_id": "UPD-S1-023-20261110-A002",
           "started_at": "2026-11-10T16:00:00Z",
-          "ended_at": "2026-11-10T16:02:00Z",
-          "result": "partial",
-          "summary": "Corrected the six remaining HostRequestAdmissionContext test call sites with valid model limits and added a domain HostStatus alias to remove the C# ambiguity. This is a compile-fix attempt only; exact-head CI has not yet validated it.",
+          "ended_at": "2026-11-10T16:04:00Z",
+          "result": "failed",
+          "summary": "The six stale constructors and the ambiguous HostStatus import were corrected, so the C# project compiled and the test suite began executing. HostLifecycle then failed at Program.cs while a request-based session test used SessionTestBackend without IInferenceModelCapabilityProvider; the new fail-closed request path correctly refused to infer without live model identity/limits. The real-inference workflow also stopped earlier in its general HostLifecycle acceptance harness on an existing QUIC/UDP-alternative assertion, before the real local model step could be established.",
           "changed_files": [
             "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
             "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
@@ -9149,31 +9149,59 @@
             "update/Step two/project-graph.md",
             "update/Step three/UPD-S1-023/execution-report.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "41bbccf74e49f4a87b5004761592e02aa78df14c",
           "tests": [
             {
-              "name": "HostLifecycle C# compilation",
-              "command": "product-build.yml — Host lifecycle unit and integration tests",
-              "result": "pending",
-              "summary": "All six stale constructor call sites updated; HostStatus aliased to WhiteP.Host.Domain.HostStatus."
-            },
-            {
-              "name": "Android and Windows product CI",
-              "command": "product-build.yml on exact A002 commit",
-              "result": "pending",
-              "summary": "Re-run the full Android, Windows and HostLifecycle jobs."
-            },
-            {
               "name": "Step Three quality gate",
-              "command": "quality.yml on exact A002 commit",
-              "result": "pending",
-              "summary": "Re-run full Python tests, compileall and both graph guards."
+              "command": "quality.yml on V 3.1.161",
+              "result": "passed",
+              "run_id": 42849978582,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42849978582",
+              "summary": "Python tests, compileall and both graph guards passed."
             },
             {
-              "name": "Real local-model inference",
-              "command": "real-inference.yml on exact A002 commit",
+              "name": "Rendezvous container",
+              "command": "rendezvous-container.yml on V 3.1.161",
+              "result": "passed",
+              "run_id": 42849979144,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42849979144",
+              "summary": "Container build and HTTP smoke test passed."
+            },
+            {
+              "name": "Windows WPF host build",
+              "command": "product-build.yml — Build Windows WPF host",
+              "result": "passed",
+              "run_id": 42849978454,
+              "job_id": 129947661611,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42849978454",
+              "summary": "Clean WPF host build and associated Windows job steps passed."
+            },
+            {
+              "name": "HostLifecycle acceptance harness",
+              "command": "product-build.yml — Host lifecycle unit and integration tests",
+              "result": "failed",
+              "run_id": 42849978454,
+              "job_id": 129947662124,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42849978454",
+              "summary": "Compilation succeeded. Harness stopped at Program.cs due SessionTestBackend not implementing live model capability provider; session correctly rejected the request before inference."
+            },
+            {
+              "name": "Android peer interoperability fixture",
+              "command": "product-build.yml — Build Android client APK",
               "result": "pending",
-              "summary": "Re-run after HostLifecycle build correction."
+              "run_id": 42849978454,
+              "job_id": 129947662133,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42849978454",
+              "summary": "Job remained in progress when this history update was prepared."
+            },
+            {
+              "name": "Real local inference acceptance harness",
+              "command": "real-inference.yml",
+              "result": "failed",
+              "run_id": 42849978678,
+              "job_id": 129947662130,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42849978678",
+              "summary": "The general HostLifecycle harness stopped at a QUIC/UDP alternative announcement assertion before the real local model generation acceptance step."
             }
           ],
           "failure_details": null,
@@ -9183,6 +9211,53 @@
           "follow_up": "Run exact-head CI on this correction. Fix any remaining compile or runtime failures; do not mark UPD-S1-023 done until all six acceptance criteria pass.",
           "device_and_host_details_redacted": "No physical Android handset or user-owned Windows host was tested; CI remains hosted-only.",
           "model_revision_and_sha256": "No real model used in A002; inference job pending.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-023-20261110-A003",
+          "started_at": "2026-11-10T16:05:00Z",
+          "ended_at": "2026-11-10T16:05:00Z",
+          "result": "partial",
+          "summary": "Updated the shared Program.cs SessionTestBackend fixture to implement IInferenceModelCapabilityProvider and return the exact fixture-model identity plus valid 8192-context/4096-output limits. This preserves fail-closed production behavior while making the test backend explicitly model-capable. Exact-head CI is pending.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/Program.cs",
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-023/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle acceptance harness",
+              "command": "product-build.yml — Host lifecycle unit and integration tests",
+              "result": "pending",
+              "summary": "SessionTestBackend now proves live fixture model identity and limits."
+            },
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact A003 commit",
+              "result": "pending",
+              "summary": "Run complete Python suite, compileall, both graph guards and evidence validation."
+            },
+            {
+              "name": "Android and Windows product build",
+              "command": "product-build.yml on exact A003 commit",
+              "result": "pending",
+              "summary": "Run all platform build, lint, instrumentation and installer checks."
+            },
+            {
+              "name": "Real local inference",
+              "command": "real-inference.yml on exact A003 commit",
+              "result": "pending",
+              "summary": "Run again; investigate any transport/environment assertion independently of model generation."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Validate the SessionTestBackend capability fixture and continue through any remaining HostLifecycle failures. Do not mark done until exact-head test suites and task acceptance checks pass.",
+          "device_and_host_details_redacted": "Hosted CI only; no physical Android handset or user-owned Windows host was accessed.",
+          "model_revision_and_sha256": "Not applicable to the test fixture; real inference must still provide a pinned model and checksum.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
@@ -11589,14 +11664,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T16:02:00Z",
+    "as_of": "2026-11-10T16:05:00Z",
     "total_tasks": 24,
     "not_started": 10,
     "in_progress": 1,
     "done": 13,
     "blocked": 0,
     "verified_completion_percentage": 54.166666666666664,
-    "calculation": "13 verified done update tasks / 24 total update tasks = 54.1667%. UPD-S1-023 remains in_progress after a failed exact-head compile and one corrective attempt pending CI."
+    "calculation": "13 verified done update tasks / 24 total update tasks = 54.1667%. UPD-S1-023 remains in_progress; A001 and A002 failed, A003 awaits exact-head CI."
   },
   "visual_identity": {
     "scope": [
@@ -11710,7 +11785,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T16:02:00Z",
+  "updated_at": "2026-11-10T16:05:00Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

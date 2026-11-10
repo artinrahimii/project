@@ -43,3 +43,14 @@ run مبنا `42835719820` دو assertion نادرست داشت. اصلاح آن
 - Product build: ناموفق، run 42848534275؛ ۷ compile errors در HostLifecycle.
 - Real inference: ناموفق پیش از اجرای inference، run 42848534114.
 - A002 شش سازندهٔ باقی‌مانده و نام مبهم HostStatus را اصلاح کرده است؛ این اصلاحات تا اجرای CI بعدی تأییدنشده‌اند.
+
+
+## تلاش A002: failure در زمان اجرا
+- HostLifecycle compile با اصلاح constructorها موفق شد.
+- Harness به دلیل اینکه `SessionTestBackend` در `tests/HostLifecycle.Tests/Program.cs` capability زنده را گزارش نمی‌کرد، fail-closed رد شد.
+- real-inference workflow به دلیل assertion مربوط به انتشار جایگزین QUIC/UDP برای همان peer متوقف شد؛ مدل محلی هنوز در آن run اجرا نشده است.
+
+## تلاش A003
+- `SessionTestBackend` در `Program.cs` اکنون `IInferenceModelCapabilityProvider` است.
+- Model ID برابر `fixture-model` و context/output برابر 8192/4096 گزارش می‌شوند.
+- CI دقیق این اصلاح هنوز اجرا نشده است.
