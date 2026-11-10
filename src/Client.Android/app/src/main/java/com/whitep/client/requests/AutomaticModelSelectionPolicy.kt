@@ -3,7 +3,9 @@ package com.whitep.client.requests
 import org.whitep.shared.contracts.v1.InferenceRequest
 import org.whitep.shared.contracts.v1.ModelCapability
 
-enum class AutomaticModelSelectionFailure(val userMessage: String) {
+enum class AutomaticModelSelectionFailure(
+    val userMessage: String,
+) {
     NO_READY_HOST(
         "No explicitly trusted, reachable host is ready for this request.",
     ),
@@ -87,6 +89,7 @@ object AutomaticModelSelectionPolicy {
                 val effectiveCeiling =
                     minOf(
                         model.maxOutputTokens,
+                        model.maxContextTokens,
                         MAX_PRODUCT_OUTPUT_TOKENS.toLong(),
                         MAX_PROTOCOL_OUTPUT_TOKENS.toLong(),
                     )
@@ -119,14 +122,12 @@ object AutomaticModelSelectionPolicy {
         // Preference: largest usable context, then output headroom. Model ID and PeerId ordinal
         // order are stable tie-breakers; no display-name parsing or random/default model is used.
         val selected =
-            options
-                .sortedWith(
-                    compareByDescending<Option> { it.maxContextTokens }
-                        .thenByDescending { it.maxOutputTokens }
-                        .thenBy { it.modelId }
-                        .thenBy { it.hostId },
-                )
-                .first()
+            options.sortedWith(
+                compareByDescending<Option> { it.maxContextTokens }
+                    .thenByDescending { it.maxOutputTokens }
+                    .thenBy { it.modelId }
+                    .thenBy { it.hostId },
+            ).first()
 
         return AutomaticModelSelectionResult.Selected(
             hostId = selected.hostId,
@@ -143,6 +144,7 @@ object AutomaticModelSelectionPolicy {
             modelId.none { character -> character.code < 32 || character.code == 127 } &&
             model.displayName.isNotBlank() &&
             model.maxContextTokens > 0L &&
-            model.maxOutputTokens > 0L
+            model.maxOutputTokens > 0L &&
+            model.maxOutputTokens <= model.maxContextTokens
     }
 }

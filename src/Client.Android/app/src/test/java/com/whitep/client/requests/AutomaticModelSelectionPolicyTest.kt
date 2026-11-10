@@ -100,12 +100,24 @@ class AutomaticModelSelectionPolicyTest {
         assertEquals(AutomaticModelSelectionFailure.NO_READY_HOST, busyResult.failure)
 
         val invalid = candidate("peer-invalid", listOf(model(" ", 8_192, 512)))
+        val inconsistentLimits =
+            candidate(
+                "peer-inconsistent-limits",
+                listOf(model("model-a", 128, 512)),
+            )
         val invalidResult =
             AutomaticModelSelectionPolicy.resolve(
                 request,
                 listOf(invalid),
             ) as AutomaticModelSelectionResult.Rejected
         assertEquals(AutomaticModelSelectionFailure.INVALID_MODEL_METADATA, invalidResult.failure)
+
+        val inconsistentResult =
+            AutomaticModelSelectionPolicy.resolve(
+                request,
+                listOf(inconsistentLimits),
+            ) as AutomaticModelSelectionResult.Rejected
+        assertEquals(AutomaticModelSelectionFailure.INVALID_MODEL_METADATA, inconsistentResult.failure)
 
         val duplicate =
             candidate(
