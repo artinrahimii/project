@@ -2,10 +2,10 @@ package com.whitep.client.ui.conversations
 
 import androidx.room.Room
 import com.whitep.client.data.ClientDatabase
+import com.whitep.client.data.ClientDatabase
 import com.whitep.client.data.PersistedRequestStatus
-import com.whitep.client.data.InferenceRequestLifecycleState
-import com.whitep.client.data.RoomConversationInferenceRequestLifecycleRepository
 import com.whitep.client.data.RequestStateEntity
+import com.whitep.client.data.RoomConversationInferenceRequestLifecycleRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -84,25 +84,18 @@ class ConversationWorkflowAcceptanceTest {
 
                     val recoveredFirst = first.recoverLatest(30L)
                     val recoveredSecond = second.recoverLatest(31L)
+                    val requestStateDao = database.requestStateDao()
+                    val firstConversationRequestIds =
+                        requestStateDao.observeForConversation("conversation-a").first().map { it.requestId }
+                    val secondConversationRequestIds =
+                        requestStateDao.observeForConversation("conversation-b").first().map { it.requestId }
 
                     assertEquals("request-a", recoveredFirst?.requestId)
                     assertEquals(PersistedRequestStatus.EXPIRED, recoveredFirst?.status)
                     assertEquals("request-b", recoveredSecond?.requestId)
                     assertEquals(PersistedRequestStatus.COMPLETED, recoveredSecond?.status)
-                    assertEquals(
-                        listOf("request-a"),
-                        database.requestStateDao()
-                            .observeForConversation("conversation-a")
-                            .first()
-                            .map { it.requestId },
-                    )
-                    assertEquals(
-                        listOf("request-b"),
-                        database.requestStateDao()
-                            .observeForConversation("conversation-b")
-                            .first()
-                            .map { it.requestId },
-                    )
+                    assertEquals(listOf("request-a"), firstConversationRequestIds)
+                    assertEquals(listOf("request-b"), secondConversationRequestIds)
                 } finally {
                     database.close()
                 }

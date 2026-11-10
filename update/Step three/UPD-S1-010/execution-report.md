@@ -97,3 +97,20 @@
 - خط خالی اضافی گزارش‌شده توسط KtLint حذف شد؛ هیچ قاعدهٔ lint غیرفعال و هیچ قرارداد runtime/protocol تغییر نکرد.
 - شواهد تشخیصی: `update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md`.
 - نتیجهٔ CI دقیق A007 تا زمان ثبت این commit pending است؛ UPD-S1-010 همچنان `in_progress` است و آزمون فیزیکی Android-to-Windows انجام نشده است.
+
+
+## نتایج دقیق CI تلاش A007
+
+- Quality Gate روی commit `8c540bdf774692ece0ba6f24e1f826fe738e011c` موفق شد؛ ۴۹۲ آزمون Python اجرا و قبول شدند.
+- آزمون‌های HostLifecycle و coverage gate موفق شدند.
+- build و smoke سرویس rendezvous موفق شدند.
+- Android job در test source set شکست خورد: ترتیب importها در خط ۳ و دو مورد chain-method-continuation در خطوط ۹۴ و ۱۰۱ فایل `ConversationWorkflowAcceptanceTest.kt`. به همین دلیل APK و Android JVM tests اجرا نشدند.
+- build، publish و startup smoke ویندوز موفق بود؛ آزمون installer در زمان ثبت این گزارش هنوز در حال اجرا بود.
+
+## تلاش A008 — اصلاح KtLint در آزمون جدید Room
+
+- مبنا: `V 3.1.171`، commit `8c540bdf774692ece0ba6f24e1f826fe738e011c`.
+- importهای فایل `ConversationWorkflowAcceptanceTest.kt` مطابق ترتیب lexicographic KtLint مرتب شدند.
+- دو زنجیرهٔ DAO به متغیرهای نام‌دار و عبارت‌های جمع‌وجور Flow تبدیل شدند تا دقیقاً دو خطای chain-method-continuation رفع شوند؛ منطق آزمون و runtime تغییر نکرد.
+- شواهد log و اصلاح: `update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md`.
+- آزمون lint، APK و JVM مربوط به A008 تا اجرای CI دقیق هنوز pending هستند؛ UPD-S1-010 در وضعیت `in_progress` باقی می‌ماند.

@@ -6993,7 +6993,9 @@
         "docs/decisions/ADR-0002-direct-p2p-data-path.md",
         ".github/workflows/product-build.yml",
         "src/Client.Android/app/src/main/java/com/whitep/client/data/InferenceRequestLifecycleRepository.kt",
-        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md"
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md"
       ],
       "evidence": [
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7028,13 +7030,14 @@
         "update/Step two/project-graph.md",
         "https://github.com/artinrahimii/project/actions/runs/42861823197",
         "https://github.com/artinrahimii/project/actions/runs/42861823132",
-        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md"
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0088, T0090, T0092, T0139, T0145, T0146, T0147, T0148, T0149, T0150, T0190, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 7,
+        "attempt_count": 8,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-010-20261110-A007",
+        "last_attempt_id": "UPD-S1-010-20261110-A008",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7055,7 +7058,8 @@
           "src/Client.Android/app/src/main/java/com/whitep/client/data/InferenceRequestLifecycleRepository.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
           "update/Step two/project-graph.md",
-          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md"
+          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
+          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md"
         ],
         "related_commits": [
           "0ec848f0573de18449bf01f1b80e0352ab692620",
@@ -7063,7 +7067,8 @@
           "66149a232d17363f08ac1269f07b22ced14fb5a6",
           "084cdf7013a42a2f15c1acec4510590843285267",
           "4bcf7ce1d043f6894227ee5adf8b07dd2d5e7be1",
-          "68cae864c567238fe831cbda12abb4182a9c3e23"
+          "68cae864c567238fe831cbda12abb4182a9c3e23",
+          "8c540bdf774692ece0ba6f24e1f826fe738e011c"
         ],
         "tests_passed": [
           "A001: Windows host compile and WPF startup smoke passed in run 42859232180.",
@@ -7074,7 +7079,10 @@
           "A004 exact-head rendezvous container smoke run 42860929814 passed.",
           "A005 exact-head Step Three quality gate run 42861823197 passed.",
           "A005 exact-head HostLifecycle tests passed in product run 42861823132.",
-          "A005 exact-head Windows WPF smoke/installer completed successfully in product run 42861823132."
+          "A005 exact-head Windows WPF smoke/installer completed successfully in product run 42861823132.",
+          "A007 exact-head quality gate run 42865138755 passed (492 Python tests).",
+          "A007 exact-head HostLifecycle tests and coverage passed in product run 42865142546.",
+          "A007 exact-head rendezvous container build and smoke run 42865139281 passed."
         ],
         "tests_failed": [
           "A001: quality gate run 42859232340 — 7 obsolete Python assertions failed because they prohibited the newly-required chat/runtime connection.",
@@ -7083,7 +7091,8 @@
           "A004 exact-head Android lint run 42860929785 reported five ktlint violations: import-ordering, argument-list-wrapping (2), max-line-length, and chain-method-continuation.",
           "A005 exact-head Android lint run 42861823132 failed with two chain-method-continuation violations in ConversationMessagesViewModel.kt; corrected in A006.",
           "A006 exact-head quality run 42862592160 on V 3.1.170: 492 Python tests ran; one source-contract assertion failed because it expected a contiguous UUID.nameUUIDFromBytes expression while valid Kotlin formatting split the call across lines.",
-          "A006 exact-head Android product run 42862592314: KtLint reported needless blank line(s) at InferenceRequestLifecycleRepository.kt:91:1; Android APK compilation and JVM tests were skipped."
+          "A006 exact-head Android product run 42862592314: KtLint reported needless blank line(s) at InferenceRequestLifecycleRepository.kt:91:1; Android APK compilation and JVM tests were skipped.",
+          "A007 exact-head Android product run 42865142546: KtLint test source set found import-ordering and two chain-method-continuation violations in ConversationWorkflowAcceptanceTest.kt; Android APK and JVM unit tests were skipped."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -7093,7 +7102,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Run exact-head A007 quality and product CI. Confirm Python test discovery includes the conversation-scoped lifecycle test, Android KtLint passes, and APK/JVM tests proceed. Continue chat UI status/cancel/retry acceptance; do not conflate hosted CI with physical Android-to-Windows E2E."
+        "follow_up": "Verify A008 exact-head Android KtLint, APK build and JVM tests. Check completion of the V 3.1.171 Windows installer job separately. UPD-S1-010 remains in_progress pending its full chat/runtime acceptance; physical Android-to-Windows inference remains a separate UPD-S1-020 gate."
       },
       "execution_history": [
         {
@@ -7358,57 +7367,100 @@
             "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "8c540bdf774692ece0ba6f24e1f826fe738e011c",
           "tests": [
             {
-              "name": "Previous exact-head Python quality gate (A006 baseline)",
-              "command": "python -m unittest discover -s tests -v",
+              "name": "Step Three quality gate",
+              "command": "quality.yml exact-head V 3.1.171",
+              "result": "passed",
+              "run_id": 42865138755,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42865138755",
+              "summary": "The 492-test Python quality job completed successfully on exact commit 8c540bdf774692ece0ba6f24e1f826fe738e011c."
+            },
+            {
+              "name": "Android KtLint",
+              "command": "product-build.yml Android job exact-head V 3.1.171",
               "result": "failed",
-              "summary": "Run 42862592160 on V 3.1.170 executed 492 tests; one source-contract assertion failed because it required UUID.nameUUIDFromBytes to be contiguous despite valid multiline Kotlin formatting."
+              "run_id": 42865142546,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42865142546",
+              "summary": "KtLint test source set reported import ordering and two chain-method-continuation violations in ConversationWorkflowAcceptanceTest.kt; APK and Android unit-test steps were skipped."
             },
             {
-              "name": "Previous exact-head Android KtLint (A006 baseline)",
-              "command": "gradle --no-daemon ktlintCheck",
-              "result": "failed",
-              "summary": "Run 42862592314 reported one needless blank line at InferenceRequestLifecycleRepository.kt:91:1; APK build and Android JVM tests were skipped."
-            },
-            {
-              "name": "Previous exact-head Windows WPF build and startup smoke",
-              "command": "product-build.yml Windows job",
+              "name": "HostLifecycle acceptance",
+              "command": "product-build.yml HostLifecycle job exact-head V 3.1.171",
               "result": "passed",
-              "summary": "Run 42862592314 passed clean restore, build, publish, WPF startup smoke and installer acceptance."
+              "run_id": 42865142546,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42865142546",
+              "summary": "HostLifecycle build, unit/integration tests and coverage validation passed."
             },
             {
-              "name": "Previous exact-head HostLifecycle acceptance",
-              "command": "HostLifecycle acceptance suite",
+              "name": "Rendezvous container smoke",
+              "command": "rendezvous-container.yml exact-head V 3.1.171",
               "result": "passed",
-              "summary": "Run 42862592314 passed HostLifecycle tests and coverage gate."
+              "run_id": 42865139281,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42865139281",
+              "summary": "Container build and smoke test passed."
             },
             {
-              "name": "Previous exact-head rendezvous container smoke",
-              "command": "rendezvous-container.yml",
-              "result": "passed",
-              "run_id": 42862592458,
-              "url": "https://github.com/artinrahimii/project/actions/runs/42862592458"
-            },
-            {
-              "name": "A007 Python quality gate",
-              "command": "quality.yml exact-head after A007",
-              "result": "pending"
-            },
-            {
-              "name": "A007 Android KtLint/build/JVM tests",
-              "command": "product-build.yml exact-head after A007",
-              "result": "pending"
+              "name": "Windows WPF build and installer acceptance",
+              "command": "product-build.yml Windows job exact-head V 3.1.171",
+              "result": "pending",
+              "run_id": 42865142546,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42865142546",
+              "summary": "WPF build, publish and startup smoke passed; installer acceptance was still running at the time of this graph update."
             }
           ],
           "failure_details": "A006 exact-head CI exposed one whitespace-sensitive Python source assertion and one KtLint needless-blank-line violation. Both are corrected in A007; the new lifecycle source-contract test is now placed where unittest discovery executes it.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Verify the exact A007 quality and product-build workflow results. If both pass, confirm APK build and Android JVM tests actually ran; continue the remaining UPD-S1-010 UI/status/cancel/retry acceptance and keep physical Android-to-Windows validation separate.",
+          "follow_up": "The exact A007 quality gate and HostLifecycle tests passed. Fix the two KtLint test-source violations, then rerun product-build on an exact main commit and confirm Android lint, APK and JVM tests. The Windows WPF build/installer job is still running; do not infer its final result. Continue normal-chat acceptance and reserve physical E2E for UPD-S1-020.",
           "device_and_host_details_redacted": "GitHub-hosted CI only; no physical Android device or user-owned Windows host was available or used.",
           "model_revision_and_sha256": "No inference executed during this test/lint correction.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-010-20261110-A008",
+          "started_at": "2026-11-10T17:31:41.246Z",
+          "ended_at": "2026-11-10T17:31:41.246Z",
+          "result": "partial",
+          "summary": "Fixed the exact Android test-source KtLint failures reported by A007: sorted imports and simplified the two DAO Flow assertion chains while preserving the same conversation-isolation assertions. Runtime behavior was not changed; exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+            "update/Step three/UPD-S1-010/execution-report.md",
+            "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "A007 exact-head Python quality gate",
+              "command": "quality.yml V 3.1.171",
+              "result": "passed",
+              "run_id": 42865138755,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42865138755"
+            },
+            {
+              "name": "A007 exact-head Android KtLint",
+              "command": "product-build.yml V 3.1.171",
+              "result": "failed",
+              "run_id": 42865142546,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42865142546",
+              "summary": "Two chain-method-continuation findings and one import-ordering finding in the newly added Kotlin acceptance test."
+            },
+            {
+              "name": "A008 Android KtLint, APK and JVM tests",
+              "command": "product-build.yml exact-head after A008",
+              "result": "pending"
+            }
+          ],
+          "failure_details": "A007's Python quality gate passed, but the product workflow found import ordering and two chain-method-continuation violations in the Kotlin test-source file. The diagnostics are captured in evidence/ci-failure-analysis-A008.md.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head Android lint and product build. Confirm the new Robolectric method is compiled and executed, then continue checking UPD-S1-010's UI/runtime acceptance. Do not claim the physical Android-to-Windows path or upgrade tests.",
+          "device_and_host_details_redacted": "Hosted GitHub CI only; no physical Android device or personal Windows host.",
+          "model_revision_and_sha256": "No local-model inference executed.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
@@ -12145,14 +12197,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T17:12:36.409Z",
+    "as_of": "2026-11-10T17:31:41.246Z",
     "total_tasks": 24,
     "not_started": 9,
     "in_progress": 1,
     "done": 14,
     "blocked": 0,
     "verified_completion_percentage": 58.333333333333336,
-    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress pending A006 exact-head lint, Android builds/tests and full chat-runtime acceptance; 9 tasks remain not_started."
+    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress after A008; the A007 Python quality and HostLifecycle gates passed, but Android KtLint failed and A008 exact-head Android lint/build/JVM validation is pending. 9 tasks remain not_started."
   },
   "visual_identity": {
     "scope": [
@@ -12266,7 +12318,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T17:12:36.409Z",
+  "updated_at": "2026-11-10T17:31:41.246Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
