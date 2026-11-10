@@ -8223,9 +8223,9 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0116, T0117, T0118, T0119, T0120, T0121, T0122, T0123, T0124, T0125, T0126, T0127, T0128. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 3,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "UPD-S1-014-20261111-A003",
+        "attempt_count": 4,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "UPD-S1-014-20261111-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -8235,23 +8235,29 @@
           "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md",
           "update/Step two/project-graph.md",
           "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md",
-          "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md"
+          "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md",
+          "update/Step three/UPD-S1-014/evidence/discovery-selector-A004.md"
         ],
         "related_commits": [
           "0392fb1a57a1e105f54fda19c6e2a03fe33e531d",
           "66fe4dc744e045b528bf9bade78e7613da6eb831",
-          "911ef42bdfaf8b32a46169360a710ff21a3b9146"
+          "911ef42bdfaf8b32a46169360a710ff21a3b9146",
+          "cc6c8c9f0839137867732bdda9ddef9c3045d2a5"
         ],
         "tests_passed": [
           "Exact V 3.1.183 Quality gate passed 496 Python tests, compileall and graph guards (run 42907340773).",
           "Exact V 3.1.183 HostLifecycle job passed (run 42907340561).",
           "Exact V 3.1.183 Rendezvous container build/smoke passed (run 42907340870).",
           "Exact V 3.1.184 HostLifecycle acceptance job passed (run 42907998263).",
-          "Exact V 3.1.184 Rendezvous container build/smoke passed (run 42907998204)."
+          "Exact V 3.1.184 Rendezvous container build/smoke passed (run 42907998204).",
+          "Exact V 3.1.185 Quality passed: 496 Python tests, compileall, old graph 0 errors/1 preserved warning, update graph 0 errors/0 warnings (run 42908458217).",
+          "Exact V 3.1.185 HostLifecycle acceptance passed (run 42908458199).",
+          "Exact V 3.1.185 Rendezvous container build/smoke passed (run 42908458216)."
         ],
         "tests_failed": [
           "V 3.1.183 Android ktlint: three chain-method-continuation formatting violations; JVM did not run.",
-          "V 3.1.184 quality: 496 Python tests, one stale source-contract assertion expected the pre-refactor sortedWith chain instead of eligibleCandidates.sortWith. The implementation and JVM test were not changed by A003."
+          "V 3.1.184 quality: 496 Python tests, one stale source-contract assertion expected the pre-refactor sortedWith chain instead of eligibleCandidates.sortWith. The implementation and JVM test were not changed by A003.",
+          "Exact V 3.1.185 Android ktlintMainSourceSetCheck failed two chain-method-continuation rules caused by chained property access in comparator; JVM and Keystore instrumentation were not run."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -8261,7 +8267,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Run exact-head quality and full Product Build on A003; retain in_progress until all applicable gates pass."
+        "follow_up": "Run exact-head quality, ktlint/JVM/Keystore/debug+release APK, Windows build/installer, HostLifecycle and Rendezvous; keep task in_progress until all applicable gates pass."
       },
       "execution_history": [
         {
@@ -8376,13 +8382,69 @@
         {
           "attempt_id": "UPD-S1-014-20261111-A003",
           "started_at": "2026-11-10T21:47:21.939Z",
-          "ended_at": "2026-11-10T21:47:21.939Z",
-          "result": "partial",
+          "ended_at": "2026-11-10T21:49:48Z",
+          "result": "failed",
           "summary": "Updated the Python source-contract assertion to match the current formatting-compliant selector structure, eligibleCandidates.sortWith. The assertion change does not alter the selector algorithm, production behavior, JVM ranking test, protobuf or network contract.",
           "changed_files": [
             "tests/test_android_host_candidate_selector_contract.py",
             "update/Step three/UPD-S1-014/execution-report.md",
             "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": "cc6c8c9f0839137867732bdda9ddef9c3045d2a5",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact V 3.1.185",
+              "result": "passed",
+              "run_id": 42908458217,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42908458217",
+              "summary": "496 Python tests, compileall and both graph guard modes passed."
+            },
+            {
+              "name": "Android Kotlin lint",
+              "command": "gradle --no-daemon ktlintCheck on exact V 3.1.185",
+              "result": "failed",
+              "run_id": 42908458199,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42908458199",
+              "summary": "ktlintMainSourceSetCheck reported two standard:chain-method-continuation violations in HostCandidateSelector.kt at lines 65 and 67 from chained status/announcement/capabilities property access. Android JVM and Keystore instrumentation did not run."
+            },
+            {
+              "name": "HostLifecycle acceptance",
+              "command": "product-build.yml HostLifecycle job on exact V 3.1.185",
+              "result": "passed",
+              "run_id": 42908458199,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42908458199",
+              "summary": "The HostLifecycle acceptance and coverage job completed successfully."
+            },
+            {
+              "name": "Rendezvous container smoke",
+              "command": "rendezvous-container.yml on exact V 3.1.185",
+              "result": "passed",
+              "run_id": 42908458216,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42908458216",
+              "summary": "Container build and smoke test passed."
+            }
+          ],
+          "failure_details": "Exact V 3.1.185 Android ktlintMainSourceSetCheck failed with two standard:chain-method-continuation violations at HostCandidateSelector.kt lines 65 and 67, due to chained status/announcement/capabilities property access. The source-contract fix and quality job passed, as did HostLifecycle and Rendezvous. Android JVM/Keystore instrumentation were not run.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A004 extracts first/second status, announcements and capabilities into local variables so no chained property access remains; preserves exact integer utilization cross-product and PeerId tie-break. Re-run exact-head lint/JVM/Keystore and all other product gates before closing task.",
+          "device_and_host_details_redacted": "GitHub-hosted CI only. No physical device or independent user-owned Windows host used.",
+          "model_revision_and_sha256": "No local inference was executed in this attempt.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable."
+        },
+        {
+          "attempt_id": "UPD-S1-014-20261111-A004",
+          "started_at": "2026-11-10T21:50:00Z",
+          "ended_at": "2026-11-10T21:50:00Z",
+          "result": "partial",
+          "summary": "Adjusted only the selector comparator's local variable extraction to eliminate the remaining two ktlint chain-method-continuation violations. Measured utilization calculation remains the same exact integer cross-product, and PeerId remains the deterministic tie-break.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "update/Step three/UPD-S1-014/execution-report.md",
+            "update/Step three/UPD-S1-014/evidence/discovery-selector-A004.md",
             "update/Step two/project-graph.md"
           ],
           "commit_sha": null,
@@ -8391,9 +8453,9 @@
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head quality and full Product Build on A003; retain in_progress until all applicable gates pass.",
-          "device_and_host_details_redacted": "Source-contract synchronization only; no physical device or user-owned Windows host used.",
-          "model_revision_and_sha256": "No local inference was executed in this attempt.",
+          "follow_up": "Run exact-head quality, ktlint/JVM/Keystore/debug+release APK, Windows build/installer, HostLifecycle and Rendezvous; keep task in_progress until all applicable gates pass.",
+          "device_and_host_details_redacted": "Code formatting correction only; no physical Android handset or user-owned Windows host used.",
+          "model_revision_and_sha256": "No local inference executed.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable."
         }
       ]
@@ -13087,14 +13149,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T21:47:21.939Z",
+    "as_of": "2026-11-10T21:52:53.614Z",
     "total_tasks": 24,
     "not_started": 6,
     "in_progress": 1,
     "done": 17,
     "blocked": 0,
     "verified_completion_percentage": 70.83333333333334,
-    "calculation": "17 verified done update tasks / 24 total update tasks = 70.83%. UPD-S1-016 is done. UPD-S1-014 remains in_progress: A001 exact Android ktlint failed; A002 exact Quality failed one stale Python source-contract assertion; A003 updates only that assertion and awaits exact-head CI."
+    "calculation": "17 verified done update tasks / 24 total update tasks = 70.83%. UPD-S1-016 remains done. UPD-S1-014 is in_progress: A001/A003 exact-head Android ktlint failed (A001 3 style violations; A003 2 property-chain violations), A002 quality failed one stale source-contract assertion; A004 extracts comparator property values and awaits exact-head CI."
   },
   "visual_identity": {
     "scope": [
@@ -13208,7 +13270,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T21:47:21.939Z",
+  "updated_at": "2026-11-10T21:52:53.614Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

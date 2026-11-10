@@ -96,3 +96,20 @@
 - assertion Python از شکل زنجیره‌ای قدیمی به شکل واقعی و قالب‌بندی‌شدهٔ `eligibleCandidates.sortWith` به‌روزرسانی شد.
 - کد selector، comparator، ترتیب utilization، tie-break و آزمون JVM ranking دست‌نخورده ماندند.
 - A003 هنوز روی exact-head CI اجرا نشده است؛ task `in_progress` باقی می‌ماند.
+
+
+## نتیجهٔ CI تلاش A003 — V 3.1.185
+
+- Commit: `cc6c8c9f0839137867732bdda9ddef9c3045d2a5`.
+- Step Three Quality gate: **PASS**؛ ۴۹۶ آزمون Python، compileall و graph guard هر دو گراف موفق.
+- HostLifecycle: **PASS**؛ job پذیرش کامل شد.
+- Rendezvous: **PASS**؛ container build/smoke موفق.
+- Android Product Build: **FAIL** در ktlint؛ دو تخلف `standard:chain-method-continuation` در خطوط ۶۵ و ۶۷ از `HostCandidateSelector.kt` به‌علت chain شدن دسترسی به status/announcement/capabilities. JVM و Keystore instrumentation پس از lint اجرا نشدند.
+
+## تلاش A004 — جداسازی دسترسی‌های property در comparator
+
+- شروع: `2026-11-10T21:50:00Z`.
+- دسترسی‌های زنجیره‌ای به status، announcement و capabilities در local variableهای جداگانه ذخیره شدند.
+- فرمول مقایسهٔ utilization با cross-product صحیح و tie-break بر اساس PeerId بدون تغییر ماند.
+- هیچ قرارداد، protobuf، transport، trust یا cardinality محصول تغییر نکرد.
+- exact-head CI برای A004 هنوز اجرا نشده است؛ task همچنان `in_progress` است.

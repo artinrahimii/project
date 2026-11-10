@@ -61,16 +61,22 @@ object HostCandidateSelector {
         eligibleCandidates.sortWith { first, second ->
             // Use the live status and the capacity snapshot already validated above.
             // Cross-products compare utilization exactly without floating-point rounding.
-            val firstActive = first.status.activeRequests.toLong()
-            val firstCapacity = first.announcement.capabilities.maxConcurrentRequests.toLong()
-            val secondActive = second.status.activeRequests.toLong()
-            val secondCapacity = second.announcement.capabilities.maxConcurrentRequests.toLong()
+            val firstStatus = first.status
+            val firstAnnouncement = first.announcement
+            val firstCapabilities = firstAnnouncement.capabilities
+            val secondStatus = second.status
+            val secondAnnouncement = second.announcement
+            val secondCapabilities = secondAnnouncement.capabilities
+            val firstActive = firstStatus.activeRequests.toLong()
+            val firstCapacity = firstCapabilities.maxConcurrentRequests.toLong()
+            val secondActive = secondStatus.activeRequests.toLong()
+            val secondCapacity = secondCapabilities.maxConcurrentRequests.toLong()
             val utilizationOrder =
                 (firstActive * secondCapacity).compareTo(secondActive * firstCapacity)
             if (utilizationOrder != 0) {
                 utilizationOrder
             } else {
-                first.announcement.ephemeralHostId.compareTo(second.announcement.ephemeralHostId)
+                firstAnnouncement.ephemeralHostId.compareTo(secondAnnouncement.ephemeralHostId)
             }
         }
         return eligibleCandidates.take(maxHosts)

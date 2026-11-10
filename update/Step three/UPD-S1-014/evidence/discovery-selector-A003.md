@@ -9,3 +9,11 @@
 - HostLifecycle A002: PASS؛ Rendezvous A002: PASS.
 - Product Build Android/Windows در زمان ثبت A003 هنوز نتیجهٔ نهایی نداشت.
 - CI دقیق A003 هنوز اجرا نشده و هیچ PASS برای assertion جدید ادعا نمی‌شود.
+
+
+## نتیجهٔ CI A003 — V 3.1.185
+
+- Quality: PASS؛ ۴۹۶ Python tests، compileall و هر دو graph guard بدون خطا (legacy graph یک هشدار metadata حفظ‌شده).
+- Android: FAIL در ktlint با دو تخلف `chain-method-continuation` در property accessهای status/announcement/capabilities؛ JVM/Keystore اجرا نشدند.
+- HostLifecycle و Rendezvous: PASS.
+- A004 همین chainها را به local variableهای مجزا تبدیل می‌کند و comparator را حفظ می‌کند.
