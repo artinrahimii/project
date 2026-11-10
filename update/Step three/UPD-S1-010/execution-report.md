@@ -48,3 +48,12 @@
 - ADR-0002 به‌روزرسانی شد تا اتصال منبعی چت به runtime موجود را ثبت کند، اما وضعیت physical Android-to-Windows را همچنان NOT RUN نگه دارد.
 - خطوط تازه‌افزوده‌شدهٔ متن UI برای رفع شکست قالب‌بندی Kotlin بازآرایی شدند.
 - A002 تا اجرای مجدد quality gate، ktlint، build اندروید و unit testها `partial` است. وضعیت وظیفه `in_progress` باقی می‌ماند.
+
+
+## تلاش A003 — رفع آخرین assertion قدیمی وضعیت چت
+
+- مبنا: `V 3.1.166`، commit `f87926d9906cf0c0e6b9718fa81a40d8faad9464`
+- CI تلاش A002: ۴۹۲ آزمون Python اجرا شد؛ فقط یک assertion در `test_android_request_status_contract.py` به‌دلیل انتظار عنوان قدیمی `Request status` شکست خورد. آزمون‌های status اکنون باید وجود و نمایش ردیف‌های Room و وضعیت زندهٔ پردازش را بررسی کنند.
+- آزمون HostLifecycle در همان build موفق شد.
+- در A003 assertion عنوان قدیمی حذف شد و دو assertion مستقیم برای مشاهدهٔ ردیف‌های ذخیره‌شدهٔ Room و `requestStatusCard` جایگزین آن شد.
+- نتیجهٔ CI دقیق A003 هنوز pending است؛ این وظیفه همچنان `in_progress` است.

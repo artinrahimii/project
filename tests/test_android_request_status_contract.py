@@ -27,7 +27,8 @@ class AndroidRequestStatusContractTests(unittest.TestCase):
         self.assertIn("RequestRunStatus.FAILED", SCREEN)
         self.assertIn("liveRequestState.runStatus", SCREEN)
         self.assertIn("hostResponses", SCREEN)
-        self.assertIn("Request status", SCREEN)
+        self.assertIn("requestStates.forEach { requestState ->", SCREEN)
+        self.assertIn("requestStatusCard(requestState)", SCREEN)
 
     def test_all_eight_persisted_states_have_explicit_display_labels(self):
         for status in (

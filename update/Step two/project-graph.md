@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.166",
+  "commit_intent": "V 3.1.167",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -6983,7 +6983,14 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
         "update/Step three/UPD-S1-010/execution-report.md",
-        "update/Step three/UPD-S1-010/evidence/chat-runtime-gap-audit.md"
+        "update/Step three/UPD-S1-010/evidence/chat-runtime-gap-audit.md",
+        "tests/test_android_context_capsule_history_update_contract.py",
+        "tests/test_android_conversation_detail_contract.py",
+        "tests/test_android_message_validation_contract.py",
+        "tests/test_android_request_status_contract.py",
+        "tests/test_update_baseline_audit.py",
+        "tests/test_update_transport_trust_boundary.py",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md"
       ],
       "evidence": [
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -6997,13 +7004,22 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
         "https://github.com/artinrahimii/project/actions/runs/42859232340",
-        "https://github.com/artinrahimii/project/actions/runs/42859232180"
+        "https://github.com/artinrahimii/project/actions/runs/42859232180",
+        "tests/test_android_context_capsule_history_update_contract.py",
+        "tests/test_android_conversation_detail_contract.py",
+        "tests/test_android_message_validation_contract.py",
+        "tests/test_android_request_status_contract.py",
+        "tests/test_update_baseline_audit.py",
+        "tests/test_update_transport_trust_boundary.py",
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        "https://github.com/artinrahimii/project/actions/runs/42860167854",
+        "https://github.com/artinrahimii/project/actions/runs/42860167723"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0088, T0090, T0092, T0139, T0145, T0146, T0147, T0148, T0149, T0150, T0190, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 2,
+        "attempt_count": 3,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-010-20261110-A002",
+        "last_attempt_id": "UPD-S1-010-20261110-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7011,18 +7027,28 @@
           "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
           "update/Step three/UPD-S1-010/execution-report.md",
-          "update/Step three/UPD-S1-010/evidence/chat-runtime-gap-audit.md"
+          "update/Step three/UPD-S1-010/evidence/chat-runtime-gap-audit.md",
+          "tests/test_android_context_capsule_history_update_contract.py",
+          "tests/test_android_conversation_detail_contract.py",
+          "tests/test_android_message_validation_contract.py",
+          "tests/test_android_request_status_contract.py",
+          "tests/test_update_baseline_audit.py",
+          "tests/test_update_transport_trust_boundary.py",
+          "docs/decisions/ADR-0002-direct-p2p-data-path.md"
         ],
         "related_commits": [
-          "0ec848f0573de18449bf01f1b80e0352ab692620"
+          "0ec848f0573de18449bf01f1b80e0352ab692620",
+          "f87926d9906cf0c0e6b9718fa81a40d8faad9464"
         ],
         "tests_passed": [
           "A001: Windows host compile and WPF startup smoke passed in run 42859232180.",
-          "A001: HostLifecycle acceptance suite passed in run 42859232180."
+          "A001: HostLifecycle acceptance suite passed in run 42859232180.",
+          "A002 HostLifecycle acceptance and coverage passed in run 42860167723."
         ],
         "tests_failed": [
           "A001: quality gate run 42859232340 — 7 obsolete Python assertions failed because they prohibited the newly-required chat/runtime connection.",
-          "A001: Android build run 42859232180 — ktlintMainSourceSetCheck failed before APK build."
+          "A001: Android build run 42859232180 — ktlintMainSourceSetCheck failed before APK build.",
+          "A001 quality run 42859232340: 7 outdated source-contract failures; A002 quality run 42860167854: 1 remaining outdated heading assertion."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -7112,20 +7138,28 @@
             "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
             "update/Step three/UPD-S1-010/execution-report.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "f87926d9906cf0c0e6b9718fa81a40d8faad9464",
           "tests": [
             {
-              "name": "Python quality and graph contracts",
-              "command": "quality.yml exact-head after A002",
-              "result": "pending"
+              "name": "Python quality gate",
+              "command": "quality.yml exact-head on V 3.1.166",
+              "result": "failed",
+              "run_id": 42860167854,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42860167854",
+              "summary": "492 Python tests ran; one old UI contract assertion still expected the removed 'Request status' heading rather than asserting persisted Room status rows and live host status."
             },
             {
-              "name": "Android ktlint, APK build and JVM tests",
-              "command": "product-build.yml exact-head after A002",
-              "result": "pending"
+              "name": "HostLifecycle acceptance",
+              "command": "product-build.yml exact V 3.1.166",
+              "result": "passed",
+              "run_id": 42860167723,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42860167723",
+              "summary": "HostLifecycle suite and coverage gate passed."
             }
           ],
-          "failure_details": null,
+          "failure_details": [
+            "One remaining assertion in test_android_request_status_contract.py expected the old UI heading 'Request status'. The new chat UI presents the same persisted Room request rows under the 'Processing host' section. The next attempt updates the contract to assert the persisted rows directly."
+          ],
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [
@@ -7134,6 +7168,33 @@
           "follow_up": "Re-run exact-head quality and product build. If ktlint reports remaining violations, fix only those lines and commit a new sequential version. Keep UPD-S1-010 in_progress until all relevant Android tests and acceptance checks pass.",
           "device_and_host_details_redacted": "No physical handset or user-owned Windows host was used. CI is hosted.",
           "model_revision_and_sha256": "No model inference executed in A002.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-010-20261110-A003",
+          "started_at": "2026-11-10T17:01:17.285Z",
+          "ended_at": "2026-11-10T17:01:17.285Z",
+          "result": "partial",
+          "summary": "Corrected the last obsolete Python source-contract assertion to verify that the chat screen still observes and renders Room-backed request-status rows and live request state, without requiring the superseded old heading. Exact-head quality, ktlint, Android compile/unit tests and product builds are pending.",
+          "changed_files": [
+            "tests/test_android_request_status_contract.py",
+            "update/Step three/UPD-S1-010/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml exact-head after A003",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Validate all 492 Python tests, graph guards, Android ktlint and Android build/tests on exact V 3.1.167. Keep task in_progress until actual acceptance evidence is complete.",
+          "device_and_host_details_redacted": "Hosted CI only; no physical Android handset or user-owned Windows host accessed.",
+          "model_revision_and_sha256": "No inference executed in this attempt.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
@@ -11870,14 +11931,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T16:58:50.132Z",
+    "as_of": "2026-11-10T17:01:17.285Z",
     "total_tasks": 24,
     "not_started": 9,
     "in_progress": 1,
     "done": 14,
     "blocked": 0,
     "verified_completion_percentage": 58.333333333333336,
-    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress after A001/A002 pending exact-head CI and acceptance evidence; 9 tasks remain not_started."
+    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress pending exact-head tests and acceptance evidence; 9 tasks remain not_started."
   },
   "visual_identity": {
     "scope": [
@@ -11991,7 +12052,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T16:58:50.132Z",
+  "updated_at": "2026-11-10T17:01:17.285Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
