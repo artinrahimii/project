@@ -114,3 +114,13 @@
 - دو زنجیرهٔ DAO به متغیرهای نام‌دار و عبارت‌های جمع‌وجور Flow تبدیل شدند تا دقیقاً دو خطای chain-method-continuation رفع شوند؛ منطق آزمون و runtime تغییر نکرد.
 - شواهد log و اصلاح: `update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md`.
 - آزمون lint، APK و JVM مربوط به A008 تا اجرای CI دقیق هنوز pending هستند؛ UPD-S1-010 در وضعیت `in_progress` باقی می‌ماند.
+
+
+## تلاش A009 — اصلاح خطای import و قالب زنجیرهٔ Flow
+
+- مبنا: `V 3.1.172`، commit `2d3842e0e3d2b7cc92e07580491dc6cff54e9a1d`.
+- بازبینی مستقیم فایل آزمون پس از commit A008 نشان داد replacement قبلی به‌اشتباه `ClientDatabase` را تکرار کرده و import لازم `InferenceRequestLifecycleState` را حذف کرده است. این نقص پیش از اعلام موفقیت build شناسایی شد.
+- importها اکنون یک‌بار و به ترتیب صحیح قرار گرفتند؛ زنجیره‌های DAO/Flow نیز به ساختار receiver مستقل و فراخوانی‌های چندخطی استاندارد KtLint تبدیل شدند.
+- رفتار runtime، schema و قرارداد transport تغییر نکرده است.
+- شواهد: `update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md`.
+- نتیجهٔ A008 در زمان ثبت این تلاش هنوز نهایی نشده بود؛ lint، APK و Android JVM tests برای exact commit A009 pending هستند.

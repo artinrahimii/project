@@ -6995,7 +6995,8 @@
         "src/Client.Android/app/src/main/java/com/whitep/client/data/InferenceRequestLifecycleRepository.kt",
         "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
-        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md"
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md",
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md"
       ],
       "evidence": [
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7031,13 +7032,14 @@
         "https://github.com/artinrahimii/project/actions/runs/42861823197",
         "https://github.com/artinrahimii/project/actions/runs/42861823132",
         "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
-        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md"
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md",
+        "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0088, T0090, T0092, T0139, T0145, T0146, T0147, T0148, T0149, T0150, T0190, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 8,
+        "attempt_count": 9,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-010-20261110-A008",
+        "last_attempt_id": "UPD-S1-010-20261110-A009",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7059,7 +7061,8 @@
           "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
           "update/Step two/project-graph.md",
           "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A007.md",
-          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md"
+          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md",
+          "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md"
         ],
         "related_commits": [
           "0ec848f0573de18449bf01f1b80e0352ab692620",
@@ -7068,7 +7071,8 @@
           "084cdf7013a42a2f15c1acec4510590843285267",
           "4bcf7ce1d043f6894227ee5adf8b07dd2d5e7be1",
           "68cae864c567238fe831cbda12abb4182a9c3e23",
-          "8c540bdf774692ece0ba6f24e1f826fe738e011c"
+          "8c540bdf774692ece0ba6f24e1f826fe738e011c",
+          "2d3842e0e3d2b7cc92e07580491dc6cff54e9a1d"
         ],
         "tests_passed": [
           "A001: Windows host compile and WPF startup smoke passed in run 42859232180.",
@@ -7102,7 +7106,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Verify A008 exact-head Android KtLint, APK build and JVM tests. Check completion of the V 3.1.171 Windows installer job separately. UPD-S1-010 remains in_progress pending its full chat/runtime acceptance; physical Android-to-Windows inference remains a separate UPD-S1-020 gate."
+        "follow_up": "Verify exact-head A009 product workflow and separately collect the final A008 run outcome. UPD-S1-010 remains in_progress until all chat/runtime acceptance criteria and tests are verified."
       },
       "execution_history": [
         {
@@ -7424,14 +7428,14 @@
           "started_at": "2026-11-10T17:31:41.246Z",
           "ended_at": "2026-11-10T17:31:41.246Z",
           "result": "partial",
-          "summary": "Fixed the exact Android test-source KtLint failures reported by A007: sorted imports and simplified the two DAO Flow assertion chains while preserving the same conversation-isolation assertions. Runtime behavior was not changed; exact-head CI is pending.",
+          "summary": "Fixed the exact Android test-source KtLint failures reported by A007: sorted imports and simplified the two DAO Flow assertion chains while preserving the same conversation-isolation assertions. Runtime behavior was not changed; exact-head CI is pending. A subsequent exact-file review found the generated import block accidentally duplicated ClientDatabase while omitting InferenceRequestLifecycleState; this was caught before claiming the build passed and is corrected in A009.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
             "update/Step three/UPD-S1-010/execution-report.md",
             "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A008.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "2d3842e0e3d2b7cc92e07580491dc6cff54e9a1d",
           "tests": [
             {
               "name": "A007 exact-head Python quality gate",
@@ -7451,16 +7455,62 @@
             {
               "name": "A008 Android KtLint, APK and JVM tests",
               "command": "product-build.yml exact-head after A008",
-              "result": "pending"
+              "result": "pending",
+              "summary": "Run for the A008 commit is tracked independently; code review caught a duplicate import before the job result was assumed. A009 removes the duplicate and restores the missing import."
             }
           ],
-          "failure_details": "A007's Python quality gate passed, but the product workflow found import ordering and two chain-method-continuation violations in the Kotlin test-source file. The diagnostics are captured in evidence/ci-failure-analysis-A008.md.",
+          "failure_details": "A008 contained an accidental duplicate ClientDatabase import and omitted the InferenceRequestLifecycleState import after a string replacement. The exact-head product workflow was still running when A009 was prepared; A009 fixes this proactively and corrects chain layout.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head Android lint and product build. Confirm the new Robolectric method is compiled and executed, then continue checking UPD-S1-010's UI/runtime acceptance. Do not claim the physical Android-to-Windows path or upgrade tests.",
+          "follow_up": "Verify A008 product run for historical diagnostics, then run exact-head A009 product CI. Confirm KtLint, APK build and JVM tests execute. Do not mark UPD-S1-010 done until all task acceptance evidence is verified.",
           "device_and_host_details_redacted": "Hosted GitHub CI only; no physical Android device or personal Windows host.",
           "model_revision_and_sha256": "No local-model inference executed.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-010-20261110-A009",
+          "started_at": "2026-11-10T17:35:09.207Z",
+          "ended_at": "2026-11-10T17:35:09.207Z",
+          "result": "partial",
+          "summary": "Corrected an import-block replacement error found during exact source review: removed duplicated ClientDatabase, restored InferenceRequestLifecycleState in sorted order, and reformatted two Room Flow query chains in standard multiline style. No runtime behavior changed; exact-head A009 CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationWorkflowAcceptanceTest.kt",
+            "update/Step three/UPD-S1-010/execution-report.md",
+            "update/Step three/UPD-S1-010/evidence/ci-failure-analysis-A009.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "A007 exact-head Python quality gate",
+              "command": "quality.yml V 3.1.171",
+              "result": "passed",
+              "run_id": 42865138755,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42865138755",
+              "summary": "493 Python tests, including test_conversation_uses_conversation_scoped_request_lifecycle_store, completed OK."
+            },
+            {
+              "name": "A008 exact-head product workflow",
+              "command": "product-build.yml V 3.1.172",
+              "result": "pending",
+              "run_id": 42865909953,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42865909953",
+              "summary": "Still running when A009 was prepared; no final conclusion assumed."
+            },
+            {
+              "name": "A009 Android lint/build/JVM tests",
+              "command": "product-build.yml exact-head after A009",
+              "result": "pending"
+            }
+          ],
+          "failure_details": "A008 source editing introduced a duplicated ClientDatabase import and omitted InferenceRequestLifecycleState. This was caught in source review and corrected before claiming build success.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head A009 product workflow. Verify lint, Android debug/release APK builds, JVM tests and coverage. Record A008 workflow outcome separately when available.",
+          "device_and_host_details_redacted": "GitHub-hosted CI only; no physical Android device or personal Windows host.",
+          "model_revision_and_sha256": "No inference executed.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
@@ -12197,14 +12247,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T17:31:41.246Z",
+    "as_of": "2026-11-10T17:35:09.207Z",
     "total_tasks": 24,
     "not_started": 9,
     "in_progress": 1,
     "done": 14,
     "blocked": 0,
     "verified_completion_percentage": 58.333333333333336,
-    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress after A008; the A007 Python quality and HostLifecycle gates passed, but Android KtLint failed and A008 exact-head Android lint/build/JVM validation is pending. 9 tasks remain not_started."
+    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress after A009; A007 Python quality passed, A008 source review caught a duplicate import before assuming success, and exact-head A009 product validation is pending. 9 tasks remain not_started."
   },
   "visual_identity": {
     "scope": [
@@ -12318,7 +12368,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T17:31:41.246Z",
+  "updated_at": "2026-11-10T17:35:09.207Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
