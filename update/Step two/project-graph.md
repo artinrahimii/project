@@ -8711,8 +8711,8 @@
         "قواعد در Android و Windows سازگار و دارای آزمون برای enrollment، reconnect، mismatch و revoke باشند.",
         "هیچ اطلاعات هویتی غیرضروری در پیام عادی چت نمایش داده نشود."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال انجام",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerIdentityStore.kt",
@@ -8782,12 +8782,15 @@
           "update/Step two/project-graph.md"
         ],
         "related_commits": [
-          "0eeb9a4ba0ebabb4e689c8a07442558f80b8c675"
+          "0eeb9a4ba0ebabb4e689c8a07442558f80b8c675",
+          "6386a3016fe3deb6ac077b80c3d1ea210b3a1649"
         ],
         "tests_passed": [
           "Quality gate run 42790619781: unit suite, compileall and both graph guards passed on exact V 3.1.147.",
           "Product build run 42790619479: Android lint/build/JVM/Keystore instrumentation, Windows WPF/DPAPI/installer and HostLifecycle acceptance passed.",
-          "Rendezvous build/smoke run 42790619836 passed."
+          "Rendezvous build/smoke run 42790619836 passed.",
+          "Exact-head quality gate run 42795994763 passed on V 3.1.148, including graph/evidence repository checks.",
+          "Product build run 42790619479 passed on the unchanged Android/Windows product source baseline: Android Keystore instrumentation, Windows DPAPI trust/identity, Android/Windows builds and HostLifecycle tests."
         ],
         "tests_failed": [],
         "blocked_reason": null,
@@ -8805,13 +8808,13 @@
           "started_at": "2026-11-10T10:04:06.793Z",
           "ended_at": "2026-11-10T10:04:10.291Z",
           "result": "succeeded",
-          "summary": "Audited the existing Android and Windows persistent peer identity/trust paths, first-use consent, reconnect, mismatch and revoke controls. Existing source and tests on the exact V 3.1.147 main commit satisfy the task's functional criteria; no duplicate product implementation was added. Task remains in_progress until the exact-head quality gate validates the new report/evidence graph commit.",
+          "summary": "Audited existing Android and Windows persistent peer identity/trust, explicit enrollment, reconnect, mismatch and revoke implementation. Existing product code and both-platform tests satisfy every UPD-S1-022 functional criterion; no duplicate implementation was introduced. The exact-head quality gate validated the committed report/evidence paths and both graphs. Android/Windows/HostLifecycle product CI on the same unchanged product source baseline also passed.",
           "changed_files": [
             "update/Step three/UPD-S1-022/execution-report.md",
             "update/Step three/UPD-S1-022/evidence/trust-and-revocation-review.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "6386a3016fe3deb6ac077b80c3d1ea210b3a1649",
           "tests": [
             {
               "name": "Step Three quality gate on exact base commit",
@@ -8857,13 +8860,29 @@
               "job_id": 129742790241,
               "url": "https://github.com/artinrahimii/project/actions/runs/42790619836",
               "summary": "Production container build and HTTP smoke completed successfully."
+            },
+            {
+              "name": "Exact-head graph and evidence validation",
+              "command": "Step Three quality gate after commit V 3.1.148",
+              "result": "passed",
+              "run_id": 42795994763,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42795994763",
+              "summary": "All graph structure, contract, actual-output-path and evidence-path checks succeeded on exact report commit 6386a3016fe3deb6ac077b80c3d1ea210b3a1649."
+            },
+            {
+              "name": "Android and Windows product CI on identical product source baseline",
+              "command": "White-P product build at V 3.1.147 source baseline",
+              "result": "passed",
+              "run_id": 42790619479,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42790619479",
+              "summary": "Android clean debug/release build, JVM tests, Keystore instrumentation and permission checks; Windows WPF build/publish, DPAPI identity/trust acceptance and installer build; HostLifecycle acceptance all passed."
             }
           ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head quality CI for this report/graph commit. If all graph, evidence and contract checks pass, set this node to done and record the real report commit SHA. Then continue with UPD-S1-023 in the approved execution order; physical Android-to-Windows acceptance remains UPD-S1-020.",
+          "follow_up": "Continue with UPD-S1-023: add deterministic automatic model selection and a bounded output-token policy using fresh authenticated READY HostStatus and actual backend capability data. Physical Android-to-Windows real-model E2E remains the separate UPD-S1-020 gate.",
           "device_and_host_details_redacted": "Android GitHub-hosted emulator/CI only and Windows GitHub-hosted Windows runner; no physical Android handset or user-installed Windows host was used.",
           "model_revision_and_sha256": "Not applicable to peer identity/trust. Separate real-inference CI run 42790619433 passed with a pinned llama.cpp binary and pinned GGUF model; it is not claimed as Android-to-Windows acceptance.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable to UPD-S1-022. In-place upgrade snapshots and preservation are acceptance requirements of UPD-S1-021."
@@ -11380,14 +11399,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T10:04:10.291Z",
+    "as_of": "2026-11-10T10:15:42.905Z",
     "total_tasks": 24,
     "not_started": 11,
-    "in_progress": 1,
-    "done": 12,
+    "in_progress": 0,
+    "done": 13,
     "blocked": 0,
-    "verified_completion_percentage": 50,
-    "calculation": "12 verified done update tasks / 24 total update tasks = 50.00%. UPD-S1-022 source and test review passed on the exact base commit; the post-commit graph validation is pending."
+    "verified_completion_percentage": 54.166666666666664,
+    "calculation": "13 verified done update tasks / 24 total update tasks = 54.1667%. UPD-S1-022 was verified using exact-head report/evidence graph CI and successful Android/Windows product CI on the unchanged product source baseline."
   },
   "visual_identity": {
     "scope": [
@@ -11501,7 +11520,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T10:04:10.291Z",
+  "updated_at": "2026-11-10T10:15:42.905Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
