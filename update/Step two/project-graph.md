@@ -7922,8 +7922,8 @@
         "شرایط برق/idle و محدودیت منابع فقط در صورت پشتیبانی واقعی سیستم اعمال شوند.",
         "تمام ردها با کد وضعیت قابل مشاهده و آزمون باشند."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "expected_output_paths": [
         "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
         "src/Host.Application/HostReadinessEvaluator.cs",
@@ -7938,42 +7938,82 @@
         "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
         "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
         "tests/test_host_resource_settings.py",
+        "update/Step two/project-graph.md",
         "update/Step three/UPD-S1-013/execution-report.md",
-        "update/Step three/UPD-S1-013/evidence/capacity-admission-audit-A001.md"
+        "update/Step three/UPD-S1-013/evidence/capacity-admission-audit-A001.md",
+        "update/Step three/UPD-S1-013/evidence/ci-verification-A002.md"
       ],
       "evidence": [
         "src/Host.Windows/MainWindow.xaml.cs",
         "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "src/Host.Windows/Networking/NetworkInferenceRequestResponseMapper.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
+        "src/Host.Application/HostReadinessEvaluator.cs",
+        "src/Host.Domain/HostCapabilities.cs",
+        "src/Host.Windows/Requests/HostRequestCoordinator.cs",
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
         "tests/test_host_resource_settings.py",
-        "update/Step three/UPD-S1-013/evidence/capacity-admission-audit-A001.md"
+        "update/Step three/UPD-S1-013/evidence/capacity-admission-audit-A001.md",
+        "update/Step three/UPD-S1-013/evidence/ci-verification-A002.md",
+        "https://github.com/artinrahimii/project/actions/runs/42889844427",
+        "https://github.com/artinrahimii/project/actions/runs/42889844413",
+        "https://github.com/artinrahimii/project/actions/runs/42889844288",
+        "https://github.com/artinrahimii/project/actions/runs/42889844469"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0049, T0050, T0051, T0052, T0053, T0054, T0055, T0056, T0098, T0099, T0100, T0101, T0102, T0103, T0104, T0105, T0106, T0107, T0196. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-013-20261110231943",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "UPD-S1-013-20261110232357",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Host.Windows/MainWindow.xaml.cs",
           "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
           "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
           "tests/test_host_resource_settings.py",
           "update/Step three/UPD-S1-013/execution-report.md",
-          "update/Step three/UPD-S1-013/evidence/capacity-admission-audit-A001.md"
+          "update/Step three/UPD-S1-013/evidence/capacity-admission-audit-A001.md",
+          "update/Step two/project-graph.md",
+          "update/Step three/UPD-S1-013/evidence/ci-verification-A002.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "991930f84f7a9af9fc839d4d4c7ee9b8a049758f"
+        ],
+        "tests_passed": [
+          "V 3.1.176 quality gate: all 494 Python tests passed; both update graph checks passed with 24 nodes/80 edges; legacy graph checks passed with 230 nodes/422 edges, 0 errors and one preserved unmapped metadata warning (run 42889844427).",
+          "V 3.1.176 HostLifecycle suite passed, including capacity/admission/error-mapping acceptance; 68 critical PASS markers and 86.15% line coverage (job 130087754770, run 42889844413).",
+          "V 3.1.176 Windows product job passed clean restore/build, WPF publish/startup smoke and installer acceptance (job 130087754870, run 42889844413).",
+          "V 3.1.176 real local llama.cpp inference and cancellation passed (run 42889844288).",
+          "V 3.1.176 Rendezvous container build and HTTP contract smoke passed (run 42889844469).",
+          "Known Insufficient capacity maps to typed CapacityInsufficient before inference; capacity response maps to ProtocolError RESOURCE_LIMIT; single-inference concurrency acceptance admitted 1/64 and returned Busy for 63."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
+          "state": "passed",
+          "triggering_contracts": [
+            "Fresh live Windows RAM/disk capacity at peer admission",
+            "Typed CapacityInsufficient/CapacityUnknown response mapping",
+            "Single-inference non-queuing admission"
+          ],
+          "affected_by_contract_changes": [
+            "Windows peer admission capacity-state wiring",
+            "HostRequestAdmissionPolicy rejection precedence"
+          ],
+          "review_evidence": [
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+            "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+            "tests/HostLifecycle.Tests/NetworkInferenceRequestResponseMapperAcceptanceTests.cs",
+            "https://github.com/artinrahimii/project/actions/runs/42889844427",
+            "https://github.com/artinrahimii/project/actions/runs/42889844413/job/130087754770"
+          ]
         },
-        "follow_up": "Run exact-head quality and product CI for this attempt. Keep UPD-S1-013 in_progress until all four acceptance criteria and runtime tests pass."
+        "follow_up": "UPD-S1-013 verified complete. Continue with UPD-S1-016; physical-device Android-to-Windows acceptance and in-place upgrades are separate later gates."
       },
       "execution_history": [
         {
@@ -7990,7 +8030,7 @@
             "update/Step three/UPD-S1-013/execution-report.md",
             "update/Step three/UPD-S1-013/evidence/capacity-admission-audit-A001.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "991930f84f7a9af9fc839d4d4c7ee9b8a049758f",
           "tests": [],
           "failure_details": null,
           "blocked_reason": null,
@@ -8003,6 +8043,80 @@
           "device_and_host_details_redacted": "Source audit performed against GitHub main commit c7c2f86ae557d1b1983e896f7410eddc76a64796. No user-owned Windows host or physical Android device used.",
           "model_revision_and_sha256": "No model inference executed in this task.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable; no upgrade test performed."
+        },
+        {
+          "attempt_id": "UPD-S1-013-20261110232357",
+          "started_at": "2026-11-10T19:53:57Z",
+          "ended_at": "2026-11-10T19:58:40Z",
+          "result": "succeeded",
+          "summary": "Exact-head CI on the implementation commit passed the changed admission path and relevant Windows/product gates. All four UPD-S1-013 acceptance criteria are now evidenced: participation/model/capacity fail-closed checks, one-slot concurrency, supported measurable resource constraints, and typed observable rejection mapping.",
+          "changed_files": [
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-013/execution-report.md",
+            "update/Step three/UPD-S1-013/evidence/ci-verification-A002.md"
+          ],
+          "commit_sha": "991930f84f7a9af9fc839d4d4c7ee9b8a049758f",
+          "tests": [
+            {
+              "name": "Python quality suite and both graph guards",
+              "command": "quality.yml on exact V 3.1.176 commit; python -m unittest discover -s tests -v; compileall; graph_guard in structure and repo-root modes for both graphs",
+              "result": "passed",
+              "run_id": 42889844427,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42889844427",
+              "summary": "494 Python tests passed. Update graph has 24 nodes/80 edges and both graph_guard invocations returned 0 errors, 0 warnings. Legacy graph has 230 nodes/422 edges, 0 errors and 1 preserved UNMAPPED_DEPENDENCY warning for the non-task metadata string on T0001."
+            },
+            {
+              "name": "HostLifecycle unit and integration acceptance suite",
+              "command": "product-build.yml HostLifecycle job on exact V 3.1.176 commit",
+              "result": "passed",
+              "run_id": 42889844413,
+              "job_id": 130087754770,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42889844413/job/130087754770",
+              "summary": "HostLifecycle harness clean build and full suite passed; 68 critical PASS markers, 86.15% line coverage. One opt-in real-model test was skipped in this job and is not counted as passed."
+            },
+            {
+              "name": "Windows WPF build, publish, startup and installer acceptance",
+              "command": "product-build.yml Windows host job on exact V 3.1.176 commit",
+              "result": "passed",
+              "run_id": 42889844413,
+              "job_id": 130087754870,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42889844413/job/130087754870",
+              "summary": "Clean Windows solution restore/build, WPF publish, startup smoke test, brand screenshot and installer acceptance all passed."
+            },
+            {
+              "name": "Real local llama.cpp inference and cancellation",
+              "command": "real-inference.yml on exact V 3.1.176 commit",
+              "result": "passed",
+              "run_id": 42889844288,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42889844288",
+              "summary": "Pinned local llama.cpp/ GGUF workflow completed; real generation succeeded, active cancellation was observed, and the workflow-owned process stopped cleanly. This is local inference evidence, not Android-to-Windows physical-device E2E."
+            },
+            {
+              "name": "Rendezvous container build and smoke",
+              "command": "rendezvous-container.yml on exact V 3.1.176 commit",
+              "result": "passed",
+              "run_id": 42889844469,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42889844469",
+              "summary": "Production container build and HTTP contract smoke test passed."
+            },
+            {
+              "name": "Typed capacity admission and network error mapping",
+              "command": "HostRequestAdmissionTests.RunAsync and NetworkInferenceRequestResponseMapperAcceptanceTests.RunAsync inside HostLifecycle suite",
+              "result": "passed",
+              "run_id": 42889844413,
+              "job_id": 130087754770,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42889844413/job/130087754770",
+              "summary": "Admission regression verifies a known insufficient-capacity state returns CapacityInsufficient before inference even when lifecycle is Error; mapper tests map capacity failures to ProtocolError RESOURCE_LIMIT. Existing one-slot coordinator acceptance admitted 1 of 64 simultaneous requests; 63 were Busy."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Proceed to UPD-S1-016 in the approved execution order. Physical Android-to-Windows acceptance remains assigned to UPD-S1-020; clean install and in-place upgrade remain assigned to UPD-S1-021.",
+          "device_and_host_details_redacted": "GitHub-hosted Windows runner performed the WPF build, publish, startup smoke and installer acceptance; CI HostLifecycle and local-inference workflows passed. No physical Android handset or user-owned Windows PC participated in this task.",
+          "model_revision_and_sha256": "Real local-inference workflow passed using the workflow-pinned llama.cpp and GGUF artifacts; artifact identity is retained in that workflow's logs. No Android-to-Windows request was performed by this task.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed; clean install and in-place upgrade are separate UPD-S1-021 acceptance gates."
         }
       ]
     },
@@ -12402,14 +12516,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T19:52:27Z",
+    "as_of": "2026-11-10T20:02:06Z",
     "total_tasks": 24,
     "not_started": 8,
-    "in_progress": 1,
-    "done": 15,
+    "in_progress": 0,
+    "done": 16,
     "blocked": 0,
-    "verified_completion_percentage": 62.5,
-    "calculation": "15 verified done update tasks / 24 total update tasks = 62.5%. UPD-S1-013 A001 has made a narrow admission-capacity correction; exact-head tests/build are pending, so it remains in_progress."
+    "verified_completion_percentage": 66.66666666666666,
+    "calculation": "16 verified done update tasks / 24 total update tasks = 66.67%. UPD-S1-013 passed all task acceptance criteria with exact-head CI; Android physical-device E2E and in-place upgrade remain separate tasks."
   },
   "visual_identity": {
     "scope": [
@@ -12523,7 +12637,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T19:52:27Z",
+  "updated_at": "2026-11-10T20:02:06Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
