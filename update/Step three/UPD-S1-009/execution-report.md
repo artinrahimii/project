@@ -60,3 +60,9 @@ Only the following task evidence and graph files were added/updated in this atte
 - `update/Step two/project-graph.md`
 
 No new source code was needed.
+
+
+## Closeout revalidation hold — 2026-11-10T08:31:37.107Z
+
+- The Room/UI audit and focused tests passed, but predecessor `UPD-S1-024` was temporarily reopened because its exact-head update graph guard reported a missing test-source evidence pointer.
+- No conversation source/test regression was observed. This task remains `in_progress` until the predecessor's corrected evidence graph passes the fresh guard; the existing implementation is preserved unchanged.

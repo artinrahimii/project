@@ -189,3 +189,11 @@ Do not mark done until all 11 visual identity acceptance criteria are satisfied 
 - All 11 UPD-S1-024 visual acceptance criteria are now met. The task can be marked `done`.
 - CI uses GitHub-hosted Windows and Android emulator runners. No physical Android handset, independent user Windows host, live local-model inference or Android-to-Windows inference is claimed by this visual task.
 - Attempt result: `succeeded`; exact commit SHA is added to the execution history in the next graph update after GitHub creates this commit.
+
+
+
+## A018 — repair missing test-source evidence pointer — 2026-11-10T08:31:37.107Z
+
+- Exact quality run [42782395616](https://github.com/artinrahimii/project/actions/runs/42782395616) executed 491 Python tests successfully and passed the legacy graph guard, but the update graph guard reported `DONE_WITHOUT_TEST_FILE_EVIDENCE` for this node.
+- The brand identity regression file already existed and passed in the suite, but had not been included in the node's `evidence` array. Added `tests/test_brand_identity.py` and this diagnostic file to the graph evidence references.
+- No product source or test code changed. The task remains `in_progress` until a fresh update graph guard validates the repaired metadata.
