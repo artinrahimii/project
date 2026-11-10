@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.162",
+  "commit_intent": "V 3.1.163",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -8963,7 +8963,7 @@
         "اگر مدل سازگار یا metadata معتبر وجود ندارد، درخواست با خطای typed و قابل فهم متوقف شود؛ مدل نامعتبر یا پیش‌فرض حدسی انتخاب نشود.",
         "آزمون‌ها حالت صفر/یک/چند مدل، tie، backend ناآماده، model mismatch، metadata نامعتبر و clamp سقف خروجی را پوشش دهند."
       ],
-      "status": "in_progress",
+      "status": "done",
       "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "src/Host.Windows/Models/Catalog/",
@@ -9009,14 +9009,18 @@
         "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
         "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
-        "tests/HostLifecycle.Tests/Program.cs"
+        "tests/HostLifecycle.Tests/Program.cs",
+        "https://github.com/artinrahimii/project/actions/runs/42851148516",
+        "https://github.com/artinrahimii/project/actions/runs/42851148642",
+        "https://github.com/artinrahimii/project/actions/runs/42851148119",
+        "https://github.com/artinrahimii/project/actions/runs/42851148040"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=add; affected_task_ids=T0057, T0058, T0059, T0060, T0061, T0062, T0063, T0064, T0065, T0066, T0067, T0068, T0069, T0070, T0071, T0072, T0073, T0074, T0075, T0098, T0099, T0100, T0101, T0102, T0103, T0104, T0105, T0106, T0107, T0124, T0196, T0221. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 2,
-        "last_attempt_id": "UPD-S1-023-20261110-A003",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "UPD-S1-023-20261110-A004",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "tests/HostLifecycle.Tests/Program.cs",
           "update/Step two/project-graph.md",
@@ -9024,14 +9028,19 @@
         ],
         "related_commits": [
           "a38ac25a08820c8d0095413eec44ea0c230d5f69",
-          "41bbccf74e49f4a87b5004761592e02aa78df14c"
+          "41bbccf74e49f4a87b5004761592e02aa78df14c",
+          "9927e29a772bb1382fadd62ee2a02178b54998f0"
         ],
         "tests_passed": [
           "V 3.1.160 exact-head quality gate passed.",
           "V 3.1.160 rendezvous container build/smoke passed.",
           "V 3.1.161 exact-head quality gate passed.",
           "V 3.1.161 rendezvous container build/smoke passed.",
-          "V 3.1.161 Windows WPF host build passed."
+          "V 3.1.161 Windows WPF host build passed.",
+          "Exact V 3.1.162 quality gate run 42851148516 passed: Python suite, compileall, legacy/update graph guards.",
+          "Exact V 3.1.162 Android/Windows Product Build run 42851148642 passed: Android JVM 232 passed/1 skipped/0 failed, Keystore instrumentation, Windows WPF/HostLifecycle build and installer.",
+          "Exact V 3.1.162 real local inference run 42851148119 passed on GitHub-hosted Windows: llama.cpp b11443 and pinned SmolLM2 GGUF SHA-256 8030f04528538d47bda434f6f0bdf3952c40a58123e4d5e755332f23731a8684; real generation and cancellation passed.",
+          "Exact V 3.1.162 rendezvous container build/smoke run 42851148040 passed."
         ],
         "tests_failed": [
           "V 3.1.160 HostLifecycle compile failed with seven C# errors; see A001.",
@@ -9259,6 +9268,65 @@
           "device_and_host_details_redacted": "Hosted CI only; no physical Android handset or user-owned Windows host was accessed.",
           "model_revision_and_sha256": "Not applicable to the test fixture; real inference must still provide a pinned model and checksum.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-023-20261110-A004",
+          "started_at": "2026-11-10T16:05:59Z",
+          "ended_at": "2026-11-10T16:21:55Z",
+          "result": "succeeded",
+          "summary": "Exact-head validation of A003 on V 3.1.162 succeeded. Android deterministic model selection and typed failure tests, Windows live model-capability admission and output-ceiling tests, complete Android/Windows builds, HostLifecycle acceptance, and real pinned llama.cpp/GGUF inference plus cancellation passed. This closes the six UPD-S1-023 acceptance criteria; it does not claim physical Android-to-user-Windows P2P acceptance or upgrade testing.",
+          "changed_files": [],
+          "commit_sha": "9927e29a772bb1382fadd62ee2a02178b54998f0",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml exact-head run on V 3.1.162",
+              "result": "passed",
+              "run_id": 42851148516,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42851148516",
+              "summary": "Full Python automated suite, compileall, Step Three legacy graph structure/output/evidence guard and update graph structure/output/evidence guard passed on exact A003 commit."
+            },
+            {
+              "name": "Android unit and instrumentation tests",
+              "command": "gradle --no-daemon testDebugUnitTest createDebugUnitTestCoverageReport; connectedDebugAndroidTest",
+              "result": "passed",
+              "run_id": 42851148642,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42851148642",
+              "summary": "Android JVM tests and instrumentation succeeded; JUnit summary: 232 passed, 1 skipped, 0 failed out of 233. AutomaticModelSelectionPolicy tests were included in the Android unit test task."
+            },
+            {
+              "name": "Windows host build and acceptance",
+              "command": "product-build.yml — Windows WPF host and HostLifecycle jobs",
+              "result": "passed",
+              "run_id": 42851148642,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42851148642",
+              "summary": "Windows WPF build, publish/startup smoke, host policy/identity/trust acceptance and HostLifecycle build/integration suite passed; installer artifact built."
+            },
+            {
+              "name": "Real local model inference",
+              "command": "real-inference.yml — dotnet run --project tests/HostLifecycle.Tests/HostLifecycle.Tests.csproj --configuration Release",
+              "result": "passed",
+              "run_id": 42851148119,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42851148119",
+              "summary": "Verified llama.cpp b11443 CPU executable and pinned GGUF model; real generation and active-generation cancellation both passed on a GitHub-hosted Windows runner."
+            },
+            {
+              "name": "Rendezvous metadata service",
+              "command": "rendezvous-container.yml build and HTTP smoke",
+              "result": "passed",
+              "run_id": 42851148040,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42851148040",
+              "summary": "Container build and service smoke test passed on exact A003 commit."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Continue with UPD-S1-010 in the validated execution order. Physical Android-to-installed-Windows P2P acceptance and both-platform in-place upgrade remain separate gates under UPD-S1-020/021. Re-review the 156 re_review_required legacy decisions after their mapped implementation tasks reach acceptance.",
+          "device_and_host_details_redacted": "Hosted CI only: Android emulator and GitHub-hosted Windows runner. No physical Android handset or user-owned Windows host was accessed for this attempt.",
+          "model_revision_and_sha256": "llama.cpp b11443 CPU; archive SHA-256 98303a5a688a606d4a32522e47ed7cafa0ddff04d3be56ab927e25d3b1ea45c6; executable SHA-256 4cdaae426a798b49717e3ce9b8a7756a16355c83c812d9d59bc99e26ae6d3968. GGUF SmolLM2-135M-Instruct.Q4_K_M.gguf at revision a6b7826ed969c3926a98359e39912af137b464cb; size 105454144 bytes; SHA-256 8030f04528538d47bda434f6f0bdf3952c40a58123e4d5e755332f23731a8684; model ID smollm2-ci.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed; upgrade acceptance is tracked separately by UPD-S1-021."
         }
       ]
     },
@@ -11664,13 +11732,13 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T16:05:00Z",
+    "as_of": "2026-11-10T16:21:55Z",
     "total_tasks": 24,
     "not_started": 10,
-    "in_progress": 1,
-    "done": 13,
+    "in_progress": 0,
+    "done": 14,
     "blocked": 0,
-    "verified_completion_percentage": 54.166666666666664,
+    "verified_completion_percentage": 58.333333333333336,
     "calculation": "13 verified done update tasks / 24 total update tasks = 54.1667%. UPD-S1-023 remains in_progress; A001 and A002 failed, A003 awaits exact-head CI."
   },
   "visual_identity": {
@@ -11785,7 +11853,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T16:05:00Z",
+  "updated_at": "2026-11-10T16:21:55Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
