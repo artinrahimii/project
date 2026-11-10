@@ -199,6 +199,9 @@ internal static class HostRequestCoordinatorFailureAcceptanceTests
             "fixture/ready-model",
             "fixture/ready-model",
             HostCapacityState.Ready,
+            1024,
+            4096UL,
+            8192UL,
             (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds());
 
     private static void Assert(bool condition, string message)

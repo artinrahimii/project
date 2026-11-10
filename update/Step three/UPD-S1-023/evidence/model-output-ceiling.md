@@ -35,3 +35,11 @@
 - `src/Client.Android/app/src/test/java/com/whitep/client/requests/AutomaticModelSelectionPolicyTest.kt`
 
 run مبنا `42835719820` دو assertion نادرست داشت. اصلاح آن‌ها در این commit انجام شد؛ آزمون دقیق همین commit هنوز اجرا نشده است. آزمون فیزیکی یا Android-to-Windows در این سند ادعا نشده است.
+
+
+## نتیجهٔ CI تلاش A001
+- Quality gate exact-head: موفق، run 42848534130.
+- Rendezvous container: موفق، run 42848534328.
+- Product build: ناموفق، run 42848534275؛ ۷ compile errors در HostLifecycle.
+- Real inference: ناموفق پیش از اجرای inference، run 42848534114.
+- A002 شش سازندهٔ باقی‌مانده و نام مبهم HostStatus را اصلاح کرده است؛ این اصلاحات تا اجرای CI بعدی تأییدنشده‌اند.

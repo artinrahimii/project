@@ -1,7 +1,7 @@
 # گزارش اجرای UPD-S1-023 — سیاست انتخاب خودکار مدل و سقف خروجی
 
 ## وضعیت
-**در حال اجرا (in_progress)**. کد و آزمون‌ها اصلاح شده‌اند، اما CI دقیق همین commit هنوز اجرا نشده و هیچ ادعای تکمیل نهایی وجود ندارد.
+**در حال اجرا (in_progress)**. تلاش A001 در V 3.1.160 به‌علت هفت خطای کامپایل C# شکست خورد. تلاش A002 تمام محل‌های فراخوانی قدیمی و ابهام HostStatus را اصلاح کرده است؛ CI دقیق نسخهٔ اصلاحی هنوز در انتظار اجراست.
 
 ## مبنای ممیزی
 - مخزن: `artinrahimii/project`
@@ -37,10 +37,17 @@
 - `src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt`
 - `src/Client.Android/app/src/test/java/com/whitep/client/requests/AutomaticModelSelectionPolicyTest.kt`
 
-## آزمون‌ها
-- آزمون‌های admission و session capability افزوده/گسترش داده شدند.
-- دو assertion نامعتبر Android اصلاح شدند.
-- **اجرای دقیق-head پس از تغییرات: در انتظار CI.**
+## آزمون‌ها و خطاهای A001
+- Quality gate دقیق V 3.1.160 موفق شد: [run 42848534130](https://github.com/artinrahimii/project/actions/runs/42848534130).
+- ساخت/آزمون rendezvous موفق شد: [run 42848534328](https://github.com/artinrahimii/project/actions/runs/42848534328).
+- HostLifecycle در مرحلهٔ کامپایل شکست خورد: یک ابهام HostStatus و شش سازندهٔ ناسازگار؛ [Product Build run 42848534275](https://github.com/artinrahimii/project/actions/runs/42848534275).
+- آزمون inference واقعی اجرا نشد؛ پروژهٔ HostLifecycle پیش از رسیدن به inference build نشد؛ [run 42848534114](https://github.com/artinrahimii/project/actions/runs/42848534114).
+- تلاش A002 شش محل سازنده را با سقف‌های آزمونی معتبر به‌روز کرد و alias صریح HostStatus افزود.
+- **CI دقیق A002: در انتظار.**
+
+## تلاش‌های ثبت‌شده
+- A001: commit `a38ac25a08820c8d0095413eec44ea0c230d5f69`؛ نتیجهٔ failed؛ هفت خطای کامپایل در HostLifecycle.
+- A002: اصلاح شش سازنده و رفع ابهام نام؛ نتیجهٔ partial تا تأیید CI.
 
 ## محدودیت‌های این تلاش
 - آزمون فیزیکی Android به Windows و inference واقعی از مسیر P2P در این تلاش انجام نشده است.

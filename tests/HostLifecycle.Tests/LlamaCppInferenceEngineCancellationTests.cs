@@ -76,6 +76,9 @@ internal static class LlamaCppInferenceEngineCancellationTests
             "fixture-model",
             "fixture-model",
             HostCapacityState.Ready,
+            1024,
+            4096UL,
+            8192UL,
             (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds());
 
     private static void Assert(bool condition, string message)

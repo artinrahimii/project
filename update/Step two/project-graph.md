@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.160",
+  "commit_intent": "V 3.1.161",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -8985,7 +8985,12 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/AutomaticModelSelectionPolicyTest.kt",
         "update/Step three/UPD-S1-023/execution-report.md",
-        "update/Step three/UPD-S1-023/evidence/model-output-ceiling.md"
+        "update/Step three/UPD-S1-023/evidence/model-output-ceiling.md",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs"
       ],
       "evidence": [
         "update/Step three/UPD-S1-023/execution-report.md",
@@ -8997,31 +9002,42 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/AutomaticModelSelectionPolicyTest.kt",
         "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
         "src/Host.Application/HostInferenceSession.cs",
-        "src/Host.Windows/MainWindow.xaml.cs"
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+        "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=add; affected_task_ids=T0057, T0058, T0059, T0060, T0061, T0062, T0063, T0064, T0065, T0066, T0067, T0068, T0069, T0070, T0071, T0072, T0073, T0074, T0075, T0098, T0099, T0100, T0101, T0102, T0103, T0104, T0105, T0106, T0107, T0124, T0196, T0221. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 1,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-023-20261110-A001",
+        "attempt_count": 2,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "UPD-S1-023-20261110-A002",
         "last_attempt_result": "partial",
         "changed_files": [
-          "src/Shared.Contracts/ProtocolMessageLimits.cs",
-          "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
-          "src/Host.Application/HostInferenceSession.cs",
-          "src/Host.Windows/MainWindow.xaml.cs",
-          "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+          "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
           "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
-          "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
-          "src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt",
-          "src/Client.Android/app/src/test/java/com/whitep/client/requests/AutomaticModelSelectionPolicyTest.kt",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
           "update/Step two/project-graph.md",
-          "update/Step three/UPD-S1-023/execution-report.md",
-          "update/Step three/UPD-S1-023/evidence/model-output-ceiling.md"
+          "update/Step three/UPD-S1-023/execution-report.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
-        "tests_failed": [],
+        "related_commits": [
+          "a38ac25a08820c8d0095413eec44ea0c230d5f69"
+        ],
+        "tests_passed": [
+          "Exact-head quality gate V 3.1.160 passed (run 42848534130).",
+          "Exact-head rendezvous container build/smoke passed (run 42848534328)."
+        ],
+        "tests_failed": [
+          "HostLifecycle clean build failed with 7 C# errors in product run 42848534275.",
+          "Android peer interoperability fixture build failed on the same HostLifecycle compilation errors in product run 42848534275.",
+          "Windows product workflow failed at its HostLifecycle-dependent process restriction step in product run 42848534275.",
+          "Real local-inference test was not reached because its HostLifecycle project build failed (run 42848534114)."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -9044,9 +9060,9 @@
         {
           "attempt_id": "UPD-S1-023-20261110-A001",
           "started_at": "2026-11-10T15:49:38.054Z",
-          "ended_at": "2026-11-10T15:49:38.054Z",
-          "result": "partial",
-          "summary": "Windows request admission and the serialized inference session now enforce the active backend model identity and output/context limits, bounded by product and protocol ceilings. Android automatic model selection already existed; two stale Android unit-test expectations were corrected. Exact-head CI is pending, so this task remains in_progress.",
+          "ended_at": "2026-11-10T16:02:00Z",
+          "result": "failed",
+          "summary": "Implemented Windows live model/output-token admission enforcement and corrected the two Android test assumptions, but the exact-head CI run exposed seven C# compilation errors in the HostLifecycle test project: six call sites still used the previous HostRequestAdmissionContext constructor and one HostStatus name became ambiguous after importing the Protobuf namespace. The quality gate and rendezvous succeeded; product and real-inference workflows failed before their relevant acceptance work could complete. The failed attempt is retained and superseded by A002.",
           "changed_files": [
             "src/Shared.Contracts/ProtocolMessageLimits.cs",
             "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
@@ -9061,25 +9077,49 @@
             "update/Step three/UPD-S1-023/execution-report.md",
             "update/Step three/UPD-S1-023/evidence/model-output-ceiling.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "a38ac25a08820c8d0095413eec44ea0c230d5f69",
           "tests": [
             {
-              "name": "Android JVM tests and Android product build",
-              "command": "product-build.yml — Build Android client APK; ./gradlew :app:testDebugUnitTest",
-              "result": "pending",
-              "summary": "The two stale assertions from base run 42835719820 were corrected; exact-head rerun pending."
-            },
-            {
-              "name": "Windows HostLifecycle acceptance",
-              "command": "product-build.yml — Build Windows WPF host; run HostLifecycle.Tests",
-              "result": "pending",
-              "summary": "Live model identity/output limit session checks and admission tests added; exact-head run pending."
-            },
-            {
               "name": "Step Three quality gate",
-              "command": "quality.yml — Python unit suite, compileall and both graph guards",
-              "result": "pending",
-              "summary": "Graph state, report and evidence paths updated; exact-head validation pending."
+              "command": "quality.yml on V 3.1.160",
+              "result": "passed",
+              "run_id": 42848534130,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42848534130",
+              "summary": "Python tests, compileall and both graph guards passed."
+            },
+            {
+              "name": "Rendezvous container build and smoke",
+              "command": "rendezvous-container.yml on V 3.1.160",
+              "result": "passed",
+              "run_id": 42848534328,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42848534328",
+              "summary": "Container build and HTTP smoke test passed."
+            },
+            {
+              "name": "Windows HostLifecycle compile",
+              "command": "product-build.yml — Host lifecycle unit and integration tests",
+              "result": "failed",
+              "run_id": 42848534275,
+              "job_id": 129942503327,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42848534275",
+              "summary": "7 C# compile errors: one ambiguous HostStatus and six older HostRequestAdmissionContext constructors missing the new model/output/context fields."
+            },
+            {
+              "name": "Android/Windows product workflow",
+              "command": "product-build.yml on V 3.1.160",
+              "result": "failed",
+              "run_id": 42848534275,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42848534275",
+              "summary": "Android peer interoperability fixture and Windows process restriction steps failed while building/running HostLifecycle tests with the same compile errors."
+            },
+            {
+              "name": "Real local inference",
+              "command": "real-inference.yml on V 3.1.160",
+              "result": "failed",
+              "run_id": 42848534114,
+              "job_id": 129942503172,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42848534114",
+              "summary": "The HostLifecycle project failed to build; the live local-model inference acceptance step did not complete."
             }
           ],
           "failure_details": "The base product-build run 42835719820 failed two Android tests: discovery asserted input order despite the stable PeerId sorting in production; a model fixture declared maxOutputTokens=200000 with maxContextTokens=8192 and was correctly rejected as invalid metadata. Both test assertions/fixtures were corrected in this attempt.",
@@ -9092,6 +9132,58 @@
           "device_and_host_details_redacted": "No physical Android handset or separate user Windows host was accessed. CI and fixture tests do not establish physical Android-to-Windows acceptance.",
           "model_revision_and_sha256": "Not applicable; no real model was loaded in this source-change attempt.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed; clean install and in-place upgrade remain UPD-S1-021 gates."
+        },
+        {
+          "attempt_id": "UPD-S1-023-20261110-A002",
+          "started_at": "2026-11-10T16:00:00Z",
+          "ended_at": "2026-11-10T16:02:00Z",
+          "result": "partial",
+          "summary": "Corrected the six remaining HostRequestAdmissionContext test call sites with valid model limits and added a domain HostStatus alias to remove the C# ambiguity. This is a compile-fix attempt only; exact-head CI has not yet validated it.",
+          "changed_files": [
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorBusyTests.cs",
+            "tests/HostLifecycle.Tests/LlamaCppInferenceEngineCancellationTests.cs",
+            "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-023/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "HostLifecycle C# compilation",
+              "command": "product-build.yml — Host lifecycle unit and integration tests",
+              "result": "pending",
+              "summary": "All six stale constructor call sites updated; HostStatus aliased to WhiteP.Host.Domain.HostStatus."
+            },
+            {
+              "name": "Android and Windows product CI",
+              "command": "product-build.yml on exact A002 commit",
+              "result": "pending",
+              "summary": "Re-run the full Android, Windows and HostLifecycle jobs."
+            },
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact A002 commit",
+              "result": "pending",
+              "summary": "Re-run full Python tests, compileall and both graph guards."
+            },
+            {
+              "name": "Real local-model inference",
+              "command": "real-inference.yml on exact A002 commit",
+              "result": "pending",
+              "summary": "Re-run after HostLifecycle build correction."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head CI on this correction. Fix any remaining compile or runtime failures; do not mark UPD-S1-023 done until all six acceptance criteria pass.",
+          "device_and_host_details_redacted": "No physical Android handset or user-owned Windows host was tested; CI remains hosted-only.",
+          "model_revision_and_sha256": "No real model used in A002; inference job pending.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
     },
@@ -11497,14 +11589,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T15:49:38.054Z",
+    "as_of": "2026-11-10T16:02:00Z",
     "total_tasks": 24,
     "not_started": 10,
     "in_progress": 1,
     "done": 13,
     "blocked": 0,
     "verified_completion_percentage": 54.166666666666664,
-    "calculation": "13 verified done update tasks / 24 total update tasks = 54.1667%. UPD-S1-023 remains in_progress pending exact-head CI and is not counted as done."
+    "calculation": "13 verified done update tasks / 24 total update tasks = 54.1667%. UPD-S1-023 remains in_progress after a failed exact-head compile and one corrective attempt pending CI."
   },
   "visual_identity": {
     "scope": [
@@ -11618,7 +11710,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T15:49:38.054Z",
+  "updated_at": "2026-11-10T16:02:00Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

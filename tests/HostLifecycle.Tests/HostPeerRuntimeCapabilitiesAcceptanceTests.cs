@@ -7,6 +7,7 @@ using WhiteP.Host.Domain;
 using WhiteP.Host.Infrastructure;
 using WhiteP.Shared.Contracts;
 using WhiteP.Shared.Contracts.V1;
+using HostStatus = WhiteP.Host.Domain.HostStatus;
 
 internal static class HostPeerRuntimeCapabilitiesAcceptanceTests
 {

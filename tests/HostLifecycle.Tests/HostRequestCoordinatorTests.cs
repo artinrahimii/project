@@ -192,6 +192,9 @@ internal static class HostRequestCoordinatorTests
             "fixture/ready-model",
             "fixture/ready-model",
             WhiteP.Host.Domain.HostCapacityState.Ready,
+            1024,
+            4096UL,
+            8192UL,
             (ulong)deadline.ToUnixTimeMilliseconds());
 
     private static async Task ActiveCancellationCancelsOperationAndReleasesGateAsync()
@@ -230,7 +233,7 @@ internal static class HostRequestCoordinatorTests
         Console.WriteLine("PASS: HostRequestCoordinator explicitly cancels the active operation token and releases the gate.");
     }
 
-    private static HostRequestAdmissionContext ValidAdmission() => new(true, WhiteP.Host.Domain.HostState.Ready, "fixture/ready-model", "fixture/ready-model", WhiteP.Host.Domain.HostCapacityState.Ready, (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds());
+    private static HostRequestAdmissionContext ValidAdmission() => new(true, WhiteP.Host.Domain.HostState.Ready, "fixture/ready-model", "fixture/ready-model", WhiteP.Host.Domain.HostCapacityState.Ready, 1024, 4096UL, 8192UL, (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds());
 
     private static void Assert(bool condition, string message)
     {

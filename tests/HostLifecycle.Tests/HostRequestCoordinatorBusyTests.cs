@@ -55,7 +55,7 @@ internal static class HostRequestCoordinatorBusyTests
         Console.WriteLine("PASS: busy admission is fail-fast, does not queue 32 requests, preserves cancellation, and resumes after release.");
     }
 
-    private static HostRequestAdmissionContext ValidAdmission() => new(true, WhiteP.Host.Domain.HostState.Ready, "fixture/ready-model", "fixture/ready-model", WhiteP.Host.Domain.HostCapacityState.Ready, (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds());
+    private static HostRequestAdmissionContext ValidAdmission() => new(true, WhiteP.Host.Domain.HostState.Ready, "fixture/ready-model", "fixture/ready-model", WhiteP.Host.Domain.HostCapacityState.Ready, 1024, 4096UL, 8192UL, (ulong)DateTimeOffset.UtcNow.AddMinutes(2).ToUnixTimeMilliseconds());
 
     private static void Assert(bool condition, string message)
     {
