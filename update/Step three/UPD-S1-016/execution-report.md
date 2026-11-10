@@ -72,3 +72,12 @@
 - آزمون Android-to-Windows روی دستگاه هدف و persistence در همان Room: متعلق به UPD-S1-020 است.
 
 تا CI دقیق commit اصلاحی، UPD-S1-016 در وضعیت `in_progress` می‌ماند.
+
+
+## تلاش A002 — اصلاح فایل آزمون پیش از CI
+
+- مبنا: `fb47c4c8287bc231fbc809e3aad614da3a05e173` — `V 3.1.178`.
+- در بازخوانی blob دقیق commit، خط پایان assertion قبلی و فراخوانی بعدی `assertEquals` به‌علت newline مفقود به یک خط متصل بودند.
+- اصلاح: جداکردن دو statement در `InferenceRoundResponseCollectorTest.kt`.
+- این کشف حاصل بررسی source بود، نه نتیجهٔ شکست تست؛ job Android هنگام این کشف هنوز به JVM tests نرسیده بود.
+- تا اجرای مجدد CI روی commit A002، هیچ نتیجهٔ آزمون جدیدی PASS اعلام نمی‌شود و وظیفه `in_progress` می‌ماند.

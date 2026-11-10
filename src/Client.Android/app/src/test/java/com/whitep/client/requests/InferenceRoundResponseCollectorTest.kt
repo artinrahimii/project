@@ -157,7 +157,8 @@ class InferenceRoundResponseCollectorTest {
                     InferenceRoundResponseFailureReason.SUBMISSION_TIMED_OUT,
                 ),
                 result.failures.map { it.reason },
-            )            assertEquals(
+            )
+            assertEquals(
                 RequestErrorCode.VALIDATION_FAILED,
                 result.failures.single { it.attemptId == "attempt-b" }.errorCode,
             )

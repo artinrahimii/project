@@ -8413,9 +8413,9 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0116, T0117, T0118, T0119, T0120, T0129, T0130, T0131, T0132, T0133, T0134, T0135, T0136, T0137, T0138, T0206, T0226, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-016-20261110-A001",
+        "last_attempt_id": "UPD-S1-016-20261110-A002",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
@@ -8431,9 +8431,13 @@
           "docs/decisions/ADR-0024-tcp-request-framing.md",
           "docs/decisions/README.md",
           "update/Step three/UPD-S1-016/execution-report.md",
-          "update/Step three/UPD-S1-016/evidence/transport-audit-A001.md"
+          "update/Step three/UPD-S1-016/evidence/transport-audit-A001.md",
+          "update/Step two/project-graph.md",
+          "update/Step three/UPD-S1-016/evidence/transport-audit-A002.md"
         ],
-        "related_commits": [],
+        "related_commits": [
+          "fb47c4c8287bc231fbc809e3aad614da3a05e173"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
@@ -8444,13 +8448,13 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Commit A001 to main, then run exact-head Python quality/graph guards, Android JVM unit tests, Android Keystore instrumentation, Android debug/release build, Windows build and HostLifecycle transport acceptance. Mark done only after the new direct-refusal regression passes and all five UPD-S1-016 criteria are verified."
+        "follow_up": "Run exact-head V 3.1.179 quality and Android JVM tests; then Android Keystore instrumentation, Android debug/release build, Windows build and HostLifecycle acceptance. Do not mark done until all applicable acceptance evidence passes."
       },
       "execution_history": [
         {
           "attempt_id": "UPD-S1-016-20261110-A001",
           "started_at": "2026-11-10T20:23:30Z",
-          "ended_at": null,
+          "ended_at": "2026-11-10T20:24:10Z",
           "result": "partial",
           "summary": "Audited Android and Windows authenticated libp2p paths, trust stores, rendezvous metadata boundary, fallback connector, relay decision and protocol framing. Corrected Android direct-connection failure classification: FAILED now maps through dispatcher and response collector to NETWORK_UNAVAILABLE, while invalid identity/trust remains REJECTED. Added a closed TCP-port regression and dispatcher/collector/source-contract assertions. Updated ADR-0005/0016/0021/0024 and decision register to distinguish CI fixture interoperability from physical device E2E. Exact-head tests are pending.",
           "changed_files": [
@@ -8469,7 +8473,7 @@
             "update/Step three/UPD-S1-016/execution-report.md",
             "update/Step three/UPD-S1-016/evidence/transport-audit-A001.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "fb47c4c8287bc231fbc809e3aad614da3a05e173",
           "tests": [],
           "failure_details": null,
           "blocked_reason": null,
@@ -8484,6 +8488,29 @@
           "device_and_host_details_redacted": "Repository source and GitHub Actions evidence reviewed. No physical user device or user-owned Windows host used in this attempt.",
           "model_revision_and_sha256": "No model inference executed as part of UPD-S1-016.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable; UPD-S1-021 owns clean install/in-place upgrade."
+        },
+        {
+          "attempt_id": "UPD-S1-016-20261110-A002",
+          "started_at": "2026-11-10T20:26:53Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Source review of the committed A001 change found a Kotlin test formatting defect: the closing assertion line and the next assertEquals call were concatenated. This attempt separates the statements. No build or test has yet run against A002.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-016/execution-report.md",
+            "update/Step three/UPD-S1-016/evidence/transport-audit-A002.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": "A001 committed test source contained a missing newline before the collector's first error-code assertion. Found by reading the exact committed blob before relying on CI; no test failure is claimed because the test job had not yet reached JVM tests.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Commit A002 as V 3.1.179, then rerun exact-head quality/Android/Windows/HostLifecycle/Rendezvous checks. Keep UPD-S1-016 in_progress until exact-head CI passes.",
+          "device_and_host_details_redacted": "GitHub source inspection only; no physical device or user-owned Windows host used.",
+          "model_revision_and_sha256": "No model inference in this formatting correction.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable."
         }
       ]
     },
@@ -12606,14 +12633,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T20:23:30Z",
+    "as_of": "2026-11-10T20:26:53Z",
     "total_tasks": 24,
     "not_started": 7,
     "in_progress": 1,
     "done": 16,
     "blocked": 0,
     "verified_completion_percentage": 66.66666666666666,
-    "calculation": "16 verified done update tasks / 24 total update tasks = 66.67%. UPD-S1-016 A001 is in_progress; tests for its new implementation have not yet run."
+    "calculation": "16 verified done update tasks / 24 total update tasks = 66.67%. UPD-S1-016 A001 code/doc commit is recorded; A002 corrects a test-source formatting defect identified before CI completion. Exact-head tests for A002 are pending."
   },
   "visual_identity": {
     "scope": [
@@ -12727,7 +12754,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T20:23:30Z",
+  "updated_at": "2026-11-10T20:26:53Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
