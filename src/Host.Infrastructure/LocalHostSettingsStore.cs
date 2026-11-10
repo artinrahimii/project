@@ -131,7 +131,7 @@ public sealed class LocalHostSettingsStore
 
             // Schema v1 predates resource limits. Schemas v1/v2 predate the installed-model checksum pin.
             var requiredModelMemoryGiB = document.SchemaVersion == 1 ? LocalHostSettings.Defaults.RequiredModelMemoryGiB : document.RequiredModelMemoryGiB;
-            var minimumFreeDiskGiB = document.SchemaVersion == 1 ? LocalHostSettings.Defaults.MinimumFreeDiskGiB : document.RequiredModelMemoryGiB;
+            var minimumFreeDiskGiB = document.SchemaVersion == 1 ? LocalHostSettings.Defaults.MinimumFreeDiskGiB : document.MinimumFreeDiskGiB;
             var activeCatalogModelSha256 = document.SchemaVersion >= 3 ? document.ActiveCatalogModelSha256 : null;
 
             return LocalHostSettings.Validate(new LocalHostSettings(
