@@ -177,3 +177,15 @@ Do not mark done until all 11 visual identity acceptance criteria are satisfied 
 - The capture step had been renamed to a new success message, so the test was stale. The Windows product build and screenshot stage had not yet been reached when this diagnosis was recorded.
 - Corrected the workflow's success line to preserve the established marker while also describing the additional native window/taskbar capture.
 - A016 remains partial pending rerun of the quality gate and the native Windows/Android screenshots. No product acceptance status is promoted by this textual correction.
+
+
+
+## A017 — review exact-head native launcher/taskbar and platform screenshots — 2026-11-10T08:24:19.742Z
+
+- Baseline: `V 3.1.140`, SHA `78d1f253fdfc2d05161163d55cb3e5f573d60593`.
+- The exact-head Quality Gate (#42712050388), White-P product build (#42712050494) and Rendezvous container workflow (#42712050287) completed successfully.
+- Downloaded and inspected the Android and Windows visual-review artifacts from product build #42712050494. The app-drawer launcher, native Windows taskbar/window chrome, WPF MainWindow, and Android Home/Conversations/Conversation detail/Messages/Connections/Privacy captures were reviewed as actual rendered images.
+- Verified the canonical five-color token JSON and shared P-coin SVG/generator against the generated Windows ICO and Android launcher exports. The current contrast regression and measured pairings are recorded in the new A017 evidence file.
+- All 11 UPD-S1-024 visual acceptance criteria are now met. The task can be marked `done`.
+- CI uses GitHub-hosted Windows and Android emulator runners. No physical Android handset, independent user Windows host, live local-model inference or Android-to-Windows inference is claimed by this visual task.
+- Attempt result: `succeeded`; exact commit SHA is added to the execution history in the next graph update after GitHub creates this commit.
