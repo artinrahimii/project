@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.168",
+  "commit_intent": "V 3.1.169",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -7016,13 +7016,16 @@
         "https://github.com/artinrahimii/project/actions/runs/42860167854",
         "https://github.com/artinrahimii/project/actions/runs/42860167723",
         ".github/workflows/product-build.yml",
-        "https://github.com/artinrahimii/project/actions/runs/42860595457"
+        "https://github.com/artinrahimii/project/actions/runs/42860595457",
+        "https://github.com/artinrahimii/project/actions/runs/42860929773",
+        "https://github.com/artinrahimii/project/actions/runs/42860929785",
+        "https://github.com/artinrahimii/project/actions/runs/42860929814"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0088, T0090, T0092, T0139, T0145, T0146, T0147, T0148, T0149, T0150, T0190, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 4,
+        "attempt_count": 5,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-010-20261110-A004",
+        "last_attempt_id": "UPD-S1-010-20261110-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7043,17 +7046,22 @@
         "related_commits": [
           "0ec848f0573de18449bf01f1b80e0352ab692620",
           "f87926d9906cf0c0e6b9718fa81a40d8faad9464",
-          "66149a232d17363f08ac1269f07b22ced14fb5a6"
+          "66149a232d17363f08ac1269f07b22ced14fb5a6",
+          "084cdf7013a42a2f15c1acec4510590843285267"
         ],
         "tests_passed": [
           "A001: Windows host compile and WPF startup smoke passed in run 42859232180.",
           "A001: HostLifecycle acceptance suite passed in run 42859232180.",
-          "A002 HostLifecycle acceptance and coverage passed in run 42860167723."
+          "A002 HostLifecycle acceptance and coverage passed in run 42860167723.",
+          "A004 exact-head Step Three quality gate run 42860929773 passed (492 Python tests and graph guards).",
+          "A004 exact-head HostLifecycle job in run 42860929785 passed.",
+          "A004 exact-head rendezvous container smoke run 42860929814 passed."
         ],
         "tests_failed": [
           "A001: quality gate run 42859232340 — 7 obsolete Python assertions failed because they prohibited the newly-required chat/runtime connection.",
           "A001: Android build run 42859232180 — ktlintMainSourceSetCheck failed before APK build.",
-          "A001 quality run 42859232340: 7 outdated source-contract failures; A002 quality run 42860167854: 1 remaining outdated heading assertion."
+          "A001 quality run 42859232340: 7 outdated source-contract failures; A002 quality run 42860167854: 1 remaining outdated heading assertion.",
+          "A004 exact-head Android lint run 42860929785 reported five ktlint violations: import-ordering, argument-list-wrapping (2), max-line-length, and chain-method-continuation."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -7235,6 +7243,39 @@
           "follow_up": "Use printed KtLint report from V 3.1.168 to correct all reported formatting issues. Then require ktlint, APK compile, Android unit tests and the full graph/quality gate to pass before considering UPD-S1-010 for completion.",
           "device_and_host_details_redacted": "Hosted GitHub Actions only. No physical Android or Windows user device was used.",
           "model_revision_and_sha256": "No model inference invoked.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-010-20261110-A005",
+          "started_at": "2026-11-10T17:08:17.270Z",
+          "ended_at": "2026-11-10T17:08:17.270Z",
+          "result": "partial",
+          "summary": "Applied the exact five KtLint fixes from the V 3.1.168 Android CI report: runtime import ordering, trust-dialog argument wrapping, 120-character line limit, and the UUID string-conversion chain continuation. The CI lint gate itself remains enabled.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+            "update/Step three/UPD-S1-010/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android Kotlin lint",
+              "command": "product-build.yml exact-head after A005",
+              "result": "pending"
+            },
+            {
+              "name": "Android debug APK and JVM unit tests",
+              "command": "assembleDebug + testDebugUnitTest",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run ktlint, Android debug/release builds, unit and instrumentation tests on exact A005. If lint passes, address any compile or unit-test issues without changing acceptance semantics.",
+          "device_and_host_details_redacted": "Hosted GitHub Actions only; no physical handset or personal Windows host.",
+          "model_revision_and_sha256": "No model inference executed in this attempt.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
@@ -11971,14 +12012,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T17:03:12.729Z",
+    "as_of": "2026-11-10T17:08:17.270Z",
     "total_tasks": 24,
     "not_started": 9,
     "in_progress": 1,
     "done": 14,
     "blocked": 0,
     "verified_completion_percentage": 58.333333333333336,
-    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress pending exact-head Kotlin lint, APK compile, Android tests and remaining acceptance evidence; 9 tasks remain not_started."
+    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress pending exact-head lint, Android build/tests, full acceptance evidence and device-level end-to-end validation; 9 tasks remain not_started."
   },
   "visual_identity": {
     "scope": [
@@ -12092,7 +12133,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T17:03:12.729Z",
+  "updated_at": "2026-11-10T17:08:17.270Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

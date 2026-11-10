@@ -65,3 +65,11 @@
 - assertion قدیمی عنوان `Request status` حذف شد؛ آزمون‌های پیشین وجود جریان `requestStates` و تابع `requestStatusCard` را مستقیماً کنترل می‌کنند.
 - workflow محصول یک مرحلهٔ `always()` اضافه دارد که گزارش `ktlintMainSourceSetCheck.txt` را در log چاپ می‌کند؛ شکست `ktlintCheck` همچنان build را متوقف می‌کند.
 - CI دقیق این commit هنوز شروع نشده؛ A004 و UPD-S1-010 در وضعیت `partial/in_progress` باقی می‌مانند.
+
+
+## تلاش A005 — اصلاح دقیق خطاهای KtLint
+
+- مبنا: `V 3.1.168`، commit `084cdf7013a42a2f15c1acec4510590843285267`.
+- log دقیق KtLint پنج مورد را گزارش کرد: import-ordering، دو argument-list-wrapping، max-line-length و chain-method-continuation.
+- این پنج مورد در `ConversationDetailScreen.kt` و `ConversationMessagesViewModel.kt` اصلاح شدند؛ هیچ قاعدهٔ lint غیرفعال نشد و workflow همچنان روی `ktlintCheck` شکست می‌خورد تا تمام قواعد پاس شوند.
+- نتیجهٔ lint، کامپایل و unit testهای این تلاش پس از اجرای CI دقیق ثبت خواهد شد؛ UPD-S1-010 هنوز `in_progress` است.

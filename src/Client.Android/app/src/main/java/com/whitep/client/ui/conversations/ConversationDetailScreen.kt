@@ -22,8 +22,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -428,9 +428,11 @@ internal fun conversationDetailScreen(
             title = { Text("Before you trust this processing host") },
             text = {
                 Text(
-                    "Processing host ${hostNumber.coerceAtLeast(1)} can read prompts and context after transport decryption. " +
-                        "Encryption protects data in transit, but not from the receiving host or its operator. " +
-                        "Trust is saved only after your confirmation. You can revoke it later from host settings.",
+                    text =
+                        "Processing host ${hostNumber.coerceAtLeast(1)} can read prompts and context " +
+                            "after transport decryption. " +
+                            "Encryption protects data in transit, but not from the receiving host or its operator. " +
+                            "Trust is saved only after your confirmation. You can revoke it later from host settings.",
                 )
             },
             confirmButton = {
