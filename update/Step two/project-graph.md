@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.163",
+  "commit_intent": "V 3.1.164",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -11739,7 +11739,7 @@
     "done": 14,
     "blocked": 0,
     "verified_completion_percentage": 58.333333333333336,
-    "calculation": "13 verified done update tasks / 24 total update tasks = 54.1667%. UPD-S1-023 remains in_progress; A001 and A002 failed, A003 awaits exact-head CI."
+    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-023 passed exact-head Android model-selection, Windows live-model admission, CI product-build and pinned real local-inference checks; 10 tasks remain not_started."
   },
   "visual_identity": {
     "scope": [
