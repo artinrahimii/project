@@ -1,6 +1,7 @@
 package com.whitep.client.network
 
 import android.content.Context
+import android.util.Base64
 import com.whitep.client.security.ProtectedBlobProtector
 import io.libp2p.core.PeerId
 import io.libp2p.core.crypto.KeyType
@@ -68,6 +69,27 @@ class AndroidPeerTrustStoreTest {
                 .getSharedPreferences(AndroidPeerTrustStore.TRUST_PREFERENCES, Context.MODE_PRIVATE)
                 .contains(AndroidPeerTrustStore.TRUST_ENVELOPE_KEY),
         )
+    }
+
+    @Test
+    fun tamperedExistingTrustRecordFailsClosedWithoutSilentlyResettingIt() {
+        val peerId = PeerId.fromPubKey(generateKeyPair(KeyType.ED25519).second).toBase58()
+        val store = AndroidPeerTrustStore(context, protector)
+        store.trustPeerAfterExplicitConfirmation(peerId, explicitlyConfirmed = true)
+
+        val preferences =
+            context.getSharedPreferences(AndroidPeerTrustStore.TRUST_PREFERENCES, Context.MODE_PRIVATE)
+        val encoded = requireNotNull(preferences.getString(AndroidPeerTrustStore.TRUST_ENVELOPE_KEY, null))
+        val tamperedEnvelope = Base64.decode(encoded, Base64.NO_WRAP)
+        tamperedEnvelope[tamperedEnvelope.lastIndex] = (tamperedEnvelope.last().toInt() xor 0x01).toByte()
+        val tampered = Base64.encodeToString(tamperedEnvelope, Base64.NO_WRAP)
+        Arrays.fill(tamperedEnvelope, 0.toByte())
+        preferences.edit().putString(AndroidPeerTrustStore.TRUST_ENVELOPE_KEY, tampered).commit()
+
+        assertThrows(IllegalStateException::class.java) {
+            store.isTrusted(peerId)
+        }
+        assertTrue(preferences.getString(AndroidPeerTrustStore.TRUST_ENVELOPE_KEY, null) == tampered)
     }
 
     private class TestProtector : ProtectedBlobProtector {

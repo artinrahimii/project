@@ -2,9 +2,9 @@
 
 - **Status:** Accepted. Android peer-trust disclosure and Windows host-participation consent are integrated. Physical Android-to-Windows product acceptance remains unverified.
 - **Original decision date:** 2026-10-27
-- **Current implementation review:** 2026-11-08 — UPD-S1-007
+- **Current implementation review:** 2026-11-10 — UPD-S1-022
 - **Related task:** T0131.
-- **Related update task:** UPD-S1-007.
+- **Related update tasks:** UPD-S1-007 and UPD-S1-022.
 
 ## Decision
 
@@ -35,6 +35,8 @@ Confirming this dialog stores trust only; it does not send a prompt or context c
 Before constructing or starting `PeerAnnouncementHostLifecycle`, `MainWindow.ChangeNetworkParticipationAsync` displays the shared `PeerInferencePrivacyDisclosure` warning for the exact expected remote PeerId. It explains that the host process and computer operator can read prompt/context after transport decryption and that transport encryption protects transit, not the receiving endpoint.
 
 The default answer is No. Declining resets the participation toggle and exits before the peer lifecycle/listener/lease is created. After the privacy notice, a separate confirmation verifies that the exact remote PeerId is trusted; a new trust decision is persisted only after explicit approval.
+
+A dedicated **Revoke saved trust** action is available for the entered PeerId. Revocation is refused while hosting is active or a participation transition is still running. Once stopped, the owner sees the exact PeerId in a second confirmation dialog (default No). The protected trust entry is removed; when it was the final entry, the protected trust file is deleted. Subsequent transport admission fails closed until the same identity is explicitly approved again. Revocation does not rotate the local Windows host identity or remove local models.
 
 ## Data-flow and retention boundary
 

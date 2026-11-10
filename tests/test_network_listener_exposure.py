@@ -10,6 +10,7 @@ RECOVERY = (ROOT / "src/Host.Application/ParticipationActivationRecovery.cs").re
 RECOVERY_TESTS = (ROOT / "tests/HostLifecycle.Tests/ParticipationActivationRecoveryTests.cs").read_text(encoding="utf-8")
 TEST_ENTRYPOINT = (ROOT / "tests/HostLifecycle.Tests/Program.cs").read_text(encoding="utf-8")
 PEER_HOST_LIFECYCLE = (ROOT / "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs").read_text(encoding="utf-8")
+PEER_TRUST_STORE = (ROOT / "src/Shared.Security/PeerTrustStore.cs").read_text(encoding="utf-8")
 
 
 class NetworkListenerExposureTests(unittest.TestCase):
@@ -157,6 +158,21 @@ class NetworkListenerExposureTests(unittest.TestCase):
         self.assertLess(closed_guard, slot_check)
         self.assertLess(slot_check, request_register)
         self.assertLess(request_register, handler_register)
+
+    def test_windows_peer_trust_revocation_requires_stopped_host_and_explicit_confirmation(self):
+        self.assertIn('x:Name="RevokePeerTrustButton"', WINDOW_XAML)
+        self.assertIn('Click="RevokePeerTrustButton_Click"', WINDOW_XAML)
+        self.assertIn("public bool RevokeTrust(string peerId)", PEER_TRUST_STORE)
+        start = WINDOW.index("private void RevokePeerTrustButton_Click")
+        end = WINDOW.index("private async Task<WhiteP.Shared.Contracts.V1.HostStatus>", start)
+        handler = WINDOW[start:end]
+        self.assertIn("_peerParticipationTask is not null", handler)
+        self.assertIn("_peerParticipationService is not null", handler)
+        self.assertIn("NetworkParticipationToggle.IsChecked == true", handler)
+        self.assertIn("MessageBoxResult.No", handler)
+        self.assertIn("trustStore.RevokeTrust(peerId)", handler)
+        self.assertNotIn("exception.Message", handler)
+        self.assertNotIn("exception.ToString()", handler)
 
 if __name__ == "__main__":
     unittest.main()

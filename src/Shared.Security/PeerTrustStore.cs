@@ -88,6 +88,34 @@ public sealed class PeerTrustStore
         });
     }
 
+    /// <summary>
+    /// Removes a previously approved canonical PeerId. The last trust entry is removed
+    /// by deleting the protected store file; an unknown or malformed identity is never
+    /// treated as a successful revocation.
+    /// </summary>
+    public bool RevokeTrust(string peerId)
+    {
+        string canonicalPeerId = ValidateCanonicalPeerId(peerId);
+        return WithPathLock(() =>
+        {
+            HashSet<string> peers = LoadTrustedPeerIds();
+            if (!peers.Remove(canonicalPeerId))
+                return false;
+
+            if (peers.Count == 0)
+            {
+                if (File.Exists(_filePath))
+                    File.Delete(_filePath);
+            }
+            else
+            {
+                SaveTrustedPeerIds(peers);
+            }
+
+            return true;
+        });
+    }
+
     private T WithPathLock<T>(Func<T> action)
     {
         using var mutex = new Mutex(initiallyOwned: false, name: _mutexName);

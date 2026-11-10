@@ -45,6 +45,20 @@ internal static class PeerTrustStoreAcceptanceTests
         Assert(fixture.Store.IsTrusted(firstPeerId) && fixture.Store.IsTrusted(secondPeerId),
             "Trusting another peer must preserve prior explicit trust decisions.");
 
+        Assert(fixture.Store.RevokeTrust(firstPeerId),
+            "Revoking a previously trusted PeerId must remove that exact decision.");
+        Assert(!fixture.Store.IsTrusted(firstPeerId) && fixture.Store.IsTrusted(secondPeerId),
+            "Revoking one peer must not remove a different trusted identity.");
+        Assert(!fixture.Store.RevokeTrust(firstPeerId),
+            "Revoking an already unknown PeerId must not report a new successful change.");
+        Assert(reloaded.GetStatus(firstPeerId) == PeerTrustStatus.Unknown,
+            "A separate store instance must observe the revocation immediately.");
+        Assert(fixture.Store.RevokeTrust(secondPeerId),
+            "The final saved trust decision must be revocable.");
+        Assert(!File.Exists(fixture.FilePath) &&
+               reloaded.GetStatus(secondPeerId) == PeerTrustStatus.Unknown,
+            "Revoking the final peer must remove the protected trust record and fail closed on subsequent checks.");
+
         bool malformedIdentityRejected = false;
         try { fixture.Store.TrustPeerAfterExplicitConfirmation("not-a-peer-id", explicitlyConfirmed: true); }
         catch (AuthenticationException) { malformedIdentityRejected = true; }

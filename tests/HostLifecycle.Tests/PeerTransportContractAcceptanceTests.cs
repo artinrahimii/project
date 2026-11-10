@@ -122,6 +122,22 @@ internal static class PeerTransportContractAcceptanceTests
         await client.DisconnectAsync(timeout.Token).ConfigureAwait(false);
         await client.DisconnectAsync(timeout.Token).ConfigureAwait(false);
         Assert(!client.IsConnected, "Disconnect must clear the authenticated connection state.");
+
+        Assert(clientTrustFixture.Store.RevokeTrust(server.LocalPeerIdentity),
+            "The authenticated remote PeerId must be revocable after disconnect.");
+        bool reconnectAfterRevocationRejected = false;
+        try
+        {
+            await client.ConnectSecureAsync(
+                new PeerTransportEndpoint(serverAddress, server.LocalPeerIdentity),
+                timeout.Token).ConfigureAwait(false);
+        }
+        catch (AuthenticationException)
+        {
+            reconnectAfterRevocationRejected = true;
+        }
+        Assert(reconnectAfterRevocationRejected && !client.IsConnected,
+            "A previously trusted peer must not reconnect after its trust decision has been revoked.");
     }
 
     private static async Task VerifySecureChannelRejectsUnexpectedPeerIdentityAsync()

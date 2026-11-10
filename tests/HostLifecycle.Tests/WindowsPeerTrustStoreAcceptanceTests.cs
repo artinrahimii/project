@@ -35,6 +35,13 @@ internal static class WindowsPeerTrustStoreAcceptanceTests
             Assert(reloaded.IsTrusted(peerId),
                 "A trust decision protected by current-user DPAPI must survive a new store instance.");
 
+            Assert(reloaded.RevokeTrust(peerId),
+                "The Windows trust store must revoke the exact saved PeerId.");
+            Assert(!reloaded.IsTrusted(peerId) && !File.Exists(path),
+                "Revoking the final Windows peer must remove the protected record and deny the old identity.");
+            reloaded.TrustPeerAfterExplicitConfirmation(peerId, explicitlyConfirmed: true);
+            persisted = File.ReadAllBytes(path);
+
             byte[] tampered = persisted.ToArray();
             tampered[^1] ^= 0x40;
             File.WriteAllBytes(path, tampered);

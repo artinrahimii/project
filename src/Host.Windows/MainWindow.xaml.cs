@@ -1213,6 +1213,65 @@ public partial class MainWindow : Window
         }
     }
 
+    private void RevokePeerTrustButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_windowClosing)
+            return;
+
+        if (_peerParticipationTask is not null ||
+            _peerParticipationService is not null ||
+            NetworkParticipationToggle.IsChecked == true)
+        {
+            ParticipationNetworkStatus.Text =
+                "Stop peer hosting and wait for shutdown to finish before revoking the saved peer trust decision.";
+            return;
+        }
+
+        string peerId = PeerTrustedIdentity.Text.Trim();
+        if (string.IsNullOrWhiteSpace(peerId))
+        {
+            ParticipationNetworkStatus.Text = "Enter the exact PeerId whose saved trust decision should be revoked.";
+            return;
+        }
+
+        try
+        {
+            string localData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            if (string.IsNullOrWhiteSpace(localData))
+                throw new InvalidOperationException("The current user's local application data directory is unavailable.");
+
+            var trustStore = new PeerTrustStore(
+                Path.Combine(localData, "WhiteP", "security", "peer-trust-v1.dpapi"),
+                new WindowsDpapiSecretProtector());
+            if (!trustStore.IsTrusted(peerId))
+            {
+                ParticipationNetworkStatus.Text = "The entered PeerId does not have a saved trust decision.";
+                return;
+            }
+
+            var answer = MessageBox.Show(
+                this,
+                $"Revoke the saved trust decision for this exact PeerId?\n\n{peerId}\n\nFuture connections from this identity will be rejected until you explicitly trust it again.",
+                "Revoke peer trust",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning,
+                MessageBoxResult.No);
+            if (answer != MessageBoxResult.Yes)
+                return;
+
+            if (trustStore.RevokeTrust(peerId))
+                ParticipationNetworkStatus.Text =
+                    "Peer trust was revoked. The identity is no longer eligible to connect; a new explicit confirmation is required to trust it again.";
+            else
+                ParticipationNetworkStatus.Text = "The PeerId was no longer present in the saved trust list.";
+        }
+        catch (Exception exception)
+        {
+            ParticipationNetworkStatus.Text =
+                "Peer trust could not be revoked. " + HostErrorPresentation.ToUserMessage(exception);
+        }
+    }
+
     private async Task<WhiteP.Shared.Contracts.V1.HostStatus> GetPeerRuntimeStatusAsync(
         CancellationToken cancellationToken)
     {
