@@ -11,7 +11,7 @@
 The product-build run completed successfully on the exact baseline commit and published the following non-expired review artifacts:
 
 - Android visual review ZIP, artifact `13716408047`, SHA-256 `96c579f38fb1a171f24cc90ecc845870a999df212befc88fdc0418879687a9ae`.
-- Windows visual review ZIP, artifact `13716426558`, SHA-256 `1c96786aa217202111ae8a75ef57bd241e080516dcbd43d5876c77bef8fa941`.
+- Windows visual review ZIP, artifact `13716426558`, SHA-256 `1c96786aa217202111ae8a75ef57bd241e080516dcbd43d5876bc77bef8fa941`.
 
 Reviewed the actual images from those artifacts, not source-only mockups:
 
