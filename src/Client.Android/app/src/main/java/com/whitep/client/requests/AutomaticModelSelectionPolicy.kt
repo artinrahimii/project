@@ -113,10 +113,10 @@ object AutomaticModelSelectionPolicy {
         if (options.isEmpty()) {
             val failure =
                 when {
-                !sawVerifiedCatalogModel -> AutomaticModelSelectionFailure.NO_VERIFIED_MODEL
-                sawInvalidMetadata -> AutomaticModelSelectionFailure.INVALID_MODEL_METADATA
-                else -> AutomaticModelSelectionFailure.NO_COMPATIBLE_MODEL
-            }
+                    !sawVerifiedCatalogModel -> AutomaticModelSelectionFailure.NO_VERIFIED_MODEL
+                    sawInvalidMetadata -> AutomaticModelSelectionFailure.INVALID_MODEL_METADATA
+                    else -> AutomaticModelSelectionFailure.NO_COMPATIBLE_MODEL
+                }
             return AutomaticModelSelectionResult.Rejected(failure)
         }
 
@@ -129,8 +129,7 @@ object AutomaticModelSelectionPolicy {
                         .thenByDescending { it.maxOutputTokens }
                         .thenBy { it.modelId }
                         .thenBy { it.hostId },
-                )
-                .first()
+                ).first()
 
         return AutomaticModelSelectionResult.Selected(
             hostId = selected.hostId,
