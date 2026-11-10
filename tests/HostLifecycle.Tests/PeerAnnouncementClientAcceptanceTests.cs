@@ -241,12 +241,17 @@ internal static class PeerAnnouncementClientAcceptanceTests
 
                 Interlocked.Increment(ref requestHandlerCalls);
                 var requestMessage = parsed.Message;
+                var runtimeSnapshot = await inferenceSession.GetFreshPeerRuntimeSnapshotAsync(cancellationToken).ConfigureAwait(false);
+                var modelCapability = runtimeSnapshot.ModelCapability;
                 var admission = new HostRequestAdmissionContext(
                     HasActiveParticipation: true,
-                    HostState: inferenceSession.Status.State,
+                    HostState: runtimeSnapshot.Status.State,
                     RequestedModelId: requestMessage.ModelId,
-                    ReadyModelId: "fixture-model",
+                    ReadyModelId: modelCapability?.ModelId,
                     CapacityState: HostCapacityState.Ready,
+                    RequestedMaxOutputTokens: requestMessage.MaxOutputTokens,
+                    ReadyModelMaxOutputTokens: modelCapability?.MaxOutputTokens ?? 0UL,
+                    ReadyModelMaxContextTokens: modelCapability?.MaxContextTokens ?? 0UL,
                     DeadlineUnixMs: requestMessage.DeadlineUnixMs);
                 var outcome = await requestCoordinator.TryExecuteAsync(
                     admission,
@@ -594,6 +599,24 @@ internal static class PeerAnnouncementClientAcceptanceTests
             string path = request.RequestUri?.AbsolutePath ?? string.Empty;
             if (request.Method == HttpMethod.Get && path.EndsWith("/health", StringComparison.Ordinal))
                 return new HttpResponseMessage(HttpStatusCode.OK);
+
+            if (request.Method == HttpMethod.Get && path == "/v1/models")
+                return new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(
+                        "{\"data\":[{\"id\":\"fixture-model\"}]}",
+                        Encoding.UTF8,
+                        "application/json")
+                };
+
+            if (request.Method == HttpMethod.Get && path == "/props")
+                return new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(
+                        "{\"default_generation_settings\":{\"n_ctx\":8192}}",
+                        Encoding.UTF8,
+                        "application/json")
+                };
 
             if (request.Method != HttpMethod.Post || path != "/v1/chat/completions")
                 throw new InvalidOperationException("The test backend received an unexpected HTTP request.");

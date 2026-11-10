@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.106",
+  "commit_intent": "V 3.1.160",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -8963,8 +8963,8 @@
         "اگر مدل سازگار یا metadata معتبر وجود ندارد، درخواست با خطای typed و قابل فهم متوقف شود؛ مدل نامعتبر یا پیش‌فرض حدسی انتخاب نشود.",
         "آزمون‌ها حالت صفر/یک/چند مدل، tie، backend ناآماده، model mismatch، metadata نامعتبر و clamp سقف خروجی را پوشش دهند."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "src/Host.Windows/Models/Catalog/",
         "src/Host.Application/IInferenceBackend.cs",
@@ -8974,15 +8974,51 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/",
         "update/Step three/UPD-S1-023/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "src/Shared.Contracts/ProtocolMessageLimits.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/AutomaticModelSelectionPolicyTest.kt",
+        "update/Step three/UPD-S1-023/execution-report.md",
+        "update/Step three/UPD-S1-023/evidence/model-output-ceiling.md"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-023/execution-report.md",
+        "update/Step three/UPD-S1-023/evidence/model-output-ceiling.md",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/AutomaticModelSelectionPolicyTest.kt",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "src/Host.Application/HostInferenceSession.cs",
+        "src/Host.Windows/MainWindow.xaml.cs"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=add; affected_task_ids=T0057, T0058, T0059, T0060, T0061, T0062, T0063, T0064, T0065, T0066, T0067, T0068, T0069, T0070, T0071, T0072, T0073, T0074, T0075, T0098, T0099, T0100, T0101, T0102, T0103, T0104, T0105, T0106, T0107, T0124, T0196, T0221. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-023-20261110-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Shared.Contracts/ProtocolMessageLimits.cs",
+          "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+          "src/Host.Application/HostInferenceSession.cs",
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+          "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+          "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/AutomaticModelSelectionPolicyTest.kt",
+          "update/Step two/project-graph.md",
+          "update/Step three/UPD-S1-023/execution-report.md",
+          "update/Step three/UPD-S1-023/evidence/model-output-ceiling.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -8990,12 +9026,74 @@
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
-          "triggering_contracts": [],
+          "triggering_contracts": [
+            "The internal host admission context now carries the live backend model output/context ceilings."
+          ],
           "affected_by_contract_changes": [],
-          "review_evidence": []
+          "review_evidence": [
+            "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+            "src/Host.Application/HostInferenceSession.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+            "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs"
+          ]
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-023-20261110-A001",
+          "started_at": "2026-11-10T15:49:38.054Z",
+          "ended_at": "2026-11-10T15:49:38.054Z",
+          "result": "partial",
+          "summary": "Windows request admission and the serialized inference session now enforce the active backend model identity and output/context limits, bounded by product and protocol ceilings. Android automatic model selection already existed; two stale Android unit-test expectations were corrected. Exact-head CI is pending, so this task remains in_progress.",
+          "changed_files": [
+            "src/Shared.Contracts/ProtocolMessageLimits.cs",
+            "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+            "src/Host.Application/HostInferenceSession.cs",
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+            "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+            "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/AutomaticModelSelectionPolicyTest.kt",
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-023/execution-report.md",
+            "update/Step three/UPD-S1-023/evidence/model-output-ceiling.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android JVM tests and Android product build",
+              "command": "product-build.yml — Build Android client APK; ./gradlew :app:testDebugUnitTest",
+              "result": "pending",
+              "summary": "The two stale assertions from base run 42835719820 were corrected; exact-head rerun pending."
+            },
+            {
+              "name": "Windows HostLifecycle acceptance",
+              "command": "product-build.yml — Build Windows WPF host; run HostLifecycle.Tests",
+              "result": "pending",
+              "summary": "Live model identity/output limit session checks and admission tests added; exact-head run pending."
+            },
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml — Python unit suite, compileall and both graph guards",
+              "result": "pending",
+              "summary": "Graph state, report and evidence paths updated; exact-head validation pending."
+            }
+          ],
+          "failure_details": "The base product-build run 42835719820 failed two Android tests: discovery asserted input order despite the stable PeerId sorting in production; a model fixture declared maxOutputTokens=200000 with maxContextTokens=8192 and was correctly rejected as invalid metadata. Both test assertions/fixtures were corrected in this attempt.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "The internal HostRequestAdmissionContext now includes requested max output tokens and live model output/context ceilings. No protobuf wire schema or rendezvous payload changed."
+          ],
+          "follow_up": "Validate the exact new main commit in quality.yml and product-build.yml. If they pass, record the actual commit SHA and complete UPD-S1-023; otherwise correct each failed gate and rerun.",
+          "device_and_host_details_redacted": "No physical Android handset or separate user Windows host was accessed. CI and fixture tests do not establish physical Android-to-Windows acceptance.",
+          "model_revision_and_sha256": "Not applicable; no real model was loaded in this source-change attempt.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed; clean install and in-place upgrade remain UPD-S1-021 gates."
+        }
+      ]
     },
     {
       "id": "UPD-S1-024",
@@ -11399,14 +11497,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T10:15:42.905Z",
+    "as_of": "2026-11-10T15:49:38.054Z",
     "total_tasks": 24,
-    "not_started": 11,
-    "in_progress": 0,
+    "not_started": 10,
+    "in_progress": 1,
     "done": 13,
     "blocked": 0,
     "verified_completion_percentage": 54.166666666666664,
-    "calculation": "13 verified done update tasks / 24 total update tasks = 54.1667%. UPD-S1-022 was verified using exact-head report/evidence graph CI and successful Android/Windows product CI on the unchanged product source baseline."
+    "calculation": "13 verified done update tasks / 24 total update tasks = 54.1667%. UPD-S1-023 remains in_progress pending exact-head CI and is not counted as done."
   },
   "visual_identity": {
     "scope": [
@@ -11520,7 +11618,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T10:15:42.905Z",
+  "updated_at": "2026-11-10T15:49:38.054Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

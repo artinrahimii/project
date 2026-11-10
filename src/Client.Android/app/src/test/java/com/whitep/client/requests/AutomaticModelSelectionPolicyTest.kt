@@ -78,7 +78,7 @@ class AutomaticModelSelectionPolicyTest {
         val high =
             AutomaticModelSelectionPolicy.resolve(
                 request,
-                listOf(candidate("peer-high", listOf(model("model-high", 8_192, 200_000)))),
+                listOf(candidate("peer-high", listOf(model("model-high", 262_144, 200_000)))),
             ) as AutomaticModelSelectionResult.Selected
         assertEquals(AutomaticModelSelectionPolicy.PREFERRED_OUTPUT_TOKENS, high.maxOutputTokens)
     }

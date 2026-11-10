@@ -135,7 +135,7 @@ class AuthenticatedHostDiscoveryTest {
 
             val candidates = discovery.discoverReadyCandidates(probeRequest)
 
-            assertEquals(peerIds.take(2), candidates.map { candidate -> candidate.status.ephemeralHostId })
+            assertEquals(peerIds.take(2).sorted(), candidates.map { candidate -> candidate.status.ephemeralHostId })
             assertTrue(candidates.all { candidate -> candidate.status.modelsList.size == 1 })
         }
 

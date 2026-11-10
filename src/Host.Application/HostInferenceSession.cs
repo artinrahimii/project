@@ -327,10 +327,33 @@ public sealed class HostInferenceSession : IDisposable, IAsyncDisposable
             throw new InvalidDataException(validation.Message);
         }
 
-        return await GenerateAsync(request.Prompt, request.MaxOutputTokens, cancellationToken).ConfigureAwait(false);
+        if (request.MaxOutputTokens == 0)
+        {
+            throw new InvalidDataException("Maximum output tokens must be positive.");
+        }
+
+        return await GenerateCoreAsync(
+            request.Prompt,
+            request.MaxOutputTokens,
+            request.ModelId,
+            requireLiveModelCapability: true,
+            cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default)
+    public Task<string> GenerateAsync(string prompt, uint maxOutputTokens, CancellationToken cancellationToken = default) =>
+        GenerateCoreAsync(
+            prompt,
+            maxOutputTokens,
+            expectedModelId: null,
+            requireLiveModelCapability: false,
+            cancellationToken: cancellationToken);
+
+    private async Task<string> GenerateCoreAsync(
+        string prompt,
+        uint maxOutputTokens,
+        string? expectedModelId,
+        bool requireLiveModelCapability,
+        CancellationToken cancellationToken)
     {
         using var operationCancellation = CreateOperationCancellationSource(cancellationToken);
         var operationToken = operationCancellation.Token;
@@ -371,6 +394,51 @@ public sealed class HostInferenceSession : IDisposable, IAsyncDisposable
             {
                 _lifecycle.Transition(HostState.Error, readiness.Message);
                 throw new InvalidOperationException(readiness.Message);
+            }
+
+            var absoluteOutputCeiling = Math.Min(
+                ProtocolMessageLimits.MaximumOutputTokens,
+                ProtocolMessageLimits.MaximumProductOutputTokens);
+            if (maxOutputTokens == 0 || maxOutputTokens > absoluteOutputCeiling)
+            {
+                throw new InvalidDataException("Maximum output tokens are outside the product or protocol limit.");
+            }
+
+            if (_backend is IInferenceModelCapabilityProvider capabilityProvider)
+            {
+                var capability = await capabilityProvider.GetModelCapabilityAsync(operationToken).ConfigureAwait(false);
+                operationToken.ThrowIfCancellationRequested();
+
+                if (capability is null ||
+                    string.IsNullOrWhiteSpace(capability.ModelId) ||
+                    capability.MaxContextTokens == 0 ||
+                    capability.MaxOutputTokens == 0 ||
+                    capability.MaxOutputTokens > capability.MaxContextTokens ||
+                    capability.MaxOutputTokens > ProtocolMessageLimits.MaximumOutputTokens)
+                {
+                    throw new InvalidOperationException("The active backend cannot prove valid model limits; inference is not admitted.");
+                }
+
+                if (requireLiveModelCapability &&
+                    !string.Equals(expectedModelId, capability.ModelId, StringComparison.Ordinal))
+                {
+                    throw new InvalidDataException("The request model does not match the active backend model.");
+                }
+
+                var allowedOutputTokens = Math.Min(
+                    Math.Min(capability.MaxOutputTokens, capability.MaxContextTokens),
+                    Math.Min(
+                        (ulong)ProtocolMessageLimits.MaximumProductOutputTokens,
+                        (ulong)ProtocolMessageLimits.MaximumOutputTokens));
+
+                if (maxOutputTokens > allowedOutputTokens)
+                {
+                    throw new InvalidDataException("Maximum output tokens exceeds the active model or product limit.");
+                }
+            }
+            else if (requireLiveModelCapability)
+            {
+                throw new InvalidOperationException("The active backend cannot prove its model identity and output limits.");
             }
 
             _lifecycle.Transition(HostState.Busy, "Generating locally; one request at a time.");

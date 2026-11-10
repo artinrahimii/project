@@ -1,4 +1,5 @@
 using WhiteP.Host.Domain;
+using WhiteP.Shared.Contracts;
 
 namespace WhiteP.Host.Windows.Requests;
 
@@ -8,6 +9,9 @@ public sealed record HostRequestAdmissionContext(
     string? RequestedModelId,
     string? ReadyModelId,
     HostCapacityState CapacityState,
+    uint RequestedMaxOutputTokens,
+    ulong ReadyModelMaxOutputTokens,
+    ulong ReadyModelMaxContextTokens,
     ulong DeadlineUnixMs);
 
 public enum HostRequestAdmissionFailure
@@ -16,6 +20,9 @@ public enum HostRequestAdmissionFailure
     InactiveParticipation,
     ModelNotReady,
     ModelMismatch,
+    InvalidModelCapability,
+    InvalidOutputTokenLimit,
+    OutputTokenLimitExceeded,
     CapacityUnknown,
     CapacityInsufficient,
     InvalidDeadline,
@@ -37,9 +44,8 @@ public sealed record HostRequestAdmissionDecision(
 }
 
 /// <summary>
-/// Fail-closed preflight for active participation, model readiness, capacity and deadline.
-/// The caller supplies current state from the live session/backend; missing or inconsistent
-/// values must not be interpreted as Ready.
+/// Fail-closed preflight for active participation, live model identity/capability,
+/// output-token limits, capacity and deadline. Model limits must come from a fresh backend probe.
 /// </summary>
 public static class HostRequestAdmissionPolicy
 {
@@ -70,6 +76,36 @@ public static class HostRequestAdmissionPolicy
             return HostRequestAdmissionDecision.Rejected(
                 HostRequestAdmissionFailure.ModelMismatch,
                 "Request rejected: the requested model does not match the ready model.");
+        }
+
+        if (context.ReadyModelMaxContextTokens == 0 ||
+            context.ReadyModelMaxOutputTokens == 0 ||
+            context.ReadyModelMaxOutputTokens > context.ReadyModelMaxContextTokens ||
+            context.ReadyModelMaxOutputTokens > ProtocolMessageLimits.MaximumOutputTokens)
+        {
+            return HostRequestAdmissionDecision.Rejected(
+                HostRequestAdmissionFailure.InvalidModelCapability,
+                "Request rejected: the live model capability is missing or inconsistent.");
+        }
+
+        if (context.RequestedMaxOutputTokens == 0)
+        {
+            return HostRequestAdmissionDecision.Rejected(
+                HostRequestAdmissionFailure.InvalidOutputTokenLimit,
+                "Request rejected: maximum output tokens must be positive.");
+        }
+
+        var allowedOutputTokens = Math.Min(
+            Math.Min(context.ReadyModelMaxOutputTokens, context.ReadyModelMaxContextTokens),
+            Math.Min(
+                (ulong)ProtocolMessageLimits.MaximumProductOutputTokens,
+                (ulong)ProtocolMessageLimits.MaximumOutputTokens));
+
+        if (context.RequestedMaxOutputTokens > allowedOutputTokens)
+        {
+            return HostRequestAdmissionDecision.Rejected(
+                HostRequestAdmissionFailure.OutputTokenLimitExceeded,
+                "Request rejected: maximum output tokens exceeds the live model or product limit.");
         }
 
         if (context.CapacityState == HostCapacityState.Unknown)

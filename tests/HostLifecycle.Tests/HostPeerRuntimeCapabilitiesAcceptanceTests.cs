@@ -1,9 +1,12 @@
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using WhiteP.Host.Application;
 using WhiteP.Host.Domain;
 using WhiteP.Host.Infrastructure;
+using WhiteP.Shared.Contracts;
+using WhiteP.Shared.Contracts.V1;
 
 internal static class HostPeerRuntimeCapabilitiesAcceptanceTests
 {
@@ -11,7 +14,8 @@ internal static class HostPeerRuntimeCapabilitiesAcceptanceTests
     {
         await LlamaCppBackendReportsOnlyItsVerifiedActiveModelAndContextAsync().ConfigureAwait(false);
         await SessionReturnsFreshCapabilitiesOnlyForAReadyModelAsync().ConfigureAwait(false);
-        Console.WriteLine("PASS: peer runtime status exposes only an active llama.cpp model with a server-reported context window.");
+        await SessionAdmitsOnlyRequestsWithinTheActiveModelAndProductLimitsAsync().ConfigureAwait(false);
+        Console.WriteLine("PASS: peer runtime status and inference admission use only live model identity and limits, bounded by the product and protocol ceilings.");
     }
 
     private static async Task LlamaCppBackendReportsOnlyItsVerifiedActiveModelAndContextAsync()
@@ -90,6 +94,77 @@ internal static class HostPeerRuntimeCapabilitiesAcceptanceTests
         Assert(disconnected.ModelCapability is null, "A disconnected backend must never advertise a stale model snapshot.");
     }
 
+    private static async Task SessionAdmitsOnlyRequestsWithinTheActiveModelAndProductLimitsAsync()
+    {
+        var backend = new CapabilityTestBackend(
+            new InferenceModelCapabilitySnapshot("fixture-model", "Fixture model", 8192, 2048, false));
+        using var session = new HostInferenceSession(
+            backendFactory: (_, _) => backend,
+            readinessEvaluator: _ => Task.FromResult(new HostReadinessResult(true, "Test readiness passed.")));
+
+        var connected = await session.ConnectAsync(
+            new Uri("http://127.0.0.1:8080/"),
+            "fixture-model").ConfigureAwait(false);
+        Assert(connected.State == HostState.Ready, "The request admission test backend should become Ready.");
+
+        string validResponse = await session.GenerateAsync(CreateRequest("fixture-model", 2048)).ConfigureAwait(false);
+        Assert(validResponse == "capability test response", "A request at the exact live model output ceiling should succeed.");
+        Assert(backend.GenerationCalls == 1 && backend.LastMaxOutputTokens == 2048,
+            "The backend should receive exactly the admitted model output ceiling.");
+
+        await AssertThrowsAsync<InvalidDataException>(
+            () => session.GenerateAsync(CreateRequest("fixture-model", 2049)),
+            "A request above the active model output limit must be rejected before inference.");
+        await AssertThrowsAsync<InvalidDataException>(
+            () => session.GenerateAsync(CreateRequest("another-model", 1024)),
+            "A request naming another model must be rejected before inference.");
+        await AssertThrowsAsync<InvalidDataException>(
+            () => session.GenerateAsync(CreateRequest("fixture-model", 0)),
+            "A zero output limit must be rejected before inference.");
+        Assert(backend.GenerationCalls == 1,
+            "Rejected model identity and output-limit requests must not invoke the backend.");
+
+        var productBackend = new CapabilityTestBackend(
+            new InferenceModelCapabilitySnapshot("fixture-model", "Fixture model", 32768, 32768, false));
+        using var productSession = new HostInferenceSession(
+            backendFactory: (_, _) => productBackend,
+            readinessEvaluator: _ => Task.FromResult(new HostReadinessResult(true, "Test readiness passed.")));
+        await productSession.ConnectAsync(new Uri("http://127.0.0.1:8080/"), "fixture-model").ConfigureAwait(false);
+        await AssertThrowsAsync<InvalidDataException>(
+            () => productSession.GenerateAsync(CreateRequest("fixture-model", 4097)),
+            "The product output-token ceiling must apply even when the model advertises a larger capability.");
+        Assert(productBackend.GenerationCalls == 0,
+            "A request beyond the product ceiling must not reach the inference backend.");
+    }
+
+    private static InferenceRequest CreateRequest(string modelId, uint maxOutputTokens) =>
+        new()
+        {
+            RequestId = Guid.NewGuid().ToString("N"),
+            AttemptId = Guid.NewGuid().ToString("N"),
+            RoundId = "round-test",
+            ProtocolVersion = ProtocolVersionPolicy.CurrentVersion,
+            ModelId = modelId,
+            Prompt = "capability admission test",
+            DeadlineUnixMs = (ulong)DateTimeOffset.UtcNow.AddMinutes(1).ToUnixTimeMilliseconds(),
+            MaxOutputTokens = maxOutputTokens
+        };
+
+    private static async Task AssertThrowsAsync<TException>(Func<Task> action, string message)
+        where TException : Exception
+    {
+        try
+        {
+            await action().ConfigureAwait(false);
+        }
+        catch (TException)
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(message);
+    }
+
     private static void Assert(bool condition, string message)
     {
         if (!condition)
@@ -103,6 +178,8 @@ internal static class HostPeerRuntimeCapabilitiesAcceptanceTests
         IInferenceModelCapabilityProvider
     {
         public int CapabilityCalls { get; private set; }
+        public int GenerationCalls { get; private set; }
+        public uint LastMaxOutputTokens { get; private set; }
         public bool IsAvailable => true;
         public string UnavailableReason => string.Empty;
 
@@ -115,8 +192,13 @@ internal static class HostPeerRuntimeCapabilitiesAcceptanceTests
         public Task<string> GenerateAsync(
             string prompt,
             uint maxOutputTokens,
-            CancellationToken cancellationToken = default) =>
-            Task.FromResult("unused capability test response");
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            GenerationCalls++;
+            LastMaxOutputTokens = maxOutputTokens;
+            return Task.FromResult("capability test response");
+        }
 
         public Task<InferenceModelCapabilitySnapshot?> GetModelCapabilityAsync(
             CancellationToken cancellationToken = default)

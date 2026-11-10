@@ -1358,12 +1358,17 @@ public partial class MainWindow : Window
         var currentService = _peerParticipationService
             ?? throw new InvalidOperationException("Peer hosting is no longer active.");
 
+        var runtimeSnapshot = await _session.GetFreshPeerRuntimeSnapshotAsync(cancellationToken).ConfigureAwait(false);
+        var liveModelCapability = runtimeSnapshot.ModelCapability;
         var admission = new HostRequestAdmissionContext(
             currentService.IsActive,
-            _session.Status.State,
+            runtimeSnapshot.Status.State,
             request.ModelId,
-            ModelId.Text.Trim(),
+            liveModelCapability?.ModelId,
             _capacityReady ? HostCapacityState.Ready : HostCapacityState.Unknown,
+            request.MaxOutputTokens,
+            liveModelCapability?.MaxOutputTokens ?? 0UL,
+            liveModelCapability?.MaxContextTokens ?? 0UL,
             request.DeadlineUnixMs);
 
         HostRequestOutcome<string> outcome;
@@ -1437,7 +1442,10 @@ public partial class MainWindow : Window
             HostRequestAdmissionFailure.ModelMismatch => ProtocolErrorCode.UnsupportedModel,
             HostRequestAdmissionFailure.ModelNotReady or HostRequestAdmissionFailure.InactiveParticipation =>
                 ProtocolErrorCode.HostBusy,
-            HostRequestAdmissionFailure.CapacityUnknown or HostRequestAdmissionFailure.CapacityInsufficient =>
+            HostRequestAdmissionFailure.InvalidModelCapability or
+                HostRequestAdmissionFailure.InvalidOutputTokenLimit or
+                HostRequestAdmissionFailure.OutputTokenLimitExceeded or
+                HostRequestAdmissionFailure.CapacityUnknown or HostRequestAdmissionFailure.CapacityInsufficient =>
                 ProtocolErrorCode.ResourceLimit,
             HostRequestAdmissionFailure.DeadlineExpired => ProtocolErrorCode.RequestExpired,
             HostRequestAdmissionFailure.InvalidDeadline => ProtocolErrorCode.InvalidMessage,

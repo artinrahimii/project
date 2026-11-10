@@ -14,6 +14,8 @@ public static class ProtocolMessageLimits
     public const int MaximumPromptUtf8Bytes = 8 * 1024;
     public const int MaximumContextCapsuleBytes = 4 * 1024;
     public const uint MaximumOutputTokens = 131_072U;
+    // Conservative first-release product ceiling; Android and Windows apply the same value.
+    public const uint MaximumProductOutputTokens = 4_096U;
     public const int MaximumResponseTextUtf8Bytes = 1024 * 1024;
     public const int MaximumResponseMessageBytes = 2 * 1024 * 1024;
 
