@@ -7922,8 +7922,8 @@
         "شرایط برق/idle و محدودیت منابع فقط در صورت پشتیبانی واقعی سیستم اعمال شوند.",
         "تمام ردها با کد وضعیت قابل مشاهده و آزمون باشند."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "src/Host.Windows/WindowsHostHardwareDiscovery.cs",
         "src/Host.Application/HostReadinessEvaluator.cs",
@@ -7933,15 +7933,35 @@
         "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
         "update/Step three/UPD-S1-013/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/test_host_resource_settings.py",
+        "update/Step three/UPD-S1-013/execution-report.md",
+        "update/Step three/UPD-S1-013/evidence/capacity-admission-audit-A001.md"
+      ],
+      "evidence": [
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/test_host_resource_settings.py",
+        "update/Step three/UPD-S1-013/evidence/capacity-admission-audit-A001.md"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0049, T0050, T0051, T0052, T0053, T0054, T0055, T0056, T0098, T0099, T0100, T0101, T0102, T0103, T0104, T0105, T0106, T0107, T0196. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-013-20261110231943",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Host.Windows/MainWindow.xaml.cs",
+          "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+          "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+          "tests/test_host_resource_settings.py",
+          "update/Step three/UPD-S1-013/execution-report.md",
+          "update/Step three/UPD-S1-013/evidence/capacity-admission-audit-A001.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -7952,9 +7972,39 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": []
-        }
+        },
+        "follow_up": "Run exact-head quality and product CI for this attempt. Keep UPD-S1-013 in_progress until all four acceptance criteria and runtime tests pass."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-013-20261110231943",
+          "started_at": "2026-11-10T19:49:43Z",
+          "ended_at": "2026-11-10T19:52:27Z",
+          "result": "partial",
+          "summary": "Audited existing Windows hardware/readiness/admission/coordinator code. Found that peer admission used a stale boolean capacity cache and collapsed known Insufficient into Unknown. Added a fresh Windows RAM/disk capacity evaluation at the peer-request boundary and made typed CapacityInsufficient take precedence over generic model-not-ready when capacity is known insufficient. Added C# admission regression coverage and Python source-wiring contract coverage. New tests/builds have not yet run; task remains in_progress.",
+          "changed_files": [
+            "src/Host.Windows/MainWindow.xaml.cs",
+            "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+            "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+            "tests/test_host_resource_settings.py",
+            "update/Step three/UPD-S1-013/execution-report.md",
+            "update/Step three/UPD-S1-013/evidence/capacity-admission-audit-A001.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Peer admission now remeasures live RAM/disk capacity using persisted owner thresholds; it no longer maps a cached boolean to Ready/Unknown.",
+            "Known Insufficient capacity now returns typed CapacityInsufficient even when the lifecycle status has transitioned to Error."
+          ],
+          "follow_up": "Run exact-head quality and product CI; retain task status in_progress until exact-commit evidence confirms acceptance.",
+          "device_and_host_details_redacted": "Source audit performed against GitHub main commit c7c2f86ae557d1b1983e896f7410eddc76a64796. No user-owned Windows host or physical Android device used.",
+          "model_revision_and_sha256": "No model inference executed in this task.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; no upgrade test performed."
+        }
+      ]
     },
     {
       "id": "UPD-S1-014",
@@ -12352,14 +12402,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T18:01:47.971Z",
+    "as_of": "2026-11-10T19:52:27Z",
     "total_tasks": 24,
-    "not_started": 9,
-    "in_progress": 0,
+    "not_started": 8,
+    "in_progress": 1,
     "done": 15,
     "blocked": 0,
     "verified_completion_percentage": 62.5,
-    "calculation": "15 verified done update tasks / 24 total update tasks = 62.5%. UPD-S1-010 passed the exact-head Android, Windows, HostLifecycle and graph/quality CI gates on V 3.1.174; 9 tasks remain not_started."
+    "calculation": "15 verified done update tasks / 24 total update tasks = 62.5%. UPD-S1-013 A001 has made a narrow admission-capacity correction; exact-head tests/build are pending, so it remains in_progress."
   },
   "visual_identity": {
     "scope": [
@@ -12473,7 +12523,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T18:01:47.971Z",
+  "updated_at": "2026-11-10T19:52:27Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

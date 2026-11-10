@@ -62,6 +62,15 @@ public static class HostRequestAdmissionPolicy
                 "Request rejected: no active participation is attached to this session.");
         }
 
+        // Preserve a known capacity failure even when that same condition has already
+        // transitioned the lifecycle to Error. Unknown backend state is still reported below.
+        if (context.CapacityState == HostCapacityState.Insufficient)
+        {
+            return HostRequestAdmissionDecision.Rejected(
+                HostRequestAdmissionFailure.CapacityInsufficient,
+                "Request rejected: verified host capacity is insufficient.");
+        }
+
         if (context.HostState != HostState.Ready)
         {
             return HostRequestAdmissionDecision.Rejected(

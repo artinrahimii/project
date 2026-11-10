@@ -844,10 +844,28 @@ public partial class MainWindow : Window
 
     private HostCapacityState RenderCapacityStatus(HostStatus status)
     {
+        var state = EvaluateCurrentCapacityState(status);
+        _capacityReady = state == HostCapacityState.Ready;
+        CapacityStatus.Text = state switch
+        {
+            HostCapacityState.Ready => "Capacity: Ready for the configured local backend and the declared RAM/disk checks. GPU compute/VRAM capability is not verified.",
+            HostCapacityState.Insufficient => "Capacity: Insufficient — measured RAM or system-drive space does not meet the declared requirement. Host is not Ready.",
+            _ => "Capacity: Unknown — required hardware measurements or checks are unavailable/unverified. Host is not Ready."
+        };
+        return state;
+    }
+
+    /// <summary>
+    /// Re-measures capacity at the request boundary. Uses persisted owner thresholds rather than
+    /// WPF controls because peer requests may be handled away from the UI dispatcher.
+    /// Unknown measurements fail closed; display-adapter inventory is not treated as compute capability.
+    /// </summary>
+    private HostCapacityState EvaluateCurrentCapacityState(HostStatus status)
+    {
         try
         {
             var hardware = WindowsHostHardwareDiscovery.Discover();
-            var capacity = new HostCapabilities
+            return new HostCapabilities
             {
                 OperatingSystemDescription = hardware.OperatingSystemDescription,
                 OperatingSystemVersion = hardware.OperatingSystemVersion,
@@ -856,25 +874,13 @@ public partial class MainWindow : Window
                 AvailablePhysicalMemoryBytes = hardware.AvailablePhysicalMemoryBytes,
                 SystemDriveTotalBytes = hardware.SystemDriveTotalBytes,
                 SystemDriveAvailableBytes = hardware.SystemDriveAvailableBytes,
-                HasSufficientMemory = CheckMemoryRequirement(ModelMemoryRequirementGiB.Text, hardware.AvailablePhysicalMemoryBytes),
-                HasSufficientDiskSpace = CheckDiskRequirement(MinimumFreeDiskGiB.Text, hardware.SystemDriveAvailableBytes),
+                HasSufficientMemory = CheckMemoryRequirement(_requestedModelMemoryRequirementText, hardware.AvailablePhysicalMemoryBytes),
+                HasSufficientDiskSpace = CheckDiskRequirement(_requestedMinimumFreeDiskRequirementText, hardware.SystemDriveAvailableBytes),
                 IsInferenceBackendSupported = status.State is HostState.Ready or HostState.Busy ? true : (bool?)null
-            };
-
-            var state = capacity.CapacityState;
-            _capacityReady = state == HostCapacityState.Ready;
-            CapacityStatus.Text = state switch
-            {
-                HostCapacityState.Ready => "Capacity: Ready for the configured local backend and the declared RAM/disk checks. GPU compute/VRAM capability is not verified.",
-                HostCapacityState.Insufficient => "Capacity: Insufficient — measured RAM or system-drive space does not meet the declared requirement. Host is not Ready.",
-                _ => "Capacity: Unknown — required hardware measurements or checks are unavailable/unverified. Host is not Ready."
-            };
-            return state;
+            }.CapacityState;
         }
         catch (Exception)
         {
-            _capacityReady = false;
-            CapacityStatus.Text = "Capacity: Unknown — live hardware capacity could not be verified; host is not Ready.";
             return HostCapacityState.Unknown;
         }
     }
@@ -1360,12 +1366,13 @@ public partial class MainWindow : Window
 
         var runtimeSnapshot = await _session.GetFreshPeerRuntimeSnapshotAsync(cancellationToken).ConfigureAwait(false);
         var liveModelCapability = runtimeSnapshot.ModelCapability;
+        var currentCapacityState = EvaluateCurrentCapacityState(runtimeSnapshot.Status);
         var admission = new HostRequestAdmissionContext(
             currentService.IsActive,
             runtimeSnapshot.Status.State,
             request.ModelId,
             liveModelCapability?.ModelId,
-            _capacityReady ? HostCapacityState.Ready : HostCapacityState.Unknown,
+            currentCapacityState,
             request.MaxOutputTokens,
             liveModelCapability?.MaxOutputTokens ?? 0UL,
             liveModelCapability?.MaxContextTokens ?? 0UL,

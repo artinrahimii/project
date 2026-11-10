@@ -18,6 +18,8 @@ internal static class HostRequestAdmissionTests
             (ulong)now.AddMinutes(1).ToUnixTimeMilliseconds());
 
         Check(valid, now, HostRequestAdmissionFailure.None);
+        Check(valid with { HostState = HostState.Error, CapacityState = HostCapacityState.Insufficient }, now,
+            HostRequestAdmissionFailure.CapacityInsufficient);
         Check(valid with { HasActiveParticipation = false }, now, HostRequestAdmissionFailure.InactiveParticipation);
         Check(valid with { HostState = HostState.Busy }, now, HostRequestAdmissionFailure.ModelNotReady);
         Check(valid with { HostState = HostState.Stopped }, now, HostRequestAdmissionFailure.ModelNotReady);
@@ -60,6 +62,15 @@ internal static class HostRequestAdmissionTests
         }
 
         Assert(capacityRejected && !invoked, "Unknown capacity must fail closed.");
+
+        var insufficientInvoked = false;
+        var insufficient = await coordinator.TryExecuteAsync(
+            valid with { CapacityState = HostCapacityState.Insufficient },
+            _ => { insufficientInvoked = true; return Task.FromResult("no"); });
+        Assert(insufficient.Status == HostRequestStatus.Rejected &&
+               insufficient.AdmissionFailure == HostRequestAdmissionFailure.CapacityInsufficient &&
+               !insufficientInvoked,
+            "Known insufficient capacity must produce a typed rejection before inference.");
 
         var live = valid with
         {

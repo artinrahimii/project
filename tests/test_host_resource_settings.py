@@ -48,6 +48,20 @@ class HostResourceSettingsContractTests(unittest.TestCase):
         self.assertIn("requiredFreeDiskGiB", evaluator)
         self.assertIn("GPU/display adapters (display inventory only; compute support is not inferred)", window)
 
+    def test_peer_admission_rechecks_live_capacity_and_preserves_insufficient_state(self):
+        window = source("src/Host.Windows/MainWindow.xaml.cs")
+        policy = source("src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs")
+        admission = window[window.index("private async Task<byte[]> HandlePeerInferenceMessageAsync"):]
+        evaluator = window[window.index("private HostCapacityState EvaluateCurrentCapacityState"):window.index("private static bool? CheckMemoryRequirement")]
+        self.assertIn("EvaluateCurrentCapacityState(runtimeSnapshot.Status)", admission)
+        self.assertIn("currentCapacityState,", admission)
+        self.assertNotIn("_capacityReady ? HostCapacityState.Ready : HostCapacityState.Unknown", admission)
+        self.assertIn("_requestedModelMemoryRequirementText", evaluator)
+        self.assertIn("_requestedMinimumFreeDiskRequirementText", evaluator)
+        self.assertIn("WindowsHostHardwareDiscovery.Discover()", evaluator)
+        self.assertIn("HostCapacityState.Insufficient", policy)
+        self.assertIn("CapacityInsufficient", policy)
+
     def test_participation_and_single_inference_admission_remain_fail_closed(self):
         window = source("src/Host.Windows/MainWindow.xaml.cs")
         xaml = source("src/Host.Windows/MainWindow.xaml")
