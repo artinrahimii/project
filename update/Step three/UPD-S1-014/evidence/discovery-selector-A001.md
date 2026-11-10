@@ -46,3 +46,13 @@
 - Baseline exact V 3.1.182 Quality/Product/Rendezvous all passed before this A001 diff.
 - A001 exact-head CI has not run yet. New ranking test and Kotlin lint/build remain pending; the task must remain `in_progress`.
 - No physical Android handset, user-owned Windows host, independent public-network probe or real model E2E was used for this attempt.
+
+
+## نتیجهٔ CI دقیق A001 — V 3.1.183
+
+- Quality: PASS؛ ۴۹۶ آزمون Python، compileall، old graph guard 0 errors/1 preserved metadata warning، update graph guard 0 errors/0 warnings.
+- HostLifecycle: PASS؛ job مستقل product-build موفق.
+- Rendezvous: PASS؛ container build/smoke موفق.
+- Android: FAIL در `ktlintMainSourceSetCheck` فقط به‌علت سه تخلف `chain-method-continuation` در HostCandidateSelector.kt؛ آزمون JVM و instrumentation پس از lint اجرا نشدند.
+- Windows: در لحظهٔ ثبت A001 هنوز در حال installer acceptance بود؛ نتیجهٔ دقیق بعدی به همین سابقه افزوده می‌شود.
+- هیچ نتیجهٔ قبولی برای ranking test جدید ادعا نمی‌شود.

@@ -51,28 +51,29 @@ object HostCandidateSelector {
                 .filter { sameIdentityCandidates -> sameIdentityCandidates.size == 1 }
                 .map { sameIdentityCandidates -> sameIdentityCandidates.single() }
 
-        return uniqueCandidates
-            .asSequence()
-            .filter { candidate -> candidate.announcement.ephemeralHostId !in excludedEphemeralHostIds }
-            .filter { candidate -> isCompatibleAndReady(request, candidate) }
-            .sortedWith { first, second ->
-                // Use the live status and the capacity snapshot already validated above.
-                // Cross-products compare utilization exactly without floating-point rounding.
-                val firstLoad =
-                    first.status.activeRequests.toLong() *
-                        second.announcement.capabilities.maxConcurrentRequests.toLong()
-                val secondLoad =
-                    second.status.activeRequests.toLong() *
-                        first.announcement.capabilities.maxConcurrentRequests.toLong()
-                val utilizationOrder = firstLoad.compareTo(secondLoad)
-                if (utilizationOrder != 0) {
-                    utilizationOrder
-                } else {
-                    first.announcement.ephemeralHostId.compareTo(second.announcement.ephemeralHostId)
-                }
+        val eligibleCandidates =
+            uniqueCandidates
+                .asSequence()
+                .filter { candidate -> candidate.announcement.ephemeralHostId !in excludedEphemeralHostIds }
+                .filter { candidate -> isCompatibleAndReady(request, candidate) }
+                .toMutableList()
+
+        eligibleCandidates.sortWith { first, second ->
+            // Use the live status and the capacity snapshot already validated above.
+            // Cross-products compare utilization exactly without floating-point rounding.
+            val firstActive = first.status.activeRequests.toLong()
+            val firstCapacity = first.announcement.capabilities.maxConcurrentRequests.toLong()
+            val secondActive = second.status.activeRequests.toLong()
+            val secondCapacity = second.announcement.capabilities.maxConcurrentRequests.toLong()
+            val utilizationOrder =
+                (firstActive * secondCapacity).compareTo(secondActive * firstCapacity)
+            if (utilizationOrder != 0) {
+                utilizationOrder
+            } else {
+                first.announcement.ephemeralHostId.compareTo(second.announcement.ephemeralHostId)
             }
-            .take(maxHosts)
-            .toList()
+        }
+        return eligibleCandidates.take(maxHosts)
     }
 
     /**

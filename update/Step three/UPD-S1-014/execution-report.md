@@ -61,3 +61,21 @@
 - `tests/test_android_host_candidate_selector_contract.py`
 - `update/Step three/UPD-S1-014/execution-report.md`
 - `update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md`
+
+
+## نتیجهٔ CI تلاش A001 — V 3.1.183
+
+- Commit: `66fe4dc744e045b528bf9bade78e7613da6eb831`.
+- Step Three Quality gate: **PASS**؛ ۴۹۶ آزمون Python، compileall و هر دو graph guard موفق. گراف قدیمی ۰ خطا و ۱ هشدار metadata حفظ‌شده؛ گراف به‌روزرسانی ۰ خطا و ۰ هشدار. Run [42907340773](https://github.com/artinrahimii/project/actions/runs/42907340773).
+- HostLifecycle unit/integration/coverage: **PASS**؛ run [42907340561](https://github.com/artinrahimii/project/actions/runs/42907340561).
+- Rendezvous container build/smoke: **PASS**؛ run [42907340870](https://github.com/artinrahimii/project/actions/runs/42907340870).
+- Android Product Build: **FAIL** در `ktlintMainSourceSetCheck`؛ سه تخلف `standard:chain-method-continuation` در `HostCandidateSelector.kt` خطوط ۶۳، ۶۶ و ۷۴. خطاها فقط قالب‌بندی هستند. JVM، Keystore instrumentation و buildهای downstream در job Android پس از شکست lint **اجرا نشدند**؛ نتیجهٔ ranking test جدید هنوز اثبات نشده است.
+- Windows Product Build در زمان بسته‌شدن A001 هنوز در مرحلهٔ installer acceptance قرار داشت؛ نتیجهٔ آن جداگانه پس از اتمام job ثبت خواهد شد.
+
+## تلاش A002 — اصلاح قالب‌بندی بدون تغییر الگوریتم
+
+- شروع: `2026-11-10T21:44:28.971Z`.
+- سه تخلف زنجیرهٔ متدها با جداسازی فهرست candidateهای معتبر از مرحلهٔ `sortWith` اصلاح شدند؛ محاسبهٔ cross-product و tie-break بر اساس PeerId بدون تغییر باقی ماند.
+- هیچ قرارداد پیام، protobuf، trust، cardinality یا سیاست میزبان تغییر نکرد.
+- آزمون ranking و source-contract جدید همان آزمون‌های A001 هستند و حذف نشده‌اند.
+- CI دقیق A002 هنوز اجرا نشده است؛ task همچنان `in_progress` می‌ماند.
