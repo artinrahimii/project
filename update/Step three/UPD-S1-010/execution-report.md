@@ -57,3 +57,11 @@
 - آزمون HostLifecycle در همان build موفق شد.
 - در A003 assertion عنوان قدیمی حذف شد و دو assertion مستقیم برای مشاهدهٔ ردیف‌های ذخیره‌شدهٔ Room و `requestStatusCard` جایگزین آن شد.
 - نتیجهٔ CI دقیق A003 هنوز pending است؛ این وظیفه همچنان `in_progress` است.
+
+
+## تلاش A004 — اصلاح آزمون وضعیت و ثبت گزارش تشخیصی KtLint
+
+- مبنا: `V 3.1.167`، commit `66149a232d17363f08ac1269f07b22ced14fb5a6`.
+- assertion قدیمی عنوان `Request status` حذف شد؛ آزمون‌های پیشین وجود جریان `requestStates` و تابع `requestStatusCard` را مستقیماً کنترل می‌کنند.
+- workflow محصول یک مرحلهٔ `always()` اضافه دارد که گزارش `ktlintMainSourceSetCheck.txt` را در log چاپ می‌کند؛ شکست `ktlintCheck` همچنان build را متوقف می‌کند.
+- CI دقیق این commit هنوز شروع نشده؛ A004 و UPD-S1-010 در وضعیت `partial/in_progress` باقی می‌مانند.

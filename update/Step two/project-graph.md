@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.167",
+  "commit_intent": "V 3.1.168",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -6990,7 +6990,8 @@
         "tests/test_android_request_status_contract.py",
         "tests/test_update_baseline_audit.py",
         "tests/test_update_transport_trust_boundary.py",
-        "docs/decisions/ADR-0002-direct-p2p-data-path.md"
+        "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+        ".github/workflows/product-build.yml"
       ],
       "evidence": [
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7013,13 +7014,15 @@
         "tests/test_update_transport_trust_boundary.py",
         "docs/decisions/ADR-0002-direct-p2p-data-path.md",
         "https://github.com/artinrahimii/project/actions/runs/42860167854",
-        "https://github.com/artinrahimii/project/actions/runs/42860167723"
+        "https://github.com/artinrahimii/project/actions/runs/42860167723",
+        ".github/workflows/product-build.yml",
+        "https://github.com/artinrahimii/project/actions/runs/42860595457"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0088, T0090, T0092, T0139, T0145, T0146, T0147, T0148, T0149, T0150, T0190, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 3,
+        "attempt_count": 4,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-010-20261110-A003",
+        "last_attempt_id": "UPD-S1-010-20261110-A004",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7034,11 +7037,13 @@
           "tests/test_android_request_status_contract.py",
           "tests/test_update_baseline_audit.py",
           "tests/test_update_transport_trust_boundary.py",
-          "docs/decisions/ADR-0002-direct-p2p-data-path.md"
+          "docs/decisions/ADR-0002-direct-p2p-data-path.md",
+          ".github/workflows/product-build.yml"
         ],
         "related_commits": [
           "0ec848f0573de18449bf01f1b80e0352ab692620",
-          "f87926d9906cf0c0e6b9718fa81a40d8faad9464"
+          "f87926d9906cf0c0e6b9718fa81a40d8faad9464",
+          "66149a232d17363f08ac1269f07b22ced14fb5a6"
         ],
         "tests_passed": [
           "A001: Windows host compile and WPF startup smoke passed in run 42859232180.",
@@ -7180,12 +7185,14 @@
             "tests/test_android_request_status_contract.py",
             "update/Step three/UPD-S1-010/execution-report.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "66149a232d17363f08ac1269f07b22ced14fb5a6",
           "tests": [
             {
               "name": "Step Three quality gate",
-              "command": "quality.yml exact-head after A003",
-              "result": "pending"
+              "command": "quality.yml exact-head on V 3.1.167",
+              "result": "pending",
+              "run_id": 42860595457,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42860595457"
             }
           ],
           "failure_details": null,
@@ -7195,6 +7202,39 @@
           "follow_up": "Validate all 492 Python tests, graph guards, Android ktlint and Android build/tests on exact V 3.1.167. Keep task in_progress until actual acceptance evidence is complete.",
           "device_and_host_details_redacted": "Hosted CI only; no physical Android handset or user-owned Windows host accessed.",
           "model_revision_and_sha256": "No inference executed in this attempt.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed."
+        },
+        {
+          "attempt_id": "UPD-S1-010-20261110-A004",
+          "started_at": "2026-11-10T17:03:12.729Z",
+          "ended_at": "2026-11-10T17:03:12.729Z",
+          "result": "partial",
+          "summary": "Corrected the last outdated status-heading assertion to validate Room-backed request-state rows directly. Added an always-run diagnostic step to print the actual KtLint report while preserving the failing ktlintCheck gate; this will identify the exact remaining source-formatting violations in CI.",
+          "changed_files": [
+            ".github/workflows/product-build.yml",
+            "tests/test_android_request_status_contract.py",
+            "update/Step three/UPD-S1-010/execution-report.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Android Kotlin lint",
+              "command": "product-build.yml Android job exact V 3.1.168",
+              "result": "pending"
+            },
+            {
+              "name": "Step Three quality",
+              "command": "quality.yml exact-head 3.1.168",
+              "result": "pending"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Use printed KtLint report from V 3.1.168 to correct all reported formatting issues. Then require ktlint, APK compile, Android unit tests and the full graph/quality gate to pass before considering UPD-S1-010 for completion.",
+          "device_and_host_details_redacted": "Hosted GitHub Actions only. No physical Android or Windows user device was used.",
+          "model_revision_and_sha256": "No model inference invoked.",
           "pre_upgrade_post_upgrade_snapshot": "Not performed."
         }
       ]
@@ -11931,14 +11971,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T17:01:17.285Z",
+    "as_of": "2026-11-10T17:03:12.729Z",
     "total_tasks": 24,
     "not_started": 9,
     "in_progress": 1,
     "done": 14,
     "blocked": 0,
     "verified_completion_percentage": 58.333333333333336,
-    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress pending exact-head tests and acceptance evidence; 9 tasks remain not_started."
+    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 remains in_progress pending exact-head Kotlin lint, APK compile, Android tests and remaining acceptance evidence; 9 tasks remain not_started."
   },
   "visual_identity": {
     "scope": [
@@ -12052,7 +12092,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T17:01:17.285Z",
+  "updated_at": "2026-11-10T17:03:12.729Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

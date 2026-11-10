@@ -197,6 +197,18 @@ jobs:
       - name: Verify Kotlin formatting and lint
         working-directory: src/Client.Android
         run: gradle --no-daemon ktlintCheck
+      - name: Print Kotlin formatting diagnostics on failure
+        if: always()
+        working-directory: src/Client.Android
+        shell: bash
+        run: |
+          report="app/build/reports/ktlint/ktlintMainSourceSetCheck/ktlintMainSourceSetCheck.txt"
+          if [ -f "$report" ]; then
+            echo "Kotlin formatting diagnostics:"
+            cat "$report"
+          else
+            echo "No Kotlin formatting report was generated."
+          fi
       - name: Build debug APK from clean outputs
         working-directory: src/Client.Android
         run: gradle --no-daemon assembleDebug --no-build-cache
