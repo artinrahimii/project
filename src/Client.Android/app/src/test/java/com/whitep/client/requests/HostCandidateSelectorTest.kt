@@ -39,6 +39,24 @@ class HostCandidateSelectorTest {
     }
 
     @Test
+    fun ranksReadyCandidatesByMeasuredUtilizationAndBreaksTiesByPeerId() {
+        val candidates =
+            listOf(
+                candidate("host-x", activeRequests = 1, maxConcurrentRequests = 2),
+                candidate("host-z", activeRequests = 1, maxConcurrentRequests = 4),
+                candidate("host-a", activeRequests = 2, maxConcurrentRequests = 4),
+                candidate("host-y", activeRequests = 0, maxConcurrentRequests = 2),
+            )
+
+        val selected = HostCandidateSelector.select(validRequest(), candidates)
+
+        assertEquals(
+            listOf("host-y", "host-z", "host-a"),
+            selected.map { it.announcement.ephemeralHostId },
+        )
+    }
+
+    @Test
     fun rejectsHostsThatAreNotReadyOrHaveNoAvailableConcurrency() {
         val candidates =
             listOf(

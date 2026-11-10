@@ -24,7 +24,10 @@ data class HostCandidate(
  * already-built inference request within their advertised and observed limits.
  *
  * The selector consumes the canonical InferenceRequest produced by the payload builder.
- * It does not perform discovery, network I/O, retries, deadline scheduling, or dispatch.
+ * It ranks eligible snapshots by their measured active-request / concurrency ratio, then by
+ * canonical PeerId. It does not infer network quality: no RTT/throughput metric is currently
+ * exposed by the live status contract. It does not perform discovery, network I/O, retries,
+ * deadline scheduling, or dispatch.
  */
 object HostCandidateSelector {
     const val MAX_HOSTS_PER_ROUND = MultiHostCompatibilityLimits.MAX_HOSTS_PER_ROUND
@@ -52,7 +55,22 @@ object HostCandidateSelector {
             .asSequence()
             .filter { candidate -> candidate.announcement.ephemeralHostId !in excludedEphemeralHostIds }
             .filter { candidate -> isCompatibleAndReady(request, candidate) }
-            .sortedBy { candidate -> candidate.announcement.ephemeralHostId }
+            .sortedWith { first, second ->
+                // Use the live status and the capacity snapshot already validated above.
+                // Cross-products compare utilization exactly without floating-point rounding.
+                val firstLoad =
+                    first.status.activeRequests.toLong() *
+                        second.announcement.capabilities.maxConcurrentRequests.toLong()
+                val secondLoad =
+                    second.status.activeRequests.toLong() *
+                        first.announcement.capabilities.maxConcurrentRequests.toLong()
+                val utilizationOrder = firstLoad.compareTo(secondLoad)
+                if (utilizationOrder != 0) {
+                    utilizationOrder
+                } else {
+                    first.announcement.ephemeralHostId.compareTo(second.announcement.ephemeralHostId)
+                }
+            }
             .take(maxHosts)
             .toList()
     }

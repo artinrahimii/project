@@ -133,3 +133,16 @@
 - آزمون مستقل `continuesAfterExplicitTransportFailureAndQueuesNextHost` رفتار outcome صریح `FAILED` و ارسال candidate بعدی را بررسی می‌کند.
 - دو Python source-contract نیز با سقف واقعی سه‌تایی و نام آزمون جدید هماهنگ شدند.
 - نتیجهٔ CI دقیق commit اصلاحی هنوز **اجرا نشده** است؛ A005 تا اجرای مجدد کیفیت و Product Build در وضعیت `in_progress` می‌ماند.
+
+
+## تأیید نهایی تلاش A005 — V 3.1.182
+
+- Commit مبنا/اصلاح آزموده‌شده: `0392fb1a57a1e105f54fda19c6e2a03fe33e531d` — `V 3.1.182`.
+- Step Three Quality gate: **PASS**؛ ۴۹۶ آزمون Python، compileall و هر دو graph guard موفق؛ run [42903745782](https://github.com/artinrahimii/project/actions/runs/42903745782).
+- Android: **PASS**؛ ktlint، clean debug/release APK، بررسی امضای release با کلید موقت CI، permission audit، JVM و Keystore instrumentation؛ گزارش تجمیعی JUnit شامل ۲۳۷ آزمون، ۲۳۶ موفق، صفر شکست و یک skip؛ coverage validate شد. job [42903745800](https://github.com/artinrahimii/project/actions/runs/42903745800).
+- Windows: **PASS**؛ clean build، publish، WPF startup smoke، policy/capability checks، DPAPI host identity/trust و نصب/اجرای smoke/uninstall نصب‌کننده؛ job [42903745800](https://github.com/artinrahimii/project/actions/runs/42903745800).
+- HostLifecycle: **PASS**؛ ۶۸ نشانگر بحرانی موفق، یک skip، line coverage برابر ۸۶٫۱۵٪؛ run [42903745800](https://github.com/artinrahimii/project/actions/runs/42903745800). آزمون real-model opt-in در این job skip شد.
+- Rendezvous container build/smoke: **PASS**؛ run [42903745740](https://github.com/artinrahimii/project/actions/runs/42903745740).
+- علت شکست JVM در V 3.1.181 فقط آزمون چهارتایی خارج از سقف سه host بود؛ A005 آن را در محدودهٔ مجاز اصلاح کرد و یک آزمون مستقل برای outcome صریح `FAILED` افزود. V 3.1.182 CI دقیق، این اصلاح را پاس کرد.
+- A005 نتیجهٔ نهایی: **succeeded**. UPD-S1-016 اکنون تمام معیارهای خود را با source، regression tests و CI دقیق پاس کرده است.
+- محدودیت مستقل: آزمون فیزیکی Android-to-Windows و اجرای مدل واقعی در UPD-S1-020، و clean-install/in-place-upgrade در UPD-S1-021 باقی می‌مانند. هیچ‌کدام در این task یا این CI ادعا نشده‌اند.

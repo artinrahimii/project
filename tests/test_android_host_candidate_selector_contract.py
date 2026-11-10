@@ -40,7 +40,11 @@ class AndroidHostCandidateSelectorContractTests(unittest.TestCase):
             source,
         )
         self.assertIn(".groupBy { candidate -> candidate.announcement.ephemeralHostId }", source)
-        self.assertIn(".sortedBy { candidate -> candidate.announcement.ephemeralHostId }", source)
+        self.assertIn(".sortedWith { first, second ->", source)
+        self.assertIn("first.status.activeRequests.toLong()", source)
+        self.assertIn("second.announcement.capabilities.maxConcurrentRequests.toLong()", source)
+        self.assertIn("first.announcement.ephemeralHostId.compareTo(second.announcement.ephemeralHostId)", source)
+        self.assertIn("does not infer network quality", source)
         self.assertIn(".take(maxHosts)", source)
         self.assertIn("fun selectFirstRound(", source)
         self.assertIn("progress.roundsDispatched !in 1 until distributedRequest.maxRounds", source)
@@ -51,6 +55,7 @@ class AndroidHostCandidateSelectorContractTests(unittest.TestCase):
         source = JVM_TEST.read_text(encoding="utf-8")
         expected_tests = (
             "selectsAtMostThreeDistinctCompatibleReadyHostsInStableOrder",
+            "ranksReadyCandidatesByMeasuredUtilizationAndBreaksTiesByPeerId",
             "rejectsHostsThatAreNotReadyOrHaveNoAvailableConcurrency",
             "rejectsInconsistentPeerIdentityAndProtocolSnapshots",
             "requiresTheRequestedModelInBothAnnouncementAndLiveStatus",

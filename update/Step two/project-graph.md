@@ -8176,8 +8176,8 @@
         "هیچ prompt، response یا history به سرویس directory ارسال یا از آن دریافت نشود.",
         "قابلیت مدل تنها با شناسه و metadata معتبر و backend واقعاً آماده قابل قبول باشد؛ صرف advertised بودن مدل برای پذیرش کافی نیست."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
@@ -8188,16 +8188,52 @@
         "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
         "update/Step three/UPD-S1-014/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "tests/test_android_host_candidate_selector_contract.py",
+        "update/Step three/UPD-S1-014/execution-report.md",
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "tests/test_android_host_candidate_selector_contract.py",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
+        "src/Host.Windows/Networking/PeerAnnouncementClient.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementLeasePublisher.cs",
+        "src/Rendezvous.Service/PeerAnnouncementServiceHost.cs",
+        "src/Rendezvous.Service/PeerAnnouncementDirectory.cs",
+        "src/Shared.Contracts/Networking/PeerAnnouncement.cs",
+        "src/Host.Windows/MainWindow.xaml.cs",
+        "src/Host.Windows/Requests/HostRequestAdmissionPolicy.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/RendezvousPeerDirectoryClientTest.kt",
+        "tests/HostLifecycle.Tests/PeerAnnouncementClientAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostCapacityAcceptanceTests.cs",
+        "docs/decisions/ADR-0022-single-host-sequential-retry.md",
+        "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0116, T0117, T0118, T0119, T0120, T0121, T0122, T0123, T0124, T0125, T0126, T0127, T0128. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "UPD-S1-014-20261111-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+          "tests/test_android_host_candidate_selector_contract.py",
+          "update/Step three/UPD-S1-014/execution-report.md",
+          "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md",
+          "update/Step two/project-graph.md"
+        ],
+        "related_commits": [
+          "0392fb1a57a1e105f54fda19c6e2a03fe33e531d"
+        ],
         "tests_passed": [],
         "tests_failed": [],
         "blocked_reason": null,
@@ -8207,9 +8243,38 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": []
-        }
+        },
+        "follow_up": "Run exact-head Step Three quality, Android ktlint/JVM, Windows HostLifecycle and Rendezvous checks. Keep UPD-S1-014 in_progress until all six acceptance criteria and exact-head CI evidence are satisfied; perform legacy T0116-T0128 follow-up review after this task passes."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-014-20261111-A001",
+          "started_at": "2026-11-10T21:40:16.275Z",
+          "ended_at": "2026-11-10T21:40:16.275Z",
+          "result": "partial",
+          "summary": "Audited existing metadata-only rendezvous, expiring lease, explicit host opt-in/trust, authenticated live HostStatus probing, backend/model readiness, measured Windows RAM/disk checks and admission gates. Updated the existing selector to rank already-eligible snapshots by measured active-request utilization using exact integer cross-products, with canonical PeerId tie-break; added JVM and Python contract regressions. Connection quality is not measured by the current protocol, so no RTT/throughput score is invented. Exact-head CI for this diff is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+            "tests/test_android_host_candidate_selector_contract.py",
+            "update/Step three/UPD-S1-014/execution-report.md",
+            "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "No wire/protobuf/API changes. Generic candidate ordering now uses live activeRequests/maxConcurrentRequests utilization before stable PeerId tie-break. First-release runtime cardinality remains one host per round; current Windows READY status is activeRequests=0 and BUSY is excluded."
+          ],
+          "follow_up": "Run exact-head Step Three quality, Android ktlint/JVM, Windows HostLifecycle and Rendezvous checks. Keep UPD-S1-014 in_progress until all six acceptance criteria and exact-head CI evidence are satisfied; perform legacy T0116-T0128 follow-up review after this task passes.",
+          "device_and_host_details_redacted": "Repository source review and GitHub-hosted V 3.1.182 CI evidence only. No physical Android handset or independent user-owned Windows host was used.",
+          "model_revision_and_sha256": "No local inference was executed in this attempt.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; clean install/in-place upgrade is tracked by UPD-S1-021."
+        }
+      ]
     },
     {
       "id": "UPD-S1-015",
@@ -8362,8 +8427,8 @@
         "اگر Relay تصویب نشد، Relay در نسخهٔ هدف فعال نشود و شکست اتصال مستقیم خطای صریح باقی بماند.",
         "هیچ الگوریتم رمزنگاری اختصاصی اضافه نشود."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
         "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
@@ -8409,14 +8474,15 @@
         "docs/decisions/ADR-0024-tcp-request-framing.md",
         "tests/test_android_libp2p_transport_contract.py",
         "tests/test_relay_privacy_boundary.py",
-        "tests/test_decision_traceability.py"
+        "tests/test_decision_traceability.py",
+        "update/Step three/UPD-S1-016/evidence/transport-audit-A005.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0116, T0117, T0118, T0119, T0120, T0129, T0130, T0131, T0132, T0133, T0134, T0135, T0136, T0137, T0138, T0206, T0226, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
         "attempt_count": 5,
         "failed_attempt_count": 3,
         "last_attempt_id": "UPD-S1-016-20261110-A005",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "succeeded",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
           "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
@@ -8444,7 +8510,8 @@
           "fb47c4c8287bc231fbc809e3aad614da3a05e173",
           "a12fe9815d6f287aebf29696663b0b7aaea8ac5a",
           "41e5bd23dc9a49d4e1ddf05c51414af4225fcae7",
-          "7c95d5d8c817ac5d82c4aa63d65b3df436a8b0e7"
+          "7c95d5d8c817ac5d82c4aa63d65b3df436a8b0e7",
+          "0392fb1a57a1e105f54fda19c6e2a03fe33e531d"
         ],
         "tests_passed": [
           "V 3.1.180 Android ktlint and Windows .NET interop fixture build passed before JVM test phase.",
@@ -8454,7 +8521,12 @@
           "V 3.1.181 Windows WPF clean build/publish/startup/security/installer acceptance passed (job 130112373952).",
           "V 3.1.181 HostLifecycle unit/integration/coverage passed (job 130112373643).",
           "V 3.1.181 Rendezvous container build and smoke passed (run 42896931302).",
-          "V 3.1.181 Android ktlint, clean debug/release APK builds and merged-manifest permission checks passed before JVM tests."
+          "V 3.1.181 Android ktlint, clean debug/release APK builds and merged-manifest permission checks passed before JVM tests.",
+          "Exact V 3.1.182 Step Three quality gate passed: 496 Python tests, compileall, legacy graph guard 0 errors/1 preserved metadata warning, update graph guard 0 errors/0 warnings (run 42903745782).",
+          "Exact V 3.1.182 Android CI passed: lint, clean debug/release APKs, disposable release signature verification, permissions, JVM/instrumentation and coverage; combined JUnit 237 tests, 236 passed, 0 failed, 1 skipped (run 42903745800).",
+          "Exact V 3.1.182 Windows CI passed: WPF build/publish/startup, policy/capability, DPAPI identity/trust, Windows installer acceptance and artifact publication (run 42903745800).",
+          "Exact V 3.1.182 HostLifecycle acceptance and coverage passed: 68 critical pass markers, 1 skip, 86.15% line coverage (run 42903745800).",
+          "Exact V 3.1.182 Rendezvous container build/smoke passed (run 42903745740)."
         ],
         "tests_failed": [
           "V 3.1.179 quality: 496 tests, six stale test-name/README traceability assertion failures.",
@@ -8470,7 +8542,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Re-run exact-head quality, Android JVM/Keystore instrumentation/debug+release APK and Windows build/installer/HostLifecycle after A005; verify the dispatcher tests now stay within the three-host compatibility limit. Keep in_progress until exact-head applicable gates pass."
+        "follow_up": "UPD-S1-016 acceptance is complete on exact V 3.1.182 CI. Physical Android handset to user-installed Windows host with real local model remains a separate UPD-S1-020 gate; clean install and in-place upgrade remain UPD-S1-021."
       },
       "execution_history": [
         {
@@ -8709,8 +8781,8 @@
         {
           "attempt_id": "UPD-S1-016-20261110-A005",
           "started_at": "2026-11-10T21:18:09.123Z",
-          "ended_at": null,
-          "result": "partial",
+          "ended_at": "2026-11-10T21:29:56Z",
+          "result": "succeeded",
           "summary": "Corrected the dispatcher regression test to respect the three-host generic compatibility ceiling while preserving the first-release one-host production policy. The main test covers rejection, thrown transport failure, and a subsequent queued host within three candidates; a separate test covers explicit FAILED followed by QUEUED.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
@@ -8720,14 +8792,55 @@
             "update/Step three/UPD-S1-016/evidence/transport-audit-A005.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "0392fb1a57a1e105f54fda19c6e2a03fe33e531d",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact V 3.1.182",
+              "result": "passed",
+              "run_id": 42903745782,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42903745782",
+              "summary": "496 Python tests passed; compileall passed; graph_guard passed for the 230-node legacy graph (0 errors, 1 preserved metadata warning) and 24-node update graph (0 errors, 0 warnings)."
+            },
+            {
+              "name": "Android clean build, JVM, instrumentation and coverage",
+              "command": "product-build.yml Android job on exact V 3.1.182",
+              "result": "passed",
+              "run_id": 42903745800,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42903745800",
+              "summary": "ktlint, clean debug/release APKs, disposable release signature verification and merged-manifest permissions passed. Combined JUnit validation: 237 tests, 236 passed, 0 failed, 1 skipped. Android Keystore instrumentation and MainActivity launch/resume passed on GitHub-hosted Android emulator; not a physical handset."
+            },
+            {
+              "name": "Windows WPF build, publish, smoke and installer",
+              "command": "product-build.yml Windows job on exact V 3.1.182",
+              "result": "passed",
+              "run_id": 42903745800,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42903745800",
+              "summary": "Clean Windows build/publish and WPF startup smoke passed; policy/capability gates, current-user DPAPI identity/trust checks and Windows installer install/smoke/uninstall acceptance passed. Build artifacts and dependency notices uploaded."
+            },
+            {
+              "name": "HostLifecycle unit/integration and coverage",
+              "command": "product-build.yml HostLifecycle job on exact V 3.1.182",
+              "result": "passed",
+              "run_id": 42903745800,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42903745800",
+              "summary": "Acceptance suite and coverage validation passed: 68 critical pass markers, 1 skip, 86.15% line coverage. The real-model opt-in integration was skipped; no physical Android-to-Windows inference is claimed."
+            },
+            {
+              "name": "Rendezvous container build and smoke",
+              "command": "rendezvous-container.yml on exact V 3.1.182",
+              "result": "passed",
+              "run_id": 42903745740,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42903745740",
+              "summary": "Container build and smoke test completed successfully."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Run exact-head Step Three quality and Product Build; require Android JVM, Keystore instrumentation, debug/release APK, Windows build/installer and HostLifecycle gates before acceptance.",
-          "device_and_host_details_redacted": "Source-contract and CI correction only. No physical Android handset or user-owned Windows host used.",
+          "follow_up": "UPD-S1-016 acceptance is complete on exact V 3.1.182 CI. Physical Android handset to user-installed Windows host with real local model remains a separate UPD-S1-020 gate; clean install and in-place upgrade remain UPD-S1-021.",
+          "device_and_host_details_redacted": "GitHub-hosted Android emulator and Windows CI runner only. Android MainActivity was installed/launched/resumed in the emulator. No physical user handset, independent user-owned Windows host, or real local model inference was used for physical product acceptance.",
           "model_revision_and_sha256": "No model inference executed in this attempt.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable."
         }
@@ -12852,14 +12965,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T21:18:09.130Z",
+    "as_of": "2026-11-10T21:40:16.279Z",
     "total_tasks": 24,
-    "not_started": 7,
+    "not_started": 6,
     "in_progress": 1,
-    "done": 16,
+    "done": 17,
     "blocked": 0,
-    "verified_completion_percentage": 66.66666666666666,
-    "calculation": "16 verified done update tasks / 24 total update tasks = 66.67%. UPD-S1-016 remains in_progress. Exact V 3.1.181 quality, Windows, HostLifecycle and Rendezvous passed; Android JVM had one of 225 tests fail because the regression test exceeded the three-host compatibility round limit. A005 corrects test scope without changing production cardinality; exact-head CI is pending."
+    "verified_completion_percentage": 70.83333333333334,
+    "calculation": "17 verified done update tasks / 24 total update tasks = 70.83%. UPD-S1-016 passed exact V 3.1.182 quality, Android, Windows, HostLifecycle and Rendezvous CI. UPD-S1-014 is in_progress after a measured-utilization ranking change and new regression tests; exact-head CI is pending."
   },
   "visual_identity": {
     "scope": [
@@ -12973,7 +13086,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T21:18:09.130Z",
+  "updated_at": "2026-11-10T21:40:16.279Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
