@@ -111,3 +111,25 @@
 
 - تعداد درخواست موردانتظار در `tests/test_request_retry_budget_boundary.py` از ۳ به ۴ اصلاح شد تا با آزمون dispatcher به‌روز همسان شود.
 - این تلاش فقط اصلاح assertion قراردادی است؛ نتیجهٔ آزمون exact-head هنوز pending است.
+
+
+## نتیجهٔ CI دقیق V 3.1.181
+
+- Commit آزموده‌شده: `7c95d5d8c817ac5d82c4aa63d65b3df436a8b0e7`.
+- Step Three quality gate: **PASS**، run [42896931063](https://github.com/artinrahimii/project/actions/runs/42896931063).
+- Rendezvous container build/smoke: **PASS**، run [42896931302](https://github.com/artinrahimii/project/actions/runs/42896931302).
+- Windows WPF: **PASS**؛ clean build، publish، startup smoke، هویت/اعتماد DPAPI، بررسی agent-tool و ساخت و پذیرش installer؛ job [130112373952](https://github.com/artinrahimii/project/actions/runs/42896931040/job/130112373952).
+- HostLifecycle unit/integration/coverage: **PASS**؛ job [130112373643](https://github.com/artinrahimii/project/actions/runs/42896931040/job/130112373643).
+- Android ktlint، ساخت clean debug/release APK و بررسی permissionها: **PASS**.
+- Android JVM: **FAIL**؛ ۲۲۵ آزمون اجرا شد و یک آزمون شکست خورد. JUnit artifact شمارهٔ `13802330493` با SHA-256 برابر `546dea024dd25a107c56a5445a446a3a5d003d7cc23978069418c0cbedf4faf8` دریافت و خوانده شد.
+- علت: آزمون `keepsSubmittingOtherHostsAfterTransportRejectsOrFails` چهار host را در یک round می‌فرستاد؛ dispatcher سقف سه host در هر round دارد و پیش از dispatch نتیجهٔ `TOO_MANY_HOSTS` برمی‌گرداند. شکست در assertion موفق‌بودن dispatch رخ داد؛ این آزمون از سقف compatibility عبور کرده بود.
+- Keystore instrumentation، اجرای emulator، آپلود APK و coverage Android به‌علت توقف در JVM **اجرا نشدند**.
+
+## تلاش A005 — اصلاح آزمون در محدودهٔ قرارداد سه‌میزبانه
+
+- شروع: `2026-11-10T21:18:09.123Z`.
+- تصمیم: سقف production یک میزبان در هر round و سقف generic compatibility سه میزبان بدون تغییر می‌ماند؛ پیاده‌سازی dispatcher دست‌کاری نمی‌شود.
+- آزمون اصلی اکنون حداکثر سه host دارد: rejection، exception/failure و سپس queued؛ بنابراین ادامهٔ dispatch در سقف مجاز بررسی می‌شود.
+- آزمون مستقل `continuesAfterExplicitTransportFailureAndQueuesNextHost` رفتار outcome صریح `FAILED` و ارسال candidate بعدی را بررسی می‌کند.
+- دو Python source-contract نیز با سقف واقعی سه‌تایی و نام آزمون جدید هماهنگ شدند.
+- نتیجهٔ CI دقیق commit اصلاحی هنوز **اجرا نشده** است؛ A005 تا اجرای مجدد کیفیت و Product Build در وضعیت `in_progress` می‌ماند.

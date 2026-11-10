@@ -70,8 +70,7 @@
 
 ## دادهٔ کامل گراف v1.0
 
-```json
-{
+```json{
   "schema_version": "1.0",
   "document": "update-step-two-v1.2",
   "title": "گراف وابستگی و دفتر اجرای به‌روزرسانی White-P بر پایهٔ V1.10 — v1.2",
@@ -8388,7 +8387,8 @@
         "docs/decisions/ADR-0024-tcp-request-framing.md",
         "docs/decisions/README.md",
         "update/Step three/UPD-S1-016/execution-report.md",
-        "update/Step three/UPD-S1-016/evidence/transport-audit-A001.md"
+        "update/Step three/UPD-S1-016/evidence/transport-audit-A001.md",
+        "update/Step three/UPD-S1-016/evidence/transport-audit-A005.md"
       ],
       "evidence": [
         "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
@@ -8413,9 +8413,9 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0116, T0117, T0118, T0119, T0120, T0129, T0130, T0131, T0132, T0133, T0134, T0135, T0136, T0137, T0138, T0206, T0226, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 4,
-        "failed_attempt_count": 2,
-        "last_attempt_id": "UPD-S1-016-20261110-A004",
+        "attempt_count": 5,
+        "failed_attempt_count": 3,
+        "last_attempt_id": "UPD-S1-016-20261110-A005",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
@@ -8437,22 +8437,30 @@
           "tests/test_android_inference_attempt_dispatcher_contract.py",
           "tests/test_request_retry_budget_boundary.py",
           "update/Step three/UPD-S1-016/evidence/transport-audit-A003.md",
-          "update/Step three/UPD-S1-016/evidence/transport-audit-A004.md"
+          "update/Step three/UPD-S1-016/evidence/transport-audit-A004.md",
+          "update/Step three/UPD-S1-016/evidence/transport-audit-A005.md"
         ],
         "related_commits": [
           "fb47c4c8287bc231fbc809e3aad614da3a05e173",
           "a12fe9815d6f287aebf29696663b0b7aaea8ac5a",
-          "41e5bd23dc9a49d4e1ddf05c51414af4225fcae7"
+          "41e5bd23dc9a49d4e1ddf05c51414af4225fcae7",
+          "7c95d5d8c817ac5d82c4aa63d65b3df436a8b0e7"
         ],
         "tests_passed": [
           "V 3.1.180 Android ktlint and Windows .NET interop fixture build passed before JVM test phase.",
           "V 3.1.180 HostLifecycle acceptance job passed.",
-          "V 3.1.180 Rendezvous container build and HTTP smoke passed."
+          "V 3.1.180 Rendezvous container build and HTTP smoke passed.",
+          "V 3.1.181 Step Three quality gate passed (run 42896931063).",
+          "V 3.1.181 Windows WPF clean build/publish/startup/security/installer acceptance passed (job 130112373952).",
+          "V 3.1.181 HostLifecycle unit/integration/coverage passed (job 130112373643).",
+          "V 3.1.181 Rendezvous container build and smoke passed (run 42896931302).",
+          "V 3.1.181 Android ktlint, clean debug/release APK builds and merged-manifest permission checks passed before JVM tests."
         ],
         "tests_failed": [
           "V 3.1.179 quality: 496 tests, six stale test-name/README traceability assertion failures.",
           "V 3.1.179 Android ktlint: two spacing-between-declarations-with-comments violations in InferenceAttemptDispatcher.kt.",
-          "V 3.1.180 quality: 496 tests, one stale request-count assertion expected 3 but the changed dispatcher test now sends 4."
+          "V 3.1.180 quality: 496 tests, one stale request-count assertion expected 3 but the changed dispatcher test now sends 4.",
+          "V 3.1.181 Android JVM: 225 tests, one failure in keepsSubmittingOtherHostsAfterTransportRejectsOrFails because the test submitted four selected hosts although the generic dispatcher allows at most three per round; the dispatcher rejected the round before submission."
         ],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -8462,7 +8470,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Run exact-head V 3.1.181 quality/graph guards and Android JVM + direct-refusal transport test + Keystore instrumentation + debug/release APK; complete Windows build/installer and HostLifecycle. Retain in_progress until all relevant exact-head gates pass."
+        "follow_up": "Re-run exact-head quality, Android JVM/Keystore instrumentation/debug+release APK and Windows build/installer/HostLifecycle after A005; verify the dispatcher tests now stay within the three-host compatibility limit. Keep in_progress until exact-head applicable gates pass."
       },
       "execution_history": [
         {
@@ -8637,8 +8645,8 @@
         {
           "attempt_id": "UPD-S1-016-20261110-A004",
           "started_at": "2026-11-10T20:35:49Z",
-          "ended_at": null,
-          "result": "partial",
+          "ended_at": "2026-11-10T20:43:25Z",
+          "result": "failed",
           "summary": "Corrected the sole remaining Python quality failure on V 3.1.180: retry-budget contract expected three requests but the updated dispatcher test now intentionally exercises four candidate hosts (REJECTED, thrown fault, explicit FAILED, then QUEUED). The expected dispatch count is aligned to four.",
           "changed_files": [
             "tests/test_request_retry_budget_boundary.py",
@@ -8646,15 +8654,81 @@
             "update/Step three/UPD-S1-016/execution-report.md",
             "update/Step three/UPD-S1-016/evidence/transport-audit-A004.md"
           ],
+          "commit_sha": "7c95d5d8c817ac5d82c4aa63d65b3df436a8b0e7",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact V 3.1.181",
+              "result": "passed",
+              "run_id": 42896931063,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42896931063",
+              "summary": "Python quality and graph validation completed successfully."
+            },
+            {
+              "name": "Android client product build",
+              "command": "product-build.yml Android job on exact V 3.1.181",
+              "result": "failed",
+              "run_id": 42896931040,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42896931040/job/130112373857",
+              "summary": "ktlint, clean debug/release APK build and permission check passed; JVM ran 225 tests with one failure in InferenceAttemptDispatcherTest.kt because the test submitted four hosts despite the three-host per-round compatibility ceiling. Keystore instrumentation and downstream APK/coverage uploads were skipped."
+            },
+            {
+              "name": "Windows WPF host and installer",
+              "command": "product-build.yml Windows job on exact V 3.1.181",
+              "result": "passed",
+              "run_id": 42896931040,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42896931040/job/130112373952",
+              "summary": "Clean build, publish, WPF startup smoke, DPAPI host identity/trust checks, agent-tool checks and installer acceptance passed."
+            },
+            {
+              "name": "HostLifecycle acceptance",
+              "command": "product-build.yml HostLifecycle job on exact V 3.1.181",
+              "result": "passed",
+              "run_id": 42896931040,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42896931040/job/130112373643",
+              "summary": "Unit/integration acceptance and coverage validation passed."
+            },
+            {
+              "name": "Rendezvous container and smoke",
+              "command": "rendezvous-container.yml on exact V 3.1.181",
+              "result": "passed",
+              "run_id": 42896931302,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42896931302",
+              "summary": "Container build and smoke completed successfully."
+            }
+          ],
+          "failure_details": "Exact V 3.1.181 product-build Android job failed in 1 of 225 JVM tests: keepsSubmittingOtherHostsAfterTransportRejectsOrFails expected a Dispatched result after passing four selected candidates. The actual dispatcher rejects more than HostCandidateSelector.MAX_HOSTS_PER_ROUND (3) before submission, so the test exceeded the existing generic compatibility contract. The JUnit report confirms the failed assertTrue at InferenceAttemptDispatcherTest.kt:401. Android ktlint, debug/release APK build and permissions passed. Keystore instrumentation and remaining Android upload/coverage steps were skipped. Windows build/installer, HostLifecycle, Rendezvous and Step Three quality passed.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "A005 corrects the test to remain within three selected hosts and adds a separate explicit FAILED continuation test. Re-run exact-head quality and Product Build; do not alter production host cardinality or mark this task done before all applicable CI gates pass.",
+          "device_and_host_details_redacted": "GitHub-hosted CI only; no physical Android handset or user-owned Windows host used.",
+          "model_revision_and_sha256": "No model inference in this attempt.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable."
+        },
+        {
+          "attempt_id": "UPD-S1-016-20261110-A005",
+          "started_at": "2026-11-10T21:18:09.123Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected the dispatcher regression test to respect the three-host generic compatibility ceiling while preserving the first-release one-host production policy. The main test covers rejection, thrown transport failure, and a subsequent queued host within three candidates; a separate test covers explicit FAILED followed by QUEUED.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+            "tests/test_android_inference_attempt_dispatcher_contract.py",
+            "tests/test_request_retry_budget_boundary.py",
+            "update/Step three/UPD-S1-016/execution-report.md",
+            "update/Step three/UPD-S1-016/evidence/transport-audit-A005.md",
+            "update/Step two/project-graph.md"
+          ],
           "commit_sha": null,
           "tests": [],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
-          "follow_up": "Commit A004 as V 3.1.181 and rerun exact-head quality, Android JVM/instrumentation/APK, Windows build/installer, HostLifecycle and Rendezvous. Do not mark task done until new direct-refusal test and all applicable CI gates pass.",
-          "device_and_host_details_redacted": "Exact-head GitHub-hosted CI. No physical Android handset or user-owned Windows host used.",
-          "model_revision_and_sha256": "No model inference in this attempt.",
+          "follow_up": "Run exact-head Step Three quality and Product Build; require Android JVM, Keystore instrumentation, debug/release APK, Windows build/installer and HostLifecycle gates before acceptance.",
+          "device_and_host_details_redacted": "Source-contract and CI correction only. No physical Android handset or user-owned Windows host used.",
+          "model_revision_and_sha256": "No model inference executed in this attempt.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable."
         }
       ]
@@ -12778,14 +12852,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T20:35:49Z",
+    "as_of": "2026-11-10T21:18:09.130Z",
     "total_tasks": 24,
     "not_started": 7,
     "in_progress": 1,
     "done": 16,
     "blocked": 0,
     "verified_completion_percentage": 66.66666666666666,
-    "calculation": "16 verified done update tasks / 24 total update tasks = 66.67%. UPD-S1-016 remains in_progress. V 3.1.179 had six quality failures and ktlint violations; V 3.1.180 reduced Python quality to one stale request-count assertion, while Android lint, HostLifecycle and Rendezvous passed. A004 updates the expected request count; exact-head CI pending."
+    "calculation": "16 verified done update tasks / 24 total update tasks = 66.67%. UPD-S1-016 remains in_progress. Exact V 3.1.181 quality, Windows, HostLifecycle and Rendezvous passed; Android JVM had one of 225 tests fail because the regression test exceeded the three-host compatibility round limit. A005 corrects test scope without changing production cardinality; exact-head CI is pending."
   },
   "visual_identity": {
     "scope": [
@@ -12899,7 +12973,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T20:35:49Z",
+  "updated_at": "2026-11-10T21:18:09.130Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

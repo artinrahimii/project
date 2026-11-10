@@ -46,6 +46,7 @@ class AndroidInferenceAttemptDispatcherContractTests(unittest.TestCase):
             "doesNotSubmitAnyHostWhenPromptIsBlank",
             "rejectsTerminalRequestBeforeSubmitting",
             "keepsSubmittingOtherHostsAfterTransportRejectsOrFails",
+            "continuesAfterExplicitTransportFailureAndQueuesNextHost",
             "rejectsDuplicateAttemptIdsBeforeSubmitting",
             "rejectsRoundAfterTheConfiguredMaximumBeforeSubmitting",
             "rejectsBatchLargerThanRemainingTotalHostBudgetBeforeSubmitting",
