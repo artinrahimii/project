@@ -11,12 +11,13 @@ internal static class LocalHostSettingsPersistenceTests
         {
             PersistsSelectionAndPreservesServerModel(directory);
             LoadsLegacySettingsWithoutSelection(directory);
+            LoadsSchemaV2SettingsWithoutChecksum(directory);
             RejectsInvalidSelectionIds(directory);
             RejectsInvalidCapacityRequirements(directory);
             RejectsSemanticallyInvalidPersistedSettings(directory);
         }
         finally { if (Directory.Exists(directory)) Directory.Delete(directory, recursive: true); }
-        Console.WriteLine("PASS: settings round-trip, schema-v1 migration, persistent RAM/disk requirements, semantic validation, invalid-selection rejection, and fail-closed persistence.");
+        Console.WriteLine("PASS: settings round-trip, schema-v1/v2 migrations, installed-model checksum pinning, persistent RAM/disk requirements, semantic validation, and fail-closed persistence.");
     }
     private static void PersistsSelectionAndPreservesServerModel(string directory)
     {
@@ -51,11 +52,45 @@ internal static class LocalHostSettingsPersistenceTests
         Assert(loaded.MinimumFreeDiskGiB == 1d, "Schema v1 migration must use the documented 1 GiB disk default.");
         var migrated = new LocalHostSettingsStore(path).Save(loaded);
         Assert(migrated.RequiredModelMemoryGiB == 4d && migrated.MinimumFreeDiskGiB == 1d,
-            "Migrated settings must retain resource defaults when written as schema v2.");
+            "Migrated settings must retain resource defaults when written as the current schema.");
         using var migratedDocument = JsonDocument.Parse(File.ReadAllText(path));
         Assert(migratedDocument.RootElement.GetProperty("schemaVersion").GetInt32() == LocalHostSettings.CurrentSchemaVersion,
             "The next successful save must upgrade schema v1 to the current schema version.");
     }
+    private static void LoadsSchemaV2SettingsWithoutChecksum(string directory)
+    {
+        var path = Path.Combine(directory, "schema-v2.json");
+        File.WriteAllText(path, JsonSerializer.Serialize(new
+        {
+            schemaVersion = 2,
+            serverUrl = "http://127.0.0.1:8080/",
+            modelId = "schema-v2-server-model",
+            requestTimeoutSeconds = 150,
+            engineExecutablePath = (string?)null,
+            modelFilePath = (string?)null,
+            activeCatalogModelId = "catalog-model-from-v2",
+            persistHostConversation = false,
+            requiredModelMemoryGiB = 9d,
+            minimumFreeDiskGiB = 2.5d
+        }));
+
+        var store = new LocalHostSettingsStore(path);
+        var loaded = store.LoadOrDefault();
+        Assert(loaded.ActiveCatalogModelId == "catalog-model-from-v2",
+            "Schema v2 catalog selection must be preserved.");
+        Assert(loaded.ActiveCatalogModelSha256 is null,
+            "Schema v2 must not invent a checksum that was never recorded.");
+        Assert(loaded.RequiredModelMemoryGiB == 9d && loaded.MinimumFreeDiskGiB == 2.5d,
+            "Schema v2 resource settings must be preserved exactly.");
+
+        store.Save(loaded);
+        using var migrated = JsonDocument.Parse(File.ReadAllText(path));
+        Assert(migrated.RootElement.GetProperty("schemaVersion").GetInt32() == LocalHostSettings.CurrentSchemaVersion,
+            "Schema v2 must upgrade only on a successful save.");
+        Assert(migrated.RootElement.GetProperty("activeCatalogModelSha256").ValueKind == JsonValueKind.Null,
+            "Schema v2 migration must keep the absent checksum null.");
+    }
+
     private static void RejectsInvalidSelectionIds(string directory)
     {
         var store = new LocalHostSettingsStore(Path.Combine(directory, "invalid.json"));

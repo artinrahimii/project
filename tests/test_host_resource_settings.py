@@ -10,9 +10,12 @@ def source(relative_path: str) -> str:
 class HostResourceSettingsContractTests(unittest.TestCase):
     def test_resource_limits_are_schema_versioned_validated_and_persisted(self):
         store = source("src/Host.Infrastructure/LocalHostSettingsStore.cs")
-        self.assertIn("CurrentSchemaVersion = 2", store)
-        self.assertIn("document.SchemaVersion != 1", store)
+        self.assertIn("CurrentSchemaVersion = 3", store)
+        self.assertIn("document.SchemaVersion is < 1 or > LocalHostSettings.CurrentSchemaVersion", store)
         self.assertIn("document.SchemaVersion == 1", store)
+        self.assertIn("document.SchemaVersion >= 3", store)
+        self.assertIn("NormalizeOptionalSha256", store)
+        self.assertIn("ActiveCatalogModelSha256", store)
         self.assertIn("Defaults.RequiredModelMemoryGiB", store)
         self.assertIn("Defaults.MinimumFreeDiskGiB", store)
         self.assertIn('JsonPropertyName("requiredModelMemoryGiB")', store)
