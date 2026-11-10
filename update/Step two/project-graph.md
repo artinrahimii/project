@@ -70,7 +70,8 @@
 
 ## دادهٔ کامل گراف v1.0
 
-```json{
+```json
+{
   "schema_version": "1.0",
   "document": "update-step-two-v1.2",
   "title": "گراف وابستگی و دفتر اجرای به‌روزرسانی White-P بر پایهٔ V1.10 — v1.2",
@@ -95,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.170",
+  "commit_intent": "V 3.1.188",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -9795,8 +9796,8 @@
         "کلیدهای خصوصی در ذخیره‌سازی امن سیستم قرار گیرند.",
         "آزمون replay و دستکاری پیام و جست‌وجوی log/file برای دادهٔ حساس موفق باشد."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/network/SafeDiagnosticLog.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/security/",
@@ -9805,28 +9806,166 @@
         "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
         "update/Step three/UPD-S1-018/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/SafeDiagnosticLog.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/security/AndroidKeyStoreProtectedBlobProtector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerIdentityStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/PeerMessageFrameCodec.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Shared.Security/SafeDiagnosticLog.cs",
+        "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "docs/security.md",
+        "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/test_network_payload_logging.py",
+        "tests/test_sensitive_artifact_scanning.py",
+        "tests/test_sensitive_buffer_cleanup.py",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/SafeDiagnosticLogTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerIdentityStoreTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerTrustStoreTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/PeerMessageFrameCodecTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "update/Step three/UPD-S1-018/execution-report.md",
+        "update/Step three/UPD-S1-018/evidence/privacy-buffer-audit-A001.md"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-018/evidence/privacy-buffer-audit-A001.md",
+        "update/Step three/UPD-S1-018/execution-report.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/SafeDiagnosticLog.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/security/AndroidKeyStoreProtectedBlobProtector.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerIdentityStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/PeerMessageFrameCodec.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/Libp2pInferenceRequestTransport.kt",
+        "src/Shared.Security/SafeDiagnosticLog.cs",
+        "src/Shared.Security/AuthenticatedRequestReplayGuard.cs",
+        "src/Shared.Security/HostIdentityStore.cs",
+        "src/Shared.Security/PeerTrustStore.cs",
+        "src/Host.Windows/Security/WindowsDpapiSecretProtector.cs",
+        "src/Host.Windows/Networking/PeerAnnouncementHostLifecycle.cs",
+        "src/Host.Windows/Networking/Libp2pPeerMessageProtocol.cs",
+        "src/Host.Windows/Networking/Libp2pPeerTransport.cs",
+        "docs/security.md",
+        "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/test_network_payload_logging.py",
+        "tests/test_sensitive_artifact_scanning.py",
+        "tests/test_sensitive_buffer_cleanup.py",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/SafeDiagnosticLogTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerIdentityStoreTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerTrustStoreTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/PeerMessageFrameCodecTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "https://github.com/artinrahimii/project/actions/runs/42909899013",
+        "https://github.com/artinrahimii/project/actions/runs/42909899054"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0105, T0178, T0179, T0180, T0181, T0182, T0183, T0184, T0185, T0186, T0187, T0188, T0206, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
-        "tests_passed": [],
+        "last_attempt_id": "UPD-S1-018-20261111-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "update/Step three/UPD-S1-018/execution-report.md",
+          "update/Step three/UPD-S1-018/evidence/privacy-buffer-audit-A001.md",
+          "update/Step two/project-graph.md"
+        ],
+        "related_commits": [
+          "a0f50e22e56f7052c8b9157226b0b72713e65bc5"
+        ],
+        "tests_passed": [
+          "V 3.1.187 Quality: 496 Python tests passed, including sensitive log/artifact/buffer checks and graph guards (run 42909899013).",
+          "V 3.1.187 HostLifecycle: 68 critical pass markers, one skip, 86.14% line coverage; replay/tamper, safe diagnostic, trust and identity checks passed (job 130157488206).",
+          "V 3.1.187 Rendezvous build/smoke passed (run 42909898965).",
+          "V 3.1.187 Android ktlint, Debug/Release APK, disposable release key cleanup, permissions and JVM/coverage passed (job 130157487721).",
+          "V 3.1.187 Windows WPF build/publish/smoke, DPAPI identity/trust and installer acceptance passed (job 130157488253)."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
-        "contract_revalidation": {
-          "state": "not_required",
-          "triggering_contracts": [],
-          "affected_by_contract_changes": [],
-          "review_evidence": []
-        }
+        "contract_changes": [],
+        "follow_up": "Refresh Android Keystore instrumentation result on exact V 3.1.187. If it passes, recheck all four acceptance criteria and close UPD-S1-018; otherwise document precise failure.",
+        "device_and_host_details_redacted": "GitHub-hosted Windows runner and Android emulator/CI only; no physical handset or owner-operated Windows host.",
+        "model_revision_and_sha256": "No model inference performed.",
+        "pre_upgrade_post_upgrade_snapshot": "Not applicable; UPD-S1-021."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-018-20261111-A001",
+          "started_at": "2026-11-10T22:05:08.260Z",
+          "ended_at": "2026-11-10T22:05:08.260Z",
+          "result": "partial",
+          "summary": "Audited existing Android/Windows safe logs, OS-backed private-key storage, replay/tamper checks and mutable-buffer cleanup. No duplicate implementation justified. Quality (496 Python), HostLifecycle, Rendezvous, Android lint/Debug/Release/permissions/JVM and Windows WPF/DPAPI/installer passed; Android Keystore instrumentation remained in progress.",
+          "changed_files": [
+            "update/Step three/UPD-S1-018/execution-report.md",
+            "update/Step three/UPD-S1-018/evidence/privacy-buffer-audit-A001.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Quality",
+              "command": "quality.yml exact V 3.1.187",
+              "result": "passed",
+              "run_id": 42909899013,
+              "url": "https://github.com/actions/runs/42909899013",
+              "summary": "496 Python tests, sensitive log/file/buffer checks and graph guards passed."
+            },
+            {
+              "name": "HostLifecycle",
+              "command": "HostLifecycle acceptance with coverage",
+              "result": "passed",
+              "run_id": 42909899054,
+              "job_id": 130157488206,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42909899054/job/130157488206",
+              "summary": "68 critical pass markers, one skip, 86.14% line coverage."
+            },
+            {
+              "name": "Rendezvous",
+              "command": "Container build and smoke",
+              "result": "passed",
+              "run_id": 42909898965,
+              "url": "https://github.com/actions/runs/42909898965"
+            },
+            {
+              "name": "Android packages and JVM",
+              "command": "Clean lint/debug/release/permissions/JVM tests and coverage",
+              "result": "passed",
+              "run_id": 42909899054,
+              "job_id": 130157487721,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42909899054",
+              "summary": "ktlint, Debug/Release APK, temporary key cleanup, permissions and Android JVM/coverage passed; Keystore instrumentation was still running."
+            },
+            {
+              "name": "Windows build/installer",
+              "command": "WPF build/publish/DPAPI/installer acceptance",
+              "result": "passed",
+              "run_id": 42909899054,
+              "job_id": 130157488253,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42909899054/job/130157488253"
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Wait for Android Keystore instrumentation. Do not close until its exact-head result is successful and all four criteria remain satisfied.",
+          "device_and_host_details_redacted": "GitHub-hosted CI/emulator only; no physical handset or owner-host used.",
+          "model_revision_and_sha256": "No inference performed.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable."
+        }
+      ]
     },
     {
       "id": "UPD-S1-019",
@@ -13211,14 +13350,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T21:56:33.698Z",
+    "as_of": "2026-11-10T22:05:08.260Z",
     "total_tasks": 24,
     "not_started": 6,
     "in_progress": 1,
     "done": 17,
     "blocked": 0,
     "verified_completion_percentage": 70.83333333333334,
-    "calculation": "17 verified done update tasks / 24 total update tasks = 70.83%. UPD-S1-016 remains done. UPD-S1-014 remains in_progress: A004 passed Android lint but failed one stale Python source-contract assertion. A005 aligns the Python checks with actual comparator locals; exact-head quality and full Product Build are pending."
+    "calculation": "17 verified done update tasks / 24 total update tasks = 70.83%. UPD-S1-014 and UPD-S1-018 are in_progress; five tasks remain not_started. UPD-S1-018 awaits Android Keystore instrumentation after successful Python, HostLifecycle, Rendezvous, Android JVM/package and Windows installer checks."
   },
   "visual_identity": {
     "scope": [
@@ -13332,7 +13471,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T21:56:33.698Z",
+  "updated_at": "2026-11-10T22:05:08.260Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
