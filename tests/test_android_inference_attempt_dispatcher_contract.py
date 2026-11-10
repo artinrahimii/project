@@ -45,7 +45,7 @@ class AndroidInferenceAttemptDispatcherContractTests(unittest.TestCase):
             "identifiesEmptyPromptAsPayloadRejectionCause",
             "doesNotSubmitAnyHostWhenPromptIsBlank",
             "rejectsTerminalRequestBeforeSubmitting",
-            "keepsSubmittingOtherHostsAfterTransportRejectsOrThrows",
+            "keepsSubmittingOtherHostsAfterTransportRejectsOrFails",
             "rejectsDuplicateAttemptIdsBeforeSubmitting",
             "rejectsRoundAfterTheConfiguredMaximumBeforeSubmitting",
             "rejectsBatchLargerThanRemainingTotalHostBudgetBeforeSubmitting",

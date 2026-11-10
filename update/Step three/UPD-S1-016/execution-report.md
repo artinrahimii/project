@@ -81,3 +81,20 @@
 - اصلاح: جداکردن دو statement در `InferenceRoundResponseCollectorTest.kt`.
 - این کشف حاصل بررسی source بود، نه نتیجهٔ شکست تست؛ job Android هنگام این کشف هنوز به JVM tests نرسیده بود.
 - تا اجرای مجدد CI روی commit A002، هیچ نتیجهٔ آزمون جدیدی PASS اعلام نمی‌شود و وظیفه `in_progress` می‌ماند.
+
+
+## نتیجهٔ CI تلاش A002 — V 3.1.179
+
+- Python quality: **۴۹۶ تست اجرا شد؛ ۶ مورد شکست خورد**. یک assertion هنوز نام قدیمی آزمون dispatcher را می‌خواست؛ سه assertion نام فایل‌های تست Android/Keystore را در فهرست تصمیم‌ها پیدا نکردند؛ یک assertion نام فایل پروژهٔ Shared.Security را در فهرست پیدا نکرد؛ و یک assertion retry-budget نیز نام قدیمی آزمون را انتظار داشت.
+- Android ktlint: شکست با دو تخلف `spacing-between-declarations-with-comments` در اطراف دو comment enum جدید. به‌علت این شکست، unit test و Keystore instrumentation در این job اجرا نشدند.
+- Windows WPF/build/installer: موفق.
+- HostLifecycle: موفق.
+- Rendezvous: موفق.
+- هیچ نتیجهٔ شکست‌خورده حذف نشده و A002 در تاریخچه با نتیجهٔ `failed` حفظ شده است.
+
+## تلاش A003 — اصلاح شکست‌های دقیق CI
+
+- دو خط خالی لازم قبل از commentهای مستندکنندهٔ enum اضافه شد.
+- نام آزمون در دو Python contract به نام واقعی تغییر یافتهٔ `keepsSubmittingOtherHostsAfterTransportRejectsOrFails` همگام شد.
+- README تصمیم‌ها به‌روزرسانی شد تا تمام basenameهای مورد انتظار ردیابی شامل `AndroidKeyStorePersistenceTest.kt`، `AndroidPeerIdentityStoreTest.kt`، `AndroidPeerTrustStoreTest.kt` و `WhiteP.Shared.Security.csproj` را ذکر کند.
+- وضعیت A003 فعلاً partial است؛ CI روی commit این اصلاح هنوز اجرا نشده است.

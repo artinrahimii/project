@@ -26,8 +26,10 @@ fun interface InferenceRequestTransport {
 
 enum class InferenceTransportSubmission {
     QUEUED,
+
     /** Direct peer or transport unavailable; report this as NETWORK_UNAVAILABLE. */
     FAILED,
+
     /** Request, peer identity, explicit trust or route metadata is invalid. */
     REJECTED,
 }

@@ -8413,9 +8413,9 @@
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0116, T0117, T0118, T0119, T0120, T0129, T0130, T0131, T0132, T0133, T0134, T0135, T0136, T0137, T0138, T0206, T0226, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 2,
-        "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-016-20261110-A002",
+        "attempt_count": 3,
+        "failed_attempt_count": 1,
+        "last_attempt_id": "UPD-S1-016-20261110-A003",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
@@ -8433,13 +8433,24 @@
           "update/Step three/UPD-S1-016/execution-report.md",
           "update/Step three/UPD-S1-016/evidence/transport-audit-A001.md",
           "update/Step two/project-graph.md",
-          "update/Step three/UPD-S1-016/evidence/transport-audit-A002.md"
+          "update/Step three/UPD-S1-016/evidence/transport-audit-A002.md",
+          "tests/test_android_inference_attempt_dispatcher_contract.py",
+          "tests/test_request_retry_budget_boundary.py",
+          "update/Step three/UPD-S1-016/evidence/transport-audit-A003.md"
         ],
         "related_commits": [
-          "fb47c4c8287bc231fbc809e3aad614da3a05e173"
+          "fb47c4c8287bc231fbc809e3aad614da3a05e173",
+          "a12fe9815d6f287aebf29696663b0b7aaea8ac5a"
         ],
-        "tests_passed": [],
-        "tests_failed": [],
+        "tests_passed": [
+          "V 3.1.179 Windows WPF build/publish, startup smoke, host identity/trust and installer acceptance passed (run 42895426893).",
+          "V 3.1.179 HostLifecycle acceptance job passed (run 42895426893).",
+          "V 3.1.179 Rendezvous container build and smoke passed (run 42895426669)."
+        ],
+        "tests_failed": [
+          "V 3.1.179 Python quality suite: 496 tests, 6 failures from stale expected JVM test name and missing README decision-register basenames (run 42895426684).",
+          "V 3.1.179 Android ktlintCheck: two spacing-between-declarations-with-comments violations in InferenceAttemptDispatcher.kt; Android JVM and Keystore instrumentation were skipped (run 42895426893)."
+        ],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
@@ -8448,7 +8459,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Run exact-head V 3.1.179 quality and Android JVM tests; then Android Keystore instrumentation, Android debug/release build, Windows build and HostLifecycle acceptance. Do not mark done until all applicable acceptance evidence passes."
+        "follow_up": "Run exact-head V 3.1.180 quality/graph guards and Android ktlint, JVM, Keystore instrumentation, debug/release build, Windows and HostLifecycle acceptance. Keep UPD-S1-016 in_progress until all applicable acceptance checks pass."
       },
       "execution_history": [
         {
@@ -8492,8 +8503,8 @@
         {
           "attempt_id": "UPD-S1-016-20261110-A002",
           "started_at": "2026-11-10T20:26:53Z",
-          "ended_at": null,
-          "result": "partial",
+          "ended_at": "2026-11-10T20:29:35Z",
+          "result": "failed",
           "summary": "Source review of the committed A001 change found a Kotlin test formatting defect: the closing assertion line and the next assertEquals call were concatenated. This attempt separates the statements. No build or test has yet run against A002.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
@@ -8502,14 +8513,81 @@
             "update/Step three/UPD-S1-016/evidence/transport-audit-A002.md"
           ],
           "commit_sha": null,
-          "tests": [],
-          "failure_details": "A001 committed test source contained a missing newline before the collector's first error-code assertion. Found by reading the exact committed blob before relying on CI; no test failure is claimed because the test job had not yet reached JVM tests.",
+          "tests": [
+            {
+              "name": "Python quality suite",
+              "command": "quality.yml on exact V 3.1.179; python -m unittest discover -s tests -v",
+              "result": "failed",
+              "run_id": 42895426684,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42895426684",
+              "summary": "496 tests ran; six failures were stale source-contract test-name references and missing README traceability basenames. No product runtime test was claimed passed by this job."
+            },
+            {
+              "name": "Android ktlint",
+              "command": "gradle --no-daemon ktlintCheck",
+              "result": "failed",
+              "run_id": 42895426893,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42895426893",
+              "summary": "Two standard spacing-between-declarations-with-comments violations in InferenceAttemptDispatcher.kt before FAILED and REJECTED documentation comments. JVM and Keystore instrumentation validation was skipped after lint failed."
+            },
+            {
+              "name": "Windows WPF and installer acceptance",
+              "command": "product-build.yml Windows job",
+              "result": "passed",
+              "run_id": 42895426893,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42895426893",
+              "summary": "Windows build/publish, WPF startup smoke, host identity/trust checks and installer acceptance passed."
+            },
+            {
+              "name": "HostLifecycle acceptance suite",
+              "command": "product-build.yml HostLifecycle job",
+              "result": "passed",
+              "run_id": 42895426893,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42895426893",
+              "summary": "HostLifecycle job succeeded on exact V 3.1.179."
+            },
+            {
+              "name": "Rendezvous container smoke",
+              "command": "rendezvous-container.yml",
+              "result": "passed",
+              "run_id": 42895426669,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42895426669",
+              "summary": "Container build and smoke passed on exact V 3.1.179."
+            }
+          ],
+          "failure_details": "Exact V 3.1.179 CI: Python quality 496 tests with six failures (one old JVM test-name expectation, three missing Android trust/Keystore test basenames in decision register, one missing WhiteP.Shared.Security.csproj basename, and one stale test-name expectation in retry-budget contract). Android ktlintCheck failed with two spacing-between-declarations-with-comments violations around the FAILED/REJECTED enum documentation comments. Android JVM/Keystore tests did not run because lint failed. Windows WPF/installer, HostLifecycle and Rendezvous jobs passed.",
           "blocked_reason": null,
           "reopened_reason": null,
           "contract_changes": [],
           "follow_up": "Commit A002 as V 3.1.179, then rerun exact-head quality/Android/Windows/HostLifecycle/Rendezvous checks. Keep UPD-S1-016 in_progress until exact-head CI passes.",
           "device_and_host_details_redacted": "GitHub source inspection only; no physical device or user-owned Windows host used.",
           "model_revision_and_sha256": "No model inference in this formatting correction.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable."
+        },
+        {
+          "attempt_id": "UPD-S1-016-20261110-A003",
+          "started_at": "2026-11-10T20:33:07Z",
+          "ended_at": null,
+          "result": "partial",
+          "summary": "Corrected exact failures from A002 CI: Kotlin ktlint spacing around enum documentation comments; stale dispatcher and retry-budget test-name references; and missing ADR README traceability basenames for Android Keystore/peer-store tests and the shared security project file. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
+            "tests/test_android_inference_attempt_dispatcher_contract.py",
+            "tests/test_request_retry_budget_boundary.py",
+            "docs/decisions/README.md",
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-016/execution-report.md",
+            "update/Step three/UPD-S1-016/evidence/transport-audit-A003.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Commit A003 as V 3.1.180; run exact-head Python quality/graph guards, Android ktlint, JVM tests, Keystore instrumentation, debug/release APK, Windows WPF/installer, HostLifecycle and Rendezvous. Only mark done after all applicable gates pass.",
+          "device_and_host_details_redacted": "Exact-head GitHub-hosted CI only. No physical Android handset or user-owned Windows host used.",
+          "model_revision_and_sha256": "No model inference performed in A003.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable."
         }
       ]
@@ -12633,14 +12711,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T20:26:53Z",
+    "as_of": "2026-11-10T20:33:07Z",
     "total_tasks": 24,
     "not_started": 7,
     "in_progress": 1,
     "done": 16,
     "blocked": 0,
     "verified_completion_percentage": 66.66666666666666,
-    "calculation": "16 verified done update tasks / 24 total update tasks = 66.67%. UPD-S1-016 A001 code/doc commit is recorded; A002 corrects a test-source formatting defect identified before CI completion. Exact-head tests for A002 are pending."
+    "calculation": "16 verified done update tasks / 24 total update tasks = 66.67%. UPD-S1-016 A001 and A002 are preserved; A002 failed exact-head V 3.1.179 quality and Android ktlint. A003 fixes the identified source-contract, decision-register traceability and Kotlin spacing issues; exact-head tests are pending."
   },
   "visual_identity": {
     "scope": [
@@ -12754,7 +12832,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T20:26:53Z",
+  "updated_at": "2026-11-10T20:33:07Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

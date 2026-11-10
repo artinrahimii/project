@@ -56,7 +56,7 @@ class RetryPolicyBoundaryTests(unittest.TestCase):
         self.assertIn("progress.hostsAttempted >= distributedRequest.maxTotalHosts", DISPATCHER)
         self.assertIn("does not implement peer discovery", DISPATCHER)
         self.assertIn("timeout scheduling, retries", DISPATCHER)
-        self.assertIn("keepsSubmittingOtherHostsAfterTransportRejectsOrThrows", DISPATCHER_TESTS)
+        self.assertIn("keepsSubmittingOtherHostsAfterTransportRejectsOrFails", DISPATCHER_TESTS)
         self.assertIn("assertEquals(3, transport.requests.size)", DISPATCHER_TESTS)
 
     def test_request_retries_are_explicit_and_share_the_original_distributed_budget(self):
