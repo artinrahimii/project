@@ -111,7 +111,8 @@ object AutomaticModelSelectionPolicy {
         }
 
         if (options.isEmpty()) {
-            val failure = when {
+            val failure =
+                when {
                 !sawVerifiedCatalogModel -> AutomaticModelSelectionFailure.NO_VERIFIED_MODEL
                 sawInvalidMetadata -> AutomaticModelSelectionFailure.INVALID_MODEL_METADATA
                 else -> AutomaticModelSelectionFailure.NO_COMPATIBLE_MODEL
@@ -122,12 +123,14 @@ object AutomaticModelSelectionPolicy {
         // Preference: largest usable context, then output headroom. Model ID and PeerId ordinal
         // order are stable tie-breakers; no display-name parsing or random/default model is used.
         val selected =
-            options.sortedWith(
-                compareByDescending<Option> { it.maxContextTokens }
-                    .thenByDescending { it.maxOutputTokens }
-                    .thenBy { it.modelId }
-                    .thenBy { it.hostId },
-            ).first()
+            options
+                .sortedWith(
+                    compareByDescending<Option> { it.maxContextTokens }
+                        .thenByDescending { it.maxOutputTokens }
+                        .thenBy { it.modelId }
+                        .thenBy { it.hostId },
+                )
+                .first()
 
         return AutomaticModelSelectionResult.Selected(
             hostId = selected.hostId,
