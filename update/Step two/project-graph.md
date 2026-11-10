@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.189",
+  "commit_intent": "V 3.1.190",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -13351,10 +13351,10 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T22:06:31.963Z",
+    "as_of": "2026-11-10T22:07:56.922Z",
     "total_tasks": 24,
-    "not_started": 6,
-    "in_progress": 1,
+    "not_started": 5,
+    "in_progress": 2,
     "done": 17,
     "blocked": 0,
     "verified_completion_percentage": 70.83333333333334,
@@ -13472,7 +13472,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T22:06:31.963Z",
+  "updated_at": "2026-11-10T22:07:56.922Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
