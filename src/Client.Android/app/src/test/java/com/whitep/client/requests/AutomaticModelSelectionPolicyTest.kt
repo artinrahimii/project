@@ -135,7 +135,11 @@ class AutomaticModelSelectionPolicyTest {
             protocolVersion = "1.0.0"
         }
 
-    private fun model(id: String, context: Long, output: Long): ModelCapability =
+    private fun model(
+        id: String,
+        context: Long,
+        output: Long,
+    ): ModelCapability =
         modelCapability {
             modelId = id
             displayName = id
@@ -150,7 +154,8 @@ class AutomaticModelSelectionPolicyTest {
         state: HostRuntimeState = HostRuntimeState.HOST_RUNTIME_STATE_READY,
     ): HostCandidate {
         val capabilities =
-            HostCapabilities.newBuilder()
+            HostCapabilities
+                .newBuilder()
                 .setEphemeralHostId(peerId)
                 .setProtocolVersion("1.0.0")
                 .addAllModels(models)
@@ -159,7 +164,8 @@ class AutomaticModelSelectionPolicyTest {
                 .setMaxContextCapsuleBytes(4_096)
                 .build()
         val announcement =
-            HostAnnouncement.newBuilder()
+            HostAnnouncement
+                .newBuilder()
                 .setEphemeralHostId(peerId)
                 .setProtocolVersion("1.0.0")
                 .setCapabilities(capabilities)
