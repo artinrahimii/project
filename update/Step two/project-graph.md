@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.164",
+  "commit_intent": "V 3.1.165",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -6967,7 +6967,7 @@
         "هیچ IP، Port یا PeerId یا شناسهٔ شناسایی غیرضروری میزبان در متن و کنترل‌های مسیر عادی چت افشا نشود؛ جزئیات عیب‌یابی فقط در بخش پیشرفتهٔ جداگانه مجاز باشد.",
         "UI موجود بدون بازسازی غیرضروری حفظ شود و تست مسیر واقعی/mock boundary به‌صراحت محدودیت mock را اعلام کند."
       ],
-      "status": "not_started",
+      "status": "in_progress",
       "status_fa": "انجام‌نشده",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
@@ -6977,15 +6977,41 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/",
         "update/Step three/UPD-S1-010/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "update/Step three/UPD-S1-010/execution-report.md",
+        "update/Step three/UPD-S1-010/evidence/chat-runtime-gap-audit.md"
+      ],
+      "evidence": [
+        "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+        "update/Step three/UPD-S1-010/execution-report.md",
+        "update/Step three/UPD-S1-010/evidence/chat-runtime-gap-audit.md",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AndroidInferenceRequestRuntime.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/network/AndroidPeerTrustStore.kt",
+        "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0088, T0090, T0092, T0139, T0145, T0146, T0147, T0148, T0149, T0150, T0190, T0200, T0202, T0223. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-010-20261110-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+          "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+          "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+          "update/Step three/UPD-S1-010/execution-report.md",
+          "update/Step three/UPD-S1-010/evidence/chat-runtime-gap-audit.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -6998,7 +7024,52 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-010-20261110-A001",
+          "started_at": "2026-11-10T16:53:33.743Z",
+          "ended_at": "2026-11-10T16:53:33.743Z",
+          "result": "partial",
+          "summary": "Audited the exact existing chat/runtime boundary and confirmed the conversation UI was Room-only. Wired the existing conversation route to the real RequestViewModel/runtime, persisted rendezvous URL and first-request privacy consent, added explicit trust UI without showing peer IDs in normal chat, and added correlated/idempotent Room persistence for assistant responses and typed request errors. Exact-head CI and platform tests are pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationDetailScreen.kt",
+            "src/Client.Android/app/src/main/java/com/whitep/client/ui/conversations/ConversationMessagesViewModel.kt",
+            "src/Client.Android/app/src/test/java/com/whitep/client/ui/conversations/ConversationMessagesViewModelTest.kt",
+            "update/Step three/UPD-S1-010/execution-report.md",
+            "update/Step three/UPD-S1-010/evidence/chat-runtime-gap-audit.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Room response persistence regression test",
+              "command": "Android Gradle testDebugUnitTest — ConversationMessagesViewModelTest",
+              "result": "pending",
+              "summary": "New Robolectric test covers chronological user/assistant/system messages and duplicate response/error delivery."
+            },
+            {
+              "name": "Android product build and unit tests",
+              "command": "product-build.yml exact-head Android client job",
+              "result": "pending",
+              "summary": "Must compile and run all Android JVM/instrumentation tests on this attempt."
+            },
+            {
+              "name": "Quality and graph contract gate",
+              "command": "quality.yml exact-head",
+              "result": "pending",
+              "summary": "Must revalidate both graph guards and repository quality suite."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run CI on the exact A001 commit, fix compile/test failures, add UI/integration coverage for consent/trust/status mapping, then reassess all six acceptance criteria. Do not mark done based on this first patch.",
+          "device_and_host_details_redacted": "No physical Android handset or user-owned Windows host was accessed in this attempt.",
+          "model_revision_and_sha256": "No model inference was invoked in this UI wiring attempt.",
+          "pre_upgrade_post_upgrade_snapshot": "Not performed; upgrade acceptance remains under UPD-S1-021."
+        }
+      ]
     },
     {
       "id": "UPD-S1-011",
@@ -11732,14 +11803,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T16:21:55Z",
+    "as_of": "2026-11-10T16:53:33.743Z",
     "total_tasks": 24,
-    "not_started": 10,
-    "in_progress": 0,
+    "not_started": 9,
+    "in_progress": 1,
     "done": 14,
     "blocked": 0,
     "verified_completion_percentage": 58.333333333333336,
-    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-023 passed exact-head Android model-selection, Windows live-model admission, CI product-build and pinned real local-inference checks; 10 tasks remain not_started."
+    "calculation": "14 verified done update tasks / 24 total update tasks = 58.3333%. UPD-S1-010 is in_progress pending exact-head CI and acceptance evidence; 9 tasks remain not_started."
   },
   "visual_identity": {
     "scope": [
@@ -11853,7 +11924,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T16:21:55Z",
+  "updated_at": "2026-11-10T16:53:33.743Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

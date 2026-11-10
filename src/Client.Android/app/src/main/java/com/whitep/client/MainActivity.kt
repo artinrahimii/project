@@ -1,5 +1,6 @@
 package com.whitep.client
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -55,6 +56,10 @@ import com.whitep.client.ui.request.hostResponseCards
 import com.whitep.client.ui.request.toNetworkInferenceStatusPresentation
 import com.whitep.client.ui.theme.whitePTheme
 
+private const val CONNECTION_PREFERENCES = "whitep_connection_settings"
+private const val RENDEZVOUS_URL_KEY = "rendezvous_service_url"
+private const val PRIVACY_CONSENT_KEY = "processing_host_privacy_consent_accepted"
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +73,17 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun whitePClientApp() {
+    val applicationContext = LocalContext.current.applicationContext
+    val connectionPreferences =
+        remember(applicationContext) {
+            applicationContext.getSharedPreferences(CONNECTION_PREFERENCES, Context.MODE_PRIVATE)
+        }
+    var rendezvousUrl by rememberSaveable {
+        mutableStateOf(connectionPreferences.getString(RENDEZVOUS_URL_KEY, "").orEmpty())
+    }
+    var privacyConsentAccepted by rememberSaveable {
+        mutableStateOf(connectionPreferences.getBoolean(PRIVACY_CONSENT_KEY, false))
+    }
     val navController = rememberNavController()
     val currentEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentEntry?.destination
@@ -135,11 +151,27 @@ private fun whitePClientApp() {
                     )
                 conversationDetailScreen(
                     conversationId = conversationId,
+                    rendezvousServiceUrl = rendezvousUrl,
+                    privacyConsentAccepted = privacyConsentAccepted,
+                    onPrivacyConsentAccepted = {
+                        privacyConsentAccepted = true
+                        connectionPreferences.edit().putBoolean(PRIVACY_CONSENT_KEY, true).apply()
+                    },
+                    onConfigureConnection = {
+                        navController.navigate(ClientDestination.REQUEST.route)
+                    },
                     onBack = { navController.popBackStack() },
                 )
             }
             composable(ClientDestination.REQUEST.route) {
-                requestScreen(onBack = { navController.popBackStack() })
+                requestScreen(
+                    rendezvousUrl = rendezvousUrl,
+                    onRendezvousUrlChange = { value ->
+                        rendezvousUrl = value
+                        connectionPreferences.edit().putString(RENDEZVOUS_URL_KEY, value).apply()
+                    },
+                    onBack = { navController.popBackStack() },
+                )
             }
             composable(ClientDestination.CONNECTIONS.route) {
                 connectionsScreen()
@@ -218,7 +250,11 @@ private fun homeScreen(
 }
 
 @Composable
-private fun requestScreen(onBack: () -> Unit) {
+private fun requestScreen(
+    rendezvousUrl: String,
+    onRendezvousUrlChange: (String) -> Unit,
+    onBack: () -> Unit,
+) {
     val context = LocalContext.current
     val applicationContext = context.applicationContext
     val lifecycleRepository =
@@ -236,7 +272,6 @@ private fun requestScreen(onBack: () -> Unit) {
         )
     val requestState by requestViewModel.uiState.collectAsState()
     val statusPresentation = requestState.toNetworkInferenceStatusPresentation()
-    var rendezvousUrl by rememberSaveable { mutableStateOf("") }
     var pendingTrustPeerId by rememberSaveable { mutableStateOf<String?>(null) }
 
     appPage(
@@ -246,7 +281,7 @@ private fun requestScreen(onBack: () -> Unit) {
         OutlinedTextField(
             value = rendezvousUrl,
             onValueChange = {
-                rendezvousUrl = it
+                onRendezvousUrlChange(it)
                 requestViewModel.clearDirectorySession()
             },
             modifier = Modifier.fillMaxWidth(),

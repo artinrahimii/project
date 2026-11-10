@@ -11,9 +11,10 @@ import com.whitep.client.domain.ConversationMessageValidator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import java.nio.charset.StandardCharsets
 import java.util.UUID
 
-/** Local conversation messages only; this ViewModel does not send content to a processing host. */
+/** Owns validated user messages and idempotent persistence of correlated host responses. */
 class ConversationMessagesViewModel(
     private val conversationId: String,
     private val messageDao: MessageDao,
@@ -44,6 +45,54 @@ class ConversationMessagesViewModel(
                 conversationId = conversationId,
                 authorRole = "user",
                 content = normalizedContent,
+                createdAtEpochMillis = createdAt,
+            ),
+        )
+        return true
+    }
+
+    /**
+     * Persists a host response or typed request notice in this conversation. Deterministic
+     * message IDs make duplicate delivery/recomposition idempotent per request attempt.
+     */
+    suspend fun saveAssistantResponse(
+        requestId: String,
+        attemptId: String,
+        content: String,
+    ): Boolean = saveCorrelatedMessage("assistant", requestId, attemptId, content)
+
+    suspend fun saveRequestNotice(
+        requestId: String,
+        attemptId: String,
+        content: String,
+    ): Boolean = saveCorrelatedMessage("system", requestId, attemptId, content)
+
+    private suspend fun saveCorrelatedMessage(
+        authorRole: String,
+        requestId: String,
+        attemptId: String,
+        content: String,
+    ): Boolean {
+        if (requestId.isBlank() || attemptId.isBlank() || content.isBlank()) return false
+
+        val messageId =
+            UUID.nameUUIDFromBytes(
+                "$conversationId|$requestId|$attemptId|$authorRole".toByteArray(StandardCharsets.UTF_8),
+            ).toString()
+        if (messageDao.findById(messageId) != null) return false
+
+        val previousTimestamp = messages.first().lastOrNull()?.createdAtEpochMillis
+        val nextTimestamp =
+            previousTimestamp?.let { previous ->
+                if (previous == Long.MAX_VALUE) previous else previous + 1
+            }
+        val createdAt = nextTimestamp?.let { maxOf(clockMillis(), it) } ?: clockMillis()
+        messageDao.upsert(
+            MessageEntity(
+                messageId = messageId,
+                conversationId = conversationId,
+                authorRole = authorRole,
+                content = content,
                 createdAtEpochMillis = createdAt,
             ),
         )

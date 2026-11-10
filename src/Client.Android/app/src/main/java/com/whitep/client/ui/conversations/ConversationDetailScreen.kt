@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -34,10 +35,15 @@ import com.whitep.client.data.ConversationEntity
 import com.whitep.client.data.MessageEntity
 import com.whitep.client.data.RequestStateEntity
 import com.whitep.client.data.RoomConversationContextCapsuleRepository
+import com.whitep.client.data.RoomInferenceRequestLifecycleRepository
 import com.whitep.client.data.SharedPreferencesConversationContextCapsuleSizeLimitStore
 import com.whitep.client.domain.ConversationMessageValidationError
 import com.whitep.client.domain.ConversationMessageValidator
 import com.whitep.client.errors.RequestErrorCode
+import com.whitep.client.ui.request.HostResponseOutcome
+import com.whitep.client.ui.request.RequestRunStatus
+import com.whitep.client.ui.request.RequestViewModel
+import com.whitep.client.ui.request.RequestViewModelFactory
 import com.whitep.client.ui.request.toPresentation
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -55,6 +61,10 @@ private sealed class ConversationDetailUiState {
 @Composable
 internal fun conversationDetailScreen(
     conversationId: String,
+    rendezvousServiceUrl: String,
+    privacyConsentAccepted: Boolean,
+    onPrivacyConsentAccepted: () -> Unit,
+    onConfigureConnection: () -> Unit,
     onBack: () -> Unit,
 ) {
     val applicationContext = LocalContext.current.applicationContext
@@ -65,6 +75,19 @@ internal fun conversationDetailScreen(
     val conversationDao = database.conversationDao()
     val messageDao = database.messageDao()
     val requestStateDao = database.requestStateDao()
+    val requestLifecycleRepository =
+        remember(database) {
+            RoomInferenceRequestLifecycleRepository(database.inferenceRequestStateDao())
+        }
+    val requestViewModelFactory =
+        remember(requestLifecycleRepository) {
+            RequestViewModelFactory(requestLifecycleRepository)
+        }
+    val requestViewModel: RequestViewModel =
+        viewModel(
+            key = "conversation-request-$conversationId",
+            factory = requestViewModelFactory,
+        )
     val contextCapsuleRepository =
         remember(database) {
             RoomConversationContextCapsuleRepository(database.conversationContextCapsuleDao())
@@ -105,7 +128,11 @@ internal fun conversationDetailScreen(
     val messages by conversationMessagesViewModel.messages.collectAsState(initial = emptyList())
     val draft by conversationMessagesViewModel.draft.collectAsState()
     val requestStates by requestStateDao.observeForConversation(conversationId).collectAsState(initial = emptyList())
+    val liveRequestState by requestViewModel.uiState.collectAsState()
+    val hostResponses by requestViewModel.hostResponses.collectAsState()
     val scope = rememberCoroutineScope()
+    var pendingTrustPeerId by rememberSaveable { mutableStateOf<String?>(null) }
+    var pendingPrivacyPrompt by rememberSaveable { mutableStateOf<String?>(null) }
     var state by remember(conversationId) {
         mutableStateOf<ConversationDetailUiState>(ConversationDetailUiState.Loading)
     }
@@ -119,6 +146,44 @@ internal fun conversationDetailScreen(
             conversationListViewModel.getConversation(conversationId)?.let {
                 ConversationDetailUiState.Found(it)
             } ?: ConversationDetailUiState.Missing
+    }
+
+    LaunchedEffect(rendezvousServiceUrl, requestViewModel) {
+        if (rendezvousServiceUrl.isNotBlank()) {
+            requestViewModel.discoverPeers(applicationContext, rendezvousServiceUrl)
+        }
+    }
+
+    LaunchedEffect(hostResponses, conversationMessagesViewModel) {
+        hostResponses.forEach { response ->
+            when (response.outcome) {
+                HostResponseOutcome.SUCCEEDED -> {
+                    conversationMessagesViewModel.saveAssistantResponse(
+                        requestId = response.requestId,
+                        attemptId = response.attemptId,
+                        content = response.outputText,
+                    )
+                }
+                else -> {
+                    if (response.errorMessage.isNotBlank()) {
+                        conversationMessagesViewModel.saveRequestNotice(
+                            requestId = response.requestId,
+                            attemptId = response.attemptId,
+                            content = response.errorMessage,
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun submitMessageToHost(messageText: String) {
+        scope.launch {
+            if (conversationMessagesViewModel.sendMessage(messageText)) {
+                conversationMessagesViewModel.updateDraft("")
+                requestViewModel.sendRequest(messageText)
+            }
+        }
     }
 
     Column(
@@ -177,13 +242,117 @@ internal fun conversationDetailScreen(
                     onResolveConflict = contextCapsuleViewModel::resolveConflict,
                 )
 
-                Text("Request status", style = MaterialTheme.typography.titleLarge)
-                if (requestStates.isEmpty()) {
+                Text("Processing host", style = MaterialTheme.typography.titleLarge)
+                if (rendezvousServiceUrl.isBlank()) {
+                    Text("Connect a trusted processing host before sending a message.")
+                    OutlinedButton(
+                        onClick = onConfigureConnection,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("Configure host directory")
+                    }
+                } else if (liveRequestState.isDiscoveringPeers) {
+                    Text("Finding available processing hosts…")
+                } else if (liveRequestState.discoveredPeers.isEmpty()) {
+                    Text("No available processing host was found.")
+                    OutlinedButton(
+                        onClick = {
+                            requestViewModel.discoverPeers(applicationContext, rendezvousServiceUrl)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("Search again")
+                    }
+                } else {
+                    val trustedHostCount = liveRequestState.discoveredPeers.count { it.isTrusted }
                     Text(
-                        "No request status has been recorded for this conversation. " +
-                            "Requests are not sent to a host in this preview.",
+                        if (trustedHostCount == 0) {
+                            "Review and trust a host before sending. No host is trusted automatically."
+                        } else {
+                            "$trustedHostCount trusted processing host(s) are available."
+                        },
+                        style = MaterialTheme.typography.bodySmall,
                     )
+                    liveRequestState.discoveredPeers.forEachIndexed { index, peer ->
+                        Card(modifier = Modifier.fillMaxWidth()) {
+                            Column(
+                                modifier = Modifier.padding(12.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp),
+                            ) {
+                                Text("Processing host ${index + 1}", style = MaterialTheme.typography.titleMedium)
+                                Text(if (peer.isTrusted) "Trusted" else "Approval required")
+                                if (!peer.isTrusted) {
+                                    OutlinedButton(
+                                        onClick = { pendingTrustPeerId = peer.peerId },
+                                        modifier = Modifier.fillMaxWidth(),
+                                    ) {
+                                        Text("Review host and trust")
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
+                if (liveRequestState.isSelectingModel) {
+                    Text("Checking trusted-host compatibility and verified model readiness…")
+                }
+                if (liveRequestState.isSendingRequest) {
+                    Text("Secure connection and model processing are in progress…")
+                }
+                if (liveRequestState.isCancellingRequest) {
+                    Text("Cancellation is being sent to the selected host…")
+                }
+                liveRequestState.networkStatusMessage?.let { message ->
+                    Text(message, style = MaterialTheme.typography.bodySmall)
+                }
+                liveRequestState.hostAvailabilityMessage?.let { message ->
+                    Text(message, color = MaterialTheme.colorScheme.error)
+                }
+                Text(
+                    text =
+                        when (liveRequestState.runStatus) {
+                            RequestRunStatus.IDLE -> "No request sent yet."
+                            RequestRunStatus.RUNNING -> "Request is running."
+                            RequestRunStatus.SUCCEEDED -> "Request completed."
+                            RequestRunStatus.PARTIAL -> "Request returned a partial result."
+                            RequestRunStatus.FAILED -> "The request failed."
+                            RequestRunStatus.CANCELLED -> "The request was cancelled."
+                            RequestRunStatus.EXPIRED -> "The request expired before a result was saved."
+                        },
+                    color =
+                        if (liveRequestState.runStatus == RequestRunStatus.FAILED) {
+                            MaterialTheme.colorScheme.error
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        },
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                if (liveRequestState.canCancelRequest) {
+                    OutlinedButton(
+                        onClick = requestViewModel::cancelCurrentRequest,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("Cancel request")
+                    }
+                }
+                if (liveRequestState.canRetryRequest) {
+                    OutlinedButton(
+                        onClick = requestViewModel::retryFailedAttempts,
+                        enabled = !liveRequestState.isSendingRequest && !liveRequestState.isCancellingRequest,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text("Retry failed host attempt")
+                    }
+                }
+                hostResponses
+                    .filter { response -> response.outcome != HostResponseOutcome.SUCCEEDED }
+                    .forEach { response ->
+                        Text(
+                            response.errorMessage.ifBlank { "The processing host could not complete this request." },
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
                 requestStates.forEach { requestState ->
                     requestStatusCard(requestState)
                 }
@@ -218,26 +387,98 @@ internal fun conversationDetailScreen(
                 Button(
                     onClick = {
                         val messageText = draft
-                        scope.launch {
-                            if (conversationMessagesViewModel.sendMessage(messageText)) {
-                                conversationMessagesViewModel.updateDraft("")
-                            }
+                        if (privacyConsentAccepted) {
+                            submitMessageToHost(messageText)
+                        } else {
+                            pendingPrivacyPrompt = messageText
                         }
                     },
-                    enabled = messageValidation.isValid,
+                    enabled =
+                        messageValidation.isValid &&
+                            liveRequestState.discoveredPeers.any { it.isTrusted } &&
+                            !liveRequestState.isSelectingModel &&
+                            !liveRequestState.isSendingRequest,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text("Send")
+                    Text(
+                        when {
+                            liveRequestState.isSelectingModel -> "Checking model…"
+                            liveRequestState.isSendingRequest -> "Sending…"
+                            else -> "Send"
+                        },
+                    )
                 }
-                Text(
-                    "Messages are saved only on this device. Sending to a processing host is not available yet.",
-                    style = MaterialTheme.typography.bodySmall,
-                )
+                if (!liveRequestState.discoveredPeers.any { it.isTrusted }) {
+                    Text(
+                        "A trusted processing host is required before a message can be sent.",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
             }
             ConversationDetailUiState.Missing -> {
                 Text("This conversation could not be found on this device.")
             }
         }
+    }
+
+    pendingTrustPeerId?.let { peerId ->
+        val hostNumber = liveRequestState.discoveredPeers.indexOfFirst { it.peerId == peerId } + 1
+        AlertDialog(
+            onDismissRequest = { pendingTrustPeerId = null },
+            title = { Text("Before you trust this processing host") },
+            text = {
+                Text(
+                    "Processing host ${hostNumber.coerceAtLeast(1)} will be able to read the prompts and context you send after transport decryption. " +
+                        "Encryption protects the data in transit; it does not hide it from the receiving host or its operator. " +
+                        "Trust is saved only after your confirmation. You can revoke it later from host settings.",
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        requestViewModel.trustPeerAfterExplicitConfirmation(peerId)
+                        pendingTrustPeerId = null
+                    },
+                ) {
+                    Text("Trust this host")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingTrustPeerId = null }) {
+                    Text("Cancel")
+                }
+            },
+        )
+    }
+
+    pendingPrivacyPrompt?.let { prompt ->
+        AlertDialog(
+            onDismissRequest = { pendingPrivacyPrompt = null },
+            title = { Text("Privacy before your first request") },
+            text = {
+                Text(
+                    "A selected processing host can read your message and any context sent with it after transport decryption. " +
+                        "The host operator may inspect or retain what the host receives outside this app's control. " +
+                        "Only continue with content you are willing to disclose to a host you explicitly trust.",
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        pendingPrivacyPrompt = null
+                        onPrivacyConsentAccepted()
+                        submitMessageToHost(prompt)
+                    },
+                ) {
+                    Text("I understand and agree")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingPrivacyPrompt = null }) {
+                    Text("Cancel")
+                }
+            },
+        )
     }
 }
 

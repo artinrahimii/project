@@ -70,6 +70,41 @@ class ConversationMessagesViewModelTest {
         }
 
     @Test
+    fun persistsAssistantResponseAndTypedErrorInTheSameConversationExactlyOnce() =
+        runBlocking {
+            database.conversationDao().upsert(
+                ConversationEntity(
+                    conversationId = "conversation-response",
+                    title = "Response conversation",
+                    createdAtEpochMillis = 1L,
+                    updatedAtEpochMillis = 1L,
+                ),
+            )
+            val viewModel =
+                ConversationMessagesViewModel(
+                    conversationId = "conversation-response",
+                    messageDao = database.messageDao(),
+                    clockMillis = { 200L },
+                    messageIdGenerator = { "user-message" },
+                )
+
+            assertTrue(viewModel.sendMessage("question"))
+            assertTrue(viewModel.saveAssistantResponse("request-1", "attempt-1", "answer"))
+            assertFalse(viewModel.saveAssistantResponse("request-1", "attempt-1", "answer"))
+            assertTrue(viewModel.saveRequestNotice("request-2", "attempt-2", "The trusted host is unavailable."))
+            assertFalse(viewModel.saveRequestNotice("request-2", "attempt-2", "The trusted host is unavailable."))
+
+            val messages = viewModel.messages.first()
+            assertEquals(listOf("user", "assistant", "system"), messages.map { it.authorRole })
+            assertEquals(
+                listOf("question", "answer", "The trusted host is unavailable."),
+                messages.map { it.content },
+            )
+            assertEquals(listOf(200L, 201L, 202L), messages.map { it.createdAtEpochMillis })
+            assertEquals(3, database.messageDao().countForConversation("conversation-response"))
+        }
+
+    @Test
     fun draftIsRestoredAfterViewModelRecreation() =
         runBlocking {
             database.conversationDao().upsert(
