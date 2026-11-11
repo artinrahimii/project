@@ -160,3 +160,11 @@
 - Downstream tasks 011/015/019/020/021 were not started because their prerequisites are not satisfied.
 
 نتیجهٔ تلاش A007: **blocked** — blocker is the inability to safely write the 4 MB legacy graph through the current connector, not a product-code or test failure.
+
+## تلاش A008 — همگام‌سازی امن گراف legacy و ledger
+
+- کد فنی: f9f4cc8ad57964dedaca985ccdc679fee5eb7718 — V 3.1.191؛ اسناد بازبینی: 3e786ad83028cd3710e137243bb66963794bf198 — V 3.1.192.
+- Blob SHA اصلی گراف legacy: af686f7163322710e6c7dca87678ce5b2c345052؛ اندازه 4,030,834 بایت UTF-8.
+- Blob SHA پس از sync: 9026969f6036eae22b25851eb0b29cd1d6c57c7a؛ اندازه 4,030,905 بایت UTF-8.
+- فایل کامل با Git محلی روی runner اصلاح شد؛ 168 رکورد و marker بدون اختلاف، 20 unchanged و 148 re_review_required.
+- CI دقیق commit sync در گام بعدی اجرا می‌شود؛ تا قبل از موفقیت، task تکمیل‌شده نیست.

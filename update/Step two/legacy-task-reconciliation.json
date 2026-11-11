@@ -1585,7 +1585,7 @@
         "UPD-S1-014",
         "UPD-S1-016"
       ],
-      "decision": "re_review_required",
+      "decision": "unchanged",
       "review_status": "reviewed",
       "status_changed": false,
       "evidence": [
@@ -1600,9 +1600,10 @@
         "step three/T0116/execution-report.md",
         "https://github.com/artinrahimii/project/actions/runs/42508641717",
         "https://github.com/artinrahimii/project/actions/runs/42508641574",
-        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+        "https://github.com/artinrahimii/project/actions/runs/42508641758",
+        "update/Step three/UPD-S1-008/evidence/post-acceptance-UPD-S1-014-T0116.md"
       ],
-      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
+      "review_commit_sha": "3e786ad83028cd3710e137243bb66963794bf198"
     },
     {
       "legacy_task_id": "T0117",
@@ -1612,7 +1613,7 @@
         "UPD-S1-014",
         "UPD-S1-016"
       ],
-      "decision": "re_review_required",
+      "decision": "unchanged",
       "review_status": "reviewed",
       "status_changed": false,
       "evidence": [
@@ -1630,9 +1631,10 @@
         "step three/T0117/execution-report.md",
         "https://github.com/artinrahimii/project/actions/runs/42508641717",
         "https://github.com/artinrahimii/project/actions/runs/42508641574",
-        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+        "https://github.com/artinrahimii/project/actions/runs/42508641758",
+        "update/Step three/UPD-S1-008/evidence/post-acceptance-UPD-S1-014-T0117.md"
       ],
-      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
+      "review_commit_sha": "3e786ad83028cd3710e137243bb66963794bf198"
     },
     {
       "legacy_task_id": "T0118",
@@ -1643,7 +1645,7 @@
         "UPD-S1-014",
         "UPD-S1-016"
       ],
-      "decision": "re_review_required",
+      "decision": "unchanged",
       "review_status": "reviewed",
       "status_changed": false,
       "evidence": [
@@ -1659,9 +1661,10 @@
         "step three/T0118/execution-report.md",
         "https://github.com/artinrahimii/project/actions/runs/42508641717",
         "https://github.com/artinrahimii/project/actions/runs/42508641574",
-        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+        "https://github.com/artinrahimii/project/actions/runs/42508641758",
+        "update/Step three/UPD-S1-008/evidence/post-acceptance-UPD-S1-014-T0118.md"
       ],
-      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
+      "review_commit_sha": "3e786ad83028cd3710e137243bb66963794bf198"
     },
     {
       "legacy_task_id": "T0119",
@@ -1728,7 +1731,7 @@
       "update_task_ids": [
         "UPD-S1-014"
       ],
-      "decision": "re_review_required",
+      "decision": "unchanged",
       "review_status": "reviewed",
       "status_changed": false,
       "evidence": [
@@ -1747,9 +1750,10 @@
         "step three/T0121/execution-report.md",
         "https://github.com/artinrahimii/project/actions/runs/42508641717",
         "https://github.com/artinrahimii/project/actions/runs/42508641574",
-        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+        "https://github.com/artinrahimii/project/actions/runs/42508641758",
+        "update/Step three/UPD-S1-008/evidence/post-acceptance-UPD-S1-014-T0121.md"
       ],
-      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
+      "review_commit_sha": "3e786ad83028cd3710e137243bb66963794bf198"
     },
     {
       "legacy_task_id": "T0122",
@@ -1758,7 +1762,7 @@
       "update_task_ids": [
         "UPD-S1-014"
       ],
-      "decision": "re_review_required",
+      "decision": "unchanged",
       "review_status": "reviewed",
       "status_changed": false,
       "evidence": [
@@ -1773,9 +1777,10 @@
         "step three/T0122/execution-report.md",
         "https://github.com/artinrahimii/project/actions/runs/42508641717",
         "https://github.com/artinrahimii/project/actions/runs/42508641574",
-        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+        "https://github.com/artinrahimii/project/actions/runs/42508641758",
+        "update/Step three/UPD-S1-008/evidence/post-acceptance-UPD-S1-014-T0122.md"
       ],
-      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
+      "review_commit_sha": "3e786ad83028cd3710e137243bb66963794bf198"
     },
     {
       "legacy_task_id": "T0123",
@@ -1784,7 +1789,7 @@
       "update_task_ids": [
         "UPD-S1-014"
       ],
-      "decision": "re_review_required",
+      "decision": "unchanged",
       "review_status": "reviewed",
       "status_changed": false,
       "evidence": [
@@ -1801,9 +1806,10 @@
         "step three/T0123/execution-report.md",
         "https://github.com/artinrahimii/project/actions/runs/42508641717",
         "https://github.com/artinrahimii/project/actions/runs/42508641574",
-        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+        "https://github.com/artinrahimii/project/actions/runs/42508641758",
+        "update/Step three/UPD-S1-008/evidence/post-acceptance-UPD-S1-014-T0123.md"
       ],
-      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
+      "review_commit_sha": "3e786ad83028cd3710e137243bb66963794bf198"
     },
     {
       "legacy_task_id": "T0124",
@@ -1813,7 +1819,7 @@
         "UPD-S1-014",
         "UPD-S1-023"
       ],
-      "decision": "re_review_required",
+      "decision": "unchanged",
       "review_status": "reviewed",
       "status_changed": false,
       "evidence": [
@@ -1828,9 +1834,10 @@
         "step three/T0124/execution-report.md",
         "https://github.com/artinrahimii/project/actions/runs/42508641717",
         "https://github.com/artinrahimii/project/actions/runs/42508641574",
-        "https://github.com/artinrahimii/project/actions/runs/42508641758"
+        "https://github.com/artinrahimii/project/actions/runs/42508641758",
+        "update/Step three/UPD-S1-008/evidence/post-acceptance-UPD-S1-014-T0124.md"
       ],
-      "review_commit_sha": "07b21e2762ea9c03157de9f6c6a379eea07919de"
+      "review_commit_sha": "3e786ad83028cd3710e137243bb66963794bf198"
     },
     {
       "legacy_task_id": "T0125",
@@ -1901,7 +1908,7 @@
       "update_task_ids": [
         "UPD-S1-014"
       ],
-      "decision": "re_review_required",
+      "decision": "unchanged",
       "review_status": "reviewed",
       "status_changed": false,
       "evidence": [
@@ -1916,9 +1923,10 @@
         "tests/test_android_network_failure_acceptance.py",
         "step three/T0127/execution-report.md",
         "https://github.com/artinrahimii/project/actions/runs/42509179813",
-        "https://github.com/artinrahimii/project/actions/runs/42509179878"
+        "https://github.com/artinrahimii/project/actions/runs/42509179878",
+        "update/Step three/UPD-S1-008/evidence/post-acceptance-UPD-S1-014-T0127.md"
       ],
-      "review_commit_sha": "7082162e902e1c7e32718e0af687f8f62b7d92dc"
+      "review_commit_sha": "3e786ad83028cd3710e137243bb66963794bf198"
     },
     {
       "legacy_task_id": "T0128",

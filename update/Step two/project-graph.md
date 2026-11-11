@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.194",
+  "commit_intent": "V 3.1.197",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -8177,7 +8177,7 @@
         "هیچ prompt، response یا history به سرویس directory ارسال یا از آن دریافت نشود.",
         "قابلیت مدل تنها با شناسه و metadata معتبر و backend واقعاً آماده قابل قبول باشد؛ صرف advertised بودن مدل برای پذیرش کافی نیست."
       ],
-      "status": "blocked",
+      "status": "in_progress",
       "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
@@ -8198,7 +8198,11 @@
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md",
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md",
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md",
-        "update/Step three/UPD-S1-014/evidence/discovery-selector-A007.md"
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A007.md",
+        "step three/project-graph.md",
+        "update/Step two/legacy-task-reconciliation.json",
+        "update/Step two/legacy-task-reconciliation.md",
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A008.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md",
@@ -8224,14 +8228,15 @@
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md",
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md",
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md",
-        "update/Step three/UPD-S1-014/evidence/discovery-selector-A007.md"
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A007.md",
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A008.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0116, T0117, T0118, T0119, T0120, T0121, T0122, T0123, T0124, T0125, T0126, T0127, T0128. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 7,
+        "attempt_count": 8,
         "failed_attempt_count": 4,
-        "last_attempt_id": "UPD-S1-014-20261111-A007",
-        "last_attempt_result": "blocked",
+        "last_attempt_id": "UPD-S1-014-20261111-A008",
+        "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
@@ -8244,7 +8249,11 @@
           "update/Step three/UPD-S1-014/evidence/discovery-selector-A004.md",
           "update/Step three/UPD-S1-014/evidence/discovery-selector-A005.md",
           "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md",
-          "update/Step three/UPD-S1-014/evidence/discovery-selector-A007.md"
+          "update/Step three/UPD-S1-014/evidence/discovery-selector-A007.md",
+          "step three/project-graph.md",
+          "update/Step two/legacy-task-reconciliation.json",
+          "update/Step two/legacy-task-reconciliation.md",
+          "update/Step three/UPD-S1-014/evidence/discovery-selector-A008.md"
         ],
         "related_commits": [
           "0392fb1a57a1e105f54fda19c6e2a03fe33e531d",
@@ -8282,7 +8291,7 @@
           "Exact V 3.1.185 Android ktlintMainSourceSetCheck failed two chain-method-continuation rules caused by chained property access in comparator; JVM and Keystore instrumentation were not run.",
           "Exact V 3.1.186 Python quality: 496 tests ran, one stale source-contract assertion still expected pre-refactor comparator property expressions and '.take(maxHosts)'; compileall and graph guards did not run."
         ],
-        "blocked_reason": "The full step three/project-graph.md is a 4,030,834-byte Git blob (SHA af686f7163322710e6c7dca87678ce5b2c345052). The complete original blob was retrieved, its byte length matched the Git tree, and its fenced JSON parsed with 230 nodes. However, the GitHub connector's create_blob/update_file transport failed with an HTTP/2 body-read error when sending the full replacement. A compact serialization did not reduce the file size, and no GitHub ref update or partial file write occurred. Without a repository-local Git client or another reliable large-blob write path, the eight post-acceptance update_impact decisions cannot be synchronized safely with the reconciliation ledger.",
+        "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -8290,7 +8299,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Resume when a repository-local Git client or another reliable full-blob write path is available. Atomically synchronize T0116, T0117, T0118, T0121, T0122, T0123, T0124 and T0127 in step three/project-graph.md and update/Step two/legacy-task-reconciliation.json; run both graph guards and reconciliation contract checks before reopening this task. UPD-S1-011 and UPD-S1-015 depend on UPD-S1-014; UPD-S1-019 depends on 011 and 015; UPD-S1-020 depends on 019; UPD-S1-021 depends on 020. Do not start those tasks while this prerequisite is blocked."
+        "follow_up": "Run exact-head quality and promote only if all six steps pass."
       },
       "execution_history": [
         {
@@ -8665,6 +8674,31 @@
           "device_and_host_details_redacted": "CI only: Ubuntu GitHub-hosted runner, Windows GitHub-hosted runner and Android API 36 x86_64 emulator. No physical Android device, user-owned Windows host or external independent-node test was used.",
           "model_revision_and_sha256": "No local model inference was performed; model revision/checksum not applicable.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable; clean install and in-place upgrade remain UPD-S1-021."
+        },
+        {
+          "attempt_id": "UPD-S1-014-20261111-A008",
+          "started_at": "2026-11-11T11:38:54Z",
+          "ended_at": "2026-11-11T11:38:54Z",
+          "result": "partial",
+          "summary": "Eight post-acceptance decisions synchronized in a full local Git checkout; exact-head CI pending.",
+          "changed_files": [
+            "step three/project-graph.md",
+            "update/Step two/legacy-task-reconciliation.json",
+            "update/Step two/legacy-task-reconciliation.md",
+            "update/Step two/project-graph.md",
+            "update/Step three/UPD-S1-014/execution-report.md",
+            "update/Step three/UPD-S1-014/evidence/discovery-selector-A008.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": "The large-blob connector write limit was replaced with a full Git checkout on the GitHub Actions runner.",
+          "contract_changes": [],
+          "follow_up": "Run exact-head quality and promote only if all six steps pass.",
+          "device_and_host_details_redacted": "GitHub Actions runner only; no physical device used.",
+          "model_revision_and_sha256": "No local inference executed.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; tracked by UPD-S1-021."
         }
       ]
     },
@@ -13603,14 +13637,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-11T10:32:48.068Z",
+    "as_of": "2026-11-11T11:38:54Z",
     "total_tasks": 24,
     "not_started": 4,
-    "in_progress": 0,
+    "in_progress": 1,
     "done": 18,
-    "blocked": 2,
-    "verified_completion_percentage": 75,
-    "calculation": "18 verified done update tasks / 24 total update tasks = 75.00%. UPD-S1-014 is blocked on the large legacy graph write and UPD-S1-020 is blocked on unavailable physical devices/model; four dependent tasks remain not_started."
+    "blocked": 1,
+    "verified_completion_percentage": 75.0,
+    "calculation": "18 verified done update tasks / 24 total update tasks = 75.00%. UPD-S1-014 awaits exact-head synchronization validation; UPD-S1-020 remains blocked on physical hardware and a loaded local model."
   },
   "visual_identity": {
     "scope": [
@@ -13724,7 +13758,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-10T22:07:56.922Z",
+  "updated_at": "2026-11-11T11:38:54Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
@@ -13922,5 +13956,4 @@
       "Each reviewed ledger row is mirrored by the Step Three update_impact marker; future re-review is triggered by mapped implementation acceptance."
     ]
   }
-}
-```
+}```
