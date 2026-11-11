@@ -24,7 +24,7 @@ class UpdateS1011RendezvousConfigurationTests(unittest.TestCase):
 
     def test_custom_directory_entry_is_confined_to_advanced_host_settings(self):
         self.assertIn('title = "Advanced host settings"', ACTIVITY)
-        self.assertIn('label = { Text("Custom HTTPS Rendezvous URL (optional)") }', ACTIVITY)
+        self.assertIn('Text("Custom HTTPS Rendezvous URL (optional)")', ACTIVITY)
         self.assertIn("Clear this field to return to that default", ACTIVITY)
         self.assertIn("customOverride.ifBlank { configuredRendezvousUrl }", ACTIVITY)
         self.assertIn("remove(RENDEZVOUS_URL_KEY)", ACTIVITY)

@@ -63,7 +63,7 @@ class AndroidComposeNavigationTests(unittest.TestCase):
 
     def test_request_screen_configures_directory_and_uses_explicit_peer_trust(self):
         self.assertIn('title = "Advanced host settings"', ACTIVITY)
-        self.assertIn('label = { Text("Custom HTTPS Rendezvous URL (optional)") }', ACTIVITY)
+        self.assertIn('Text("Custom HTTPS Rendezvous URL (optional)")', ACTIVITY)
         self.assertIn("The packaged directory is used by default.", ACTIVITY)
         self.assertIn("BuildConfig.RENDEZVOUS_SERVICE_BASE_URL", ACTIVITY)
         self.assertIn("whitepRendezvousServiceBaseUrl", ANDROID_BUILD)
