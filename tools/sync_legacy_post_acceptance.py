@@ -149,7 +149,7 @@ def sync():
     new_sha=git("hash-object",str(LEGACY)); new_size=(ROOT/LEGACY).stat().st_size
     atomic(LEDGER,json.dumps(ledger,ensure_ascii=False,indent=2)+"\n")
     narrative=(ROOT/LEGACY_MD).read_text(encoding="utf-8")
-    heading="## بازبینی تکمیلی پس از پذیرش UPD-S1-014 — V 3.1.196"
+    heading=f"## بازبینی تکمیلی پس از پذیرش UPD-S1-014 — {version()}"
     if heading not in narrative:
         narrative+=f"\n\n{heading}\n\n- هشت سند پس از پذیرش برای T0116، T0117، T0118، T0121، T0122، T0123، T0124 و T0127 بررسی شدند؛ تصمیم هر هشت unchanged است.\n- وضعیت پایه done و تاریخچهٔ وظایف قدیمی حفظ شد.\n- مجموع reconciliation: 168 reviewed، صفر pending؛ 20 unchanged و 148 re_review_required.\n"
     atomic(LEGACY_MD,narrative)
@@ -233,7 +233,8 @@ def finalize(sync_sha,run):
     add(sm["tests_passed"],f"Exact-head quality passed on {sync_sha}; run {run['run_id']}")
     add(sm["related_commits"],sync_sha)
     report=(ROOT/REPORT).read_text(encoding="utf-8")
-    report+=f"\n\n## CI دقیق A008 — V 3.1.196\n\n- Commit sync: {sync_sha}.\n- Quality Gate: PASS؛ run {run['run_id']} — {run['url']}.\n- تمام شش مرحلهٔ Python tests، compileall و graph_guard برای هر دو گراف موفق شدند.\n- reconciliation: 168 reviewed، صفر pending؛ 20 unchanged و 148 re_review_required.\n"
+    sync_commit_message=git("show","-s","--format=%s",sync_sha)
+    report+=f"\n\n## CI دقیق A008 — {sync_commit_message}\n\n- Commit sync: {sync_sha}.\n- Quality Gate: PASS؛ run {run['run_id']} — {run['url']}.\n- تمام شش مرحلهٔ Python tests، compileall و graph_guard برای هر دو گراف موفق شدند.\n- reconciliation: 168 reviewed، صفر pending؛ 20 unchanged و 148 re_review_required.\n"
     atomic(REPORT,report)
     ev=(ROOT/EVIDENCE).read_text(encoding="utf-8")+f"\n\nExact-head CI passed on {sync_sha}; run {run['run_id']} — {run['url']}.\n"
     atomic(EVIDENCE,ev)
@@ -276,14 +277,16 @@ def reopen(final_sha,run):
     return [UPDATE,REPORT]
 
 def main():
-    if os.environ.get("GITHUB_EVENT_NAME")=="workflow_dispatch": return
+    event=os.environ.get("GITHUB_EVENT_NAME")
+    if event=="workflow_dispatch": return
+    if event!="push": raise RuntimeError("Only push events may perform the reconciliation write.")
+    if os.environ.get("GITHUB_REF")!="refs/heads/main": raise RuntimeError("Reconciliation writes are restricted to refs/heads/main.")
     parent=git("rev-parse","HEAD")
     if os.environ.get("GITHUB_SHA") and parent!=os.environ["GITHUB_SHA"]: raise RuntimeError("Checkout SHA differs from push event")
     git("fetch","origin","main")
     if git("rev-parse","refs/remotes/origin/main")!=parent: raise RuntimeError("Remote main moved")
-    if git("log","-1","--format=%s")!="V 3.1.195": raise RuntimeError("Expected bootstrap V 3.1.195")
+    version()  # Validate the current V 3.1.X sequence before touching files.
     paths=sync()
-    if version()!="V 3.1.196": raise RuntimeError("Unexpected sync version")
     sync_sha=commit_paths(parent,paths)
     first=dispatch_quality(sync_sha)
     if not first.get("success"):
@@ -292,7 +295,6 @@ def main():
         print("A008 remains incomplete; failure recorded in",failure_sha)
         raise RuntimeError(str(first))
     final_paths=finalize(sync_sha,first)
-    if version()!="V 3.1.197": raise RuntimeError("Unexpected finalization version")
     final_sha=commit_paths(sync_sha,final_paths)
     second=dispatch_quality(final_sha)
     if second.get("success"):
