@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.191",
+  "commit_intent": "V 3.1.193",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -8177,7 +8177,7 @@
         "هیچ prompt، response یا history به سرویس directory ارسال یا از آن دریافت نشود.",
         "قابلیت مدل تنها با شناسه و metadata معتبر و backend واقعاً آماده قابل قبول باشد؛ صرف advertised بودن مدل برای پذیرش کافی نیست."
       ],
-      "status": "in_progress",
+      "status": "blocked",
       "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
@@ -8197,7 +8197,8 @@
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md",
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md",
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md",
-        "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md"
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md",
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A007.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md",
@@ -8222,14 +8223,15 @@
         "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md",
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md",
-        "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md"
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md",
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A007.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0116, T0117, T0118, T0119, T0120, T0121, T0122, T0123, T0124, T0125, T0126, T0127, T0128. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 6,
+        "attempt_count": 7,
         "failed_attempt_count": 4,
-        "last_attempt_id": "UPD-S1-014-20261111-A006",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "UPD-S1-014-20261111-A007",
+        "last_attempt_result": "blocked",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
@@ -8241,7 +8243,8 @@
           "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md",
           "update/Step three/UPD-S1-014/evidence/discovery-selector-A004.md",
           "update/Step three/UPD-S1-014/evidence/discovery-selector-A005.md",
-          "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md"
+          "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md",
+          "update/Step three/UPD-S1-014/evidence/discovery-selector-A007.md"
         ],
         "related_commits": [
           "0392fb1a57a1e105f54fda19c6e2a03fe33e531d",
@@ -8249,7 +8252,9 @@
           "911ef42bdfaf8b32a46169360a710ff21a3b9146",
           "cc6c8c9f0839137867732bdda9ddef9c3045d2a5",
           "f5268f24296dee058ab26bbeddaeee3cc68b9660",
-          "faad2ff593ded23bda101dda1fe6eb1fc52320c7"
+          "faad2ff593ded23bda101dda1fe6eb1fc52320c7",
+          "f9f4cc8ad57964dedaca985ccdc679fee5eb7718",
+          "3e786ad83028cd3710e137243bb66963794bf198"
         ],
         "tests_passed": [
           "Exact V 3.1.183 Quality gate passed 496 Python tests, compileall and graph guards (run 42907340773).",
@@ -8265,7 +8270,11 @@
           "Exact V 3.1.186 Rendezvous container build/smoke passed (run 42909332737).",
           "V 3.1.190 quality: 496 Python tests, compileall and both graph guards passed (42911682114).",
           "V 3.1.190 Android selector/discovery/directory/dispatcher/feedback suites passed (25/7/10/22/5); Product Build Android passed (42911681942).",
-          "V 3.1.190 HostLifecycle and Rendezvous smoke passed (42911681942, 42911681917)."
+          "V 3.1.190 HostLifecycle and Rendezvous smoke passed (42911681942, 42911681917).",
+          "V 3.1.191 Quality Gate: 496 Python tests, compileall and graph guards passed (42999958123).",
+          "V 3.1.191 Android job 37/37 steps; 237 tests passed, 1 emulator LAN test skipped, 0 failures (42999958352).",
+          "V 3.1.191 Windows job 29/29 steps and HostLifecycle 14/14 steps; 68 critical markers, 86.15% line coverage (42999958352).",
+          "V 3.1.191 Rendezvous container 6/6 steps passed (42999958177)."
         ],
         "tests_failed": [
           "V 3.1.183 Android ktlint: three chain-method-continuation formatting violations; JVM did not run.",
@@ -8273,7 +8282,7 @@
           "Exact V 3.1.185 Android ktlintMainSourceSetCheck failed two chain-method-continuation rules caused by chained property access in comparator; JVM and Keystore instrumentation were not run.",
           "Exact V 3.1.186 Python quality: 496 tests ran, one stale source-contract assertion still expected pre-refactor comparator property expressions and '.take(maxHosts)'; compileall and graph guards did not run."
         ],
-        "blocked_reason": null,
+        "blocked_reason": "The full step three/project-graph.md is a 4,030,834-byte Git blob (SHA af686f7163322710e6c7dca87678ce5b2c345052). The complete original blob was retrieved, its byte length matched the Git tree, and its fenced JSON parsed with 230 nodes. However, the GitHub connector's create_blob/update_file transport failed with an HTTP/2 body-read error when sending the full replacement. A compact serialization did not reduce the file size, and no GitHub ref update or partial file write occurred. Without a repository-local Git client or another reliable large-blob write path, the eight post-acceptance update_impact decisions cannot be synchronized safely with the reconciliation ledger.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -8281,7 +8290,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Synchronize the eight eligible update_impact markers and matching ledger records in one commit with the old graph, validate both complete graphs and reconciliation schema, then reevaluate UPD-S1-014. T0125/T0126 await UPD-S1-015; T0128 awaits T0230 and independent-node acceptance."
+        "follow_up": "Resume when a repository-local Git client or another reliable full-blob write path is available. Atomically synchronize T0116, T0117, T0118, T0121, T0122, T0123, T0124 and T0127 in step three/project-graph.md and update/Step two/legacy-task-reconciliation.json; run both graph guards and reconciliation contract checks before reopening this task. UPD-S1-011 and UPD-S1-015 depend on UPD-S1-014; UPD-S1-019 depends on 011 and 015; UPD-S1-020 depends on 019; UPD-S1-021 depends on 020. Do not start those tasks while this prerequisite is blocked."
       },
       "execution_history": [
         {
@@ -8581,6 +8590,81 @@
           "device_and_host_details_redacted": "GitHub-hosted Linux runner and Android API 36 x86_64 emulator only; no physical Android device or owner-operated Windows host.",
           "model_revision_and_sha256": "No local model inference was executed.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable; tracked by UPD-S1-021."
+        },
+        {
+          "attempt_id": "UPD-S1-014-20261111-A007",
+          "started_at": "2026-11-11T10:16:40Z",
+          "ended_at": "2026-11-11T10:28:04.463Z",
+          "result": "blocked",
+          "summary": "All six technical acceptance criteria for authenticated metadata-only discovery, readiness, capacity/model filtering, deterministic measured ranking, single-host cardinality and metadata-only directory boundary passed on V 3.1.191; all exact-head CI workflows passed. The task is blocked only because the required post-acceptance legacy marker synchronization cannot safely rewrite the 4,030,834-byte legacy graph through the connected GitHub write path.",
+          "changed_files": [
+            "update/Step three/UPD-S1-014/evidence/discovery-selector-A007.md",
+            "update/Step three/UPD-S1-014/execution-report.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": "f9f4cc8ad57964dedaca985ccdc679fee5eb7718",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "GitHub Actions quality workflow on exact V 3.1.191",
+              "result": "passed",
+              "run_id": 42999958123,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42999958123",
+              "summary": "496 Python tests passed; compileall and both graph guards completed; old graph guard reported 0 errors and one preserved metadata warning."
+            },
+            {
+              "name": "Android client build and tests",
+              "command": "GitHub Actions White-P product build on exact V 3.1.191",
+              "result": "passed",
+              "run_id": 42999958352,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42999958352",
+              "summary": "Android job 37/37 steps passed; APK build/lint succeeded; 237 Android JVM/instrumentation tests passed, 1 LAN emulator test skipped, 0 failures."
+            },
+            {
+              "name": "Windows host build and installer",
+              "command": "GitHub Actions White-P product build on exact V 3.1.191",
+              "result": "passed",
+              "run_id": 42999958352,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42999958352",
+              "summary": "Windows job 29/29 steps passed; WPF startup, identity/trust checks, build/publish and installer acceptance passed."
+            },
+            {
+              "name": "Host lifecycle unit/integration",
+              "command": "HostLifecycle job on exact V 3.1.191",
+              "result": "passed",
+              "run_id": 42999958352,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42999958352",
+              "summary": "14/14 job steps passed; 68 critical pass markers, 1 skip and 86.15% line coverage."
+            },
+            {
+              "name": "Rendezvous container smoke",
+              "command": "Rendezvous container workflow on exact V 3.1.191",
+              "result": "passed",
+              "run_id": 42999958177,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42999958177",
+              "summary": "6/6 steps passed; non-root container health, announcement, discovery and invalid-input rejection passed."
+            },
+            {
+              "name": "Legacy graph full-file integrity",
+              "command": "Fetch Git Blob API and parse fenced JSON",
+              "result": "passed",
+              "summary": "Tree path step three/project-graph.md: blob af686f7163322710e6c7dca87678ce5b2c345052, 4,030,834 bytes; fetched content matched tree byte length and parsed to 230 nodes."
+            },
+            {
+              "name": "Legacy graph write through connector",
+              "command": "GitHub update_file full replacement on main",
+              "result": "blocked",
+              "summary": "HTTP/2 body-read error while transmitting the full 4,030,834-byte replacement; no ref update occurred and main remained unchanged."
+            }
+          ],
+          "failure_details": "The large-file write did not complete. Earlier create_blob/update_file attempts returned transport errors; a compact JSON representation did not reduce the source file size, so no repeated destructive or truncated write was attempted. The old graph and reconciliation ledger remain unchanged and internally consistent with their existing re_review_required decisions.",
+          "blocked_reason": "The full step three/project-graph.md is a 4,030,834-byte Git blob (SHA af686f7163322710e6c7dca87678ce5b2c345052). The complete original blob was retrieved, its byte length matched the Git tree, and its fenced JSON parsed with 230 nodes. However, the GitHub connector's create_blob/update_file transport failed with an HTTP/2 body-read error when sending the full replacement. A compact serialization did not reduce the file size, and no GitHub ref update or partial file write occurred. Without a repository-local Git client or another reliable large-blob write path, the eight post-acceptance update_impact decisions cannot be synchronized safely with the reconciliation ledger.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Resume when a repository-local Git client or another reliable full-blob write path is available. Atomically synchronize T0116, T0117, T0118, T0121, T0122, T0123, T0124 and T0127 in step three/project-graph.md and update/Step two/legacy-task-reconciliation.json; run both graph guards and reconciliation contract checks before reopening this task. UPD-S1-011 and UPD-S1-015 depend on UPD-S1-014; UPD-S1-019 depends on 011 and 015; UPD-S1-020 depends on 019; UPD-S1-021 depends on 020. Do not start those tasks while this prerequisite is blocked.",
+          "device_and_host_details_redacted": "CI only: Ubuntu GitHub-hosted runner, Windows GitHub-hosted runner and Android API 36 x86_64 emulator. No physical Android device, user-owned Windows host or external independent-node test was used.",
+          "model_revision_and_sha256": "No local model inference was performed; model revision/checksum not applicable.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; clean install and in-place upgrade remain UPD-S1-021."
         }
       ]
     },
@@ -13473,14 +13557,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-11T09:27:00Z",
+    "as_of": "2026-11-11T10:28:04.463Z",
     "total_tasks": 24,
     "not_started": 5,
-    "in_progress": 1,
+    "in_progress": 0,
     "done": 18,
-    "blocked": 0,
+    "blocked": 1,
     "verified_completion_percentage": 75,
-    "calculation": "18 verified done update tasks / 24 total update tasks = 75.00%. UPD-S1-014 remains in_progress pending synchronized legacy graph and reconciliation ledger updates; five tasks remain not_started."
+    "calculation": "18 verified done update tasks / 24 total update tasks = 75.00%. UPD-S1-014 is blocked on the large legacy graph write; five downstream tasks remain not_started because their prerequisites are not met."
   },
   "visual_identity": {
     "scope": [

@@ -144,3 +144,19 @@
 - آزمون فیزیکی Android-to-Windows، inference روی میزبان واقعی متعلق به کاربر و استقرار عمومی HTTPS در این تلاش اجرا نشده‌اند.
 
 نتیجهٔ A006: تمام آزمون‌های فنیِ قابل اجرا موفق‌اند؛ task به دلیل تکمیل‌نشدن sync دو گراف و ledger در وضعیت **in_progress** باقی می‌ماند.
+
+## تلاش A007 — بازبینی exact-head و محدودیت نوشتن گراف legacy (۱۱ نوامبر ۲۰۲۶)
+
+- خط مبنای محصول: f9f4cc8ad57964dedaca985ccdc679fee5eb7718 — V 3.1.191.
+- Quality Gate run 42999958123: 496 Python tests passed; compileall and both graph guards completed; legacy guard 0 errors/1 preserved metadata warning.
+- Product Build run 42999958352: Windows 29/29 steps passed; Android 37/37 steps passed; HostLifecycle 14/14 passed.
+- Android result: 237 tests passed, 1 emulator LAN integration skipped, 0 failures.
+- HostLifecycle: 68 critical pass markers, 1 skip, 86.15% line coverage.
+- Rendezvous run 42999958177: 6/6 steps passed; container health, announcement, discovery and invalid-input rejection successful.
+- Eight post-acceptance review evidence files for T0116/T0117/T0118/T0121/T0122/T0123/T0124/T0127 were added in V 3.1.192.
+- Full legacy graph integrity: Blob SHA af686f7163322710e6c7dca87678ce5b2c345052, Git tree size 4,030,834 bytes, fully fetched and parsed, 230 nodes.
+- Attempt to transmit the full replacement through the connected GitHub contents/blob API failed with HTTP/2 body-read error; no branch update or truncated write occurred. A more compact JSON serialization did not reduce bytes because the source JSON is already compact.
+- Existing legacy ledger and graph markers remain internally consistent: 168 records, 168 markers, 12 unchanged and 156 re_review_required. The eight post-acceptance reviews are evidence-only until both source files can be synchronously updated.
+- Downstream tasks 011/015/019/020/021 were not started because their prerequisites are not satisfied.
+
+نتیجهٔ تلاش A007: **blocked** — blocker is the inability to safely write the 4 MB legacy graph through the current connector, not a product-code or test failure.
