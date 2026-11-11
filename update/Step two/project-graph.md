@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.193",
+  "commit_intent": "V 3.1.194",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -10322,7 +10322,7 @@
         "گزارش دستگاه/سیستم‌عامل/نسخهٔ اپ/مدل و checksum/کامیت/نتیجه را ثبت کند، اما متن prompt/response، کلید، توکن یا شناسهٔ حساس را افشا نکند.",
         "آزمون مستقل از AndroidWindowsLanIntegrationTest و آزمون مستقل llama.cpp اجرا شده باشد؛ پاسخ ثابت، mock، fixture، test peer یا emulator مدرک تکمیل نیست."
       ],
-      "status": "not_started",
+      "status": "blocked",
       "status_fa": "انجام‌نشده",
       "expected_output_paths": [
         "src/Client.Android/app/src/androidTest/java/com/whitep/client/product/RealAndroidWindowsInferenceAcceptanceTest.kt",
@@ -10331,28 +10331,74 @@
         ".github/workflows/android-windows-real-product-acceptance.yml",
         "update/Step three/UPD-S1-020/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "update/Step three/UPD-S1-020/evidence/physical-device-access-blocker-A001.md",
+        "update/Step three/UPD-S1-020/execution-report.md"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-020/evidence/physical-device-access-blocker-A001.md"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=add; affected_task_ids=T0200, T0201, T0202, T0203, T0204, T0205, T0206, T0223, T0224, T0225, T0226, T0227, T0229. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
-        "related_commits": [],
+        "last_attempt_id": "UPD-S1-020-20261111-A001",
+        "last_attempt_result": "blocked",
+        "changed_files": [
+          "update/Step three/UPD-S1-020/evidence/physical-device-access-blocker-A001.md",
+          "update/Step three/UPD-S1-020/execution-report.md"
+        ],
+        "related_commits": [
+          "cf042d3f7634a1a113280a5f50257c354feb2117"
+        ],
         "tests_passed": [],
         "tests_failed": [],
-        "blocked_reason": null,
+        "blocked_reason": "No physical Android handset, user-operated Windows host or locally loaded model can be controlled by the current connected execution environment. CI provides only a GitHub-hosted Windows runner and Android API 36 x86_64 emulator; the task explicitly prohibits emulator, fixture, LAN-only or independent-backend substitutes. UPD-S1-019 is also not done, so the mandatory E2E start condition is unmet.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": []
-        }
+        },
+        "follow_up": "Keep blocked until UPD-S1-019 is done and a physical Android device plus an installed Windows host with an actual locally loaded model (with model revision and SHA-256) are available for coordinated end-to-end testing. Then execute the prescribed Android Chat UI → Android runtime → approved P2P → Windows product → real local backend/model → same Room conversation path and all required failure scenarios."
       },
-      "execution_history": [],
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-020-20261111-A001",
+          "started_at": "2026-11-11T10:32:48.068Z",
+          "ended_at": "2026-11-11T10:32:48.068Z",
+          "result": "blocked",
+          "summary": "Pre-start acceptance audit confirmed that the required physical Android device, user-operated Windows host and loaded local model are not accessible in this environment. UPD-S1-019 is also not done. No emulator, fixture, test peer or independent backend was substituted for the required real-product E2E test.",
+          "changed_files": [
+            "update/Step three/UPD-S1-020/evidence/physical-device-access-blocker-A001.md",
+            "update/Step three/UPD-S1-020/execution-report.md"
+          ],
+          "commit_sha": "cf042d3f7634a1a113280a5f50257c354feb2117",
+          "tests": [
+            {
+              "name": "Physical Android/Windows/model availability gate",
+              "command": "Pre-start environment capability check",
+              "result": "blocked",
+              "summary": "No physical Android handset, user-operated Windows host or model file/runtime is available to this connected environment; no test was run."
+            },
+            {
+              "name": "UPD-S1-019 prerequisite",
+              "command": "Update graph prerequisite check",
+              "result": "blocked",
+              "summary": "UPD-S1-019 remains not_started; E2E start condition is therefore unmet."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": "No physical Android handset, user-operated Windows host or locally loaded model can be controlled by the current connected execution environment. CI provides only a GitHub-hosted Windows runner and Android API 36 x86_64 emulator; the task explicitly prohibits emulator, fixture, LAN-only or independent-backend substitutes. UPD-S1-019 is also not done, so the mandatory E2E start condition is unmet.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Keep blocked until UPD-S1-019 is done and a physical Android device plus an installed Windows host with an actual locally loaded model (with model revision and SHA-256) are available for coordinated end-to-end testing. Then execute the prescribed Android Chat UI → Android runtime → approved P2P → Windows product → real local backend/model → same Room conversation path and all required failure scenarios.",
+          "device_and_host_details_redacted": "No physical Android device or user-operated Windows host was available. Only GitHub-hosted CI runner/emulator evidence exists and is expressly insufficient for this task.",
+          "model_revision_and_sha256": "No model was loaded or executed; revision/checksum unavailable.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; in-place upgrade is UPD-S1-021."
+        }
+      ],
       "verification_contract": {
         "must_start_from_android_chat_ui": true,
         "must_use_physical_android_device": true,
@@ -13557,14 +13603,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-11T10:28:04.463Z",
+    "as_of": "2026-11-11T10:32:48.068Z",
     "total_tasks": 24,
-    "not_started": 5,
+    "not_started": 4,
     "in_progress": 0,
     "done": 18,
-    "blocked": 1,
+    "blocked": 2,
     "verified_completion_percentage": 75,
-    "calculation": "18 verified done update tasks / 24 total update tasks = 75.00%. UPD-S1-014 is blocked on the large legacy graph write; five downstream tasks remain not_started because their prerequisites are not met."
+    "calculation": "18 verified done update tasks / 24 total update tasks = 75.00%. UPD-S1-014 is blocked on the large legacy graph write and UPD-S1-020 is blocked on unavailable physical devices/model; four dependent tasks remain not_started."
   },
   "visual_identity": {
     "scope": [
