@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.207",
+  "commit_intent": "V 3.1.208",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -10590,8 +10590,8 @@
         "آزمون‌های انتخاب مدل و سقف خروجی، نبود مدل سازگار، مدل‌های هم‌امتیاز و metadata نامعتبر را پوشش دهند.",
         "آزمون‌های UI نگاشت وضعیت‌های درخواست و عدم افشای IP، Port و PeerId در مسیر عادی را بررسی کنند."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌شده",
       "expected_output_paths": [
         "src/Client.Android/app/src/test/",
         "src/Client.Android/app/src/androidTest/",
@@ -10652,15 +10652,25 @@
         "attempt_count": 1,
         "failed_attempt_count": 0,
         "last_attempt_id": "UPD-S1-019-20261111-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "passed",
         "changed_files": [
           "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerTrustStoreTest.kt",
           "update/Step three/UPD-S1-019/execution-report.md",
           "update/Step three/UPD-S1-019/evidence/acceptance-test-matrix.md",
           "update/Step two/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "33fdfcca9efbf10045a9a822cc654313c8568f69"
+        ],
+        "tests_passed": [
+          "Exact-head Quality Gate passed on V 3.1.207: 502 Python tests; both update graph guard modes clean.",
+          "Exact-head Android JVM suite: 238 passed, 1 skipped, 0 failures; AndroidPeerTrustStoreTest 4/4 passed including host key rotation.",
+          "Exact-head Android Keystore instrumentation: 11 passed, 1 LAN-only skipped, 0 failures.",
+          "Exact-head Windows HostLifecycle: 68 critical PASS markers, 86.14% line coverage, one opt-in real-inference skip.",
+          "Exact-head Windows build/installer: WPF build, startup smoke, isolated clean install, installer smoke and uninstall passed.",
+          "Exact-head Android debug/release build, disposable signing, permission policy and Protobuf verification passed.",
+          "Exact-head Rendezvous container health/announcement/discovery smoke passed."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -10670,23 +10680,80 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Run exact-head quality.yml and product-build.yml on the test commit. Promote to done only after both succeed and the final graph-state commit is revalidated."
+        "follow_up": "Proceed to UPD-S1-020 only when physical Android, installed Windows host, real loaded local model and required public/network prerequisites are available. UPD-S1-021 may prepare candidate packaging and upgrade automation, but cannot be marked done before the physical E2E and both platforms' in-place upgrade acceptance."
       },
       "execution_history": [
         {
           "attempt_id": "UPD-S1-019-20261111-A001",
           "started_at": "2026-11-11T18:20:55.333Z",
-          "ended_at": "2026-11-11T18:20:55.333Z",
-          "result": "partial",
-          "summary": "Existing Android/Windows/shared tests were mapped against all UPD-S1-019 acceptance areas. Added Android peer-trust regression proving a rotated host PeerId does not inherit previous trust and requires fresh explicit confirmation. Exact-head CI is pending.",
+          "ended_at": "2026-11-11T18:33:45.054Z",
+          "result": "passed",
+          "summary": "Exact-head CI passed on V 3.1.207. The added Android host-key-rotation trust test passed in the 4-test AndroidPeerTrustStoreTest suite; all automated Android/Windows suites and quality checks passed. Only the explicitly LAN-dependent AndroidWindowsLanIntegrationTest and opt-in real-model CI check were skipped; physical-device Android-to-Windows acceptance remains a separate UPD-S1-020 gate.",
           "changed_files": [
             "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerTrustStoreTest.kt",
             "update/Step three/UPD-S1-019/execution-report.md",
             "update/Step three/UPD-S1-019/evidence/acceptance-test-matrix.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "33fdfcca9efbf10045a9a822cc654313c8568f69",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "python -m unittest discover -s tests -v; python -m compileall -q tools tests; both graph_guard modes for both graphs",
+              "result": "passed",
+              "run_id": 43076943275,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43076943275",
+              "summary": "502 Python tests passed; update graph guards 0 errors/0 warnings; legacy graph guard 0 errors/1 preserved unmapped-metadata warning."
+            },
+            {
+              "name": "Android JVM unit tests",
+              "command": "gradle --no-daemon testDebugUnitTest createDebugUnitTestCoverageReport",
+              "result": "passed",
+              "run_id": 43076943268,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43076943268",
+              "summary": "239 total; 238 passed, 0 failures, 0 errors, 1 skipped. AndroidPeerTrustStoreTest: 4/4 passed, including rotatedHostIdentityDoesNotInheritPriorTrustAndRequiresFreshConfirmation."
+            },
+            {
+              "name": "Android Keystore instrumentation",
+              "command": "gradle --no-daemon --project-dir src/Client.Android connectedDebugAndroidTest createDebugAndroidTestCoverageReport",
+              "result": "passed",
+              "run_id": 43076943268,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43076943268",
+              "summary": "11 instrumentation cases passed; 1 LAN-only AndroidWindowsLanIntegrationTest skipped by its condition; no failures. These are emulator/provider tests, not physical-device product acceptance."
+            },
+            {
+              "name": "Windows HostLifecycle tests",
+              "command": "dotnet tests/HostLifecycle.Tests/bin/Release/net10.0/HostLifecycle.Tests.dll under dotnet-coverage collect",
+              "result": "passed",
+              "run_id": 43076943268,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43076943268",
+              "summary": "Job completed successfully; 68 critical PASS markers, 1 opt-in real-model integration skip; Cobertura line coverage 86.14% (9286/10780)."
+            },
+            {
+              "name": "Windows build and installer clean-install acceptance",
+              "command": "dotnet restore/build/publish and tools/build_windows_installer.ps1 via Windows Product Build",
+              "result": "passed",
+              "run_id": 43076943268,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43076943268",
+              "summary": "WPF build/publish/startup smoke passed. Installer compiled, installed to isolated temporary location, smoke-launched, verified notices/publisher registration and uninstalled. Installer 61,498,504 bytes; inventory 83 NuGet packages and one model notice. This is clean-install evidence, not an in-place upgrade."
+            },
+            {
+              "name": "Android clean debug/release build and signing smoke",
+              "command": "Gradle clean debug and release builds; disposable JKS signature verification; permission policy; Protobuf source validation",
+              "result": "passed",
+              "run_id": 43076943268,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43076943268",
+              "summary": "Debug APK and release variant built; disposable signing key verified then deleted; minimum permissions and generated Protobuf bindings verified. This is not production-keystore release signing."
+            },
+            {
+              "name": "Rendezvous container build and smoke",
+              "command": "Build production container and exercise HTTP contract",
+              "result": "passed",
+              "run_id": 43076943292,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43076943292",
+              "summary": "Non-root container health, announcement, discovery and invalid-input rejection passed on exact commit."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": null,
@@ -14050,14 +14117,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-11T18:20:55.333Z",
+    "as_of": "2026-11-11T18:33:45.054Z",
     "total_tasks": 24,
     "not_started": 1,
-    "in_progress": 1,
-    "done": 20,
+    "in_progress": 0,
+    "done": 21,
     "blocked": 0,
-    "verified_completion_percentage": 83.33333333333333,
-    "calculation": "20 verified done update tasks / 24 total update tasks = 83.33%. UPD-S1-019 is in progress pending exact-head Android/Windows test CI; UPD-S1-011 and UPD-S1-020 remain deferred_final.",
+    "verified_completion_percentage": 87.5,
+    "calculation": "21 verified done update tasks / 24 total update tasks = 87.50%. UPD-S1-019 passed exact-head automated CI; UPD-S1-020 and UPD-S1-011 remain deferred_final; UPD-S1-021 remains not_started and cannot complete before physical E2E and both in-place upgrades.",
     "deferred_final": 2
   },
   "visual_identity": {
@@ -14172,7 +14239,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-11T18:20:55.333Z",
+  "updated_at": "2026-11-11T18:33:45.054Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
@@ -14391,6 +14458,13 @@
       "to": "in_progress",
       "changed_at": "2026-11-11T18:20:55.333Z",
       "reason": "Execution began after auditing all mapped prerequisites and the explicit UPD-S1-011 downstream allowlist; an Android peer-key-rotation trust regression was added and exact-head CI is pending."
+    },
+    {
+      "task_id": "UPD-S1-019",
+      "from": "in_progress",
+      "to": "done",
+      "changed_at": "2026-11-11T18:33:45.054Z",
+      "reason": "All six acceptance areas were covered by existing tests plus a new Android key-rotation/PeerId trust regression; exact V 3.1.207 quality, Android JVM/instrumentation, Windows HostLifecycle/product build and Rendezvous CI all passed. The LAN-only and opt-in real-model skips are documented and do not replace separate physical E2E acceptance."
     }
   ]
 }```

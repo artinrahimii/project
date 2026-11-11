@@ -33,3 +33,18 @@
 ## محدودیت و پیگیری
 - نتیجهٔ هر workflow فقط پس از مشاهدهٔ run مربوط به SHA دقیق commit ثبت می‌شود.
 - پس از موفقیت، همین گزارش با SHA کامل، run ID و شمار واقعی آزمون‌ها تکمیل و وضعیت گراف به‌روزرسانی می‌شود.
+
+ 
+## نتیجهٔ نهایی تلاش A001 — CI دقیق commit V 3.1.207
+
+- کد آزمون و مبنای اجرا: `33fdfcca9efbf10045a9a822cc654313c8568f69`; پیام `V 3.1.207`.
+- Quality Gate، run [43076943275](https://github.com/artinrahimii/project/actions/runs/43076943275): موفق؛ 502 آزمون Python؛ دو حالت graph_guard برای گراف به‌روزرسانی بدون خطا و بدون هشدار؛ گراف قدیمی بدون خطا و یک هشدار metadata حفظ‌شده.
+- Product Build، run [43076943268](https://github.com/artinrahimii/project/actions/runs/43076943268): موفق؛ هر سه job Windows WPF، Android و HostLifecycle موفق.
+- Android JVM: 239 تست؛ 238 موفق، 0 failure، 0 error، 1 skipped. کلاس AndroidPeerTrustStoreTest شامل 4 تست بود؛ آزمون تازهٔ `rotatedHostIdentityDoesNotInheritPriorTrustAndRequiresFreshConfirmation` موفق شد.
+- Android instrumentation: 11 موفق و یک آزمون LAN-only از `AndroidWindowsLanIntegrationTest` skipped؛ هیچ failure وجود نداشت. این شواهد emulator/Keystore instrumentation هستند، نه تست دستگاه فیزیکی.
+- Windows HostLifecycle: 68 نشانگر PASS؛ پوشش خط 86.14% (9286/10780)؛ آزمون مستقل مدل واقعی که opt-in است skipped ماند.
+- Windows installer: بستهٔ 61,498,504 بایتی تولید، روی مسیر موقت نصب، smoke-launch و سپس uninstall شد؛ 83 بستهٔ NuGet و مجوز یک مدل نمونه ثبت شدند. هشدار `NU1902` برای `System.Formats.Cbor 10.0.0` با شناسهٔ `GHSA-vmv3-wvjp-wqpj` در build مشاهده شد و باید پیش از انتشار بررسی شود.
+- Android: debug و release build موفق؛ release فقط با کلید موقت CI امضا و پس از بررسی حذف شد. Production signing key در این job استفاده نشده است.
+- Rendezvous container build/smoke، run [43076943292](https://github.com/artinrahimii/project/actions/runs/43076943292): موفق.
+- مرز پذیرش: هیچ آزمون فیزیکی Android-to-Windows، اجرای مدل واقعی در همان مسیر UI، ذخیرهٔ پاسخ واقعی در همان Room conversation، public rendezvous reachability یا in-place upgrade انجام نشد؛ این‌ها خارج از دامنهٔ تکمیل UPD-S1-019 و در UPD-S1-011/020/021 باقی می‌مانند.
+- وضعیت UPD-S1-019: `done` با شواهد فوق؛ هیچ ادعایی دربارهٔ تکمیل کل محصول یا release production مطرح نمی‌شود.

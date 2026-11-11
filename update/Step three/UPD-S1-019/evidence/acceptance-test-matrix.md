@@ -24,3 +24,16 @@
 - آزمون Android و Windows در GitHub Actions روی commit اجرایی این وظیفه باید واقعاً اجرا شوند؛ تا ثبت نتیجهٔ دقیق، این تلاش در حال اجرا است.
 - CI/loopback/native .NET integration آزمون فیزیکی محصول نیست.
 - آزمون دستگاه Android واقعی به Windows نصب‌شده با مدل محلی واقعی، بازگشت پاسخ به همان Room و snapshot نصب/ارتقای درجا همچنان در UPD-S1-020 و UPD-S1-021 است و در این وظیفه ادعای موفقیت نمی‌شود.
+
+ 
+## تأیید اجرای دقیق A001
+
+- Source/test commit: `33fdfcca9efbf10045a9a822cc654313c8568f69` (`V 3.1.207`).
+- Quality Gate: PASS — run 43076943275 (502 Python tests; update graph guards both 0 errors/0 warnings).
+- Product Build: PASS — run 43076943268 (Windows, Android and HostLifecycle jobs all successful).
+- Android JVM: 238 passed, 1 skipped, 0 failed; `AndroidPeerTrustStoreTest` 4/4 passed, including the key-rotation regression.
+- Android Keystore instrumentation: 11 passed, 1 LAN-only skipped, 0 failed.
+- Windows HostLifecycle: 68 critical PASS markers; 86.14% line coverage; one explicit real-model opt-in skip.
+- Windows clean installer build/install/smoke/uninstall and Android debug/release build passed.
+- Rendezvous container smoke: PASS — run 43076943292.
+- Not covered here: physical Android-to-Windows, public-network Rendezvous, real local model in the same product request path, and in-place upgrade.
