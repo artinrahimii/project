@@ -15,7 +15,8 @@
 ## معنی یال‌ها و وضعیت‌ها
 
 - یال `A → B` یعنی A پیش‌نیاز B است و باید پیش از تکمیل B انجام و تأیید شود.
-- وضعیت‌ها: `not_started`، `in_progress`، `done` و `blocked`.
+- وضعیت‌ها: `not_started`، `in_progress`، `done`، `blocked` و `deferred_final`.
+- `deferred_final` یعنی پذیرش مشخص‌شده به مرحلهٔ پایانی منتقل شده است؛ این وضعیت `done` نیست و فقط در دامنهٔ downstream_work_allowlist اجازهٔ ادامهٔ کار وابسته را می‌دهد.
 - `done` فقط با فایل واقعی، آزمون موفق، معیار پذیرش پاس‌شده و شواهد commit/CI/device مجاز است.
 - `expected_output_paths` مسیر هدف است؛ `actual_output_paths` تا زمان بررسی وجود فایل واقعی خالی می‌ماند.
 - هر تلاش، حتی شکست‌خورده یا ناقص، باید در `execution_history` افزوده شود؛ سابقه پاک یا جایگزین نمی‌شود.
@@ -96,12 +97,13 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.205",
+  "commit_intent": "V 3.1.206",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
     "done": "انجام‌شده؛ فقط با کد/خروجی واقعی، آزمون موفق، actual_output_paths معتبر و شواهد قابل بازبینی.",
-    "blocked": "مسدود؛ علت، پیش‌نیاز/دسترسی مفقود و شرط رفع مانع باید ثبت شود."
+    "blocked": "مسدود؛ علت، پیش‌نیاز/دسترسی مفقود و شرط رفع مانع باید ثبت شود.",
+    "deferred_final": "موکول به مرحلهٔ پایانی؛ هنوز تکمیل‌شده محسوب نمی‌شود و در درصد پیشرفت انجام‌شده شمرده نمی‌شود. دامنه، شرط شروع و کارهای وابستهٔ مجاز باید در deferral ثبت شوند."
   },
   "graph_policy": {
     "direction": "A -> B یعنی A پیش‌نیاز B است و باید پیش از تکمیل B تأیید شود.",
@@ -118,7 +120,8 @@
     "base_commit_policy": "base_repository.base_commit_sha is the main-branch checkpoint used to prepare this graph revision. At task execution, resolve and record the real current main HEAD; audit all commits after the checkpoint. product_code_baseline_sha identifies the last product-code revision when the checkpoint commit changed only graph metadata. The original v1.1 checkpoint remains historical; this v1.2 correction does not rewrite the product-code baseline.",
     "legacy_task_sync_policy": "affected_task_ids are mapped to real Step Three nodes. Every impacted legacy node must carry update_impact with the corresponding UPD-S1 IDs and remain pending re-review until behavior and evidence are inspected. Traceability metadata alone never changes legacy status.",
     "real_e2e_policy": "The real product E2E gate must traverse the Android chat UI, Android runtime, approved direct P2P transport, installed Windows host, loaded local inference model and the same Android Room conversation. Transport fixtures and standalone model tests are supplemental only.",
-    "upgrade_policy": "Release acceptance requires in-place upgrade tests on both platforms in addition to clean installation. Preserve or explicitly migrate Room history, settings, local model integrity/paths, host identity and peer trust. Never use uninstall/clear-data as an upgrade test."
+    "upgrade_policy": "Release acceptance requires in-place upgrade tests on both platforms in addition to clean installation. Preserve or explicitly migrate Room history, settings, local model integrity/paths, host identity and peer trust. Never use uninstall/clear-data as an upgrade test.",
+    "deferred_final_policy": "A deferred_final node is not done and never counts toward verified completion. It defers only the explicitly scoped final operational/device acceptance. Preserve all V1.10 prerequisite edges. A downstream task may begin only for the exact work scope listed in the deferred prerequisite's deferral.downstream_work_allowlist; this does not waive any acceptance criterion or permit the downstream task/release to be marked done when it still depends on the deferred final evidence."
   },
   "sections": [
     {
@@ -7661,8 +7664,8 @@
         "رضایت و هشدار حریم خصوصی پیش از اولین درخواست نمایش داده شود و قابل رد کردن باشد.",
         "شناسهٔ میزبان یا IP/Port غیرضروری در رابط عادی افشا نشود."
       ],
-      "status": "blocked",
-      "status_fa": "مسدود",
+      "status": "deferred_final",
+      "status_fa": "موکول به مرحلهٔ پایانی",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/",
@@ -7681,7 +7684,7 @@
         "docs/deployment/rendezvous-service.md",
         ".github/workflows/rendezvous-container.yml"
       ],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0139, T0186. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0139, T0186. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. وضعیت پس از تلاش A002 به درخواست کاربر از blocked به deferred_final منتقل شد؛ سابقهٔ مسدودی قبلی حفظ شده و این گره تکمیل‌شده محسوب نمی‌شود.",
       "execution_summary": {
         "attempt_count": 2,
         "failed_attempt_count": 0,
@@ -7707,7 +7710,7 @@
           "Exact V 3.1.204 Rendezvous container build and loopback smoke run 43044517854 passed; public deployment remains blocked."
         ],
         "tests_failed": [],
-        "blocked_reason": "A real public HTTPS Rendezvous origin and TLS-terminating deployment are not available in the repository or current connected execution environment. The only documented origin https://rendezvous.example.net/ is explicitly a placeholder. The existing rendezvous-container workflow only builds the container and smoke-tests it on 127.0.0.1; it does not deploy a public service or verify reachability from another network. The normal Android configuration intentionally defaults to an empty endpoint rather than a guessed or fake service. Completion cannot proceed until an owned public origin/deployment is supplied and the required independent-network host discovery/peer-connectivity acceptance can run.",
+        "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -7715,7 +7718,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Deploy the Rendezvous image to a real host behind TLS ingress/reverse proxy, supply the actual public HTTPS origin, configure that origin in the Android/Windows release builds, then verify from a peer on another network that a real Windows host announcement is discoverable and its exact PeerId can be authenticated and dialed; retain redacted evidence."
+        "follow_up": "در مرحلهٔ پایانی endpoint عمومی HTTPS واقعی را مستقر و در build انتشار پیکربندی کن؛ سپس از شبکه‌ای مستقل کشف میزبان و احراز/اتصال PeerId را ثبت کن. تا آن زمان UPD-S1-019 می‌تواند آزمون‌های خودکار و CI را بر اساس قراردادهای کدنویسی موجود ادامه دهد."
       },
       "execution_history": [
         {
@@ -7809,7 +7812,23 @@
           "model_revision_and_sha256": "Not applicable; no local inference model was loaded.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable; deployment/reachability prerequisite only."
         }
-      ]
+      ],
+      "deferral": {
+        "reason": "معیارهای کدنویسی و رابطِ تعریف‌شده در V1.10 برای این وظیفه در کد موجود است و آزمون‌های قراردادی و CI ثبت‌شده برای build دقیق V 3.1.203 موفق‌اند. تنها استقرار سرویس Rendezvous روی endpoint عمومی HTTPS واقعی، تنظیم build انتشار با همان endpoint و اثبات کشف میزبان/اتصال همتا از یک شبکهٔ مستقل باقی مانده است؛ این پذیرش عملیاتی به مرحلهٔ پایانی منتقل می‌شود. این تغییر به معنی تکمیل وظیفه یا اثبات endpoint عمومی نیست.",
+        "start_condition": "پس از تکمیل کارهای پیاده‌سازی و آزمون خودکار، در مرحلهٔ پایانی یک endpoint عمومی HTTPS واقعی با DNS و TLS ingress مستقر شود، در build انتشار Android/Windows پیکربندی شود و از یک شبکهٔ مستقل کشف میزبان Windows و احراز/اتصال به PeerId واقعی با شواهد قابل بازبینی آزموده شود.",
+        "final_stage": "مرحلهٔ پایانی استقرار و پذیرش عملیاتی، پیش از آزمون فیزیکی UPD-S1-020 و جمع‌بندی انتشار.",
+        "scope": "فقط استقرار عمومی Rendezvous و آزمون دسترسی/کشف/اتصال از شبکهٔ مستقل به تعویق افتاده است؛ معیارهای کدنویسی V1.10 دربارهٔ چت عادی، انتخاب خودکار مدل و سقف خروجی، رد هویت نامعتبر، رضایت و عدم افشای شناسهٔ فنی در رابط عادی همچنان با کد و CI موجود قابل آزمون‌اند.",
+        "downstream_work_allowlist": [
+          {
+            "task_id": "UPD-S1-019",
+            "allowed_scope": "پیاده‌سازی و اجرای آزمون‌های واحد/یکپارچه و CI برای قراردادهای Android، رضایت، انتخاب خودکار مدل/میزبان، هویت و وضعیت‌های درخواست بر اساس کد فعلی؛ بدون ادعای اتصال به endpoint عمومی یا پوشش آزمون شبکهٔ مستقل.",
+            "completion_limit": "UPD-S1-019 می‌تواند پس از پاس‌شدن معیارهای آزمون خودکار خودش تکمیل شود؛ UPD-S1-011 تا استقرار عمومی و آزمون مستقل همچنان deferred_final می‌ماند."
+          }
+        ],
+        "recorded_at": "2026-11-11T17:20:03.802Z",
+        "previous_status": "blocked",
+        "new_status": "deferred_final"
+      }
     },
     {
       "id": "UPD-S1-012",
@@ -10658,8 +10677,8 @@
         "گزارش دستگاه/سیستم‌عامل/نسخهٔ اپ/مدل و checksum/کامیت/نتیجه را ثبت کند، اما متن prompt/response، کلید، توکن یا شناسهٔ حساس را افشا نکند.",
         "آزمون مستقل از AndroidWindowsLanIntegrationTest و آزمون مستقل llama.cpp اجرا شده باشد؛ پاسخ ثابت، mock، fixture، test peer یا emulator مدرک تکمیل نیست."
       ],
-      "status": "blocked",
-      "status_fa": "انجام‌نشده",
+      "status": "deferred_final",
+      "status_fa": "موکول به مرحلهٔ پایانی",
       "expected_output_paths": [
         "src/Client.Android/app/src/androidTest/java/com/whitep/client/product/RealAndroidWindowsInferenceAcceptanceTest.kt",
         "tests/HostLifecycle.Tests/RealProductInferenceAcceptanceTests.cs",
@@ -10674,7 +10693,7 @@
       "evidence": [
         "update/Step three/UPD-S1-020/evidence/physical-device-access-blocker-A001.md"
       ],
-      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=add; affected_task_ids=T0200, T0201, T0202, T0203, T0204, T0205, T0206, T0223, T0224, T0225, T0226, T0227, T0229. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
+      "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=add; affected_task_ids=T0200, T0201, T0202, T0203, T0204, T0205, T0206, T0223, T0224, T0225, T0226, T0227, T0229. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است. وضعیت پس از تلاش A001 به درخواست کاربر از blocked به deferred_final منتقل شد؛ آزمون فیزیکی هنوز اجرا نشده و سابقهٔ مسدودی قبلی حفظ شده است.",
       "execution_summary": {
         "attempt_count": 1,
         "failed_attempt_count": 0,
@@ -10689,7 +10708,7 @@
         ],
         "tests_passed": [],
         "tests_failed": [],
-        "blocked_reason": "No physical Android handset, user-operated Windows host or locally loaded model can be controlled by the current connected execution environment. CI provides only a GitHub-hosted Windows runner and Android API 36 x86_64 emulator; the task explicitly prohibits emulator, fixture, LAN-only or independent-backend substitutes. UPD-S1-019 is also not done, so the mandatory E2E start condition is unmet.",
+        "blocked_reason": null,
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -10697,7 +10716,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Keep blocked until UPD-S1-019 is done and a physical Android device plus an installed Windows host with an actual locally loaded model (with model revision and SHA-256) are available for coordinated end-to-end testing. Then execute the prescribed Android Chat UI → Android runtime → approved P2P → Windows product → real local backend/model → same Room conversation path and all required failure scenarios."
+        "follow_up": "پس از اتمام UPD-S1-019 و استقرار/آزمون نهایی endpoint در UPD-S1-011، در مرحلهٔ پایانی با گوشی Android واقعی، میزبان Windows واقعی و مدل محلی دارای revision و SHA-256 آزمون کامل UI→P2P→inference→Room و تمام حالات شکست را اجرا و شواهد redacted ثبت کن."
       },
       "execution_history": [
         {
@@ -10751,6 +10770,22 @@
           "emulator-only, mock-only, fake transport, protocol fixture or canned response"
         ],
         "existing_lan_test_role": "Supplemental authenticated-transport verification only; not product E2E."
+      },
+      "deferral": {
+        "reason": "آزمون اصلی این وظیفه الزاماً به گوشی Android فیزیکی، میزبان Windows نصب‌شده و قابل‌کنترل، مدل محلی واقعاً بارگذاری‌شده با revision و SHA-256 و اجرای مسیر کامل تا ذخیره در همان Room conversation نیاز دارد. این منابع در محیط اجرای متصل موجود نیستند؛ هیچ emulator یا fixture جایگزین پذیرفته نمی‌شود. آزمون فیزیکی به مرحلهٔ پایانی منتقل می‌شود، نه اینکه انجام‌شده فرض شود.",
+        "start_condition": "ابتدا UPD-S1-019 تکمیل شود و پذیرش نهایی endpoint عمومی/شبکهٔ مستقل در UPD-S1-011 انجام شده باشد؛ سپس گوشی Android واقعی، برنامهٔ نصب‌شدهٔ Windows، backend و مدل محلی واقعی با revision و SHA-256، شبکهٔ پشتیبانی‌شده و ثبت امن شواهد فراهم شوند.",
+        "final_stage": "مرحلهٔ پایانی اعتبارسنجی محصول واقعی، پس از تکمیل آزمون‌های خودکار و استقرار عمومی Rendezvous و پیش از بستن UPD-S1-021 یا اعلام آمادگی انتشار.",
+        "scope": "تمام مسیر Android Chat UI تا Android runtime، P2P، Windows product host، backend/model واقعی و بازگشت پاسخ به همان Room conversation به همراه identity mismatch/revoke، unavailable/busy، قطع اتصال، timeout، cancel و retry.",
+        "downstream_work_allowlist": [
+          {
+            "task_id": "UPD-S1-021",
+            "allowed_scope": "آماده‌سازی پیش‌نویس راهنماها، workflowهای release، بسته‌های candidate، checksum، فهرست مجوزها و دارایی‌های آزمون clean-install/in-place-upgrade می‌تواند پیشاپیش انجام شود.",
+            "completion_limit": "UPD-S1-021 تا عبور آزمون فیزیکی UPD-S1-020 و تکمیل شواهد نصب تمیز و ارتقای درجا روی Android و Windows نباید done شود و هیچ release نباید promote یا اعلام شود."
+          }
+        ],
+        "recorded_at": "2026-11-11T17:20:03.802Z",
+        "previous_status": "blocked",
+        "new_status": "deferred_final"
       }
     },
     {
@@ -13801,7 +13836,7 @@
   "execution_tracking_policy": {
     "purpose": "Make the update graph an executable plan and an append-only implementation ledger for the Android client, Windows host and shared runtime.",
     "rules": [
-      "Before starting a node, verify every prerequisite node is done and its actual outputs/evidence exist in the recorded commit.",
+      "Before starting a node, verify every prerequisite is done and its actual outputs/evidence exist, except for an explicitly allowlisted preparatory/test scope in a prerequisite node's deferred_final.deferral.downstream_work_allowlist. Such an exception permits only the named work; it does not satisfy the prerequisite for final completion, release approval or evidence that depends on the deferred acceptance.",
       "Use the current repository tree and source files as baseline; audit before rewriting and prefer small compatible changes.",
       "Record every attempt, including failed, partial, blocked or reopened attempts; never delete earlier execution history.",
       "For each attempt record changed files, commit SHA or explicit not-committed statement, exact test command and observed result.",
@@ -13816,7 +13851,9 @@
       "For UPD-S1-008, create one evidence-backed reconciliation record for every unique affected Txxxx ID. Do not automatically change legacy statuses from traceability metadata; an empty or invalid Step Three graph blocks completion.",
       "For UPD-S1-020, LAN interop fixtures and standalone real-inference are supplemental only. Acceptance requires one physical Android-to-installed-Windows-product request through the real local model and persistence in the same Room conversation.",
       "For UPD-S1-021, both clean installation and in-place upgrade must pass on Android and Windows. Compare pre/post state and model checksums; do not uninstall, clear data or reset identities.",
-      "Before marking UPD-S1-008 done, reconcile every affected Txxxx ID against Step Three, inspect actual code/tests for the changed behavior and record evidence-backed decisions. The initial pending markers do not mean the review is complete."
+      "Before marking UPD-S1-008 done, reconcile every affected Txxxx ID against Step Three, inspect actual code/tests for the changed behavior and record evidence-backed decisions. The initial pending markers do not mean the review is complete.",
+      "A deferred_final node is not done. Its reason, exact deferred acceptance scope, start condition, final stage and explicitly permitted downstream work must be recorded under deferral. Preserve original execution_history and blocker evidence; scheduling a task for final-stage completion does not erase a prior blocked attempt.",
+      "For the current deferrals, UPD-S1-019 may proceed with automated unit/integration test implementation and CI against the existing Android contracts while only the public production Rendezvous deployment and independent-network acceptance of UPD-S1-011 remain deferred. UPD-S1-021 may prepare candidate packages, documentation and upgrade-test assets while UPD-S1-020 is deferred, but neither task closure nor release promotion may bypass the final physical E2E gate."
     ],
     "required_attempt_fields": [
       "attempt_id",
@@ -13939,14 +13976,15 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-11T15:06:15.219Z",
+    "as_of": "2026-11-11T17:20:03.802Z",
     "total_tasks": 24,
     "not_started": 2,
     "in_progress": 0,
     "done": 20,
-    "blocked": 2,
-    "verified_completion_percentage": 83.33333333333333,
-    "calculation": "20 verified done update tasks / 24 total update tasks = 83.33%. UPD-S1-011 is blocked pending public HTTPS deployment and independent-network reachability; UPD-S1-020 remains blocked on physical Android/Windows/model E2E."
+    "blocked": 0,
+    "verified_completion_percentage": 83.33333333333334,
+    "calculation": "20 verified done update tasks / 24 total update tasks = 83.33%. UPD-S1-011 and UPD-S1-020 are deferred_final and are not counted as done; 2 tasks remain not_started. The public HTTPS deployment/network acceptance and physical Android-to-Windows real-model E2E remain mandatory final-stage gates.",
+    "deferred_final": 2
   },
   "visual_identity": {
     "scope": [
@@ -14060,7 +14098,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-11T15:06:15.219Z",
+  "updated_at": "2026-11-11T17:20:03.802Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
@@ -14257,5 +14295,22 @@
       "UPD-S1-008 remains incomplete while any required review is pending.",
       "Each reviewed ledger row is mirrored by the Step Three update_impact marker; future re-review is triggered by mapped implementation acceptance."
     ]
-  }
-}```
+  },
+  "status_change_history": [
+    {
+      "task_id": "UPD-S1-011",
+      "from": "blocked",
+      "to": "deferred_final",
+      "changed_at": "2026-11-11T17:20:03.802Z",
+      "reason": "درخواست کاربر برای انتقال استقرار عمومی و آزمون شبکهٔ مستقل به مرحلهٔ پایانی؛ هیچ معیار یا شاهدی به‌عنوان تکمیل‌شده جعل نشده است."
+    },
+    {
+      "task_id": "UPD-S1-020",
+      "from": "blocked",
+      "to": "deferred_final",
+      "changed_at": "2026-11-11T17:20:03.802Z",
+      "reason": "درخواست کاربر برای انتقال آزمون فیزیکی Android-to-Windows با مدل واقعی به مرحلهٔ پایانی؛ آزمون همچنان انجام‌نشده است."
+    }
+  ]
+}
+```
