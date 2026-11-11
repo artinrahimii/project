@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.190",
+  "commit_intent": "V 3.1.191",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -8196,7 +8196,8 @@
         "update/Step three/UPD-S1-014/execution-report.md",
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md",
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md",
-        "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md"
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md",
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A001.md",
@@ -8220,13 +8221,14 @@
         "docs/decisions/ADR-0022-single-host-sequential-retry.md",
         "docs/decisions/ADR-0018-explicit-peer-trust-and-identity-verification.md",
         "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md",
-        "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md"
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md",
+        "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0116, T0117, T0118, T0119, T0120, T0121, T0122, T0123, T0124, T0125, T0126, T0127, T0128. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 5,
+        "attempt_count": 6,
         "failed_attempt_count": 4,
-        "last_attempt_id": "UPD-S1-014-20261111-A005",
+        "last_attempt_id": "UPD-S1-014-20261111-A006",
         "last_attempt_result": "partial",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
@@ -8238,14 +8240,16 @@
           "update/Step three/UPD-S1-014/evidence/discovery-selector-A002.md",
           "update/Step three/UPD-S1-014/evidence/discovery-selector-A003.md",
           "update/Step three/UPD-S1-014/evidence/discovery-selector-A004.md",
-          "update/Step three/UPD-S1-014/evidence/discovery-selector-A005.md"
+          "update/Step three/UPD-S1-014/evidence/discovery-selector-A005.md",
+          "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md"
         ],
         "related_commits": [
           "0392fb1a57a1e105f54fda19c6e2a03fe33e531d",
           "66fe4dc744e045b528bf9bade78e7613da6eb831",
           "911ef42bdfaf8b32a46169360a710ff21a3b9146",
           "cc6c8c9f0839137867732bdda9ddef9c3045d2a5",
-          "f5268f24296dee058ab26bbeddaeee3cc68b9660"
+          "f5268f24296dee058ab26bbeddaeee3cc68b9660",
+          "faad2ff593ded23bda101dda1fe6eb1fc52320c7"
         ],
         "tests_passed": [
           "Exact V 3.1.183 Quality gate passed 496 Python tests, compileall and graph guards (run 42907340773).",
@@ -8258,7 +8262,10 @@
           "Exact V 3.1.185 Rendezvous container build/smoke passed (run 42908458216).",
           "Exact V 3.1.186 Android ktlintMainSourceSetCheck passed before clean Debug APK build (run 42909332981).",
           "Exact V 3.1.186 HostLifecycle acceptance passed (run 42909332981).",
-          "Exact V 3.1.186 Rendezvous container build/smoke passed (run 42909332737)."
+          "Exact V 3.1.186 Rendezvous container build/smoke passed (run 42909332737).",
+          "V 3.1.190 quality: 496 Python tests, compileall and both graph guards passed (42911682114).",
+          "V 3.1.190 Android selector/discovery/directory/dispatcher/feedback suites passed (25/7/10/22/5); Product Build Android passed (42911681942).",
+          "V 3.1.190 HostLifecycle and Rendezvous smoke passed (42911681942, 42911681917)."
         ],
         "tests_failed": [
           "V 3.1.183 Android ktlint: three chain-method-continuation formatting violations; JVM did not run.",
@@ -8274,7 +8281,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Run exact-head Python quality, Android lint/JVM/Keystore/debug+release APK, Windows build/installer, HostLifecycle and Rendezvous; keep UPD-S1-014 in_progress until all applicable gates pass."
+        "follow_up": "Synchronize the eight eligible update_impact markers and matching ledger records in one commit with the old graph, validate both complete graphs and reconciliation schema, then reevaluate UPD-S1-014. T0125/T0126 await UPD-S1-015; T0128 awaits T0230 and independent-node acceptance."
       },
       "execution_history": [
         {
@@ -8520,6 +8527,60 @@
           "device_and_host_details_redacted": "Source-contract synchronization only. No physical Android handset or user-owned Windows host used.",
           "model_revision_and_sha256": "No local inference executed.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable."
+        },
+        {
+          "attempt_id": "UPD-S1-014-20261111-A006",
+          "started_at": "2026-11-10T22:08:01Z",
+          "ended_at": "2026-11-10T22:19:21Z",
+          "result": "partial",
+          "summary": "Exact-head selector/discovery tests and six technical acceptance areas passed on V 3.1.190. Post-acceptance legacy code review was performed for eight eligible IDs, but cross-graph marker and reconciliation-ledger synchronization was not committed because the legacy graph is a 4 MB blob and the connector transfer failed. Task remains in_progress.",
+          "changed_files": [
+            "update/Step three/UPD-S1-014/evidence/discovery-selector-A006.md",
+            "update/Step three/UPD-S1-014/execution-report.md"
+          ],
+          "commit_sha": "faad2ff593ded23bda101dda1fe6eb1fc52320c7",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "quality.yml on exact V 3.1.190",
+              "result": "passed",
+              "run_id": 42911682114,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42911682114",
+              "summary": "496 Python tests, compileall and both graph guards passed."
+            },
+            {
+              "name": "Android selector/discovery suites",
+              "command": "testDebugUnitTest on exact V 3.1.190",
+              "result": "passed",
+              "run_id": 42911681942,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42911681942",
+              "summary": "HostCandidateSelector 25/25; AuthenticatedHostDiscovery 7/7; RendezvousPeerDirectoryClient 10/10; InferenceAttemptDispatcher 22/22; HostSelectionFeedback 5/5."
+            },
+            {
+              "name": "Windows HostLifecycle",
+              "command": "Product Build HostLifecycle on V 3.1.190",
+              "result": "passed",
+              "run_id": 42911681942,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42911681942",
+              "summary": "68 critical pass markers, 86.15% line coverage, one skip."
+            },
+            {
+              "name": "Rendezvous container smoke",
+              "command": "rendezvous-container.yml on V 3.1.190",
+              "result": "passed",
+              "run_id": 42911681917,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42911681917",
+              "summary": "Container build and HTTP smoke passed."
+            }
+          ],
+          "failure_details": "The 4 MB step three/project-graph.md blob was successfully fetched and parsed, but uploading its rewritten blob failed with an HTTP/2 body-read transport error. No update_ref was attempted. The legacy graph and reconciliation ledger remain unchanged; eight post-acceptance review decisions are not yet synchronized.",
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Synchronize the eight eligible update_impact markers and matching ledger records in one commit with the old graph, validate both complete graphs and reconciliation schema, then reevaluate UPD-S1-014. T0125/T0126 await UPD-S1-015; T0128 awaits T0230 and independent-node acceptance.",
+          "device_and_host_details_redacted": "GitHub-hosted Linux runner and Android API 36 x86_64 emulator only; no physical Android device or owner-operated Windows host.",
+          "model_revision_and_sha256": "No local model inference was executed.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; tracked by UPD-S1-021."
         }
       ]
     },
@@ -9796,7 +9857,7 @@
         "کلیدهای خصوصی در ذخیره‌سازی امن سیستم قرار گیرند.",
         "آزمون replay و دستکاری پیام و جست‌وجوی log/file برای دادهٔ حساس موفق باشد."
       ],
-      "status": "in_progress",
+      "status": "done",
       "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/network/SafeDiagnosticLog.kt",
@@ -9835,7 +9896,8 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/network/PeerMessageFrameCodecTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
         "update/Step three/UPD-S1-018/execution-report.md",
-        "update/Step three/UPD-S1-018/evidence/privacy-buffer-audit-A001.md"
+        "update/Step three/UPD-S1-018/evidence/privacy-buffer-audit-A001.md",
+        "update/Step three/UPD-S1-018/evidence/privacy-buffer-audit-A002.md"
       ],
       "evidence": [
         "update/Step three/UPD-S1-018/evidence/privacy-buffer-audit-A001.md",
@@ -9868,35 +9930,41 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/network/PeerMessageFrameCodecTest.kt",
         "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
         "https://github.com/artinrahimii/project/actions/runs/42909899013",
-        "https://github.com/artinrahimii/project/actions/runs/42909899054"
+        "https://github.com/artinrahimii/project/actions/runs/42909899054",
+        "update/Step three/UPD-S1-018/evidence/privacy-buffer-audit-A002.md"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0105, T0178, T0179, T0180, T0181, T0182, T0183, T0184, T0185, T0186, T0187, T0188, T0206, T0227. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-018-20261111-A001",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "UPD-S1-018-20261111-A002",
+        "last_attempt_result": "passed",
         "changed_files": [
           "update/Step three/UPD-S1-018/execution-report.md",
           "update/Step three/UPD-S1-018/evidence/privacy-buffer-audit-A001.md",
-          "update/Step two/project-graph.md"
+          "update/Step two/project-graph.md",
+          "update/Step three/UPD-S1-018/evidence/privacy-buffer-audit-A002.md"
         ],
         "related_commits": [
           "a0f50e22e56f7052c8b9157226b0b72713e65bc5",
-          "9bafee47db73751afd717f0ecbe3ea07ec29784e"
+          "9bafee47db73751afd717f0ecbe3ea07ec29784e",
+          "faad2ff593ded23bda101dda1fe6eb1fc52320c7"
         ],
         "tests_passed": [
           "V 3.1.187 Quality: 496 Python tests passed, including sensitive log/artifact/buffer checks and graph guards (run 42909899013).",
           "V 3.1.187 HostLifecycle: 68 critical pass markers, one skip, 86.14% line coverage; replay/tamper, safe diagnostic, trust and identity checks passed (job 130157488206).",
           "V 3.1.187 Rendezvous build/smoke passed (run 42909898965).",
           "V 3.1.187 Android ktlint, Debug/Release APK, disposable release key cleanup, permissions and JVM/coverage passed (job 130157487721).",
-          "V 3.1.187 Windows WPF build/publish/smoke, DPAPI identity/trust and installer acceptance passed (job 130157488253)."
+          "V 3.1.187 Windows WPF build/publish/smoke, DPAPI identity/trust and installer acceptance passed (job 130157488253).",
+          "V 3.1.190 AndroidKeyStorePersistenceTest instrumentation 5/5 passed; artifact 13808322428.",
+          "V 3.1.190 EncryptedClientDatabaseAcceptanceTest instrumentation 4/4 passed; reopen and legacy Room migration succeeded.",
+          "V 3.1.190 quality 496 Python tests and Windows HostLifecycle security acceptance passed (42911682114, 42911681942)."
         ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
         "contract_changes": [],
-        "follow_up": "Refresh Android Keystore instrumentation result on exact V 3.1.187. If it passes, recheck all four acceptance criteria and close UPD-S1-018; otherwise document precise failure.",
+        "follow_up": "Keep limitations explicit: replay guard is process-local; zeroization covers mutable application-owned buffers, not immutable String/Protobuf or GC/JIT/OS copies. Physical Android-to-Windows acceptance remains UPD-S1-020.",
         "device_and_host_details_redacted": "GitHub-hosted Windows runner and Android emulator/CI only; no physical handset or owner-operated Windows host.",
         "model_revision_and_sha256": "No model inference performed.",
         "pre_upgrade_post_upgrade_snapshot": "Not applicable; UPD-S1-021."
@@ -9965,6 +10033,60 @@
           "device_and_host_details_redacted": "GitHub-hosted CI/emulator only; no physical handset or owner-host used.",
           "model_revision_and_sha256": "No inference performed.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable."
+        },
+        {
+          "attempt_id": "UPD-S1-018-20261111-A002",
+          "started_at": "2026-11-10T22:08:01Z",
+          "ended_at": "2026-11-10T22:19:21Z",
+          "result": "passed",
+          "summary": "Exact-head privacy/security acceptance passed on V 3.1.190, including five Android Keystore persistence tests, four encrypted Room database tests, Python privacy contracts, Windows DPAPI identity/trust, replay/tamper and safe diagnostics.",
+          "changed_files": [
+            "update/Step three/UPD-S1-018/evidence/privacy-buffer-audit-A002.md",
+            "update/Step three/UPD-S1-018/execution-report.md"
+          ],
+          "commit_sha": "faad2ff593ded23bda101dda1fe6eb1fc52320c7",
+          "tests": [
+            {
+              "name": "Android Keystore persistence instrumentation",
+              "command": "connectedDebugAndroidTest on V 3.1.190",
+              "result": "passed",
+              "run_id": 42911681942,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42911681942",
+              "summary": "AndroidKeyStorePersistenceTest 5 passed, 0 failed, 0 skipped; artifact 13808322428."
+            },
+            {
+              "name": "Encrypted database instrumentation",
+              "command": "connectedDebugAndroidTest on V 3.1.190",
+              "result": "passed",
+              "run_id": 42911681942,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42911681942",
+              "summary": "EncryptedClientDatabaseAcceptanceTest 4 passed, including reopen persistence and legacy Room migration."
+            },
+            {
+              "name": "Python privacy contracts",
+              "command": "quality.yml on V 3.1.190",
+              "result": "passed",
+              "run_id": 42911682114,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42911682114",
+              "summary": "496 Python tests and graph guards passed."
+            },
+            {
+              "name": "Windows identity/trust and lifecycle",
+              "command": "HostLifecycle product build job on V 3.1.190",
+              "result": "passed",
+              "run_id": 42911681942,
+              "url": "https://github.com/artinrahimii/project/actions/runs/42911681942",
+              "summary": "68 critical pass markers, DPAPI identity/trust, replay/tamper and safe diagnostics passed; 86.15% line coverage, one skip."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Keep limitations explicit: replay guard is process-local; zeroization covers mutable application-owned buffers, not immutable String/Protobuf or GC/JIT/OS copies. Physical Android-to-Windows acceptance remains UPD-S1-020.",
+          "device_and_host_details_redacted": "GitHub-hosted Android API 36 x86_64 emulator and Windows CI runner; no physical handset or user-owned Windows host.",
+          "model_revision_and_sha256": "No model inference was part of this security task.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; tracked by UPD-S1-021."
         }
       ]
     },
@@ -13351,14 +13473,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-10T22:07:56.922Z",
+    "as_of": "2026-11-11T09:27:00Z",
     "total_tasks": 24,
     "not_started": 5,
-    "in_progress": 2,
-    "done": 17,
+    "in_progress": 1,
+    "done": 18,
     "blocked": 0,
-    "verified_completion_percentage": 70.83333333333334,
-    "calculation": "17 verified done update tasks / 24 total update tasks = 70.83%. UPD-S1-014 and UPD-S1-018 are in_progress; five tasks remain not_started. UPD-S1-018 is pending Android Keystore instrumentation; its report/evidence commit SHA is recorded in A001."
+    "verified_completion_percentage": 75,
+    "calculation": "18 verified done update tasks / 24 total update tasks = 75.00%. UPD-S1-014 remains in_progress pending synchronized legacy graph and reconciliation ledger updates; five tasks remain not_started."
   },
   "visual_identity": {
     "scope": [

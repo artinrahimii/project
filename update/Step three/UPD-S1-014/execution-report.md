@@ -130,3 +130,17 @@
 - assertionهای Python با نام متغیرهای فعلی comparator، cross-product صحیح، PeerId tie-break و `eligibleCandidates.take(maxHosts)` همگام شدند.
 - هیچ کد Kotlin، آزمون JVM ranking، سیاست میزبان یا قرارداد wire تغییر نکرد.
 - A005 هنوز روی exact-head CI اجرا نشده است؛ task همچنان `in_progress` است.
+
+## تلاش A006 — آزمون exact-head (۱۱ نوامبر ۲۰۲۶)
+
+- کد دقیق بررسی‌شده: `faad2ff593ded23bda101dda1fe6eb1fc52320c7` — `V 3.1.190`.
+- Step Three Quality run 42911682114: **PASS**؛ ۴۹۶ آزمون Python، compileall و graph guards هر دو گراف.
+- Android Product Build run 42911681942: **PASS**؛ ktlint، آزمون‌های JVM، Debug/Release APK و Keystore instrumentation.
+- suiteهای مرتبط Android: HostCandidateSelector 25/25، AuthenticatedHostDiscovery 7/7، RendezvousPeerDirectoryClient 10/10، InferenceAttemptDispatcher 22/22 و HostSelectionFeedback 5/5 موفق.
+- HostLifecycle job 130163646012: PASS؛ ۶۸ critical pass marker، ۸۶٫۱۵٪ line coverage، یک skip. Rendezvous smoke run 42911681917: PASS.
+- معیارهای فنی discovery، trust، expiry، ظرفیت/مدل، ranking صرفاً بر اساس metric واقعی، سقف میزبان مصوب و metadata-only directory روی همین commit بررسی و آزموده شدند.
+- بررسی کد legacy پس از پذیرش برای هشت مورد T0116، T0117، T0118، T0121، T0122، T0123، T0124 و T0127 انجام شد؛ اما تصمیم جدید هنوز در ledger و نشانگرهای گراف اولیه ثبت نشده است. برای جلوگیری از ناسازگاری، این وضعیت‌ها تا sync اتمیک دو گراف تغییر داده نمی‌شوند.
+- T0125/T0126 تا پذیرش UPD-S1-015 و T0128 تا فراهم‌شدن T0230 و آزمون دو گرهٔ مستقل منتظر می‌مانند.
+- آزمون فیزیکی Android-to-Windows، inference روی میزبان واقعی متعلق به کاربر و استقرار عمومی HTTPS در این تلاش اجرا نشده‌اند.
+
+نتیجهٔ A006: تمام آزمون‌های فنیِ قابل اجرا موفق‌اند؛ task به دلیل تکمیل‌نشدن sync دو گراف و ledger در وضعیت **in_progress** باقی می‌ماند.

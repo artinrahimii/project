@@ -31,3 +31,16 @@ Replay guard برنامه process-local و تا deadline است؛ persistence ب
 
 کد سالم موجود حفظ شد. وضعیت `in_progress` باقی می‌ماند تا نتیجهٔ Android Keystore instrumentation هم ثبت و چهار معیار پذیرش مجدداً تطبیق داده شوند.
 
+
+## تلاش A002 — تکمیل آزمون Keystore و حریم خصوصی روی commit دقیق (۱۱ نوامبر ۲۰۲۶)
+
+- commit دقیق بررسی‌شده: `faad2ff593ded23bda101dda1fe6eb1fc52320c7` — `V 3.1.190`.
+- Step Three Quality run 42911682114: **PASS**؛ ۴۹۶ آزمون Python، compileall و هر دو graph guard.
+- AndroidKeyStorePersistenceTest در artifact 13808322428 از Product Build run 42911681942: **5/5 PASS**، صفر failure و صفر skip؛ کلیدهای non-exportable مجزا، persistence پس از ساخت مجدد store، نبود کلید و envelope دستکاری‌شده بررسی شدند.
+- EncryptedClientDatabaseAcceptanceTest: **4/4 PASS**؛ encryption، protected key envelope، حفظ داده پس از reopen، migration از Room plaintext قدیمی و fail-closed در نبود کلید.
+- Android مجموعاً ۲۳۷ pass، یک skip و صفر failure؛ مورد skipشده AndroidWindowsLanIntegrationTest است و به‌عنوان آزمون فیزیکی تلقی نمی‌شود.
+- HostLifecycle job 130163646012: PASS؛ ۶۸ critical pass marker، ۸۶٫۱۵٪ line coverage، یک skip؛ DPAPI identity/trust، replay/tamper و safe diagnostics موفق.
+- Windows WPF build/publish/smoke و installer acceptance در run 42911681942 موفق است.
+- محدودیت‌ها: replay guard process-local است؛ پاک‌سازی فقط bufferهای mutable تحت مالکیت برنامه را پوشش می‌دهد، نه immutable String/Protobuf یا کپی‌های GC/JIT/OS. آزمون فیزیکی مستقل Android-to-Windows در این وظیفه انجام نشده است.
+
+نتیجهٔ A002: **passed**؛ معیارهای فنی UPD-S1-018 با شواهد exact-head تأیید شدند.
