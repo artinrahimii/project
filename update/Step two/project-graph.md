@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.197",
+  "commit_intent": "V 3.1.198",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -8177,8 +8177,8 @@
         "هیچ prompt، response یا history به سرویس directory ارسال یا از آن دریافت نشود.",
         "قابلیت مدل تنها با شناسه و metadata معتبر و backend واقعاً آماده قابل قبول باشد؛ صرف advertised بودن مدل برای پذیرش کافی نیست."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "انجام‌نشده",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
@@ -8236,7 +8236,7 @@
         "attempt_count": 8,
         "failed_attempt_count": 4,
         "last_attempt_id": "UPD-S1-014-20261111-A008",
-        "last_attempt_result": "partial",
+        "last_attempt_result": "passed",
         "changed_files": [
           "src/Client.Android/app/src/main/java/com/whitep/client/requests/HostCandidateSelector.kt",
           "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
@@ -8263,7 +8263,8 @@
           "f5268f24296dee058ab26bbeddaeee3cc68b9660",
           "faad2ff593ded23bda101dda1fe6eb1fc52320c7",
           "f9f4cc8ad57964dedaca985ccdc679fee5eb7718",
-          "3e786ad83028cd3710e137243bb66963794bf198"
+          "3e786ad83028cd3710e137243bb66963794bf198",
+          "8dae90c267b2464c718fefcf6bf37aa9e9d091a8"
         ],
         "tests_passed": [
           "Exact V 3.1.183 Quality gate passed 496 Python tests, compileall and graph guards (run 42907340773).",
@@ -8283,7 +8284,8 @@
           "V 3.1.191 Quality Gate: 496 Python tests, compileall and graph guards passed (42999958123).",
           "V 3.1.191 Android job 37/37 steps; 237 tests passed, 1 emulator LAN test skipped, 0 failures (42999958352).",
           "V 3.1.191 Windows job 29/29 steps and HostLifecycle 14/14 steps; 68 critical markers, 86.15% line coverage (42999958352).",
-          "V 3.1.191 Rendezvous container 6/6 steps passed (42999958177)."
+          "V 3.1.191 Rendezvous container 6/6 steps passed (42999958177).",
+          "Exact-head quality passed on 8dae90c267b2464c718fefcf6bf37aa9e9d091a8; run 43013679259"
         ],
         "tests_failed": [
           "V 3.1.183 Android ktlint: three chain-method-continuation formatting violations; JVM did not run.",
@@ -8299,7 +8301,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Run exact-head quality and promote only if all six steps pass."
+        "follow_up": "Continue in conservative order with UPD-S1-011 and UPD-S1-015. UPD-S1-020 remains blocked on physical hardware."
       },
       "execution_history": [
         {
@@ -8678,9 +8680,9 @@
         {
           "attempt_id": "UPD-S1-014-20261111-A008",
           "started_at": "2026-11-11T11:38:54Z",
-          "ended_at": "2026-11-11T11:38:54Z",
-          "result": "partial",
-          "summary": "Eight post-acceptance decisions synchronized in a full local Git checkout; exact-head CI pending.",
+          "ended_at": "2026-11-11T11:40:04Z",
+          "result": "passed",
+          "summary": "Eight post-acceptance decisions synchronized; exact-head quality passed; all 168 ledger and marker records match with baseline statuses and histories preserved.",
           "changed_files": [
             "step three/project-graph.md",
             "update/Step two/legacy-task-reconciliation.json",
@@ -8689,8 +8691,65 @@
             "update/Step three/UPD-S1-014/execution-report.md",
             "update/Step three/UPD-S1-014/evidence/discovery-selector-A008.md"
           ],
-          "commit_sha": null,
-          "tests": [],
+          "commit_sha": "8dae90c267b2464c718fefcf6bf37aa9e9d091a8",
+          "tests": [
+            {
+              "name": "python -m unittest discover -s tests -v",
+              "command": "python -m unittest discover -s tests -v",
+              "result": "passed",
+              "run_id": 43013679259,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43013679259",
+              "summary": "Passed on exact synchronization commit."
+            },
+            {
+              "name": "python -m compileall -q tools tests",
+              "command": "python -m compileall -q tools tests",
+              "result": "passed",
+              "run_id": 43013679259,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43013679259",
+              "summary": "Passed on exact synchronization commit."
+            },
+            {
+              "name": "python tools/graph_guard.py step three/project-graph.md",
+              "command": "python tools/graph_guard.py step three/project-graph.md",
+              "result": "passed",
+              "run_id": 43013679259,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43013679259",
+              "summary": "Passed on exact synchronization commit."
+            },
+            {
+              "name": "python tools/graph_guard.py step three/project-graph.md --repo-root .",
+              "command": "python tools/graph_guard.py step three/project-graph.md --repo-root .",
+              "result": "passed",
+              "run_id": 43013679259,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43013679259",
+              "summary": "Passed on exact synchronization commit."
+            },
+            {
+              "name": "python tools/graph_guard.py update/Step two/project-graph.md",
+              "command": "python tools/graph_guard.py update/Step two/project-graph.md",
+              "result": "passed",
+              "run_id": 43013679259,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43013679259",
+              "summary": "Passed on exact synchronization commit."
+            },
+            {
+              "name": "python tools/graph_guard.py update/Step two/project-graph.md --repo-root .",
+              "command": "python tools/graph_guard.py update/Step two/project-graph.md --repo-root .",
+              "result": "passed",
+              "run_id": 43013679259,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43013679259",
+              "summary": "Passed on exact synchronization commit."
+            },
+            {
+              "name": "Exact-head quality gate",
+              "command": "workflow_dispatch on 8dae90c267b2464c718fefcf6bf37aa9e9d091a8",
+              "result": "passed",
+              "run_id": 43013679259,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43013679259",
+              "summary": "All six quality steps passed."
+            }
+          ],
           "failure_details": null,
           "blocked_reason": null,
           "reopened_reason": "The large-blob connector write limit was replaced with a full Git checkout on the GitHub Actions runner.",
@@ -13637,14 +13696,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-11T11:38:54Z",
+    "as_of": "2026-11-11T11:40:04Z",
     "total_tasks": 24,
     "not_started": 4,
-    "in_progress": 1,
-    "done": 18,
+    "in_progress": 0,
+    "done": 19,
     "blocked": 1,
-    "verified_completion_percentage": 75.0,
-    "calculation": "18 verified done update tasks / 24 total update tasks = 75.00%. UPD-S1-014 awaits exact-head synchronization validation; UPD-S1-020 remains blocked on physical hardware and a loaded local model."
+    "verified_completion_percentage": 79.16666666666667,
+    "calculation": "19 verified done update tasks / 24 total update tasks = 79.17%. UPD-S1-014 awaits exact-head synchronization validation; UPD-S1-020 remains blocked on physical hardware and a loaded local model."
   },
   "visual_identity": {
     "scope": [
@@ -13758,7 +13817,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-11T11:38:54Z",
+  "updated_at": "2026-11-11T11:40:04Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",

@@ -7,3 +7,6 @@
 - reconciliation: 168 reviewed، صفر pending؛ 20 unchanged، 148 re_review_required.
 - هیچ status پایه یا history قدیمی تغییر نکرد. E2E فیزیکی و inference مدل واقعی اجرا نشده‌اند.
 - exact-head CI هنوز pending است.
+
+
+Exact-head CI passed on 8dae90c267b2464c718fefcf6bf37aa9e9d091a8; run 43013679259 — https://github.com/artinrahimii/project/actions/runs/43013679259.

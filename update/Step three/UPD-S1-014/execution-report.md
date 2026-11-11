@@ -168,3 +168,11 @@
 - Blob SHA پس از sync: 9026969f6036eae22b25851eb0b29cd1d6c57c7a؛ اندازه 4,030,905 بایت UTF-8.
 - فایل کامل با Git محلی روی runner اصلاح شد؛ 168 رکورد و marker بدون اختلاف، 20 unchanged و 148 re_review_required.
 - CI دقیق commit sync در گام بعدی اجرا می‌شود؛ تا قبل از موفقیت، task تکمیل‌شده نیست.
+
+
+## CI دقیق A008 — V 3.1.197
+
+- Commit sync: 8dae90c267b2464c718fefcf6bf37aa9e9d091a8.
+- Quality Gate: PASS؛ run 43013679259 — https://github.com/artinrahimii/project/actions/runs/43013679259.
+- تمام شش مرحلهٔ Python tests، compileall و graph_guard برای هر دو گراف موفق شدند.
+- reconciliation: 168 reviewed، صفر pending؛ 20 unchanged و 148 re_review_required.
