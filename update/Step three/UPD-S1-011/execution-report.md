@@ -45,3 +45,13 @@
 - Product build run `43038776527` در job اندروید، lint، JVM، debug/release build و Keystore instrumentation را موفق اجرا کرد؛ Windows WPF و HostLifecycle نیز موفق بودند.
 - Rendezvous container workflow run `43038776377` build و smoke محلی را موفق کرد.
 - این نتایج endpoint عمومی را مستقر یا قابل‌دسترسی اثبات نمی‌کنند. `docs/deployment/rendezvous-service.md` صریحاً دامنهٔ `https://rendezvous.example.net/` را placeholder می‌داند و استقرار TLS/ingress و آزمون دسترسی از شبکهٔ دیگر را لازم می‌شمارد. بنابراین UPD-S1-011 همچنان `in_progress` است تا endpoint واقعی مستقر و در build انتشار پیکربندی شود.
+
+
+## تلاش A002 — مانع واقعی استقرار عمومی
+
+- commit بررسی‌شده: `1b91af90fe42e4a33237bf4065d8c98dd25bcb42` (`V 3.1.204`).
+- سند استقرار، `https://rendezvous.example.net/` را placeholder می‌داند؛ هیچ endpoint عمومی تأییدشده‌ای در پیکربندی محصول وجود ندارد.
+- workflow کانتینر فقط build و smoke روی loopback انجام می‌دهد (run `43044517854` موفق)؛ این آزمون deploy عمومی یا دسترسی از شبکهٔ مستقل نیست.
+- استقرار نیازمند host، DNS عمومی، TLS ingress/reverse proxy و آزمون peer واقعی روی شبکهٔ دیگر است. این منابع در محیط متصل فعلی فراهم نیستند.
+- URL حدسی، default ساختگی یا relay inference اضافه نشد.
+- وضعیت به `blocked` تغییر یافت تا زمان فراهم‌شدن endpoint و زیرساخت عمومی؛ جزئیات و شرط رفع مانع در `evidence/public-rendezvous-deployment-blocker-A002.md` ثبت شده است.

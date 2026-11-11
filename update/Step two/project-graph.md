@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.204",
+  "commit_intent": "V 3.1.205",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -7661,8 +7661,8 @@
         "رضایت و هشدار حریم خصوصی پیش از اولین درخواست نمایش داده شود و قابل رد کردن باشد.",
         "شناسهٔ میزبان یا IP/Port غیرضروری در رابط عادی افشا نشود."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "blocked",
+      "status_fa": "مسدود",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/",
@@ -7672,35 +7672,42 @@
       "actual_output_paths": [
         "update/Step three/UPD-S1-011/execution-report.md",
         "update/Step three/UPD-S1-011/evidence/rendezvous-configuration-audit.md",
-        "tests/test_update_s1_011_rendezvous_configuration.py"
+        "tests/test_update_s1_011_rendezvous_configuration.py",
+        "update/Step three/UPD-S1-011/evidence/public-rendezvous-deployment-blocker-A002.md"
       ],
       "evidence": [
-        "update/Step three/UPD-S1-011/evidence/rendezvous-configuration-audit.md"
+        "update/Step three/UPD-S1-011/evidence/rendezvous-configuration-audit.md",
+        "update/Step three/UPD-S1-011/evidence/public-rendezvous-deployment-blocker-A002.md",
+        "docs/deployment/rendezvous-service.md",
+        ".github/workflows/rendezvous-container.yml"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0139, T0186. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-011-20261111140620",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "UPD-S1-011-20261111-A002",
+        "last_attempt_result": "blocked",
         "changed_files": [
           "src/Client.Android/app/build.gradle.kts",
           "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
           "tests/test_update_s1_011_rendezvous_configuration.py",
           "update/Step three/UPD-S1-011/execution-report.md",
           "update/Step three/UPD-S1-011/evidence/rendezvous-configuration-audit.md",
-          "update/Step two/project-graph.md"
+          "update/Step two/project-graph.md",
+          "update/Step three/UPD-S1-011/evidence/public-rendezvous-deployment-blocker-A002.md"
         ],
         "related_commits": [
-          "ea374677019b50b07677a60c1e6c0df3a970c89b"
+          "ea374677019b50b07677a60c1e6c0df3a970c89b",
+          "1b91af90fe42e4a33237bf4065d8c98dd25bcb42"
         ],
         "tests_passed": [
           "Exact V 3.1.203 quality gate run 43038776230 passed (502 Python tests and both graph guards).",
           "Exact V 3.1.203 product build run 43038776527 passed Android and Windows CI jobs.",
-          "Exact V 3.1.203 Rendezvous container build/smoke run 43038776377 passed; public endpoint deployment remains unverified."
+          "Exact V 3.1.203 Rendezvous container build/smoke run 43038776377 passed; public endpoint deployment remains unverified.",
+          "Exact V 3.1.204 Rendezvous container build and loopback smoke run 43044517854 passed; public deployment remains blocked."
         ],
         "tests_failed": [],
-        "blocked_reason": null,
+        "blocked_reason": "A real public HTTPS Rendezvous origin and TLS-terminating deployment are not available in the repository or current connected execution environment. The only documented origin https://rendezvous.example.net/ is explicitly a placeholder. The existing rendezvous-container workflow only builds the container and smoke-tests it on 127.0.0.1; it does not deploy a public service or verify reachability from another network. The normal Android configuration intentionally defaults to an empty endpoint rather than a guessed or fake service. Completion cannot proceed until an owned public origin/deployment is supplied and the required independent-network host discovery/peer-connectivity acceptance can run.",
         "reopened_reason": null,
         "contract_revalidation": {
           "state": "not_required",
@@ -7708,7 +7715,7 @@
           "affected_by_contract_changes": [],
           "review_evidence": []
         },
-        "follow_up": "Keep in_progress until a real public HTTPS origin is deployed behind TLS/ingress, configured into the release build and verified from an independent network."
+        "follow_up": "Deploy the Rendezvous image to a real host behind TLS ingress/reverse proxy, supply the actual public HTTPS origin, configure that origin in the Android/Windows release builds, then verify from a peer on another network that a real Windows host announcement is discoverable and its exact PeerId can be authenticated and dialed; retain redacted evidence."
       },
       "execution_history": [
         {
@@ -7762,6 +7769,45 @@
           "device_and_host_details_redacted": "GitHub-hosted CI Windows runner and Android emulator only; no physical handset or external network endpoint was accessed.",
           "model_revision_and_sha256": "Not applicable; no model was loaded.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable; no installation or upgrade test was performed."
+        },
+        {
+          "attempt_id": "UPD-S1-011-20261111-A002",
+          "started_at": "2026-11-11T15:06:15.219Z",
+          "ended_at": "2026-11-11T15:06:15.219Z",
+          "result": "blocked",
+          "summary": "Exact-head source and deployment audit confirmed that no real public HTTPS Rendezvous endpoint or TLS-terminated deployment is available. Existing container CI performs loopback smoke only; a guessed endpoint was not introduced.",
+          "changed_files": [
+            "update/Step three/UPD-S1-011/execution-report.md",
+            "update/Step three/UPD-S1-011/evidence/public-rendezvous-deployment-blocker-A002.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": "1b91af90fe42e4a33237bf4065d8c98dd25bcb42",
+          "tests": [
+            {
+              "name": "Public Rendezvous deployment contract audit",
+              "command": "Review docs/deployment/rendezvous-service.md and .github/workflows/rendezvous-container.yml at exact main commit",
+              "result": "blocked",
+              "run_id": null,
+              "url": null,
+              "summary": "Documentation identifies the example HTTPS origin as a placeholder; workflow has no deployment or independent-network reachability step."
+            },
+            {
+              "name": "Rendezvous container build and loopback smoke",
+              "command": "Exact V 3.1.204 .github/workflows/rendezvous-container.yml",
+              "result": "passed",
+              "run_id": 43044517854,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43044517854",
+              "summary": "Container build and local loopback smoke passed; does not satisfy public deployment acceptance."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": "A real public HTTPS Rendezvous origin and TLS-terminating deployment are not available in the repository or current connected execution environment. The only documented origin https://rendezvous.example.net/ is explicitly a placeholder. The existing rendezvous-container workflow only builds the container and smoke-tests it on 127.0.0.1; it does not deploy a public service or verify reachability from another network. The normal Android configuration intentionally defaults to an empty endpoint rather than a guessed or fake service. Completion cannot proceed until an owned public origin/deployment is supplied and the required independent-network host discovery/peer-connectivity acceptance can run.",
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Deploy the Rendezvous image to a real host behind TLS ingress/reverse proxy, supply the actual public HTTPS origin, configure that origin in the Android/Windows release builds, then verify from a peer on another network that a real Windows host announcement is discoverable and its exact PeerId can be authenticated and dialed; retain redacted evidence.",
+          "device_and_host_details_redacted": "No public deployment host, public DNS origin, TLS ingress endpoint or independent-network peer was available to the connected execution environment. No credentials or private deployment data were read or recorded.",
+          "model_revision_and_sha256": "Not applicable; no local inference model was loaded.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; deployment/reachability prerequisite only."
         }
       ]
     },
@@ -13893,14 +13939,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-11T14:44:52Z",
+    "as_of": "2026-11-11T15:06:15.219Z",
     "total_tasks": 24,
     "not_started": 2,
-    "in_progress": 1,
+    "in_progress": 0,
     "done": 20,
-    "blocked": 1,
+    "blocked": 2,
     "verified_completion_percentage": 83.33333333333333,
-    "calculation": "20 verified done update tasks / 24 total update tasks = 83.33%. UPD-S1-015 passed exact-head quality and product validation; UPD-S1-011 remains in progress pending a deployed public HTTPS Rendezvous endpoint; UPD-S1-020 remains blocked on physical device/host/model E2E."
+    "calculation": "20 verified done update tasks / 24 total update tasks = 83.33%. UPD-S1-011 is blocked pending public HTTPS deployment and independent-network reachability; UPD-S1-020 remains blocked on physical Android/Windows/model E2E."
   },
   "visual_identity": {
     "scope": [
@@ -14014,7 +14060,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-11T14:44:52Z",
+  "updated_at": "2026-11-11T15:06:15.219Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
