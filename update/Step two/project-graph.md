@@ -7661,23 +7661,36 @@
         "رضایت و هشدار حریم خصوصی پیش از اولین درخواست نمایش داده شود و قابل رد کردن باشد.",
         "شناسهٔ میزبان یا IP/Port غیرضروری در رابط عادی افشا نشود."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/",
         "src/Client.Android/app/src/test/java/com/whitep/client/ui/",
         "update/Step three/UPD-S1-011/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "update/Step three/UPD-S1-011/execution-report.md",
+        "update/Step three/UPD-S1-011/evidence/rendezvous-configuration-audit.md",
+        "tests/test_update_s1_011_rendezvous_configuration.py"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-011/evidence/rendezvous-configuration-audit.md"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0139, T0186. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-011-20261111140620",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/build.gradle.kts",
+          "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+          "tests/test_update_s1_011_rendezvous_configuration.py",
+          "update/Step three/UPD-S1-011/execution-report.md",
+          "update/Step three/UPD-S1-011/evidence/rendezvous-configuration-audit.md",
+          "update/Step two/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -7690,7 +7703,52 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-011-20261111140620",
+          "started_at": "2026-11-11T14:06:20.090Z",
+          "ended_at": "2026-11-11T14:06:20.090Z",
+          "result": "partial",
+          "summary": "Added publisher-supplied HTTPS build configuration and advanced-only custom override; endpoint deployment and exact-head CI remain outstanding.",
+          "changed_files": [
+            "src/Client.Android/app/build.gradle.kts",
+            "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
+            "tests/test_update_s1_011_rendezvous_configuration.py",
+            "update/Step three/UPD-S1-011/execution-report.md",
+            "update/Step three/UPD-S1-011/evidence/rendezvous-configuration-audit.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "Rendezvous build configuration/Android consent contract",
+              "command": "Exact-head GitHub Actions quality.yml/product-build.yml; local execution unavailable",
+              "result": "pending",
+              "run_id": null,
+              "url": null,
+              "note": "Awaiting exact commit CI result."
+            },
+            {
+              "name": "Android lint, JVM tests, debug/release build and emulator launch",
+              "command": "Exact-head GitHub Actions quality.yml/product-build.yml; local execution unavailable",
+              "result": "pending",
+              "run_id": null,
+              "url": null,
+              "note": "Awaiting exact commit CI result."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [
+            "Build-time HTTPS Rendezvous configuration injection; no shared wire-protocol change."
+          ],
+          "follow_up": "Inspect exact-head CI. Keep in_progress until a real public HTTPS endpoint is deployed and supplied to a release build, then verify ordinary chat without manual URL entry.",
+          "device_and_host_details_redacted": "No physical Android handset or user-operated Windows host was accessed; source/test audit only.",
+          "model_revision_and_sha256": "Not applicable; no model was loaded.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; no installation or upgrade test was performed."
+        }
+      ]
     },
     {
       "id": "UPD-S1-012",
@@ -8833,8 +8891,8 @@
         "هیچ درخواست به همهٔ میزبان‌های آنلاین broadcast نشود و پاسخ دیرهنگام/تکراری به تلاش نادرست نسبت داده نشود.",
         "deadline، سقف retry و idempotency با آزمون قطعی پوشش داده شوند."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -8842,15 +8900,26 @@
         "src/Client.Android/app/src/test/java/com/whitep/client/requests/",
         "update/Step three/UPD-S1-015/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "update/Step three/UPD-S1-015/execution-report.md",
+        "update/Step three/UPD-S1-015/evidence/single-host-retry-audit.md",
+        "tests/test_update_s1_015_retry_policy.py"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-015/evidence/single-host-retry-audit.md"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-015-20261111140620",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "tests/test_update_s1_015_retry_policy.py",
+          "update/Step three/UPD-S1-015/execution-report.md",
+          "update/Step three/UPD-S1-015/evidence/single-host-retry-audit.md",
+          "update/Step two/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -8863,7 +8932,48 @@
           "review_evidence": []
         }
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-015-20261111140620",
+          "started_at": "2026-11-11T14:06:20.090Z",
+          "ended_at": "2026-11-11T14:06:20.090Z",
+          "result": "partial",
+          "summary": "Audited and retained one-host-per-round, three-round/three-attempt manual retry; added independent source-contract test. Exact-head CI remains outstanding.",
+          "changed_files": [
+            "tests/test_update_s1_015_retry_policy.py",
+            "update/Step three/UPD-S1-015/execution-report.md",
+            "update/Step three/UPD-S1-015/evidence/single-host-retry-audit.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [
+            {
+              "name": "First-release single-host cardinality/bounded retry contract",
+              "command": "Exact-head GitHub Actions quality.yml/product-build.yml; local execution unavailable",
+              "result": "pending",
+              "run_id": null,
+              "url": null,
+              "note": "Awaiting exact commit CI result."
+            },
+            {
+              "name": "Android JVM request/retry and Windows HostLifecycle tests",
+              "command": "Exact-head GitHub Actions quality.yml/product-build.yml; local execution unavailable",
+              "result": "pending",
+              "run_id": null,
+              "url": null,
+              "note": "Awaiting exact commit CI result."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Inspect exact-head quality and product-build results before marking done.",
+          "device_and_host_details_redacted": "No physical Android handset or user-operated Windows host was accessed; source/test audit only.",
+          "model_revision_and_sha256": "Not applicable; no model was loaded.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; no installation or upgrade test was performed."
+        }
+      ]
     },
     {
       "id": "UPD-S1-016",

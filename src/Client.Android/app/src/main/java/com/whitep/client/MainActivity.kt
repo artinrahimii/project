@@ -78,8 +78,13 @@ private fun whitePClientApp() {
         remember(applicationContext) {
             applicationContext.getSharedPreferences(CONNECTION_PREFERENCES, Context.MODE_PRIVATE)
         }
+    val configuredRendezvousUrl = BuildConfig.RENDEZVOUS_SERVICE_BASE_URL.trim()
     var rendezvousUrl by rememberSaveable {
-        mutableStateOf(connectionPreferences.getString(RENDEZVOUS_URL_KEY, "").orEmpty())
+        mutableStateOf(
+            connectionPreferences.getString(RENDEZVOUS_URL_KEY, null)
+                ?.takeIf { it.isNotBlank() }
+                ?: configuredRendezvousUrl,
+        )
     }
     var privacyConsentAccepted by rememberSaveable {
         mutableStateOf(connectionPreferences.getBoolean(PRIVACY_CONSENT_KEY, false))
@@ -167,8 +172,15 @@ private fun whitePClientApp() {
                 requestScreen(
                     rendezvousUrl = rendezvousUrl,
                     onRendezvousUrlChange = { value ->
-                        rendezvousUrl = value
-                        connectionPreferences.edit().putString(RENDEZVOUS_URL_KEY, value).apply()
+                        val customOverride = value.trim()
+                        rendezvousUrl = customOverride.ifBlank { configuredRendezvousUrl }
+                        connectionPreferences.edit().apply {
+                            if (customOverride.isBlank()) {
+                                remove(RENDEZVOUS_URL_KEY)
+                            } else {
+                                putString(RENDEZVOUS_URL_KEY, customOverride)
+                            }
+                        }.apply()
                     },
                     onBack = { navController.popBackStack() },
                 )
@@ -275,8 +287,8 @@ private fun requestScreen(
     var pendingTrustPeerId by rememberSaveable { mutableStateOf<String?>(null) }
 
     appPage(
-        title = "New request",
-        subtitle = "Configure your HTTPS peer directory, explicitly trust a host, and send an inference request.",
+        title = "Advanced host settings",
+        subtitle = "Normal conversations use the app publisher’s configured directory. A custom HTTPS directory can be set here for an operator-approved override.",
     ) {
         OutlinedTextField(
             value = rendezvousUrl,
@@ -285,9 +297,9 @@ private fun requestScreen(
                 requestViewModel.clearDirectorySession()
             },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("HTTPS Rendezvous URL") },
+            label = { Text("Custom HTTPS Rendezvous URL (optional)") },
             supportingText = {
-                Text("Use the HTTPS address configured by the service operator. No server address is prefilled.")
+                Text("The packaged directory is used by default. Clear this field to return to that default; use a custom address only when instructed by the service operator.")
             },
             singleLine = true,
         )

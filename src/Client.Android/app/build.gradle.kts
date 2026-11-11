@@ -1,6 +1,7 @@
 import com.google.protobuf.gradle.*
 import org.gradle.api.GradleException
 import java.io.File
+import java.net.URI
 
 plugins {
     id("com.android.application")
@@ -10,6 +11,38 @@ plugins {
     id("com.google.protobuf")
     id("org.jlleitschuh.gradle.ktlint")
 }
+
+val rendezvousServiceBaseUrl =
+    providers
+        .gradleProperty("whitepRendezvousServiceBaseUrl")
+        .orElse(providers.environmentVariable("WHITEP_RENDEZVOUS_SERVICE_BASE_URL"))
+        .orElse("")
+        .get()
+        .trim()
+
+if (rendezvousServiceBaseUrl.isNotEmpty()) {
+    val uri =
+        try {
+            URI(rendezvousServiceBaseUrl)
+        } catch (exception: Exception) {
+            throw GradleException("The configured Rendezvous service URL is not a valid URI.", exception)
+        }
+    if (!uri.isAbsolute ||
+        uri.scheme?.equals("https", ignoreCase = true) != true ||
+        uri.host.isNullOrBlank() ||
+        uri.userInfo != null ||
+        uri.query != null ||
+        uri.fragment != null
+    ) {
+        throw GradleException(
+            "WHITEP_RENDEZVOUS_SERVICE_BASE_URL must be an absolute HTTPS URL without credentials, query parameters or a fragment.",
+        )
+    }
+}
+val escapedRendezvousServiceBaseUrl =
+    rendezvousServiceBaseUrl
+        .replace("\\", "\\\\")
+        .replace("\"", "\\\"")
 
 val robolectricDependencyRepoUrl =
     providers
@@ -87,6 +120,11 @@ android {
     namespace = "com.whitep.client"
     compileSdk = 36
     defaultConfig {
+        buildConfigField(
+            "String",
+            "RENDEZVOUS_SERVICE_BASE_URL",
+            "\"$escapedRendezvousServiceBaseUrl\"",
+        )
         applicationId = "com.whitep.client"
         minSdk = 26
         targetSdk = 36
@@ -115,7 +153,10 @@ android {
             }
         }
     }
-    buildFeatures { compose = true }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
