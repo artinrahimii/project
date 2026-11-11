@@ -70,7 +70,6 @@
 
 ## دادهٔ کامل گراف v1.0
 
-```json
 {
   "schema_version": "1.0",
   "document": "update-step-two-v1.2",
@@ -8178,7 +8177,7 @@
         "قابلیت مدل تنها با شناسه و metadata معتبر و backend واقعاً آماده قابل قبول باشد؛ صرف advertised بودن مدل برای پذیرش کافی نیست."
       ],
       "status": "done",
-      "status_fa": "انجام‌نشده",
+      "status_fa": "تکمیل‌شده",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/network/RendezvousPeerDirectoryClient.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/AuthenticatedHostDiscovery.kt",
@@ -8264,7 +8263,8 @@
           "faad2ff593ded23bda101dda1fe6eb1fc52320c7",
           "f9f4cc8ad57964dedaca985ccdc679fee5eb7718",
           "3e786ad83028cd3710e137243bb66963794bf198",
-          "8dae90c267b2464c718fefcf6bf37aa9e9d091a8"
+          "8dae90c267b2464c718fefcf6bf37aa9e9d091a8",
+          "5063b8cf276c8d19896fbb109226914359c2125f"
         ],
         "tests_passed": [
           "Exact V 3.1.183 Quality gate passed 496 Python tests, compileall and graph guards (run 42907340773).",
@@ -8285,7 +8285,8 @@
           "V 3.1.191 Android job 37/37 steps; 237 tests passed, 1 emulator LAN test skipped, 0 failures (42999958352).",
           "V 3.1.191 Windows job 29/29 steps and HostLifecycle 14/14 steps; 68 critical markers, 86.15% line coverage (42999958352).",
           "V 3.1.191 Rendezvous container 6/6 steps passed (42999958177).",
-          "Exact-head quality passed on 8dae90c267b2464c718fefcf6bf37aa9e9d091a8; run 43013679259"
+          "Exact-head quality passed on 8dae90c267b2464c718fefcf6bf37aa9e9d091a8; run 43013679259",
+          "Final V 3.1.198 exact-head quality passed (run 43013833154; https://github.com/artinrahimii/project/actions/runs/43013833154)."
         ],
         "tests_failed": [
           "V 3.1.183 Android ktlint: three chain-method-continuation formatting violations; JVM did not run.",
@@ -8682,7 +8683,7 @@
           "started_at": "2026-11-11T11:38:54Z",
           "ended_at": "2026-11-11T11:40:04Z",
           "result": "passed",
-          "summary": "Eight post-acceptance decisions synchronized; exact-head quality passed; all 168 ledger and marker records match with baseline statuses and histories preserved.",
+          "summary": "Eight post-acceptance decisions synchronized; exact-head quality passed on the synchronization commit and again on the final task-state commit; all 168 ledger and marker records match with baseline statuses and histories preserved.",
           "changed_files": [
             "step three/project-graph.md",
             "update/Step two/legacy-task-reconciliation.json",
@@ -8748,6 +8749,14 @@
               "run_id": 43013679259,
               "url": "https://github.com/artinrahimii/project/actions/runs/43013679259",
               "summary": "All six quality steps passed."
+            },
+            {
+              "name": "Final committed-state exact-head quality gate",
+              "command": "workflow_dispatch on 5063b8cf276c8d19896fbb109226914359c2125f",
+              "result": "passed",
+              "run_id": 43013833154,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43013833154",
+              "summary": "All six quality steps passed on final task-state commit V 3.1.198."
             }
           ],
           "failure_details": null,
@@ -13703,7 +13712,7 @@
     "done": 19,
     "blocked": 1,
     "verified_completion_percentage": 79.16666666666667,
-    "calculation": "19 verified done update tasks / 24 total update tasks = 79.17%. UPD-S1-014 awaits exact-head synchronization validation; UPD-S1-020 remains blocked on physical hardware and a loaded local model."
+    "calculation": "19 verified done update tasks / 24 total update tasks = 79.17%. UPD-S1-014 is complete after full legacy synchronization and exact-head quality on V 3.1.198; UPD-S1-020 remains blocked on physical hardware and a loaded local model."
   },
   "visual_identity": {
     "scope": [
@@ -14015,4 +14024,4 @@
       "Each reviewed ledger row is mirrored by the Step Three update_impact marker; future re-review is triggered by mapped implementation acceptance."
     ]
   }
-}```
+}
