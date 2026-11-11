@@ -72,6 +72,31 @@ class AndroidPeerTrustStoreTest {
     }
 
     @Test
+    fun rotatedHostIdentityDoesNotInheritPriorTrustAndRequiresFreshConfirmation() {
+        val previousIdentity = generateKeyPair(KeyType.ED25519).second
+        val rotatedIdentity = generateKeyPair(KeyType.ED25519).second
+        val previousPeerId = PeerId.fromPubKey(previousIdentity).toBase58()
+        val rotatedPeerId = PeerId.fromPubKey(rotatedIdentity).toBase58()
+        val store = AndroidPeerTrustStore(context, protector)
+
+        assertTrue(previousPeerId != rotatedPeerId)
+        store.trustPeerAfterExplicitConfirmation(previousPeerId, explicitlyConfirmed = true)
+        assertTrue(store.isTrusted(previousPeerId))
+        assertFalse(store.isTrusted(rotatedPeerId))
+
+        store.revokeTrust(previousPeerId)
+        assertFalse(store.isTrusted(previousPeerId))
+        assertFalse(store.isTrusted(rotatedPeerId))
+        assertThrows(SecurityException::class.java) {
+            store.trustPeerAfterExplicitConfirmation(rotatedPeerId, explicitlyConfirmed = false)
+        }
+        assertFalse(store.isTrusted(rotatedPeerId))
+
+        store.trustPeerAfterExplicitConfirmation(rotatedPeerId, explicitlyConfirmed = true)
+        assertTrue(store.isTrusted(rotatedPeerId))
+    }
+
+    @Test
     fun tamperedExistingTrustRecordFailsClosedWithoutSilentlyResettingIt() {
         val peerId = PeerId.fromPubKey(generateKeyPair(KeyType.ED25519).second).toBase58()
         val store = AndroidPeerTrustStore(context, protector)

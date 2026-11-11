@@ -71,8 +71,7 @@
 
 ## دادهٔ کامل گراف v1.0
 
-```json
-{
+```json{
   "schema_version": "1.0",
   "document": "update-step-two-v1.2",
   "title": "گراف وابستگی و دفتر اجرای به‌روزرسانی White-P بر پایهٔ V1.10 — v1.2",
@@ -97,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.206",
+  "commit_intent": "V 3.1.207",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -10591,8 +10590,8 @@
         "آزمون‌های انتخاب مدل و سقف خروجی، نبود مدل سازگار، مدل‌های هم‌امتیاز و metadata نامعتبر را پوشش دهند.",
         "آزمون‌های UI نگاشت وضعیت‌های درخواست و عدم افشای IP، Port و PeerId در مسیر عادی را بررسی کنند."
       ],
-      "status": "not_started",
-      "status_fa": "انجام‌نشده",
+      "status": "in_progress",
+      "status_fa": "در حال اجرا",
       "expected_output_paths": [
         "src/Client.Android/app/src/test/",
         "src/Client.Android/app/src/androidTest/",
@@ -10601,15 +10600,65 @@
         ".github/workflows/product-build.yml",
         "update/Step three/UPD-S1-019/execution-report.md"
       ],
-      "actual_output_paths": [],
-      "evidence": [],
+      "actual_output_paths": [
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerTrustStoreTest.kt",
+        "update/Step three/UPD-S1-019/execution-report.md",
+        "update/Step three/UPD-S1-019/evidence/acceptance-test-matrix.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/AutomaticModelSelectionPolicyTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/AuthenticatedHostDiscoveryTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/InferenceResponseCorrelationValidatorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestStatusPresentationTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/Libp2pInferenceRequestTransportTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundTimerTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceRoundResponseCollectorTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/HostCandidateSelectorTest.kt",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsHostIdentityStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestAdmissionTests.cs",
+        "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/ModelCatalogParserAcceptanceTests.cs",
+        "tests/test_network_payload_logging.py",
+        "tests/test_sensitive_artifact_scanning.py",
+        "tests/test_sensitive_buffer_cleanup.py",
+        "tests/test_android_request_status_contract.py"
+      ],
+      "evidence": [
+        "update/Step three/UPD-S1-019/evidence/acceptance-test-matrix.md",
+        "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerTrustStoreTest.kt",
+        "tests/HostLifecycle.Tests/PeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/WindowsPeerTrustStoreAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerTransportContractAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/PeerMessageSecurityAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorFailureAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/HostPeerRuntimeCapabilitiesAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/SafeDiagnosticLogAcceptanceTests.cs",
+        "tests/HostLifecycle.Tests/NetworkInferenceRequestFrameAcceptanceTests.cs",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/AutomaticModelSelectionPolicyTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestStatusPresentationTest.kt"
+      ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=add; affected_task_ids=T0150, T0176, T0196, T0197, T0198, T0199, T0200, T0201, T0202, T0203, T0204, T0205, T0206, T0207, T0208, T0229. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 0,
+        "attempt_count": 1,
         "failed_attempt_count": 0,
-        "last_attempt_id": null,
-        "last_attempt_result": null,
-        "changed_files": [],
+        "last_attempt_id": "UPD-S1-019-20261111-A001",
+        "last_attempt_result": "partial",
+        "changed_files": [
+          "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerTrustStoreTest.kt",
+          "update/Step three/UPD-S1-019/execution-report.md",
+          "update/Step three/UPD-S1-019/evidence/acceptance-test-matrix.md",
+          "update/Step two/project-graph.md"
+        ],
         "related_commits": [],
         "tests_passed": [],
         "tests_failed": [],
@@ -10620,9 +10669,34 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": []
-        }
+        },
+        "follow_up": "Run exact-head quality.yml and product-build.yml on the test commit. Promote to done only after both succeed and the final graph-state commit is revalidated."
       },
-      "execution_history": []
+      "execution_history": [
+        {
+          "attempt_id": "UPD-S1-019-20261111-A001",
+          "started_at": "2026-11-11T18:20:55.333Z",
+          "ended_at": "2026-11-11T18:20:55.333Z",
+          "result": "partial",
+          "summary": "Existing Android/Windows/shared tests were mapped against all UPD-S1-019 acceptance areas. Added Android peer-trust regression proving a rotated host PeerId does not inherit previous trust and requires fresh explicit confirmation. Exact-head CI is pending.",
+          "changed_files": [
+            "src/Client.Android/app/src/test/java/com/whitep/client/network/AndroidPeerTrustStoreTest.kt",
+            "update/Step three/UPD-S1-019/execution-report.md",
+            "update/Step three/UPD-S1-019/evidence/acceptance-test-matrix.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": null,
+          "tests": [],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "Run exact-head quality.yml and product-build.yml on the test commit. Promote to done only after both succeed and the final graph-state commit is revalidated.",
+          "device_and_host_details_redacted": "GitHub-hosted CI runners and Android emulator/instrumentation only; no physical Android device or user-operated Windows host was used.",
+          "model_revision_and_sha256": "No local inference model was loaded for UPD-S1-019; real device/model inference remains under UPD-S1-020.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable to UPD-S1-019; in-place upgrade is separately gated by UPD-S1-021."
+        }
+      ]
     },
     {
       "id": "UPD-S1-020",
@@ -13976,14 +14050,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-11T17:20:03.802Z",
+    "as_of": "2026-11-11T18:20:55.333Z",
     "total_tasks": 24,
-    "not_started": 2,
-    "in_progress": 0,
+    "not_started": 1,
+    "in_progress": 1,
     "done": 20,
     "blocked": 0,
-    "verified_completion_percentage": 83.33333333333334,
-    "calculation": "20 verified done update tasks / 24 total update tasks = 83.33%. UPD-S1-011 and UPD-S1-020 are deferred_final and are not counted as done; 2 tasks remain not_started. The public HTTPS deployment/network acceptance and physical Android-to-Windows real-model E2E remain mandatory final-stage gates.",
+    "verified_completion_percentage": 83.33333333333333,
+    "calculation": "20 verified done update tasks / 24 total update tasks = 83.33%. UPD-S1-019 is in progress pending exact-head Android/Windows test CI; UPD-S1-011 and UPD-S1-020 remain deferred_final.",
     "deferred_final": 2
   },
   "visual_identity": {
@@ -14098,7 +14172,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-11T17:20:03.802Z",
+  "updated_at": "2026-11-11T18:20:55.333Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
@@ -14310,7 +14384,13 @@
       "to": "deferred_final",
       "changed_at": "2026-11-11T17:20:03.802Z",
       "reason": "درخواست کاربر برای انتقال آزمون فیزیکی Android-to-Windows با مدل واقعی به مرحلهٔ پایانی؛ آزمون همچنان انجام‌نشده است."
+    },
+    {
+      "task_id": "UPD-S1-019",
+      "from": "not_started",
+      "to": "in_progress",
+      "changed_at": "2026-11-11T18:20:55.333Z",
+      "reason": "Execution began after auditing all mapped prerequisites and the explicit UPD-S1-011 downstream allowlist; an Android peer-key-rotation trust regression was added and exact-head CI is pending."
     }
   ]
-}
-```
+}```
