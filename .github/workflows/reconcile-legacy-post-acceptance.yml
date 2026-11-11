@@ -1,0 +1,65 @@
+name: Reconcile legacy post-acceptance reviews
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/sync_legacy_post_acceptance.py"
+      - ".github/workflows/reconcile-legacy-post-acceptance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  synchronize:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - name: Check out full main history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+          token: \${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.13"
+      - name: Synchronize legacy graph and reconciliation ledger
+        env:
+          GH_TOKEN: \${{ github.token }}
+          GITHUB_TOKEN: \${{ github.token }}
+          GITHUB_REPOSITORY: \${{ github.repository }}
+          GITHUB_SHA: \${{ github.sha }}
+          GITHUB_EVENT_NAME: \${{ github.event_name }}
+        run: python tools/sync_legacy_post_acceptance.py
+
+  exact_head_quality:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out dispatched main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: \${{ github.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.13"
+      - name: Run automated tests
+        run: python -m unittest discover -s tests -v
+      - name: Check Python syntax
+        run: python -m compileall -q tools tests
+      - name: Validate Step Three graph structure
+        run: python tools/graph_guard.py "step three/project-graph.md"
+      - name: Validate Step Three outputs and evidence
+        run: python tools/graph_guard.py "step three/project-graph.md" --repo-root .
+      - name: Validate Update graph structure
+        run: python tools/graph_guard.py "update/Step two/project-graph.md"
+      - name: Validate Update outputs and evidence
+        run: python tools/graph_guard.py "update/Step two/project-graph.md" --repo-root .
