@@ -81,7 +81,8 @@ private fun whitePClientApp() {
     val configuredRendezvousUrl = BuildConfig.RENDEZVOUS_SERVICE_BASE_URL.trim()
     var rendezvousUrl by rememberSaveable {
         mutableStateOf(
-            connectionPreferences.getString(RENDEZVOUS_URL_KEY, null)
+            connectionPreferences
+                .getString(RENDEZVOUS_URL_KEY, null)
                 ?.takeIf { it.isNotBlank() }
                 ?: configuredRendezvousUrl,
         )
@@ -174,13 +175,15 @@ private fun whitePClientApp() {
                     onRendezvousUrlChange = { value ->
                         val customOverride = value.trim()
                         rendezvousUrl = customOverride.ifBlank { configuredRendezvousUrl }
-                        connectionPreferences.edit().apply {
-                            if (customOverride.isBlank()) {
-                                remove(RENDEZVOUS_URL_KEY)
-                            } else {
-                                putString(RENDEZVOUS_URL_KEY, customOverride)
-                            }
-                        }.apply()
+                        connectionPreferences
+                            .edit()
+                            .apply {
+                                if (customOverride.isBlank()) {
+                                    remove(RENDEZVOUS_URL_KEY)
+                                } else {
+                                    putString(RENDEZVOUS_URL_KEY, customOverride)
+                                }
+                            }.apply()
                     },
                     onBack = { navController.popBackStack() },
                 )
@@ -288,7 +291,9 @@ private fun requestScreen(
 
     appPage(
         title = "Advanced host settings",
-        subtitle = "Normal conversations use the app publisher’s configured directory. A custom HTTPS directory can be set here for an operator-approved override.",
+        subtitle =
+            "Normal conversations use the app publisher’s configured directory. " +
+                "A custom HTTPS directory can be set here for an operator-approved override.",
     ) {
         OutlinedTextField(
             value = rendezvousUrl,
@@ -297,9 +302,15 @@ private fun requestScreen(
                 requestViewModel.clearDirectorySession()
             },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Custom HTTPS Rendezvous URL (optional)") },
+            label = {
+                Text("Custom HTTPS Rendezvous URL (optional)")
+            },
             supportingText = {
-                Text("The packaged directory is used by default. Clear this field to return to that default; use a custom address only when instructed by the service operator.")
+                Text(
+                    "The packaged directory is used by default. " +
+                        "Clear this field to return to that default; use a custom address only " +
+                        "when instructed by the service operator.",
+                )
             },
             singleLine = true,
         )

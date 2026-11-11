@@ -11,6 +11,7 @@ README = (ROOT / "README.md").read_text(encoding="utf-8")
 ACCEPTANCE = (ROOT / "docs/acceptance.md").read_text(encoding="utf-8")
 REQUIREMENTS = (ROOT / "docs/requirements.md").read_text(encoding="utf-8")
 ANDROID_UI = (ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt").read_text(encoding="utf-8")
+ANDROID_BUILD = (ROOT / "src/Client.Android/app/build.gradle.kts").read_text(encoding="utf-8")
 ANDROID_REQUEST_VIEW_MODEL = (
     ROOT / "src/Client.Android/app/src/main/java/com/whitep/client/ui/request/RequestViewModel.kt"
 ).read_text(encoding="utf-8")
@@ -23,7 +24,10 @@ UNCONFIGURED_BACKEND = (ROOT / "src/Host.Application/UnconfiguredInferenceBacken
 class ClaimsAuditTests(unittest.TestCase):
     def test_android_ui_discloses_explicit_trust_and_receiving_host_visibility(self):
         self.assertNotIn("P2P client preview (transport not implemented)", ANDROID_UI)
-        self.assertIn("No server address is prefilled.", ANDROID_UI)
+        self.assertIn("The packaged directory is used by default.", ANDROID_UI)
+        self.assertIn("Custom HTTPS Rendezvous URL (optional)", ANDROID_UI)
+        self.assertIn('providers.environmentVariable("WHITEP_RENDEZVOUS_SERVICE_BASE_URL")', ANDROID_BUILD)
+        self.assertIn('.orElse("")', ANDROID_BUILD)
         self.assertIn("Before you trust this host", ANDROID_UI)
         self.assertIn("this processing host receives your prompt and context capsule", ANDROID_UI)
         self.assertIn("Saving trust does not send a prompt or context now.", ANDROID_UI)

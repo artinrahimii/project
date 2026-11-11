@@ -62,8 +62,12 @@ class AndroidComposeNavigationTests(unittest.TestCase):
         self.assertIn("restoreState = true", ACTIVITY)
 
     def test_request_screen_configures_directory_and_uses_explicit_peer_trust(self):
-        self.assertIn('label = { Text("HTTPS Rendezvous URL") }', ACTIVITY)
-        self.assertIn("No server address is prefilled.", ACTIVITY)
+        self.assertIn('title = "Advanced host settings"', ACTIVITY)
+        self.assertIn('label = { Text("Custom HTTPS Rendezvous URL (optional)") }', ACTIVITY)
+        self.assertIn("The packaged directory is used by default.", ACTIVITY)
+        self.assertIn("BuildConfig.RENDEZVOUS_SERVICE_BASE_URL", ACTIVITY)
+        self.assertIn("whitepRendezvousServiceBaseUrl", ANDROID_BUILD)
+        self.assertIn("WHITEP_RENDEZVOUS_SERVICE_BASE_URL", ANDROID_BUILD)
         self.assertIn("requestViewModel.discoverPeers(", ACTIVITY)
         self.assertIn("Review and trust this host", ACTIVITY)
         self.assertIn("requestViewModel.trustPeerAfterExplicitConfirmation(peerId)", ACTIVITY)

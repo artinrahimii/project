@@ -6,6 +6,7 @@ ANDROID = ROOT / "src/Client.Android/app/src/main/java/com/whitep/client"
 TESTS = ROOT / "src/Client.Android/app/src/test/java/com/whitep/client"
 DISTRIBUTED = (ANDROID / "requests/DistributedRequest.kt").read_text(encoding="utf-8")
 RUNTIME = (ANDROID / "requests/AndroidInferenceRequestRuntime.kt").read_text(encoding="utf-8")
+DISPATCHER = (ANDROID / "requests/InferenceAttemptDispatcher.kt").read_text(encoding="utf-8")
 VIEW_MODEL = (ANDROID / "ui/request/RequestViewModel.kt").read_text(encoding="utf-8")
 ACTIVITY = (ANDROID / "MainActivity.kt").read_text(encoding="utf-8")
 VM_TESTS = (TESTS / "ui/request/RequestViewModelTest.kt").read_text(encoding="utf-8")
@@ -19,8 +20,10 @@ class UpdateS1015RetryPolicyTests(unittest.TestCase):
         self.assertIn("const val MAX_TOTAL_HOSTS = MAX_ROUNDS * MAX_ACTIVE_HOSTS_PER_REQUEST", DISTRIBUTED)
         self.assertIn("maxHosts = FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST", RUNTIME)
         self.assertIn("selectedHosts.size > FirstReleaseInferenceLimits.MAX_ACTIVE_HOSTS_PER_REQUEST", RUNTIME)
-        self.assertIn("progress.roundsDispatched >= distributedRequest.maxRounds", RUNTIME)
-        self.assertIn("progress.hostsAttempted >= distributedRequest.maxTotalHosts", RUNTIME)
+        self.assertIn("progress.roundsDispatched >= distributedRequest.maxRounds", DISPATCHER)
+        self.assertIn("progress.hostsAttempted >= distributedRequest.maxTotalHosts", DISPATCHER)
+        self.assertIn("requestBudgetLocks.computeIfAbsent(requestId)", RUNTIME)
+        self.assertIn("lock.withLock", RUNTIME)
 
     def test_retry_is_explicit_manual_bounded_and_targets_failed_hosts(self):
         self.assertIn("fun retryFailedAttempts()", VIEW_MODEL)
