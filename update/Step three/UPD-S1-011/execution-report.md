@@ -37,3 +37,11 @@
 ## ادامه
 
 تا استقرار و تعیین endpoint عمومی HTTPS و آزمون build منتشرشده با آن، این وظیفه تکمیل‌شده نیست. مقدار پیش‌فرض عمداً خالی است تا اتصال به سرویس ساختگی یا ناامن اتفاق نیفتد.
+
+
+## بازاعتبارسنجی CI روی commit دقیق V 3.1.203
+
+- آزمون قراردادی URL/HTTPS/تنظیمات پیشرفته و رضایت Android در quality gate دقیق commit `ea374677019b50b07677a60c1e6c0df3a970c89b` اجرا و موفق شد؛ quality run `43038776230` شامل ۵۰۲ آزمون و هر دو graph guard بود.
+- Product build run `43038776527` در job اندروید، lint، JVM، debug/release build و Keystore instrumentation را موفق اجرا کرد؛ Windows WPF و HostLifecycle نیز موفق بودند.
+- Rendezvous container workflow run `43038776377` build و smoke محلی را موفق کرد.
+- این نتایج endpoint عمومی را مستقر یا قابل‌دسترسی اثبات نمی‌کنند. `docs/deployment/rendezvous-service.md` صریحاً دامنهٔ `https://rendezvous.example.net/` را placeholder می‌داند و استقرار TLS/ingress و آزمون دسترسی از شبکهٔ دیگر را لازم می‌شمارد. بنابراین UPD-S1-011 همچنان `in_progress` است تا endpoint واقعی مستقر و در build انتشار پیکربندی شود.

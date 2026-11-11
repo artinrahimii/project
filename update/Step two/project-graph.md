@@ -96,7 +96,7 @@
     "product_code_baseline_message": "V 3.1.11",
     "baseline_delta_summary": "The verified comparison from V 3.1.11 to V 3.1.12 contains exactly one added file, update/Step two/project-graph.md. No Android, Windows, shared runtime or test source was changed. The product-code baseline therefore remains V 3.1.11 while the graph-creation main checkpoint is V 3.1.12."
   },
-  "commit_intent": "V 3.1.198",
+  "commit_intent": "V 3.1.204",
   "status_legend": {
     "not_started": "انجام‌نشده؛ هیچ تلاش اجرایی ثبت نشده است.",
     "in_progress": "در حال اجرا؛ دست‌کم یک تلاش آغاز شده اما معیارهای پذیرش کامل نشده‌اند.",
@@ -7691,8 +7691,14 @@
           "update/Step three/UPD-S1-011/evidence/rendezvous-configuration-audit.md",
           "update/Step two/project-graph.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "ea374677019b50b07677a60c1e6c0df3a970c89b"
+        ],
+        "tests_passed": [
+          "Exact V 3.1.203 quality gate run 43038776230 passed (502 Python tests and both graph guards).",
+          "Exact V 3.1.203 product build run 43038776527 passed Android and Windows CI jobs.",
+          "Exact V 3.1.203 Rendezvous container build/smoke run 43038776377 passed; public endpoint deployment remains unverified."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -7701,7 +7707,8 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": []
-        }
+        },
+        "follow_up": "Keep in_progress until a real public HTTPS origin is deployed behind TLS/ingress, configured into the release build and verified from an independent network."
       },
       "execution_history": [
         {
@@ -7709,7 +7716,7 @@
           "started_at": "2026-11-11T14:06:20.090Z",
           "ended_at": "2026-11-11T14:06:20.090Z",
           "result": "partial",
-          "summary": "Added publisher-supplied HTTPS build configuration and advanced-only custom override; endpoint deployment and exact-head CI remain outstanding.",
+          "summary": "Exact-head CI passes for Android URL configuration, privacy consent and model-selection contracts; endpoint deployment and live public reachability remain outstanding.",
           "changed_files": [
             "src/Client.Android/app/build.gradle.kts",
             "src/Client.Android/app/src/main/java/com/whitep/client/MainActivity.kt",
@@ -7718,23 +7725,31 @@
             "update/Step three/UPD-S1-011/evidence/rendezvous-configuration-audit.md",
             "update/Step two/project-graph.md"
           ],
-          "commit_sha": null,
+          "commit_sha": "ea374677019b50b07677a60c1e6c0df3a970c89b",
           "tests": [
             {
               "name": "Rendezvous build configuration/Android consent contract",
               "command": "Exact-head GitHub Actions quality.yml/product-build.yml; local execution unavailable",
-              "result": "pending",
-              "run_id": null,
-              "url": null,
-              "note": "Awaiting exact commit CI result."
+              "result": "passed",
+              "run_id": 43038776230,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43038776230",
+              "note": "Exact V 3.1.203 workflow completed successfully; the public endpoint deployment requirement remains outstanding."
             },
             {
               "name": "Android lint, JVM tests, debug/release build and emulator launch",
               "command": "Exact-head GitHub Actions quality.yml/product-build.yml; local execution unavailable",
-              "result": "pending",
-              "run_id": null,
-              "url": null,
-              "note": "Awaiting exact commit CI result."
+              "result": "passed",
+              "run_id": 43038776230,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43038776230",
+              "note": "Exact V 3.1.203 workflow completed successfully; the public endpoint deployment requirement remains outstanding."
+            },
+            {
+              "name": "Rendezvous container build and smoke",
+              "command": "Exact V 3.1.203 .github/workflows/rendezvous-container.yml",
+              "result": "passed",
+              "run_id": 43038776377,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43038776377",
+              "note": "Container build and loopback smoke only; not public deployment or cross-network reachability."
             }
           ],
           "failure_details": null,
@@ -7743,8 +7758,8 @@
           "contract_changes": [
             "Build-time HTTPS Rendezvous configuration injection; no shared wire-protocol change."
           ],
-          "follow_up": "Inspect exact-head CI. Keep in_progress until a real public HTTPS endpoint is deployed and supplied to a release build, then verify ordinary chat without manual URL entry.",
-          "device_and_host_details_redacted": "No physical Android handset or user-operated Windows host was accessed; source/test audit only.",
+          "follow_up": "Keep in_progress until a real public HTTPS origin is deployed behind TLS/ingress, configured into the release build and verified from an independent network.",
+          "device_and_host_details_redacted": "GitHub-hosted CI Windows runner and Android emulator only; no physical handset or external network endpoint was accessed.",
           "model_revision_and_sha256": "Not applicable; no model was loaded.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable; no installation or upgrade test was performed."
         }
@@ -8891,8 +8906,8 @@
         "هیچ درخواست به همهٔ میزبان‌های آنلاین broadcast نشود و پاسخ دیرهنگام/تکراری به تلاش نادرست نسبت داده نشود.",
         "deadline، سقف retry و idempotency با آزمون قطعی پوشش داده شوند."
       ],
-      "status": "in_progress",
-      "status_fa": "در حال اجرا",
+      "status": "done",
+      "status_fa": "تکمیل‌شده",
       "expected_output_paths": [
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/InferenceAttemptDispatcher.kt",
         "src/Client.Android/app/src/main/java/com/whitep/client/requests/DistributedRequest.kt",
@@ -8903,25 +8918,39 @@
       "actual_output_paths": [
         "update/Step three/UPD-S1-015/execution-report.md",
         "update/Step three/UPD-S1-015/evidence/single-host-retry-audit.md",
-        "tests/test_update_s1_015_retry_policy.py"
+        "tests/test_update_s1_015_retry_policy.py",
+        "update/Step three/UPD-S1-015/evidence/exact-head-ci-A002-2026-11-11.md"
       ],
       "evidence": [
-        "update/Step three/UPD-S1-015/evidence/single-host-retry-audit.md"
+        "update/Step three/UPD-S1-015/evidence/single-host-retry-audit.md",
+        "update/Step three/UPD-S1-015/evidence/exact-head-ci-A002-2026-11-11.md",
+        "tests/test_update_s1_015_retry_policy.py",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/DistributedRequestTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/requests/InferenceAttemptDispatcherTest.kt",
+        "src/Client.Android/app/src/test/java/com/whitep/client/ui/request/RequestViewModelTest.kt",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorTests.cs",
+        "tests/HostLifecycle.Tests/HostRequestCoordinatorConcurrencyTests.cs"
       ],
       "notes": "این گره از update/Step one/Output/V1.10.json کپی معنایی شده است. change_operation=modify; affected_task_ids=T0125, T0126, T0161, T0162, T0163, T0164, T0165, T0166, T0167, T0168, T0169, T0170, T0171, T0172, T0173, T0174, T0175, T0176, T0177, T0203, T0204, T0224, T0225. مسیرهای expected فقط مقصد هستند و وجود فایل را ثابت نمی‌کنند. هیچ خروجی اجرایی در زمان ساخت گراف ادعا نشده است.",
       "execution_summary": {
-        "attempt_count": 1,
+        "attempt_count": 2,
         "failed_attempt_count": 0,
-        "last_attempt_id": "UPD-S1-015-20261111140620",
-        "last_attempt_result": "partial",
+        "last_attempt_id": "UPD-S1-015-20261111-A002",
+        "last_attempt_result": "passed",
         "changed_files": [
           "tests/test_update_s1_015_retry_policy.py",
           "update/Step three/UPD-S1-015/execution-report.md",
           "update/Step three/UPD-S1-015/evidence/single-host-retry-audit.md",
-          "update/Step two/project-graph.md"
+          "update/Step two/project-graph.md",
+          "update/Step three/UPD-S1-015/evidence/exact-head-ci-A002-2026-11-11.md"
         ],
-        "related_commits": [],
-        "tests_passed": [],
+        "related_commits": [
+          "ea374677019b50b07677a60c1e6c0df3a970c89b"
+        ],
+        "tests_passed": [
+          "Exact V 3.1.203 quality gate run 43038776230: 502 Python tests, compileall and both graph guards passed.",
+          "Exact V 3.1.203 product build run 43038776527: Android lint/JVM/build/Keystore instrumentation and Windows WPF/HostLifecycle/installer passed."
+        ],
         "tests_failed": [],
         "blocked_reason": null,
         "reopened_reason": null,
@@ -8930,7 +8959,8 @@
           "triggering_contracts": [],
           "affected_by_contract_changes": [],
           "review_evidence": []
-        }
+        },
+        "follow_up": "No further implementation is required for UPD-S1-015 unless a mapped contract or source change invalidates this evidence. Continue with the next dependency-ready task; UPD-S1-019 remains gated by UPD-S1-011."
       },
       "execution_history": [
         {
@@ -8972,6 +9002,53 @@
           "device_and_host_details_redacted": "No physical Android handset or user-operated Windows host was accessed; source/test audit only.",
           "model_revision_and_sha256": "Not applicable; no model was loaded.",
           "pre_upgrade_post_upgrade_snapshot": "Not applicable; no installation or upgrade test was performed."
+        },
+        {
+          "attempt_id": "UPD-S1-015-20261111-A002",
+          "started_at": "2026-11-11T14:28:18Z",
+          "ended_at": "2026-11-11T14:44:52Z",
+          "result": "passed",
+          "summary": "Exact-head quality and product CI passed on V 3.1.203. Existing implementation and behavioral tests verify one-host first-release cardinality, bounded/manual retry, stable request ID with fresh attempt IDs, deadline enforcement, duplicate-attempt/response rejection and single-inference concurrency.",
+          "changed_files": [
+            "update/Step three/UPD-S1-015/execution-report.md",
+            "update/Step three/UPD-S1-015/evidence/exact-head-ci-A002-2026-11-11.md",
+            "update/Step two/project-graph.md"
+          ],
+          "commit_sha": "ea374677019b50b07677a60c1e6c0df3a970c89b",
+          "tests": [
+            {
+              "name": "Step Three quality gate",
+              "command": "python -m unittest discover -s tests -v; python -m compileall -q tools tests; graph_guard for both graphs in structural and --repo-root modes",
+              "result": "passed",
+              "run_id": 43038776230,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43038776230",
+              "summary": "502 Python tests passed; compileall and both graph guards passed."
+            },
+            {
+              "name": "Android request/retry JVM and build tests",
+              "command": "Exact V 3.1.203 product-build workflow Android job",
+              "result": "passed",
+              "run_id": 43038776527,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43038776527",
+              "summary": "Kotlin lint, debug/release APK builds, Android JVM tests and Keystore instrumentation completed successfully. Emulator instrumentation is not physical-device E2E."
+            },
+            {
+              "name": "Windows HostLifecycle and coordinator tests",
+              "command": "Exact V 3.1.203 product-build workflow HostLifecycle job",
+              "result": "passed",
+              "run_id": 43038776527,
+              "url": "https://github.com/artinrahimii/project/actions/runs/43038776527",
+              "summary": "HostRequestCoordinatorTests and HostRequestCoordinatorConcurrencyTests invoked by Program.cs completed in successful HostLifecycle job; WPF build/startup and installer acceptance also passed."
+            }
+          ],
+          "failure_details": null,
+          "blocked_reason": null,
+          "reopened_reason": null,
+          "contract_changes": [],
+          "follow_up": "No further implementation is required for UPD-S1-015 unless a mapped contract or source change invalidates this evidence. Continue with the next dependency-ready task; UPD-S1-019 remains gated by UPD-S1-011.",
+          "device_and_host_details_redacted": "GitHub-hosted Linux quality runner and Windows product runner; Android Keystore instrumentation used the CI Android emulator. No physical Android-to-Windows E2E was run or claimed.",
+          "model_revision_and_sha256": "No local model was loaded in this task; not applicable.",
+          "pre_upgrade_post_upgrade_snapshot": "Not applicable; clean-install and in-place-upgrade validation belong to UPD-S1-021."
         }
       ]
     },
@@ -13816,14 +13893,14 @@
     }
   ],
   "progress_snapshot": {
-    "as_of": "2026-11-11T11:40:04Z",
+    "as_of": "2026-11-11T14:44:52Z",
     "total_tasks": 24,
-    "not_started": 4,
-    "in_progress": 0,
-    "done": 19,
+    "not_started": 2,
+    "in_progress": 1,
+    "done": 20,
     "blocked": 1,
-    "verified_completion_percentage": 79.16666666666667,
-    "calculation": "19 verified done update tasks / 24 total update tasks = 79.17%. UPD-S1-014 is complete after full legacy synchronization and exact-head quality on V 3.1.198; UPD-S1-020 remains blocked on physical hardware and a loaded local model."
+    "verified_completion_percentage": 83.33333333333333,
+    "calculation": "20 verified done update tasks / 24 total update tasks = 83.33%. UPD-S1-015 passed exact-head quality and product validation; UPD-S1-011 remains in progress pending a deployed public HTTPS Rendezvous endpoint; UPD-S1-020 remains blocked on physical device/host/model E2E."
   },
   "visual_identity": {
     "scope": [
@@ -13937,7 +14014,7 @@
     },
     "rule": "Do not renumber or silently drop tasks. Any change to task scope, prerequisite or affected legacy IDs must cite the updated source version and preserve previous execution records."
   },
-  "updated_at": "2026-11-11T11:40:04Z",
+  "updated_at": "2026-11-11T14:44:52Z",
   "legacy_task_sync": {
     "state": "reviewed",
     "reason_code": "RECONCILIATION_REVIEWED",
@@ -14125,7 +14202,7 @@
     },
     "reconciliation_artifact_path": "update/Step two/legacy-task-reconciliation.json",
     "status_change_policy": "All 168 affected legacy nodes now carry synchronized, individually reviewed decisions from the ledger. Preserve each baseline status; any transition requires independent evidence against the legacy task's original acceptance criteria.",
-    "completion_blocker": "The 168/168 reconciliation reviews and cross-graph markers are complete with 0 pending records. The 156 re_review_required decisions are reviewed outcomes that trigger follow-up review after mapped implementation tasks reach acceptance; they are not pending reconciliation records. No legacy status changed.",
+    "completion_blocker": "The 168/168 initial reconciliation reviews and cross-graph markers are complete with 0 pending records. The current ledger contains 148 re_review_required decisions and 20 unchanged decisions. These 148 are reviewed outcomes that trigger follow-up review after all mapped implementation tasks reach acceptance; they are not pending initial reconciliation records. No legacy status changed.",
     "rules": [
       "Every unique affected Txxxx ID has exactly one record in the reconciliation artifact and an update_impact marker on its Step Three node.",
       "Every marker lists all corresponding UPD-S1 task IDs and records the legacy status at the start of review.",
@@ -14135,5 +14212,4 @@
       "Each reviewed ledger row is mirrored by the Step Three update_impact marker; future re-review is triggered by mapped implementation acceptance."
     ]
   }
-}
-```
+}```

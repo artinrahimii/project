@@ -18,3 +18,11 @@
 URL پیکربندی‌شده در زمان build به BuildConfig تزریق می‌شود؛ فقط HTTPS مطلق بدون userinfo/query/fragment پذیرفته است. URL سفارشی در صفحهٔ Advanced host settings نگه داشته می‌شود و override خالی به مقدار بسته‌بندی‌شده برمی‌گردد.
 
 این سند اثبات build، اتصال به endpoint واقعی، discovery عمومی یا اجرای inference نیست. CI exact-head و endpoint واقعی هنوز لازم است.
+
+
+## نتیجهٔ CI دقیق V 3.1.203
+
+- quality run 43038776230: موفق؛ ۵۰۲ آزمون Python، compileall و دو graph guard.
+- product build run 43038776527: موفق؛ Android lint/JVM/build/Keystore instrumentation و Windows WPF/HostLifecycle/installer.
+- rendezvous container run 43038776377: موفق؛ فقط build و smoke محلی container.
+- هیچ endpoint عمومی در این workflowها deploy یا از شبکهٔ مستقل بررسی نشده است. آدرس نمونه در `docs/deployment/rendezvous-service.md` placeholder است؛ پس این CI شرط endpoint واقعی برای تکمیل UPD-S1-011 را برآورده نمی‌کند.

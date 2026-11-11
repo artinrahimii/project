@@ -27,3 +27,13 @@
 - آزمون قراردادی جدید: `tests/test_update_s1_015_retry_policy.py`.
 
 در این بررسی شکاف قطعی جدیدی در منطق محصول پیدا نشد؛ کد سالم موجود حفظ شد. وضعیت تا اجرای کیفیت، Android JVM و HostLifecycle روی commit دقیق، `in_progress` می‌ماند.
+
+
+## تلاش A002 — بازاعتبارسنجی آزمون‌ها روی commit دقیق
+
+- commit کد و آزمون‌های اجراشده: `ea374677019b50b07677a60c1e6c0df3a970c89b` — `V 3.1.203`.
+- کیفیت: run `43038776230` موفق؛ ۵۰۲ آزمون Python، compileall و اعتبارسنجی هر دو گراف.
+- محصول: run `43038776527` موفق؛ Android lint/JVM/build/Keystore instrumentation و Windows WPF/HostLifecycle/installer.
+- شواهد رفتاری deadline، سقف تلاش، retry دستی، Request ID پایدار، Attempt ID تازه، پاسخ تکراری، بودجهٔ retry و concurrency در فایل `evidence/exact-head-ci-A002-2026-11-11.md` ثبت شده‌اند.
+- نتیجه: معیارهای پذیرش UPD-S1-015 با کد موجود و آزمون‌های واقعی تأیید شدند؛ هیچ تغییر غیرضروری به منطق محصول اعمال نشد. وضعیت این وظیفه به `done` ارتقا یافت.
+- محدودیت: این نتیجه آزمون فیزیکی Android-to-Windows یا اجرای مدل روی دستگاه کاربر محسوب نمی‌شود؛ آن‌ها در UPD-S1-020 جداگانه مسدود هستند.
